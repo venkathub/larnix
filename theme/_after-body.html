@@ -34,3 +34,73 @@
   new MutationObserver(fixToggleTitle).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
+
+<script>
+/* Larnix live-cell status: show "Setting up…" (not "Running…") while a cell is
+   downloading/installing its Python packages.
+
+   quarto-live drives a single per-cell indicator (.exercise-editor-eval-indicator)
+   for the whole evaluate() call, so the Run button reads "Running…" even while
+   Pyodide is still fetching packages on first use — a one-time download that can
+   take many seconds and reads as a hang. We split the package-load phase out:
+   pre-load the cell's imports (tagging the active editor .lx-loading-pkg so CSS
+   swaps the label to "Setting up…"), THEN hand off to the original evaluate(),
+   whose own load step is now a no-op, so "Running…" shows only for real
+   execution. A short delay before tagging means already-cached packages (the
+   common case after first run) never flash the setup state. */
+(function () {
+  var LOADING_CLASS = "lx-loading-pkg";
+  var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
+  var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+
+  function activeEditors() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll(".exercise-editor"),
+      function (ed) {
+        var ind = ed.querySelector(".exercise-editor-eval-indicator");
+        return ind && !ind.classList.contains("d-none");
+      }
+    );
+  }
+
+  function patch() {
+    var rt = window._exercise_ojs_runtime;
+    if (!rt || !rt.PyodideEvaluator) return false;
+    var proto = rt.PyodideEvaluator.prototype;
+    if (proto.__lxLoadingPatched) return true;
+    proto.__lxLoadingPatched = true;
+
+    var originalEvaluate = proto.evaluate;
+    proto.evaluate = async function (code) {
+      if (code != null && this.pyodide) {
+        var editors = [];
+        var timer = setTimeout(function () {
+          editors = activeEditors();
+          editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
+        }, DELAY_MS);
+        try {
+          // Download/install any packages this cell imports, up front.
+          await this.pyodide.loadPackagesFromImports(code);
+        } catch (e) {
+          /* swallow — let the original evaluate() surface the real error */
+        } finally {
+          clearTimeout(timer);
+          editors.forEach(function (ed) { ed.classList.remove(LOADING_CLASS); });
+        }
+      }
+      // Packages are cached now, so the original load step is a no-op and the
+      // cell correctly shows "Running…" only while the code executes.
+      return originalEvaluate.apply(this, arguments);
+    };
+    return true;
+  }
+
+  if (!patch()) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
+    }, POLL_MS);
+  }
+})();
+</script>
+

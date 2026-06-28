@@ -381,6 +381,21 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   font-family: "Nunito"; font-weight: 800; font-size: 0.82rem; white-space: nowrap;
 }
 
+// While a cell is still DOWNLOADING/INSTALLING its Python packages (driven by
+// JS adding .lx-loading-pkg — see theme/_after-body.html), surface a distinct
+// "Setting up…" state in violet instead of "Running…". This is the one-time
+// first-use latency, not code execution, so it must read differently. The
+// extra class raises specificity, so these win over the "Running…" rules above.
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code {
+  background: var(--clay-violet-bg) !important; border-color: var(--clay-violet-bg) !important;
+}
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::before {
+  border-color: var(--clay-violet-tx); border-top-color: transparent;
+}
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::after {
+  content: "Setting up…"; color: var(--clay-violet-tx);
+}
+
 // Pyodide cell OUTPUT rendered as a dark terminal window (both page themes).
 .exercise-cell-output {
   position: relative; margin: 0.7rem 0 0;

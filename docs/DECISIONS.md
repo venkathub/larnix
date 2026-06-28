@@ -29,12 +29,27 @@
      the a11y gate's `THEME_PAIRS` was extended to the full palette and now supports a **3:1
      large-text threshold** (WCAG) for the big hero gradient word. All pairs pass.
   5. **Sepia** (D0008) remains a tracked follow-up.
+  6. **Live-cell status: "Setting up…" while downloading packages, not "Running…"** (follow-up fix).
+     quarto-live drives one per-cell indicator (`.exercise-editor-eval-indicator`) for the whole
+     `evaluate()` call, which the theme renders as the in-place Run-button status **"Running…"**. But
+     `evaluate()` first awaits `pyodide.loadPackagesFromImports(code)` — a one-time, multi-second
+     package **download** on first use (e.g. the first `import pandas`) — so the button read "Running…"
+     during a network wait, making the cell look hung. Considered: (a) editing the vendored, minified
+     `live-runtime.js` — rejected (third-party, overwritten on extension upgrade, non-diffable);
+     (b) pure CSS — rejected (download and execution share one indicator class, indistinguishable to
+     CSS). **Chosen:** a theme-layer JS seam — wrap `PyodideEvaluator.prototype.evaluate` (exposed on
+     `window._exercise_ojs_runtime`) to pre-load the cell's imports first, tagging the active editor
+     `.lx-loading-pkg` so CSS swaps the label to a violet **"Setting up…"**, then delegate to the
+     original `evaluate()` (its own load step now a no-op, so "Running…" shows only for real execution).
+     A 150 ms delay before tagging means already-cached packages never flash the setup state. Scoped to
+     Pyodide (Python) cells; the wrapper self-heals (no-ops) if runtime internals ever change.
 - **Rationale.** A memorable, friendly identity that fits a beginner-first learning platform; CSS-only
   motion, self-hosted fonts, ₹0, accessible.
 - **Consequences.** Replaces the earlier Inter polish. New tokens/components in
   `theme/_larnix-components.scss`; `a11y_check.py` gained per-pair contrast thresholds. Honest content
   choices: testimonials are persona-based with a "Larnix is new" framing; "enrollment" is "start free,
-  no signup" (no accounts exist in P0).
+  no signup" (no accounts exist in P0). The live-cell loading fix (decision 6) adds a `.lx-loading-pkg`
+  state in `theme/_larnix-components.scss` and a second `<script>` in `theme/_after-body.html`.
 
 ---
 
