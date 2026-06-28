@@ -1,0 +1,78 @@
+# ─────────────────────────────────────────────────────────────
+# Larnix .gitignore
+# ─────────────────────────────────────────────────────────────
+
+# ── Secrets / environment ──
+.env
+.env.*
+!.env.example
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# ── Jupyter / notebooks ──
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+profile_default/
+ipython_config.py
+
+# ── Node ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.npm/
+*.tsbuildinfo
+
+# ── Quarto ──
+/_site/
+**/_site/
+.quarto/
+**/.quarto/
+/_freeze/
+**/_freeze/
+*.quarto_ipynb
+
+# ── OS files ──
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Editors / IDE ──
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── Logs / temp ──
+*.log
+tmp/
+.cache/
