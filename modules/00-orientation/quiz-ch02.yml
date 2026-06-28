@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m0-ch2-what-it-costs"
+questions:
+  - id: cost-through-m10
+    prompt: "What does it cost to work through Modules 0–10 of Larnix?"
+    options:
+      - "A small monthly subscription"
+      - "₹0 — a browser is the whole setup, with free GPU tiers when needed"
+      - "The price of one rented GPU per module"
+    answer: 1
+    explanation: "Modules 0–10 run in the browser or on free Colab/Kaggle tiers — ₹0 end to end."
+  - id: when-first-gpu
+    prompt: "When do you first need a GPU, and where does it come from?"
+    options:
+      - "In Module 0, and you must buy one"
+      - "From Module 5 onward, from a free tier (Colab or Kaggle)"
+      - "Never — Larnix uses no GPUs at all"
+    answer: 1
+    explanation: "Heavier work from Module 5 uses a free Colab/Kaggle GPU; no purchase needed."
+  - id: paid-api-rule
+    prompt: "A later lesson shows a paid API. What is guaranteed?"
+    options:
+      - "You must add a credit card to continue"
+      - "It is optional and paired with a free fallback (Ollama or a free tier)"
+      - "The lesson cannot be completed without paying"
+    answer: 1
+    explanation: "Paid steps are always optional and always have a free fallback — keys are never required to learn."
+  - id: only-optional-spend
+    prompt: "Where is the only optional spend in the whole course?"
+    options:
+      - "The Module 11 pretraining capstone — and it has a free smaller-model path"
+      - "Every module after Module 3"
+      - "The in-browser exercises"
+    answer: 0
+    explanation: "Only the M11 capstone can use a rented GPU, and even that has a free ₹0 path."

@@ -31,7 +31,7 @@ All 🟢 Beginner · `browser` · `stable`.
 | # | Chapter | Status |
 |---|---------|--------|
 | 1 | [Train your first model — in your browser](ch01-train-your-first-model.qmd) | shipped |
-| 2 | What you need & what it costs | authored in P1 |
+| 2 | [What you need & what it costs](ch02-what-you-need-and-what-it-costs.qmd) | shipped |
 | 3 | What is AI, really? | authored in P1 |
 | 4 | AI vs ML vs DL vs GenAI — a family tree | authored in P1 |
 | 5 | A 10-minute history of AI | authored in P1 |

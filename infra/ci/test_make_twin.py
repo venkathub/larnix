@@ -107,6 +107,19 @@ class ParseTests(unittest.TestCase):
         joined = "\n".join(self.by_id.values())
         self.assertNotIn("open ended", joined)
 
+    def test_hint_details_before_solution_is_skipped(self):
+        # A P1-D4 "If you're stuck" hint (a <details> with no code) must not be
+        # mistaken for the solution; the generator pairs with the real solution.
+        qmd = SAMPLE_QMD.replace(
+            "<details><summary>Show solution</summary>",
+            "<details><summary>If you're stuck</summary>\n\nthink about it\n</details>\n\n"
+            "<details><summary>Show solution</summary>",
+        )
+        by_id = {c["id"]: c["code"] for c in make_twin.parse_chapter(qmd)}
+        self.assertIn("ex-ex_one", by_id)
+        self.assertIn("return n * 2", by_id["ex-ex_one"])
+        self.assertNotIn("think about it", by_id["ex-ex_one"])
+
     def test_cell_order_worked_before_exercise(self):
         ids = [c["id"] for c in self.cells]
         self.assertLess(ids.index("worked-1"), ids.index("ex-ex_one"))

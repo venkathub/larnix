@@ -80,6 +80,9 @@ scored client-side by the P0 quiz engine (score saved to `localStorage`, ₹0):
 
 - **Per-chapter quick check** — a `quiz.yml` (2–3 MCQ) beside each chapter, mounted
   in the chapter with `{{< quiz quiz.yml >}}`. Immediate recall after the lesson.
+  When several chapters share a module directory, name the file
+  `quiz-<chNN>.yml` (e.g. `quiz-ch02.yml`) and mount it with
+  `{{< quiz quiz-ch02.yml >}}` — these still match the `quiz*.yml` lint glob.
 - **Cumulative module quiz** — one `module-quiz.yml` (~8–12 MCQ) per module,
   mounted on the **module landing page** (`modules/<NN>/index.qmd`) with
   `{{< quiz module-quiz.yml >}}`. End-of-module consolidation (the Varsity model).

@@ -1,0 +1,310 @@
+---
+title: "What you need & what it costs"
+module: "M0 — Orientation"
+chapter: 2
+difficulty: "beginner"
+prereqs:
+  - "M0 Ch1 — Train your first model"
+learning_objectives:
+  - "Confirm the complete ₹0 path through Modules 0–10"
+  - "Name the three compute tiers and when each one appears"
+  - "Know that any paid step is optional and always has a free fallback"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: zero-cost-path
+    q: "Through Module 10, what does Larnix cost you?"
+    a: "₹0 — a browser is the whole setup, and any GPUs come from free tiers."
+  - id: when-gpu
+    q: "When do you first need a GPU, and where does it come from?"
+    a: "From Module 5 onward, and it comes from a free tier (Google Colab or Kaggle)."
+  - id: paid-is-optional
+    q: "If a lesson uses a paid API, what is guaranteed?"
+    a: "A free fallback (a local Ollama model or a free tier). Keys are never required to learn."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You trained a machine-learning model in Chapter 1. Here is the bill for it:
+
+**₹0.**
+
+No card, no trial, no "first month free." Learning to drive does not start with
+buying a car — you borrow one for the lesson. Larnix is built the same way: the
+expensive machinery is borrowed, for free, right when you need it, and most of the
+time you need nothing but the browser tab you are already in.
+
+This chapter is the honest receipt. By the end you will know exactly what you
+need, what each tool costs, and where the *one* optional spend in the whole course
+shows up — so money is never the reason you stop.
+
+> You'll need from before: nothing but Chapter 1's "press Run and it works"
+> experience. We build straight on that.
+
+---
+
+## What you actually need
+
+For the part of the course you are in now — **Modules 0 through 10** — the full
+list of requirements is:
+
+- A **web browser** (the one you're reading this in).
+- An **internet connection** to load each page.
+
+That's it. The code runs *inside the browser* through a technology called
+Pyodide, which is Python compiled to run on the web. There is nothing to install,
+no account to create, and no payment anywhere.
+
+Two free tools appear **later**, and only when a lesson actually needs them:
+
+- A **free Google account**, so you can open the heavier Module 5+ notebooks on
+  **Google Colab** or **Kaggle** — both give you a real GPU at no cost.
+- **Ollama**, a free program that runs language models on your own computer, used
+  in the later language-model modules. Also free.
+
+You do not need either of these today. When the time comes, the chapter that uses
+them walks you through the free setup.
+
+### The three compute tiers
+
+Every chapter declares where its code runs. There are exactly three tiers, and you
+can read which one you're in from the badge at the top of each chapter:
+
+| Tier | What runs it | Cost | First appears |
+|------|--------------|------|---------------|
+| `browser` | Your browser (Pyodide) | **₹0** | Module 0 (here) |
+| `colab` | A free Colab/Kaggle GPU | **₹0** (free tier) | Module 5 |
+| `gpu` | A rented GPU, billed by the second | a few hundred ₹ (**optional**) | Module 11 only |
+
+Modules 0–10 use only the first two tiers, so they are **₹0 end to end**. The
+third tier appears exactly once.
+
+### The one optional spend, named honestly
+
+The Module 11 capstone trains a small language model from scratch. Doing that at
+full size is the only place where renting a GPU — a few hundred rupees for a short
+session — can help. It is **optional**: the same capstone ships a smaller-model
+path that runs on a free GPU, so you can complete the course for ₹0 even there.
+
+> ⚠️ Watch out: when a later lesson shows a paid API (say, a hosted model), it is
+> always **optional** and always paired with a **free fallback** — a local Ollama
+> model or a free tier. If a chapter ever seems to demand a key to continue, that
+> is a bug; the free path is the real path.
+
+---
+
+## Let's build it (worked example)
+
+We'll compute the bill ourselves. The cells below run in your browser — pressing
+**Run** on them costs, fittingly, ₹0.
+
+```{pyodide}
+#| caption: "Where is this code even running?"
+import sys
+import platform
+
+print("Python version:", sys.version.split()[0])
+print("Runtime:", platform.system(), "/", platform.machine())
+print("This page installed:", "nothing — the browser is the whole setup")
+```
+
+The runtime says `Emscripten` / `wasm32`: that is Python running *inside your
+browser* as WebAssembly. No server did this work; your own tab did.
+
+```{pyodide}
+#| caption: "The ₹0 receipt for Modules 0–10"
+# Each tool you'll touch through Module 10, and what it costs you.
+toolkit = [
+    ("Browser + Pyodide", "browser", 0),   # every "Run" button, Modules 0–10
+    ("Google Colab (free)", "colab", 0),    # a free GPU, from Module 5
+    ("Kaggle (free)", "colab", 0),          # an alternative free GPU
+    ("Ollama (local models)", "browser", 0),  # language models on your own machine
+]
+
+def total_cost(tools):
+    return sum(cost for _name, _tier, cost in tools)
+
+for name, tier, cost in toolkit:
+    print(f"  - {name} ({tier}): ₹{cost}")
+print("Total to finish Modules 0–10: ₹", total_cost(toolkit))
+```
+
+```{pyodide}
+#| caption: "Framing the one optional cost (Module 11)"
+# A rented GPU is billed by time. These are EXAMPLE numbers you supply, not a
+# quoted price — real rates change, so always check the current rate yourself.
+example_rate_per_hour = 30   # ₹ per hour (an example)
+example_hours = 3            # a short session
+
+print("Example M11 rented-GPU cost:", example_rate_per_hour * example_hours, "₹")
+print("...and this is optional — a free smaller-model path exists.")
+```
+
+That last number is a *what-if*, not a promise: you choose the rate and the hours.
+The exercises below let you compute your own.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Modules 0–10 cost ₹0** — a browser is the entire setup; there is nothing to
+   install or pay for.
+2. When a GPU is needed (Module 5 onward), it comes from a **free tier** (Colab or
+   Kaggle).
+3. Any **paid API** in a lesson is **optional** and always paired with a **free
+   fallback** — keys are never required to learn.
+4. The **only** optional spend is the Module 11 capstone (a few hundred rupees,
+   approximate), and even it has a free smaller-model path.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `total_cost` adds up the cost of every tool. Replace
+`____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_total
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_total
+def total_cost(tools):
+    """Sum the cost of each (name, cost) tool."""
+    return sum(____ for name, cost in tools)  # TODO: add up each tool's cost
+
+run_tests([
+    ("the free toolkit costs nothing", total_cost([("Browser", 0), ("Colab", 0)]), 0),
+    ("adds up real costs", total_cost([("a", 10), ("b", 5)]), 15),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Each item is a pair `(name, cost)`. The loop already unpacks it into `name` and
+`cost` — you need only the value being summed.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def total_cost(tools):
+    return sum(cost for name, cost in tools)
+```
+
+`cost` is the number in each `(name, cost)` pair; `sum(...)` adds them. A toolkit
+of all zeros totals `0`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `gpu_estimate(hours, rate_per_hour)` — the cost of renting a GPU is the time
+times the rate. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_gpu
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_gpu
+def gpu_estimate(hours, rate_per_hour):
+    """Estimate rented-GPU cost as hours x hourly rate (both are numbers you supply)."""
+    return ____  # TODO: multiply the hours by the hourly rate
+
+run_tests([
+    ("3 hours at ₹30/hr", gpu_estimate(3, 30), 90),
+    ("zero hours is free", gpu_estimate(0, 100), 0),
+    ("fractional hours work", gpu_estimate(1.5, 20), 30.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Cost by time means one multiplication: how many hours, times the price per hour.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def gpu_estimate(hours, rate_per_hour):
+    return hours * rate_per_hour
+```
+
+Renting is billed by time, so the cost is `hours * rate_per_hour`. Zero hours
+costs nothing; fractional hours are fine because it's plain multiplication.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Plan your own Module 11 budget.
+Pick a realistic hourly GPU rate (look one up), choose how many hours you'd spend,
+and use `gpu_estimate` to compute the cost. Then write two sentences: what it would
+cost you, and how you'd do the capstone for **₹0** instead.
+
+**Rubric — a good answer:**
+
+- Uses `gpu_estimate` with a rate you state and reports the number.
+- Names the ₹0 alternative (the free smaller-model path on a free GPU).
+- Is honest that the rate is an estimate that changes over time.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+my_rate = 35   # ₹/hour — an example; check a current provider's rate
+my_hours = 4
+print("My M11 estimate:", gpu_estimate(my_hours, my_rate), "₹")
+```
+
+"At ₹35/hour for 4 hours, a full-size run would cost me about ₹140. I could
+instead train the smaller model on a free Colab/Kaggle GPU and finish the capstone
+for ₹0 — the rented GPU only buys speed and scale, not the learning."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now know the whole cost map: ₹0 through Module 10, free GPUs when needed, and
+one clearly-marked optional spend at the very end. With money off the table, the
+next chapters answer the obvious question — *what is this "AI" you used?* —
+starting with plain definitions and a family tree of the field.

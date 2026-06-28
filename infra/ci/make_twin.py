@@ -124,7 +124,9 @@ def parse_chapter(text: str) -> list[dict]:
                     "id": f"ex-{pending['exercise']}",
                     "code": f"{sol}\n\n{pending['asserts']}",
                 })
-            pending = None
+                pending = None
+            # else: a <details> with no code block (e.g. an "If you're stuck" hint,
+            # P1-D4) — skip it and keep waiting for the real solution.
     return cells
 
 
