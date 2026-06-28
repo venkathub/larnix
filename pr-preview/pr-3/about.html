@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-cb9e12fa7e533d3a00e0d999c1233980.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-fa4f2909b5778a94aac850dbd2dd4dd0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-cb9e12fa7e533d3a00e0d999c1233980.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -383,10 +383,13 @@ ul.task-list li input[type="checkbox"] {
 
 </main> <!-- /main -->
 <script>
-/* Larnix navbar fixes (loaded after body):
+/* Larnix navbar + reading-mode (loaded after body):
    1) Highlight the navbar link that matches the CURRENT page (Quarto sometimes
       marks a deep chapter link active on unrelated pages).
-   2) Keep the theme-toggle tooltip in sync with the mode it switches TO. */
+   2) A 3-way reading-mode switcher — Light → Sepia → Dark — layered on Quarto's
+      native (light/dark-only) toggle. Sepia is the light Bootstrap theme plus a
+      `data-lx-mode="sepia"` token override on <html> (see theme SCSS). Light/dark
+      reuse Quarto's own stylesheet switching so we never reimplement it. */
 (function () {
   function norm(p) { return (p.replace(/index\.html$/, "").replace(/\/$/, "") || "/"); }
 
@@ -403,19 +406,65 @@ ul.task-list li input[type="checkbox"] {
     });
   }
 
-  function fixToggleTitle() {
-    var t = document.querySelector(".quarto-color-scheme-toggle");
-    if (!t) return;
-    var dark = document.body.classList.contains("quarto-dark");
-    var label = dark ? "Switch to light mode" : "Switch to dark mode";
-    t.setAttribute("title", label);
-    t.setAttribute("aria-label", label);
+  // ── Reading mode (light / sepia / dark) ───────────────────────────────────
+  var MODES = ["light", "sepia", "dark"];
+  var LABELS = { light: "Light", sepia: "Sepia", dark: "Dark" };
+  var KEY = "larnix-mode";
+
+  function quartoIsDark() { return document.body.classList.contains("quarto-dark"); }
+
+  // Drive Quarto's own light/dark switch only when the base scheme must change
+  // (sepia and light share the light base; only dark needs the alternate sheet).
+  function setQuartoBase(wantDark) {
+    if (wantDark !== quartoIsDark() && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme();
+    }
   }
 
-  function run() { fixNavActive(); fixToggleTitle(); }
+  function getMode() {
+    var m = localStorage.getItem(KEY);
+    if (MODES.indexOf(m) >= 0) return m;
+    return quartoIsDark() ? "dark" : "light"; // first visit: follow Quarto's state
+  }
+
+  function updateToggles(mode) {
+    var next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    var label = "Reading mode: " + LABELS[mode] + " — switch to " + LABELS[next];
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.setAttribute("title", label);
+      t.setAttribute("aria-label", label);
+    });
+  }
+
+  function applyMode(mode, persist) {
+    if (MODES.indexOf(mode) < 0) mode = "light";
+    setQuartoBase(mode === "dark");
+    document.documentElement.setAttribute("data-lx-mode", mode);
+    document.documentElement.classList.toggle("lx-sepia", mode === "sepia");
+    if (persist) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+    updateToggles(mode);
+  }
+
+  function cycle(ev) {
+    if (ev) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+    var cur = document.documentElement.getAttribute("data-lx-mode") || getMode();
+    applyMode(MODES[(MODES.indexOf(cur) + 1) % MODES.length], true);
+    return false;
+  }
+
+  function bindToggles() {
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.onclick = cycle; // replace Quarto's inline 2-state onclick with our cycle
+    });
+  }
+
+  function run() {
+    fixNavActive();
+    applyMode(getMode(), false); // restore saved mode (no re-persist)
+    bindToggles();
+  }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
-  new MutationObserver(fixToggleTitle).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
 
