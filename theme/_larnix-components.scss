@@ -210,6 +210,16 @@ h1, .h1 { font-weight: 700; }
 }
 .lx-quote .lx-name { font-weight: 800; font-family: "Nunito"; line-height: 1.1; }
 .lx-quote .lx-role { font-size: 0.82rem; opacity: 0.8; }
+.lx-whoinfo { display: flex; flex-direction: column; }
+
+// ── Landing layout: full-bleed marketing page, no chapter sidebar ────────────
+body:has(.lx-landing) #quarto-sidebar,
+body:has(.lx-landing) #quarto-margin-sidebar,
+body:has(.lx-landing) .quarto-sidebar-toggle { display: none !important; }
+body:has(.lx-landing) #quarto-content,
+body:has(.lx-landing) main.content {
+  max-width: 1080px; margin-inline: auto; padding-inline: 1.2rem;
+}
 
 // ── CTA band ────────────────────────────────────────────────────────────────
 .lx-cta-band {

@@ -4,6 +4,7 @@ pagetitle: "Larnix — learn AI/ML the fun way, in your browser"
 toc: false
 section-divs: false
 anchor-sections: false
+page-layout: full
 ---
 
 ::: {.lx-landing}
@@ -134,7 +135,8 @@ doesn't assume I already know calculus."
 
 ::: {.lx-who}
 [CS]{.lx-avatar style="background:#c92a26"}
-::: {}
+
+::: {.lx-whoinfo}
 [The career switcher]{.lx-name}
 [wants a clear path, not 40 open tabs]{.lx-role}
 :::
@@ -147,7 +149,8 @@ browser, for free, is the whole reason I can do this."
 
 ::: {.lx-who}
 [NP]{.lx-avatar style="background:#6d28d9"}
-::: {}
+
+::: {.lx-whoinfo}
 [The low-spec beginner]{.lx-name}
 [needs it to actually run, at ₹0]{.lx-role}
 :::
@@ -160,7 +163,8 @@ every step and run it myself."
 
 ::: {.lx-who}
 [DV]{.lx-avatar style="background:#0369a1"}
-::: {}
+
+::: {.lx-whoinfo}
 [The curious student]{.lx-name}
 [wants depth, and to press Run]{.lx-role}
 :::
