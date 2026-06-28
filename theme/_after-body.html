@@ -52,6 +52,7 @@
   var LOADING_CLASS = "lx-loading-pkg";
   var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
   var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+  var firstRun = true;      // first eval of the page always involves a download
 
   function activeEditors() {
     return Array.prototype.filter.call(
@@ -74,10 +75,15 @@
     proto.evaluate = async function (code) {
       if (code != null && this.pyodide) {
         var editors = [];
+        // First eval of the page hands straight off from the runtime bootstrap
+        // (which already shows "Setting up…"), so tag immediately to avoid a
+        // brief "Running…" flash in the gap; later evals keep the anti-flash delay.
+        var delay = firstRun ? 0 : DELAY_MS;
+        firstRun = false;
         var timer = setTimeout(function () {
           editors = activeEditors();
           editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
-        }, DELAY_MS);
+        }, delay);
         try {
           // Download/install any packages this cell imports, up front.
           await this.pyodide.loadPackagesFromImports(code);

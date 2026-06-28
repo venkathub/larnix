@@ -381,18 +381,31 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   font-family: "Nunito"; font-weight: 800; font-size: 0.82rem; white-space: nowrap;
 }
 
-// While a cell is still DOWNLOADING/INSTALLING its Python packages (driven by
-// JS adding .lx-loading-pkg — see theme/_after-body.html), surface a distinct
-// "Setting up…" state in violet instead of "Running…". This is the one-time
-// first-use latency, not code execution, so it must read differently. The
-// extra class raises specificity, so these win over the "Running…" rules above.
-.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code {
+// While a cell is downloading/installing packages, surface a distinct violet
+// "Setting up…" state instead of "Running…". This is one-time download latency,
+// not code execution, so it must read differently. Two triggers, both ANDed with
+// "this cell's eval indicator is active" so only the running cell is affected:
+//
+//   1. body:has(#exercise-loading-indicator:not(.d-none)) — quarto-live's own
+//      global indicator is visible during the first-load Pyodide runtime +
+//      base-package bootstrap (the multi-second initial download). It's created
+//      d-none by live.lua, un-hidden during boot, removed when ready — so this
+//      selector is true exactly during that bootstrap window.
+//   2. .exercise-editor.lx-loading-pkg — set by JS (theme/_after-body.html) for
+//      ON-DEMAND package downloads that happen mid-run, after bootstrap, when the
+//      global indicator is already gone (e.g. the first `import sklearn`).
+//
+// Each selector is more specific than the base "Running…" rules, so it wins.
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code,
+body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code {
   background: var(--clay-violet-bg) !important; border-color: var(--clay-violet-bg) !important;
 }
-.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::before {
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::before,
+body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::before {
   border-color: var(--clay-violet-tx); border-top-color: transparent;
 }
-.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::after {
+.exercise-editor.lx-loading-pkg:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::after,
+body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::after {
   content: "Setting up…"; color: var(--clay-violet-tx);
 }
 

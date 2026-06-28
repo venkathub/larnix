@@ -32,24 +32,35 @@
   6. **Live-cell status: "Setting up…" while downloading packages, not "Running…"** (follow-up fix).
      quarto-live drives one per-cell indicator (`.exercise-editor-eval-indicator`) for the whole
      `evaluate()` call, which the theme renders as the in-place Run-button status **"Running…"**. But
-     `evaluate()` first awaits `pyodide.loadPackagesFromImports(code)` — a one-time, multi-second
-     package **download** on first use (e.g. the first `import pandas`) — so the button read "Running…"
-     during a network wait, making the cell look hung. Considered: (a) editing the vendored, minified
-     `live-runtime.js` — rejected (third-party, overwritten on extension upgrade, non-diffable);
-     (b) pure CSS — rejected (download and execution share one indicator class, indistinguishable to
-     CSS). **Chosen:** a theme-layer JS seam — wrap `PyodideEvaluator.prototype.evaluate` (exposed on
-     `window._exercise_ojs_runtime`) to pre-load the cell's imports first, tagging the active editor
-     `.lx-loading-pkg` so CSS swaps the label to a violet **"Setting up…"**, then delegate to the
-     original `evaluate()` (its own load step now a no-op, so "Running…" shows only for real execution).
-     A 150 ms delay before tagging means already-cached packages never flash the setup state. Scoped to
-     Pyodide (Python) cells; the wrapper self-heals (no-ops) if runtime internals ever change.
+     a cell run involves two distinct download phases that both read as "Running…" yet are really a
+     one-time, multi-second **download**, not code execution: **(a)** the first-load Pyodide runtime +
+     base-package **bootstrap** (the `Downloading Pyodide` / `Downloading package: …` phase), and
+     **(b)** on-demand package installs when a cell first imports something (e.g. the first
+     `import sklearn`). Considered: editing the vendored, minified `live-runtime.js` — rejected
+     (third-party, overwritten on extension upgrade, non-diffable). **Chosen:** a two-part theme-layer
+     fix that swaps the label to a violet **"Setting up…"** for both phases:
+     - **Bootstrap (a) — CSS only.** quarto-live shows its own global `#exercise-loading-indicator`
+       (created `d-none` by `live.lua`, un-hidden during boot, removed when ready) for exactly this
+       window. A `body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none))`
+       selector retargets the running cell's button to "Setting up…" — no JS, no runtime internals.
+     - **On-demand (b) — JS seam.** Wrap `PyodideEvaluator.prototype.evaluate` (exposed on
+       `window._exercise_ojs_runtime`) to pre-load the cell's imports first, tagging the active editor
+       `.lx-loading-pkg` (CSS swaps the label), then delegate to the original `evaluate()` (its load
+       step now a no-op, so "Running…" shows only for real execution). A 150 ms delay before tagging
+       means already-cached packages never flash the setup state; the **first** eval of the page uses
+       no delay so it hands straight off from the bootstrap state without a "Running…" flash.
+
+     Scoped to Pyodide (Python) cells; the wrapper self-heals (no-ops) if runtime internals change.
 - **Rationale.** A memorable, friendly identity that fits a beginner-first learning platform; CSS-only
   motion, self-hosted fonts, ₹0, accessible.
 - **Consequences.** Replaces the earlier Inter polish. New tokens/components in
   `theme/_larnix-components.scss`; `a11y_check.py` gained per-pair contrast thresholds. Honest content
   choices: testimonials are persona-based with a "Larnix is new" framing; "enrollment" is "start free,
-  no signup" (no accounts exist in P0). The live-cell loading fix (decision 6) adds a `.lx-loading-pkg`
-  state in `theme/_larnix-components.scss` and a second `<script>` in `theme/_after-body.html`.
+  no signup" (no accounts exist in P0). The live-cell loading fix (decision 6) adds the `.lx-loading-pkg`
+  / `#exercise-loading-indicator` "Setting up…" states in `theme/_larnix-components.scss` and a second
+  `<script>` in `theme/_after-body.html`. Verified end-to-end in a real browser on a cold cache: the
+  full ~4.4 s runtime bootstrap and the on-demand scikit-learn download both read "Setting up…", with
+  "Running…" only during actual code execution.
 
 ---
 
