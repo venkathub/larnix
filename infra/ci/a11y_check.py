@@ -88,6 +88,7 @@ THEME_PAIRS = [
     ("light: nav text", "#2b2b3a", "#fffdfa"),
     ("light: nav brand", "#0b6e6e", "#fffdfa"),
     ("light: details summary", "#0b6e6e", "#ffffff"),
+    ("light: code label", "#5d5d70", "#ece4d8"),
     ("dark: body text", "#e7e3f0", _DARK_BASE),
     ("dark: heading", "#ffffff", _DARK_BASE),
     ("dark: muted text", "#b3acc7", _DARK_BASE),
@@ -109,6 +110,7 @@ THEME_PAIRS = [
     ("dark: primary link", "#5eead4", _DARK_BASE),
     ("dark: nav text", "#e7e3f0", _DARK_BASE),
     ("dark: nav brand", "#5eead4", _DARK_BASE),
+    ("dark: code label", "#b3acc7", "#2a2440"),
 ]
 
 

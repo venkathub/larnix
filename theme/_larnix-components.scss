@@ -65,6 +65,8 @@
   --lx-nav-ink: #0b6e6e;
   --lx-nav-active-bg: #d4f3ee;
   --lx-nav-active-tx: #0c5f57;
+  --lx-code-bar: #ece4d8;
+  --lx-code-surface: #fbf7f1;
 }
 
 // ── Base typography ─────────────────────────────────────────────────────────
@@ -264,13 +266,48 @@ body:has(.lx-landing) main.content {
 .badge-stable   { background: #e9faf2; color: #075f43; border-color: #bdecd6; }
 .badge-frontier { background: #fff1f2; color: #8f1133; border-color: #f6c9d3; }
 
-// ── Code ────────────────────────────────────────────────────────────────────
+// ── Code blocks as IDE / terminal windows ───────────────────────────────────
 code:not(.sourceCode) { background: #f2e9db; padding: 0.12em 0.4em; border-radius: 0.4em; font-size: 0.9em; }
+
+// Static fenced code (e.g. hidden-solution blocks): a window with traffic lights.
 div.sourceCode {
-  border: 1px solid var(--lx-border); border-radius: 16px;
+  position: relative; border: 1px solid var(--lx-border); border-radius: 14px;
+  background: var(--lx-code-surface) !important; box-shadow: var(--clay-shadow-sm);
+  margin: 1.3rem 0; padding-top: 2.35rem; overflow: hidden;
+}
+div.sourceCode::before {
+  content: "Python"; position: absolute; inset: 0 0 auto 0; height: 2.35rem;
+  background: var(--lx-code-bar); border-bottom: 1px solid var(--lx-border);
+  font-family: "Nunito"; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em;
+  color: var(--lx-muted); display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 1rem; text-transform: uppercase;
+}
+div.sourceCode::after {
+  content: ""; position: absolute; top: 0.85rem; left: 1rem; width: 0.66rem; height: 0.66rem;
+  border-radius: 50%; background: #ff5f57; box-shadow: 1.05rem 0 #febc2e, 2.1rem 0 #28c840;
+}
+div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.75rem 1.05rem 1rem; }
+.code-copy-button { top: 0.3rem !important; }
+
+// Live (pyodide) editor cells: same window chrome, native CodeMirror theme kept.
+.exercise-editor {
+  border: 1px solid var(--lx-border) !important; border-radius: 16px !important;
   box-shadow: var(--clay-shadow-sm); overflow: hidden;
 }
-pre.sourceCode { padding: 0.9rem 1.05rem; margin: 0; }
+.exercise-editor-header {
+  background: var(--lx-code-bar) !important; border-bottom: 1px solid var(--lx-border) !important;
+}
+.exercise-editor-header::before {
+  content: ""; flex: 0 0 auto; align-self: center;
+  width: 0.66rem; height: 0.66rem; border-radius: 50%; background: #ff5f57;
+  box-shadow: 1.05rem 0 #febc2e, 2.1rem 0 #28c840; margin-right: 2.4rem;
+}
+.exercise-editor-header .btn,
+.exercise-editor-header a[class*="btn"],
+.exercise-editor-header button {
+  border-radius: 999px !important; font-family: "Nunito"; font-weight: 800; font-size: 0.82rem;
+}
+
 .callout { border-radius: 16px !important; box-shadow: var(--clay-shadow-sm); }
 
 // ── Navbar (light, glassy, claymorphism-friendly) ───────────────────────────
@@ -306,6 +343,25 @@ pre.sourceCode { padding: 0.9rem 1.05rem; margin: 0; }
 .navbar .quarto-navbar-tools a { width: 2.2rem; height: 2.2rem; display: inline-grid;
   place-items: center; }
 .navbar .quarto-navbar-tools a:hover { background: var(--lx-nav-active-bg); }
+// Tool icons (search SVG ships a near-white fill; force them to the nav text colour).
+.navbar .quarto-navbar-tools a i,
+.navbar .quarto-navbar-tools a svg,
+.navbar .aa-DetachedSearchButton,
+.navbar .aa-DetachedSearchButton svg,
+.navbar .quarto-color-scheme-toggle i,
+.navbar i.bi {
+  color: var(--lx-nav-text) !important;
+  fill: var(--lx-nav-text) !important;
+}
+.navbar .aa-DetachedSearchButton,
+.navbar .quarto-color-scheme-toggle {
+  border-radius: 999px; transition: background 0.15s ease, transform 0.15s ease;
+}
+.navbar .aa-DetachedSearchButton:hover,
+.navbar .quarto-color-scheme-toggle:hover {
+  background: var(--lx-nav-active-bg); transform: translateY(-1px);
+}
+.navbar .quarto-color-scheme-toggle:hover i { color: var(--lx-nav-ink) !important; }
 .navbar .navbar-toggler { border-color: var(--lx-border); }
 
 // ── Chapter reading polish ──────────────────────────────────────────────────
@@ -342,6 +398,27 @@ nav[role="doc-toc"] ul > li > a.active { border-left-color: var(--c-teal) !impor
 .btn-exercise-editor, .qwebr-button-run, a[class*="btn-exercise"] {
   border-radius: 999px !important; font-family: "Nunito"; font-weight: 800;
 }
+
+// Section headings on content pages (not the landing) get a teal accent bar.
+body:not(:has(.lx-landing)) #quarto-document-content h2 {
+  padding-left: 0.7rem; border-left: 0.32rem solid var(--c-teal); border-radius: 4px;
+}
+body:not(:has(.lx-landing)) #quarto-document-content h3 { color: var(--lx-heading); }
+
+// Chapter quiz -> clay cards + pill submit.
+.larnix-quiz-q {
+  background: var(--lx-card); border: 1px solid var(--lx-border) !important;
+  border-radius: 16px !important; box-shadow: var(--clay-shadow-sm);
+}
+.larnix-quiz-q.is-correct { border-color: var(--c-mint) !important; background: var(--clay-mint-bg); }
+.larnix-quiz-q.is-incorrect { border-color: var(--c-coral) !important; background: var(--clay-coral-bg); }
+.larnix-quiz-submit {
+  border-radius: 999px !important; font-family: "Nunito"; font-weight: 800;
+  background: var(--lx-brand) !important; border: none !important;
+  box-shadow: 0 12px 22px -8px rgba(11, 110, 110, 0.55),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.18), inset 0 4px 8px rgba(255, 255, 255, 0.28);
+}
+.larnix-quiz-prior, .larnix-quiz-score { font-family: "Nunito"; }
 
 // ── Motion (staggered reveal + float), respecting reduced-motion ────────────
 @media (prefers-reduced-motion: no-preference) {
