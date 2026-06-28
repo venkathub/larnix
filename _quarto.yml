@@ -29,6 +29,7 @@ website:
     type: overlay
   navbar:
     title: "Larnix"
+    pinned: true
     left:
       - href: index.qmd
         text: Home
