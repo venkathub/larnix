@@ -1,7 +1,7 @@
 # Content & code quality gates (extended task by task through P0).
 #
-# Tasks 4 + 7 add the schema gates; task 8 adds the R10 notebook-execution gate.
-# Later P0 tasks add: prose/link/spell (task 9), a11y (task 10), R1/R3/R6 (task 11).
+# Tasks 4 + 7 add the schema gates; task 8 adds the R10 notebook-execution gate;
+# task 9 adds the prose/spell/link gates. Later: a11y (task 10), R1/R3/R6 (task 11).
 
 name: Checks
 
@@ -64,3 +64,42 @@ jobs:
 
       - name: Execute notebooks (R10)
         run: python infra/ci/run_notebooks.py
+
+  prose:
+    name: Prose, spelling & links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tools (pinned)
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/errata-ai/vale/releases/download/v3.9.1/vale_3.9.1_Linux_64-bit.tar.gz \
+            | sudo tar xz -C /usr/local/bin vale
+          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
+            | sudo tar xz -C /usr/local/bin lychee
+          pip install codespell==2.4.2
+          npm install -g markdownlint-cli2@0.18.1
+
+      - name: Vale (tone / banned words)
+        run: vale --glob='!**/_extensions/**' site modules
+
+      - name: markdownlint
+        run: markdownlint-cli2
+
+      - name: codespell
+        run: codespell .
+
+      - name: Link check (lychee)
+        run: lychee --config lychee.toml --no-progress 'docs/**/*.md' 'site/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md

@@ -8,9 +8,13 @@ CI workflows, local-preview tooling, and deploy configuration.
 |------|---------|
 | `docker-compose.yml` | Version-pinned Quarto image for local render/preview (no system Quarto needed). See `site/README.md`. |
 | `ci/` | Python CI gate scripts + their unit tests (front-matter lint now; R-gates later). See `ci/README.md`. |
+| `../.vale.ini` + `../styles/Larnix/` | Vale prose style — STYLE_GUIDE §3 tone gate (banned words + no hype) on `.qmd`. |
+| `../.markdownlint-cli2.yaml` | Markdown structural lint config. |
+| `../.codespellrc` | Spell-check skips + allow-list. |
+| `../lychee.toml` | Link-checker config (excludes generated/vendored + not-yet-live URLs). |
 | `../.github/workflows/publish.yml` | Build + deploy the site to GitHub Pages (production) on push to `main`. |
 | `../.github/workflows/pr-preview.yml` | Build + deploy a per-PR preview; comments the URL on the PR. |
-| `../.github/workflows/checks.yml` | Content/code quality gates (front-matter schema now; notebook exec, prose, a11y, R-gates added task by task). |
+| `../.github/workflows/checks.yml` | Quality gates: `schema` (front-matter + quiz + unit tests), `notebooks` (R10), `prose` (Vale, markdownlint, codespell, lychee). |
 
 Later P0 tasks add more CI: notebook-execution gate (R10, task 8), prose/link/spell
 (task 9), a11y (task 10), and the R1/R3/R6 gates (task 11) — as separate

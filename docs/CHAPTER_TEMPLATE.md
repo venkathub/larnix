@@ -77,6 +77,7 @@ est_minutes: 25                   # realistic time to read + run
 <!-- 3–6 numbered points. The reader should be able to read ONLY this and remember the chapter. -->
 
 > ### Key Takeaways
+>
 > 1. <the single most important point>
 > 2. <…>
 > 3. <…>
@@ -88,6 +89,7 @@ est_minutes: 25                   # realistic time to read + run
      solution. Match difficulty to the chapter tier; label any stretch task. -->
 
 ### Exercise 1 — Guided (≈5 min) 🟢
+
 <Fill-in-the-blank or one-line completion. Structure provided.>
 
 ```python
@@ -100,12 +102,14 @@ est_minutes: 25                   # realistic time to read + run
 ```python
 <reference solution>
 ```
+
 <One-paragraph walkthrough of why this is the answer.>
 </details>
 
 ---
 
 ### Exercise 2 — Implement (≈15 min) 🟡
+
 <Clear spec for a function/step. Graded by the assert-based tests below.>
 
 ```python
@@ -127,11 +131,13 @@ print("All tests passed ✅")
 ```python
 <reference solution>
 ```
+
 </details>
 
 ---
 
 ### Exercise 3 — Stretch (optional, ≈20 min) 🔴
+
 <Open-ended mini-task with multiple valid solutions. Graded by rubric or a loose check.>
 
 **Rubric:** <2–3 bullet criteria for a good solution.>
@@ -141,6 +147,7 @@ print("All tests passed ✅")
 ```python
 <one valid approach>
 ```
+
 <Note that other approaches are fine, and what trade-offs they carry.>
 </details>
 

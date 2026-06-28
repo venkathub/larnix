@@ -1,6 +1,7 @@
 # CLAUDE.md — Larnix Engineering & Curriculum Operating Agreement
 
 ## Mission
+
 Build Larnix: a free, open-access, beginner-to-frontier school for AI/ML, modeled on
 Zerodha Varsity's pedagogy (plain language, analogies, short single-idea chapters, "Key
 Takeaways", three difficulty tiers, end-of-module quizzes, certification). It spans 17 modules
@@ -12,6 +13,7 @@ where a complete beginner on a low-spec laptop can become job-ready — and wher
 own engineering proves production AI/web depth.
 
 ## Audience — two audiences, kept distinct
+
 1. THE LEARNER (the product's user): a BROAD audience — true beginners, non-CS folks, junior
    programmers, and career switchers. Content must start from zero, use analogies before symbols,
    and never assume prior ML. Three difficulty tiers per topic: Beginner / Intermediate / Advanced.
@@ -21,7 +23,9 @@ own engineering proves production AI/web depth.
    correctness over cleverness, in both prose and code.
 
 ## The "Varsity contract" (the pedagogy gate — non-negotiable for every chapter)
+
 Every chapter MUST contain, in this order:
+
 1. A hook: a real-world analogy or a working demo first (taste before theory).
 2. Plain-language explanation, one concept per chapter, ~1,500–3,000 words OR a 15–25 min notebook.
 3. At least one runnable worked example (a notebook cell or snippet that actually executes).
@@ -32,6 +36,7 @@ prereqs, learning_objectives, compute (browser|colab|gpu), status (stable|fronti
 last_reviewed (date), est_minutes. No chapter is "done" until it satisfies this contract and passes CI.
 
 ## Architecture (6 subsystems)
+
 1. Content System — modules -> chapters -> lessons authored as Quarto (.qmd) + Jupyter (.ipynb);
    the per-chapter template; the 17-module curriculum itself; the style guide & tone.
 2. Build & Publish System — Quarto static-site generation, theming (Key Takeaways box,
@@ -47,6 +52,7 @@ last_reviewed (date), est_minutes. No chapter is "done" until it satisfies this 
 Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, docs-as-code discipline.
 
 ## Tech stack (chosen for docs-as-code + low-spec author + ₹0 learner)
+
 - Authoring: Quarto (.qmd) + Jupyter notebooks (.ipynb) + Markdown. Everything is plain text and diffable.
 - In-browser compute: JupyterLite + Pyodide (e.g. quarto-live) for M0–M4 and all quick "try it" cells.
 - GPU compute (external, never local): Google Colab + Kaggle free tiers for M5–M10; a rented GPU
@@ -60,8 +66,9 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
   ships with a free local fallback (Ollama) or free tier (Groq/Gemini). Keys are never required to learn.
 
 ## Environment constraints
-- The BUILDER's laptop is low-spec. It runs only Claude Code + editor + a browser + the Quarto CLI
-  + Docker for local site preview. No model and no GPU job ever runs on it.
+
+- The BUILDER's laptop is low-spec. It runs only Claude Code + editor + a browser + the Quarto CLI +
+  Docker for local site preview. No model and no GPU job ever runs on it.
 - GPU-dependent chapters are authored and test-executed on Colab/Kaggle (or a short rented-GPU
   session), NOT locally. CI executes only the CPU/in-browser notebooks; GPU notebooks are validated
   via a documented manual Colab run recorded in the chapter's PR.
@@ -72,6 +79,7 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
   costs" chapter in M0 with the ₹0 path stated up front.
 
 ## Working agreement (how you, Claude Code, must operate)
+
 - **One module (or one subsystem) per session**, built in dependency order. Do not scaffold the
   whole curriculum at once.
 - **Pedagogy gate before content scale.** In P0, before authoring any module at scale, build and
@@ -98,6 +106,7 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
   shortcut creates content/tech debt, say so and propose the better path.
 
 ## Repo conventions
+
 - /modules/<NN>-<slug>/ — each module: chapters as .qmd/.ipynb, a module README (objectives,
   prereqs, chapter list, capstone), quiz.yml, capstone.md with a rubric.
 - /site — _quarto.yml, theme/CSS (Key Takeaways box, difficulty badges, dark/sepia), nav, search.
@@ -109,6 +118,7 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
 - Conventional commit messages. Feature branches; CI must pass before merge to main.
 
 ## Definition of Done (every phase / every module)
+
 - [ ] Every chapter satisfies the Varsity contract (hook -> explanation -> runnable example ->
       Key Takeaways -> 2–4 graded exercises) and has complete front-matter incl. last_reviewed.
 - [ ] All in-browser/CPU notebooks execute cleanly in CI; GPU notebooks are Colab-verified and the

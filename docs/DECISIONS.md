@@ -6,6 +6,7 @@
 ---
 
 ## D0010 — R10 for browser chapters: a CI-executed companion notebook ("twin")
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** The R10 gate (`RISKS.md §5`, P0_SPEC §5.1) requires every chapter's code to execute
@@ -34,6 +35,7 @@
 ---
 
 ## D0009 — Auto-grader: `/lib` assert helper in `{pyodide}` cells (V-1 resolution)
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** P0-D5 / D0006 chose to build on quarto-live's native exercise grading **plus** a thin
@@ -64,6 +66,7 @@
 ---
 
 ## D0008 — Design system: badge shortcode, shared SCSS partial, sepia deferred
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** P0 task 3 builds the visual vocabulary every chapter reuses: the Key Takeaways box,
@@ -96,6 +99,7 @@
 ---
 
 ## D0007 — PR-preview mechanism: gh-pages branch subfolders (`pr-preview-action`)
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** D0005 (P0-D9) chose **GitHub Pages + a PR preview** but explicitly left the preview
@@ -126,6 +130,7 @@
 ---
 
 ## D0006 — P0 quality gates: notebook execution, prose/lint stack, R-gates, a11y, grader & quiz design
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** P0 (the pedagogy gate) must make the Varsity contract and the `RISKS.md §5` triggers
@@ -165,6 +170,7 @@
 ---
 
 ## D0005 — P0 platform stack: Quarto + quarto-live (Pyodide) on GitHub Pages
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** P0 must build the content-delivery machine: an in-browser Python runtime and a
@@ -187,6 +193,7 @@
 ---
 
 ## D0004 — P0 sample-chapter scope: one Pyodide scikit-learn chapter; seed SR cards; defer M0 HF demo
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** P0 proves the whole platform on **one** sample chapter ("evals before features",
@@ -219,6 +226,7 @@
 ---
 
 ## D0003 — Final consistency pass: ₹0 boundary, compute buckets, front-matter field set
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** A cross-doc consistency pass found three mismatches: (a) `Larnix-PLAN.md` said the
@@ -248,6 +256,7 @@
 ---
 
 ## D0002 — ROADMAP is the executive spine; PLAN/RISKS/STYLE_GUIDE own their domains
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** Multiple planning docs now exist (`ROADMAP.md`, `Larnix-PLAN.md`, `RISKS.md`,
@@ -259,6 +268,7 @@
   3. *Domain ownership with a single spine (chosen).* Each doc is authoritative for one domain;
      ROADMAP is the executive spine that references the others instead of duplicating them.
 - **Decision.** Source-of-truth ownership is:
+
   | Domain | Source of truth |
   |--------|-----------------|
   | Mission, subsystems, working rules, Definition of Done | `CLAUDE.md` |
@@ -266,8 +276,10 @@
   | Risks — IDs, triggers, owners, mitigations, cadence | `RISKS.md` |
   | Pedagogy/format — Varsity contract, tiers, front-matter, compute/status fields | `STYLE_GUIDE.md` + `CHAPTER_TEMPLATE.md` |
   | Executive spine (phases, coverage map, outcome map, effort) | `ROADMAP.md` |
+
   `CLAUDE.md` principles override all. ROADMAP defers detail to the owning doc and links rather
   than restating.
+
 - **Rationale.** Single-owner-per-domain prevents drift; the spine stays readable; updates have one
   obvious home.
 - **Consequences.** `ROADMAP.md` carries a "reconciliation map" header declaring this split. When a
@@ -276,6 +288,7 @@
 ---
 
 ## D0001 — Canonical chapter count: PLAN's per-module estimate (~240+ full / ~180 stable-core)
+
 - **Date:** 2026-06-28
 - **Status:** Accepted
 - **Context.** `RISKS.md` (R9) described the surface as "~180 chapters," while `Larnix-PLAN.md`'s

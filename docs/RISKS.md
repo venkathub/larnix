@@ -37,6 +37,7 @@
 ## 3. Detailed entries
 
 ### R1 — Frontier content goes stale
+
 - **Category:** Content currency. **Likelihood:** H · **Impact:** H.
 - **Why it matters:** AI moves weekly; a wrong "latest model / current API" makes the whole platform look untrustworthy.
 - **Mitigations (in motion):**
@@ -47,6 +48,7 @@
 - **Owning phase:** P0 (build the check) → Ongoing. **Owner:** module owner / maintainer.
 
 ### R2 — Custom-LLM scope vs learner expectation
+
 - **Category:** Expectation. **Likelihood:** M · **Impact:** M.
 - **Why it matters:** "Build your own LLM" can be misread as "train a GPT-4." Disappointment if unmanaged.
 - **Mitigations:**
@@ -57,6 +59,7 @@
 - **Owning phase:** P4 (M11). **Owner:** M11 author.
 
 ### R3 — In-browser compute limits break a lesson
+
 - **Category:** Technical / accessibility. **Likelihood:** M · **Impact:** M.
 - **Why it matters:** Pyodide has memory/package/GPU limits; a `browser` chapter that secretly needs PyTorch will fail for beginners.
 - **Mitigations:**
@@ -67,6 +70,7 @@
 - **Owning phase:** P0 (build the lint) → checked every phase. **Owner:** platform/CI owner.
 
 ### R4 — Auto-grading open-ended work is unreliable
+
 - **Category:** Assessment. **Likelihood:** M · **Impact:** M.
 - **Why it matters:** Deterministic graders can't fairly score RAG quality, generated images, or a custom model's outputs.
 - **Mitigations:**
@@ -78,6 +82,7 @@
 - **Owning phase:** P0 (grader harness) → P6 (certification). **Owner:** assessment owner.
 
 ### R5 — "Job-ready" misread as guaranteed offer
+
 - **Category:** Expectation / reputational / regulatory. **Likelihood:** M · **Impact:** H.
 - **Why it matters:** Outcome over-promises mislead learners and invite regulatory/advertising-standards risk.
 - **Mitigations:**
@@ -88,6 +93,7 @@
 - **Owning phase:** P6 (M16 + launch copy). **Owner:** maintainer / whoever owns marketing copy.
 
 ### R6 — API spend forced on a learner
+
 - **Category:** Accessibility / cost. **Likelihood:** L · **Impact:** H.
 - **Why it matters:** The ₹0 promise is Larnix's signature; a mandatory paid key would break it and exclude the core audience.
 - **Mitigations:**
@@ -97,6 +103,7 @@
 - **Owning phase:** P0 (principle) → Ongoing. **Owner:** style-guide enforcer / reviewer.
 
 ### R7 — Data-protection obligations (DPDP / GDPR)
+
 - **Category:** Legal / privacy. **Likelihood:** M · **Impact:** H.
 - **Why it matters:** Storing accounts, progress, or certificates makes Larnix a data controller under India's **DPDP Act, 2023** (and GDPR for EU learners). *Not legal advice — confirm specifics with counsel.*
 - **Mitigations:**
@@ -106,6 +113,7 @@
 - **Owning phase:** P6 (accounts/cert). **Owner:** maintainer (with legal review).
 
 ### R8 — Certification proctoring burden & fairness
+
 - **Category:** Operational / fairness. **Likelihood:** M · **Impact:** M.
 - **Why it matters:** Proctoring adds cost, privacy exposure, and fairness/bias concerns (and intersects R7).
 - **Mitigations:**
@@ -115,6 +123,7 @@
 - **Owning phase:** P6 (cert). **Status:** Deferred. **Owner:** maintainer.
 
 ### R9 — Content-maintenance burden (~240+ chapters; ~180 stable-core)
+
 - **Category:** Sustainability. **Likelihood:** H · **Impact:** H.
 - **Why it matters:** A large surface is the project's biggest *practical* risk — easy to start, hard to keep correct and current. Per-module estimates in `Larnix-PLAN.md` (the curriculum source of truth) sum to **~240+ chapters**, of which **~180 are stable-core** (math, classical ML, backprop, transformers — written to last) and the remainder are the smaller, version-pinned frontier surface (ties to R1). The two figures are a scope distinction, not two competing counts.
 - **Mitigations:**
@@ -126,6 +135,7 @@
 - **Owning phase:** All → Ongoing. **Owner:** maintainer.
 
 ### R10 — AI-drafted content contains errors
+
 - **Category:** Correctness. **Likelihood:** H · **Impact:** H.
 - **Why it matters:** Claude Code drafts chapters; subtle technical errors can slip in and teach the wrong thing.
 - **Mitigations:**
@@ -137,6 +147,7 @@
 - **Owning phase:** P0 (gates) → All. **Owner:** reviewer / module owner.
 
 ### R11 — Dataset / model licensing problems
+
 - **Category:** Legal / IP. **Likelihood:** M · **Impact:** H.
 - **Why it matters:** Lessons use datasets and pretrained models with varied licenses; redistribution or training-data provenance issues create real exposure — especially in the M11 pretraining-data lesson.
 - **Mitigations:**
@@ -147,6 +158,7 @@
 - **Owning phase:** P3–P4 (data-heavy lessons). **Owner:** data-lesson author.
 
 ### R12 — Learner drop-off / low completion
+
 - **Category:** Pedagogical / product. **Likelihood:** H · **Impact:** M.
 - **Why it matters:** Long curricula for broad audiences have high attrition; a course nobody finishes doesn't achieve the mission.
 - **Mitigations:**
@@ -157,6 +169,7 @@
 - **Owning phase:** P1 → Ongoing. **Owner:** maintainer.
 
 ### R13 — Free third-party tiers change (Colab / Kaggle / API)
+
 - **Category:** External dependency. **Likelihood:** M · **Impact:** M.
 - **Why it matters:** The ₹0 path leans on free tiers we don't control; a terms/pricing change could break it.
 - **Mitigations:**
@@ -166,6 +179,7 @@
 - **Owning phase:** Ongoing. **Status:** Watch. **Owner:** maintainer.
 
 ### R14 — Solo-maintainer bus factor
+
 - **Category:** Sustainability. **Likelihood:** M · **Impact:** H.
 - **Why it matters:** A single maintainer is a single point of failure for a large, evolving platform.
 - **Mitigations:**
@@ -191,4 +205,4 @@
 - **Quarterly:** full review — re-score likelihood/impact, refresh all `frontier` content, burn down the maintenance backlog (R9), reassess deferred/accepted risks.
 - **On every new phase (Stage 1 grooming):** add any phase-specific risks the spec surfaces.
 
-_Last reviewed: <YYYY-MM-DD> · Maintainer: <name>_
+*Last reviewed: <YYYY-MM-DD> · Maintainer: <name>*
