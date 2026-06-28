@@ -27,9 +27,9 @@ Every chapter MUST contain, in this order:
 3. At least one runnable worked example (a notebook cell or snippet that actually executes).
 4. A "Key Takeaways" box: 3–6 numbered points.
 5. 2–4 hands-on exercises with auto-graders and hidden solution walkthroughs.
-Front-matter on every chapter: title, module, difficulty (beginner|intermediate|advanced),
-prereqs, learning_objectives, compute (browser|colab|gpu), last_reviewed (date), status
-(stable|frontier). No chapter is "done" until it satisfies this contract and passes CI.
+Front-matter on every chapter: title, module, chapter, difficulty (beginner|intermediate|advanced),
+prereqs, learning_objectives, compute (browser|colab|gpu), status (stable|frontier),
+last_reviewed (date), est_minutes. No chapter is "done" until it satisfies this contract and passes CI.
 
 ## Architecture (6 subsystems)
 1. Content System — modules -> chapters -> lessons authored as Quarto (.qmd) + Jupyter (.ipynb);

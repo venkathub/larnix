@@ -156,7 +156,7 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 
 ### B0. Prerequisites & Infrastructure (free-tier-first) ✨ — your second ask
 
-**Guiding rule:** *nothing paid until a module truly needs it, and every paid step has a free or local alternative.* A learner can complete Modules 0–9 for **₹0** using a browser, a Google account (Colab), a free Kaggle account, a free Hugging Face account, and **Ollama on their own laptop**. Paid API keys and rented GPUs only become necessary in the LLM-app, custom-training, and production modules — and even there, free local paths exist.
+**Guiding rule:** *nothing paid until a module truly needs it, and every paid step has a free or local alternative.* A learner can complete Modules 0–10 for **₹0** using a browser, a Google account (Colab), a free Kaggle account, a free Hugging Face account, and **Ollama on their own laptop**. Paid API keys and rented GPUs only become necessary in the LLM-app, custom-training, and production modules — and even there, free local paths exist.
 
 | Tier | Needed from (modules) | What you need | Free / local option | Paid option (only for scale/convenience) |
 |------|----------------------|---------------|---------------------|--------------------------------------------------|
@@ -245,7 +245,7 @@ By finishing the curriculum and its capstones, a learner can credibly claim — 
 
 ## Recommendations (decision-ready)
 1. **Two outcomes define success:** (a) a learner can train and serve a custom LLM (M11), and (b) a learner is interview-ready with a deployed portfolio (M16). Sequence the build so these are reachable and prove them with real capstones, not slideware.
-2. **Free-tier-first, taught just-in-time.** Keep M0–9 at ₹0 (browser + Colab/Kaggle + Ollama). Introduce API keys and rented GPUs only in M8/M11 with hard spend caps and a free local fallback for every paid example.
+2. **Free-tier-first, taught just-in-time.** Keep M0–10 at ₹0 (browser + Colab/Kaggle + Ollama). Introduce optional paid API keys (always with a free Ollama/Groq/Gemini fallback) from M8, and a rented GPU only in M11 — with hard spend caps and a free local fallback for every paid example.
 3. **Commit to "runnable-everything"** (JupyterLite for beginners + Colab/GPU for heavy work); prove it in Phase 0 before authoring at scale.
 4. **Adopt docs-as-code from day one** (Git + Quarto + CI) — cheap to host, correct, and ideal for phased Claude Code development.
 5. **Write foundations to last, isolate the frontier** (version-pinned, "last reviewed" dated, swappable chapters; standing quarterly refresh).

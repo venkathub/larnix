@@ -25,7 +25,7 @@ Every chapter MUST contain these parts, in this order. A chapter missing any par
 4. **Key Takeaways box** — 3–6 numbered points recapping what matters. (See format in §7.)
 5. **Hands-on exercises** — 2–4 exercises with auto-graders and hidden solution walkthroughs, scaffolded by difficulty (see §6).
 
-Plus required **front-matter** on every chapter (see CHAPTER_TEMPLATE.md): `title`, `module`, `difficulty`, `prereqs`, `learning_objectives`, `compute`, `last_reviewed`, `status`.
+Plus required **front-matter** on every chapter (see CHAPTER_TEMPLATE.md): `title`, `module`, `chapter`, `difficulty`, `prereqs`, `learning_objectives`, `compute`, `status`, `last_reviewed`, `est_minutes`.
 
 ---
 

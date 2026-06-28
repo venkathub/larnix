@@ -25,7 +25,7 @@
 | R6 | API spend forced on a learner | L | **H** | P0 (principle) → Ongoing | Open |
 | R7 | Data-protection obligations (DPDP / GDPR) | M | **H** | P6 (accounts/cert) | Open |
 | R8 | Certification proctoring burden & fairness | M | M | P6 (cert) | Deferred |
-| R9 | Content-maintenance burden (~180 chapters) | **H** | **H** | All phases → Ongoing | Open |
+| R9 | Content-maintenance burden (~240+ chapters; ~180 stable-core) | **H** | **H** | All phases → Ongoing | Open |
 | R10 | AI-drafted content contains errors | **H** | **H** | P0 (gates) → All | Open |
 | R11 | Dataset / model licensing problems | M | **H** | P3–P4 (data lessons) | Open |
 | R12 | Learner drop-off / low completion | **H** | M | P1 → Ongoing | Open |
@@ -114,9 +114,9 @@
 - **Trigger / threshold:** Demand to make the credential high-stakes/proctored is raised. **On trigger:** run a privacy + fairness + cost assessment before adopting.
 - **Owning phase:** P6 (cert). **Status:** Deferred. **Owner:** maintainer.
 
-### R9 — Content-maintenance burden (~180 chapters)
+### R9 — Content-maintenance burden (~240+ chapters; ~180 stable-core)
 - **Category:** Sustainability. **Likelihood:** H · **Impact:** H.
-- **Why it matters:** A large surface is the project's biggest *practical* risk — easy to start, hard to keep correct and current.
+- **Why it matters:** A large surface is the project's biggest *practical* risk — easy to start, hard to keep correct and current. Per-module estimates in `Larnix-PLAN.md` (the curriculum source of truth) sum to **~240+ chapters**, of which **~180 are stable-core** (math, classical ML, backprop, transformers — written to last) and the remainder are the smaller, version-pinned frontier surface (ties to R1). The two figures are a scope distinction, not two competing counts.
 - **Mitigations:**
   - **Phase ruthlessly:** ship Foundations (P1) first, prove the model and the gates, then expand. Don't author all modules before the machinery is proven.
   - Keep **stable-core large, frontier-surface small** (ties to R1).
