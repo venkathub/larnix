@@ -11,4 +11,3 @@ first model, in your browser*. Follow [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.m
 to click and run it locally or on the deployed site. Build/preview and CI details
 are in [`docs/RUNBOOK.md`](docs/RUNBOOK.md); the design rationale lives in
 [`docs/DECISIONS.md`](docs/DECISIONS.md).
-
