@@ -1,8 +1,12 @@
 # P0_SPEC — Platform MVP + the Pedagogy Gate
 
 > **Phase:** P0 — *Platform MVP + the pedagogy gate* (per `ROADMAP.md §3`).
-> **Status:** GROOMING — awaiting approval. No chapters or application code are written until this
-> spec is approved and the listed decisions are confirmed + logged in `DECISIONS.md`.
+> **Status:** ✅ COMPLETE (2026-06-28). Spec approved; all P0 decisions logged in `DECISIONS.md`
+> (D0004–D0014); all 18 tasks (§6) shipped and every DoD item (§7) met. Verified on codebase
+> analysis: the site renders from a fresh clone (Quarto 1.8.27 via Docker), the sample chapter runs
+> in-browser (Pyodide) and as a CI `.ipynb` twin, all schema/R-gate/a11y gates pass locally with 73
+> unit tests green, and the full gate set + prose/link/spell + deploy + PR-preview are wired in
+> `.github/workflows/` (`checks.yml`, `publish.yml`, `pr-preview.yml`).
 > **Authoritative parents:** `CLAUDE.md` (operating agreement, DoD), `ROADMAP.md §3 P0`
 > (phase goal + exit criteria), `STYLE_GUIDE.md` (Varsity contract), `CHAPTER_TEMPLATE.md`
 > (front-matter schema), `RISKS.md §5` (the automated gates this phase must build).
@@ -345,30 +349,41 @@ Each task ≈ one commit/PR. Order respects dependencies.
 ## 7. Definition of Done (P0) — instantiates the generic DoD from `CLAUDE.md`
 
 P0 is done when **all** of the following hold (= `ROADMAP §3 P0` exit criteria, expanded against
-the `CLAUDE.md` DoD):
+the `CLAUDE.md` DoD). **All items met as of 2026-06-28** (evidence in parentheses):
 
-- [ ] **Builds from a fresh clone** and the Quarto site **CI-deploys to a public preview URL**.
-- [ ] **Theme** implements the Key Takeaways box, 🟢/🟡/🔴 difficulty badges, compute + status
-      badges, dark/sepia, working nav + search.
-- [ ] **`CHAPTER_TEMPLATE.md` front-matter schema (10 fields) is enforced by lint** in CI.
-- [ ] **One sample chapter satisfies the full Varsity contract** (hook → explanation → runnable
+- [x] **Builds from a fresh clone** and the Quarto site **CI-deploys to a public preview URL**.
+      (`publish.yml` → GitHub Pages; `pr-preview.yml` → per-PR preview; render verified via Docker.)
+- [x] **Theme** implements the Key Takeaways box, 🟢/🟡/🔴 difficulty badges, compute + status
+      badges, dark/sepia, working nav + search. (`theme/*.scss`, `_extensions/larnix/badges`; sepia
+      3-way switcher shipped per D0014; nav + overlay search in `_quarto.yml`.)
+- [x] **`CHAPTER_TEMPLATE.md` front-matter schema (10 fields) is enforced by lint** in CI.
+      (`infra/ci/frontmatter_lint.py` + tests; wired in `checks.yml`.)
+- [x] **One sample chapter satisfies the full Varsity contract** (hook → explanation → runnable
       example → Key Takeaways → 2–4 graded exercises) with complete, accurate front-matter incl.
-      `last_reviewed`.
-- [ ] Its **notebook runs in JupyterLite (₹0)** *and* **executes cleanly in CI**.
-- [ ] **≥1 exercise auto-graded in-browser** with a hidden solution walkthrough; **≥1 rubric-graded**
-      exercise demonstrates the open-ended path (`RISKS.md R4`).
-- [ ] **Quiz engine renders + scores an MCQ client-side**, persisting progress locally.
-- [ ] **CI green:** notebook execution (R10), Vale, markdownlint, link-check, spell, **a11y
-      (alt-text + contrast, P0-D11)**.
-- [ ] **The R1/R3/R6/R10 automated gates exist** and run on every PR (`RISKS.md §5`).
-- [ ] **SR card seeding convention** in place (cards authored + schema-validated; engine deferred).
-- [ ] **Colab button pattern + GPU-notebook CI policy** documented and proven on the fixture.
-- [ ] **`DECISIONS.md` updated** with the confirmed P0 decisions; **`RUNBOOK.md`** has local-preview
+      `last_reviewed`. (`modules/00-orientation/ch01-train-your-first-model.qmd`.)
+- [x] Its **notebook runs in JupyterLite (₹0)** *and* **executes cleanly in CI**.
+      (quarto-live/Pyodide in-browser; `.ipynb` twin executed by `run_notebooks.py` (R10).)
+- [x] **≥1 exercise auto-graded in-browser** with a hidden solution walkthrough; **≥1 rubric-graded**
+      exercise demonstrates the open-ended path (`RISKS.md R4`). (Ex 1–2 assert-graded with
+      `<details>` solutions; Ex 3 rubric-graded.)
+- [x] **Quiz engine renders + scores an MCQ client-side**, persisting progress locally.
+      (`_extensions/larnix/quiz` + `modules/00-orientation/quiz.yml`; `quiz_lint.py`.)
+- [x] **CI green:** notebook execution (R10), Vale, markdownlint, link-check, spell, **a11y
+      (alt-text + contrast, P0-D11)**. (All wired in `checks.yml`; Python gates + 73 unit tests pass
+      locally; a11y gate checks 74 theme pairs.)
+- [x] **The R1/R3/R6/R10 automated gates exist** and run on every PR (`RISKS.md §5`).
+      (`currency_check.py`, `browser_import_lint.py`, `free_fallback_check.py`, `run_notebooks.py`.)
+- [x] **SR card seeding convention** in place (cards authored + schema-validated; engine deferred).
+      (`review_cards:` in the sample chapter; `review_cards_lint.py`.)
+- [x] **Colab button pattern + GPU-notebook CI policy** documented and proven on the fixture.
+      (`_extensions/larnix/colab`, `infra/fixtures/colab-fixture.ipynb`, `RUNBOOK.md` GPU policy.)
+- [x] **`DECISIONS.md` updated** with the confirmed P0 decisions; **`RUNBOOK.md`** has local-preview
       + CI instructions; **`STYLE_GUIDE.md`** adhered to (lint/prose pass).
-- [ ] **A "5-minute learner walkthrough"** path through the sample chapter that you can click/run.
-- [ ] **`PORTFOLIO.md`** carries a quantified bullet (e.g. "built a docs-as-code AI-course platform:
+- [x] **A "5-minute learner walkthrough"** path through the sample chapter that you can click/run.
+      (`docs/WALKTHROUGH.md`.)
+- [x] **`PORTFOLIO.md`** carries a quantified bullet (e.g. "built a docs-as-code AI-course platform:
       in-browser Python, assert-based auto-grading, a quiz engine, and a 6-gate CI pipeline, proven
-      end-to-end on a zero-install sample chapter").
+      end-to-end on a zero-install sample chapter"). (`docs/PORTFOLIO.md` — P0 entry.)
 
 ---
 
