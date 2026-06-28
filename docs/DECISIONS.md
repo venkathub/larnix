@@ -5,6 +5,102 @@
 
 ---
 
+## D0016 — P1 technical decisions (env-chapter proxy, plotting, datasets, grader, twins, quizzes)
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** Grooming Phase **P1 — Foundations track (M0–M3)** (`docs/phases/P1_SPEC.md §3`). The
+  technical choices needed to author ~50 in-browser chapters at scale without regressing the P0
+  gates. Every load-bearing claim was web-validated 2026-06-28 (`P1_SPEC.md §9`).
+- **Decisions (P1-Dn → chosen option).**
+  1. **P1-D6 = A — environment/tooling chapters stay `browser`-conceptual.** Pyodide cannot run
+     `pip`/`venv`/a real IDE, yet the Varsity contract requires a runnable example. M1 Ch13–14
+     (venv/pip, IDE/Colab) and M3 Ch11–12 (notebooks, environments) ship a **runnable in-scope
+     proxy** (e.g. `micropip` as the Pyodide analogue of pip; inspect `sys.path`) plus a **recorded,
+     copy-paste shell transcript** for the real local commands. Keeps P1 **Colab-free** (a phase
+     non-goal). *Rejected:* tagging them `colab` (introduces Colab into P1); pure prose with a lint
+     exception (special-cases the "every chapter runs" gate).
+  2. **P1-D7 = A — Matplotlib-only for M3 plotting.** Matplotlib is **built into Pyodide**
+     (zero-install, offline, ₹0). Seaborn is shown as an optional `🔬` "install it yourself" note.
+     Web search (§9) **retired** the earlier "Seaborn may have no Pyodide wheel" risk — Seaborn is
+     pure-Python and `micropip`-installable; the recommendation now rests on **offline/zero-install**,
+     not capability. *Rejected:* Matplotlib+Seaborn by default (adds a first-use network download,
+     breaks the offline promise); Plotly (different mental model, not what M4+ assumes).
+  3. **P1-D8 = A — vendor small CSVs in-repo + a `lib/data.py` loader.** Each ≤~50 KB; Palmer
+     Penguins shipped as a vendored CSV (CC0 1.0, verified §9); sklearn `load_*` built-ins used where
+     they exist (Iris). Deterministic + offline-friendly + CI-twin-safe; licenses logged in
+     `docs/ASSETS.md` (R11). *Rejected:* runtime URL fetch (needs internet, flaky in CI, R13);
+     all-synthetic (M3 EDA must use real data to be honest).
+  4. **P1-D9 = A — single-source the grader via quarto-live `resources:`.** Load `lib/grader.py`
+     into the Pyodide VFS once (the `resources:` front-matter key, confirmed in §9) instead of
+     pasting the helper into ~50 chapters; CPython `lib/test_grader.py` stays the off-browser
+     evidence (D0009). *Rejected:* per-chapter paste (50× duplication; bug = 50 edits); pip/micropip
+     package (over-engineered for one file).
+  5. **P1-D10 = A — generate the CI twin notebooks.** `infra/ci/make_twin.py` extracts tagged
+     `{pyodide}` cells + exercise solutions from each `.qmd` into its CPython twin (R10), with a CI
+     check that the committed twin matches source (no silent drift). *Rejected:* hand-authoring 49
+     twins (drift risk — the exact future improvement D0010 flagged); headless-browser smoke test
+     (slow/flaky, rejected for P0 too).
+  6. **P1-D11 = A — per-chapter quick check + cumulative module quiz.** Each chapter gets a 2–3-MCQ
+     quick check (`quiz.yml`); each module gets a `module-quiz.yml` (~8–12 MCQ) on the README,
+     rendered/scored by the P0 JS engine. *Rejected:* single end-of-module quiz only (loses recall
+     checks, R12); per-chapter only (breaks the Varsity end-of-module-quiz → cert model + per-module
+     DoD).
+- **Rationale.** Each choice keeps P1 **₹0/offline/browser**, correct-in-CI, and maintainable across
+  ~50 chapters (R9), reusing the proven P0 platform rather than adding subsystems.
+- **Consequences.** New shared tooling lands before content scale (`P1_SPEC.md §6.A`): grader VFS
+  loading, `make_twin.py`, module-quiz support, an extended `browser_import_lint.py` Pyodide-safe
+  allow-list (with a `# micropip:` annotation for runtime-installed packages), `lib/data.py` +
+  vendored CSVs, and `docs/ASSETS.md` + `assets_check.py` (R11). Seaborn-by-default and runtime
+  dataset fetching are explicitly **not** adopted in P1.
+
+---
+
+## D0015 — P1 pedagogical decisions (M0 ordering, running examples, GenAI taste, scaffolding, granularity)
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** Grooming Phase **P1 — Foundations track (M0–M3)** (`docs/phases/P1_SPEC.md`). P1 is
+  the first content-at-scale phase (~50 chapters, all 🟢→🟡, all `browser`/₹0). These are the
+  pedagogical choices that shape the on-ramp; confirmed via the grooming Q&A (2026-06-28).
+- **Decisions (P1-Dn → chosen option).**
+  1. **P1-D1 = A — M0 is wow-first:** `1 Run a model → 2 What it costs → 3 What is AI → 4 Family tree
+     (+ GenAI taste) → 5 History → 6 How this school works`. Honours "taste before theory"
+     (`STYLE_GUIDE §2`), keeps the P0 sample chapter as Ch1, and still ships the ₹0 cost chapter up
+     front (Ch2). *Rejected:* concept-first (demotes the strongest hook); cost-chapter-first (opens
+     with logistics, not a win).
+  2. **P1-D2 = A — per-module running examples:** M0 = the Iris "tell species apart" demo + the
+     "Asha" persona; **M1 = a synthetic, license-free messy `habits.csv`** (we author it → full
+     control of the mess for teaching cleaning); **M2 = the "assemble one neuron" thread**
+     (movie-taste vectors + tip-vs-bill line); **M3 = Palmer Penguins (CC0)**, with the capstone on a
+     *different* public dataset. *Rejected:* one real dataset across all of M1–M3 (can't serve both
+     messy-CSV teaching and clean EDA); per-chapter ad-hoc examples (breaks `STYLE_GUIDE §4`; worse
+     retention, R12).
+  3. **P1-D3 = A — M0 GenAI taste via a client-side `transformers.js` widget** (sentiment/
+     image-caption) in M0 Ch4: runs in-browser, no Python, no key, no Colab, ₹0 (feasibility
+     confirmed §9). It is a *demo*, not a graded exercise (outside the Pyodide grader path).
+     *Rejected:* classical-only M0 (under-sells "what is AI today" for a 2026 beginner); an
+     Open-in-Colab HF demo (introduces Colab into P1, a non-goal).
+  4. **P1-D4 = A — a small fixed scaffolding kit across all ~50 chapters:** a one-line "You'll need
+     from before" recap; exercises always run guided → implement → stretch; `🧱 For Java developers`
+     collapsible asides in M1; an "If you're stuck" hint before each hidden solution. Consistency aids
+     retention (R12) and is partly lintable. *Rejected:* free-form scaffolding (inconsistent across
+     50 chapters); heavy per-exercise sub-steps (slows confident learners; more to maintain).
+  5. **P1-D5 = A — hold PLAN's chapter counts (6/14/16/14 ≈ 50) but allow ≤3 documented merges**
+     where two chapters are thin (candidate pairs: M1 errors+tracebacks; M2 distributions +
+     mean/variance; M3 notebooks + environments), each logged. Protects pace while keeping
+     single-idea chapters. *Rejected:* hold counts exactly (some chapters pad/split awkwardly);
+     aggressive consolidation to ~35 (breaks "one concept per chapter"; diverges from PLAN).
+- **Rationale.** Beginner-first, analogy-before-symbol, a satisfying early win, and one running
+  example per module — the Varsity pedagogy ported to a code-heavy on-ramp, tuned against drop-off
+  (R12) and re-authoring cost (R9).
+- **Consequences.** Drives the M0–M3 chapter design in `P1_SPEC.md §2`; the `habits.csv` and Penguins
+  datasets feed P1-D8/D0016; the transformers.js widget is the only non-Pyodide runnable in P1 and is
+  browser-preview-verified (not in the notebook-execution path). Any chapter merge is recorded so the
+  count can drift from PLAN by a few with an audit trail.
+
+---
+
 ## D0014 — GUI: playful claymorphism design system (Fredoka + Nunito); sepia shipped
 
 - **Date:** 2026-06-28
