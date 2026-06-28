@@ -67,6 +67,7 @@
   --lx-nav-active-tx: #0c5f57;
   --lx-code-bar: #ece4d8;
   --lx-code-surface: #fbf7f1;
+  --lx-chip-bg: rgba(255, 255, 255, 0.62);
 }
 
 // ── Base typography ─────────────────────────────────────────────────────────
@@ -134,7 +135,7 @@ h1, .h1 { font-weight: 700; }
 .lx-hero { text-align: center; padding: 2.5rem 0 1.5rem; }
 .lx-hero .lx-eyebrow {
   display: inline-block; font-family: "Nunito"; font-weight: 800; font-size: 0.85rem;
-  letter-spacing: 0.06em; text-transform: uppercase; color: #0c5f57;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--clay-teal-tx);
   background: var(--clay-teal-bg); padding: 0.35rem 0.9rem; border-radius: 999px;
   box-shadow: var(--clay-shadow-sm); margin-bottom: 1.2rem;
 }
@@ -174,7 +175,7 @@ h1, .h1 { font-weight: 700; }
 .lx-course .lx-course-top { display: flex; align-items: center; gap: 0.7rem; }
 .lx-course .lx-coursenum {
   font-family: "Fredoka"; font-weight: 700; font-size: 1.1rem;
-  background: rgba(255, 255, 255, 0.65); color: inherit;
+  background: var(--lx-chip-bg); color: inherit;
   width: 2.4rem; height: 2.4rem; display: grid; place-items: center; border-radius: 14px;
   box-shadow: var(--clay-shadow-sm); flex: 0 0 auto;
 }
@@ -182,7 +183,7 @@ h1, .h1 { font-weight: 700; }
 .lx-course p { margin: 0.7rem 0 0.9rem; font-size: 0.94rem; opacity: 0.92; }
 .lx-pill {
   display: inline-block; font-family: "Nunito"; font-weight: 800; font-size: 0.72rem;
-  padding: 0.18rem 0.6rem; border-radius: 999px; background: rgba(255, 255, 255, 0.6);
+  padding: 0.18rem 0.6rem; border-radius: 999px; background: var(--lx-chip-bg);
   color: inherit; margin-right: 0.3rem;
 }
 .lx-course--soon { opacity: 0.72; }
