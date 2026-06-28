@@ -30,6 +30,41 @@ est_minutes: 25                   # realistic time to read + run
   - If the chapter needs more than ~3,000 words / 25 min, split it into two.
 -->
 
+<!--
+  LARNIX AUTHORING MECHANISMS (proven in P0 — see DECISIONS D0005–D0013):
+
+  • Badge row (put right under the title):
+      {{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+  • Browser chapters (compute: browser) run Python in the browser via Pyodide.
+    Use `{pyodide}` code cells, and add this to the front-matter ABOVE
+    (live-html is a distinct format that does NOT inherit the project theme, and
+    its theme path is relative to THIS file — modules/<NN>-slug/ is two levels
+    down, hence ../../theme):
+
+        format:
+          live-html:
+            theme:
+              light: [cosmo, ../../theme/larnix.scss]
+              dark:  [darkly, ../../theme/larnix-dark.scss]
+            toc: true
+        execute:
+          enabled: false   # {pyodide} cells run in the browser, never at render
+
+    Each browser chapter also ships a CI "twin" `.ipynb` (same front-matter) that
+    runs the worked example + exercise solutions under CPython (R10 gate, D0010).
+
+  • GPU/colab chapters: add an Open-in-Colab button with {{< colab path/to.ipynb >}}.
+
+  • Key Takeaways box:  ::: {.key-takeaways}  ### Key Takeaways  1. … :::
+
+  • Auto-graded exercise: paste the grader helper (lib/grader.py) into a
+    `#| edit: false` setup cell, then call run_tests([(label, got, expected), …]).
+
+  • End-of-chapter quiz: author quiz.yml beside the chapter, mount with
+    {{< quiz quiz.yml >}}.
+-->
+
 # <Chapter title>
 
 ## The hook

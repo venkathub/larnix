@@ -23,9 +23,10 @@ By the end of M0 you can:
 
 ## Capstone
 
-_(Module capstone + rubric are added when M0 is built out in P1. P0 ships this
-one sample chapter to prove the platform; the capstone rubric format is shown as
-a template artifact in P0 task 16.)_
+A real module capstone (task + graded rubric) is added when M0 is built out in
+P1. P0 ships this one sample chapter to prove the platform; the **rubric format**
+P1 authors inherit is shown as a template artifact in
+[`capstone.md`](capstone.md) (clearly marked "template, not graded P0 content").
 
 ## How to run
 
