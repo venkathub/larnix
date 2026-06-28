@@ -31,6 +31,22 @@ Two GitHub Actions workflows (see `infra/README.md` for the deploy model):
 Set **Settings → Pages → Source → Deploy from a branch → `gh-pages` / (root)**.
 No secrets needed (`GITHUB_TOKEN` is automatic).
 
+### Branch protection & merge policy (`main`)
+
+`main` is protected — all work lands via pull request and **every check must pass
+before merge** (no direct pushes, even for admins):
+
+- **Required status checks** (strict / branch must be up to date): `Schema, a11y &
+  unit tests`, `Notebook execution (R10)`, `Prose, spelling & links`, `preview`.
+- **Pull request required** (0 approvals — solo maintainer); conversations must be
+  resolved; **force-pushes and branch deletion are blocked**; **admins are not
+  exempt** (`enforce_admins`).
+- Repo hygiene: **head branches auto-delete on merge**, **auto-merge enabled** (a
+  PR merges itself once checks go green), and "update branch" is allowed.
+
+Manage at **Settings → Branches**. In a genuine emergency an admin can temporarily
+relax protection, fix, then restore it.
+
 ### Reading a failed run
 
 1. **Actions** tab → open the failed run → expand the failed step.
