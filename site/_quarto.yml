@@ -1,0 +1,47 @@
+project:
+  type: website
+  output-dir: _site
+  # Render the whole site directory. Module chapters get wired into the sidebar
+  # in later P0 tasks (nav for the sample chapter lands in task 15).
+  render:
+    - "*.qmd"
+
+# Execution settings. `freeze: auto` caches computed cell output so a fresh
+# `quarto render` does not need to re-execute unchanged pages. CI (P0 task 8)
+# executes notebooks explicitly; the R10 gate owns "everything runs".
+execute:
+  freeze: auto
+
+website:
+  title: "Larnix"
+  description: "A free, beginner-to-frontier school for AI/ML — every chapter runs."
+  site-url: "https://larnix.github.io"
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    title: "Larnix"
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+    right:
+      - icon: github
+        href: https://github.com/larnix
+        aria-label: Larnix on GitHub
+  page-footer:
+    center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
+
+format:
+  html:
+    # The full design system (Key Takeaways box, difficulty/compute/status
+    # badges, dark/sepia toggle) is layered on in P0 task 3. For now we wire the
+    # theme slots so the scaffold renders with a clean default + light/dark.
+    theme:
+      light: cosmo
+      dark: darkly
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap

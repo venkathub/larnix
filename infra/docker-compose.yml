@@ -1,0 +1,33 @@
+# Local Quarto preview for the Larnix site — no system Quarto install required.
+#
+# The builder's laptop runs Docker but not the Quarto CLI, so we render/preview
+# through the official, version-pinned Quarto image. CI installs Quarto natively
+# (see infra/ CI workflows, P0 task 2) and is the authoritative render.
+#
+# Pin: Quarto 1.8.27 (released 2026-01-16, the latest confirmed stable patch on
+# the 1.8 line as of 2026-06-28). Bump deliberately and log the bump.
+#
+# Usage:
+#   Build/preview with live reload on http://localhost:4848 :
+#     docker compose -f infra/docker-compose.yml run --rm --service-ports preview
+#   One-shot static render into site/_site/ :
+#     docker compose -f infra/docker-compose.yml run --rm render
+
+services:
+  preview:
+    image: ghcr.io/quarto-dev/quarto:1.8.27
+    entrypoint: ["quarto"]
+    working_dir: /work/site
+    command: ["preview", "--host", "0.0.0.0", "--port", "4848", "--no-browser"]
+    ports:
+      - "4848:4848"
+    volumes:
+      - ../:/work
+
+  render:
+    image: ghcr.io/quarto-dev/quarto:1.8.27
+    entrypoint: ["quarto"]
+    working_dir: /work/site
+    command: ["render"]
+    volumes:
+      - ../:/work

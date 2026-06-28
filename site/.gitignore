@@ -1,0 +1,8 @@
+# Quarto build artifacts — never commit generated output.
+/_site/
+/.quarto/
+/_freeze/
+
+# quarto-live / extensions are added per-task; keep downloaded extension
+# binaries out of source control if a task vendors them. (The extension source
+# itself, once added, is committed deliberately.)

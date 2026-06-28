@@ -1,0 +1,31 @@
+---
+title: "Larnix"
+subtitle: "A free, beginner-to-frontier school for AI/ML — where every chapter runs."
+---
+
+## What this is
+
+Larnix is a free, open-access course that takes a complete beginner — on a
+low-spec laptop, at zero cost — from "what is AI" to building and shipping real
+machine-learning systems. It follows the Zerodha Varsity teaching style: plain
+language, one idea per chapter, a worked example you can run, a short
+"Key Takeaways" box, and graded practice.
+
+This page is the scaffold's hello-world. It exists to prove the site builds from
+a fresh clone and renders. Real content arrives later in Phase P0 with the first
+sample chapter.
+
+## How the platform is built
+
+- **Read it** as a static website (this Quarto site).
+- **Run it** in your browser — beginner chapters execute Python with zero
+  install (wired in a later P0 task).
+- **Practice it** — exercises are auto-graded in the browser; quizzes score
+  client-side.
+
+See the [About](about.qmd) page for the project's goals and the build roadmap.
+
+::: {.callout-note}
+This is a development scaffold. The design system, in-browser runtime,
+auto-grader, quiz engine, and the first chapter land in subsequent P0 tasks.
+:::
