@@ -1,30 +1,30 @@
 /*-- scss:defaults --*/
-// Larnix light theme — layered on top of `cosmo`.
-
-// Typography: self-hosted Inter with a robust system fallback.
-$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+// Larnix light theme (playful claymorphism) — layered on `cosmo`.
+$font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
   Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif !default;
+$headings-font-family: "Fredoka", "Nunito", sans-serif !default;
 $font-size-root: 17px !default;
-$line-height-base: 1.7 !default;
+$line-height-base: 1.65 !default;
 $headings-font-weight: 700 !default;
-$headings-line-height: 1.25 !default;
+$headings-line-height: 1.15 !default;
 
-// Brand + links.
-$primary: #0b6e6e !default;        // Larnix teal
+// Dark teal stays the primary so the navbar + filled buttons keep white-text AA;
+// the brighter teal (#14b8a6) is an accent used only in clay fills/gradients.
+$primary: #0b6e6e !default;
 $link-color: #0b6e6e !default;
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
 
-// Surfaces + shape.
-$body-color: #1e293b !default;
-$border-radius: 0.55rem !default;
-$border-radius-lg: 0.9rem !default;
-$border-radius-sm: 0.35rem !default;
+$body-bg: #fdf4ea !default;
+$body-color: #2b2b3a !default;
+$border-radius: 0.8rem !default;
+$border-radius-lg: 1.2rem !default;
+$border-radius-sm: 0.5rem !default;
 
 
 /*-- scss:rules --*/
-// Shared component structure + light token values / colours + Inter @font-face.
 @import "larnix-components";
 
-// Slightly tighter, calmer navbar.
-.navbar { box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06); }
+// Soft, light navbar that fits the warm page.
+.navbar { box-shadow: 0 2px 0 rgba(43, 43, 58, 0.05); }
+.navbar-brand { font-family: "Fredoka", sans-serif; font-weight: 700; }

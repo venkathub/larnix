@@ -1,53 +1,65 @@
 /*-- scss:defaults --*/
-// Larnix dark theme — layered on top of `darkly`.
-$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+// Larnix dark theme (playful claymorphism) — layered on `darkly`.
+$font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
   Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif !default;
+$headings-font-family: "Fredoka", "Nunito", sans-serif !default;
 $font-size-root: 17px !default;
-$line-height-base: 1.7 !default;
+$line-height-base: 1.65 !default;
 $headings-font-weight: 700 !default;
 
-$primary: #2dd4bf !default;         // brighter teal for dark backgrounds
-$link-color: #2dd4bf !default;
+$primary: #2dd4bf !default;
+$link-color: #5eead4 !default;
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
 
-$border-radius: 0.55rem !default;
-$border-radius-lg: 0.9rem !default;
+$body-bg: #181527 !default;
+$border-radius: 0.8rem !default;
+$border-radius-lg: 1.2rem !default;
 
 
 /*-- scss:rules --*/
-// Shared component structure (same layout/fonts as light) ...
 @import "larnix-components";
 
-// ... then dark token + colour overrides (these win via cascade order).
+// Dark token + colour overrides (win via cascade order).
 :root {
-  --lx-brand: #14b8a6;
-  --lx-brand-strong: #0d9488;
-  --lx-bg: #1f2428;
-  --lx-surface: #242b31;
-  --lx-surface-2: #2b333a;
-  --lx-border: #3a434c;
-  --lx-text: #e2e8f0;
-  --lx-muted: #aeb8c4;
-  --lx-heading: #f1f5f9;
-  --lx-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 20px rgba(0, 0, 0, .35);
-  --lx-shadow-lg: 0 12px 36px rgba(0, 0, 0, .45);
+  --lx-bg: #181527;
+  --lx-card: #241f36;
+  --lx-text: #e7e3f0;
+  --lx-heading: #ffffff;
+  --lx-muted: #b3acc7;
+  --lx-border: #352e4d;
 
-  --lx-kt-bg: #11302e;
-  --lx-kt-border: #2dd4bf;
-  --lx-kt-heading: #99f6e4;
-  --lx-kt-edge: #1f5651;
+  --clay-teal-bg:   #123f3b; --clay-teal-tx:   #7ff0e2;
+  --clay-coral-bg:  #45211f; --clay-coral-tx:  #ffb3ad;
+  --clay-amber-bg:  #3c2f12; --clay-amber-tx:  #ffd98a;
+  --clay-violet-bg: #2a2350; --clay-violet-tx: #cbbdff;
+  --clay-sky-bg:    #11314a; --clay-sky-tx:    #a9ddff;
+  --clay-mint-bg:   #123a2b; --clay-mint-tx:   #8ef0c0;
+
+  --lx-brand: #0b6e6e;
+
+  --clay-shadow:
+    0 18px 36px -14px rgba(0, 0, 0, 0.55),
+    inset 0 -7px 14px rgba(0, 0, 0, 0.40),
+    inset 0 8px 14px rgba(255, 255, 255, 0.06);
+  --clay-shadow-sm:
+    0 10px 22px -10px rgba(0, 0, 0, 0.5),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.35),
+    inset 0 5px 10px rgba(255, 255, 255, 0.05);
+
+  --lx-kt-bg: #123f3b; --lx-kt-border: #2dd4bf; --lx-kt-heading: #7ff0e2; --lx-kt-edge: #1d5650;
 }
 
-// Hero keeps the dark-teal gradient + white text in dark mode (already AA).
-.lx-hero .btn-light { background: #f1f5f9; color: #0d3b3b; }
+.lx-progress .lx-track { background: #2a2440; box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4); }
+.lx-step { background: var(--lx-card); color: var(--lx-muted); }
+.lx-landing::before, .lx-landing::after { opacity: 0.32; }
 
-// Badges (dark): tinted translucent fills with light text, AA against the page.
-.badge-beginner     { background: rgba(34, 197, 94, 0.18);  color: #bbf7d0; border-color: rgba(34, 197, 94, 0.45); }
-.badge-intermediate { background: rgba(217, 119, 6, 0.20);  color: #fde68a; border-color: rgba(217, 119, 6, 0.50); }
-.badge-advanced     { background: rgba(239, 68, 68, 0.18);  color: #fecaca; border-color: rgba(239, 68, 68, 0.45); }
-.badge-browser { background: rgba(56, 189, 248, 0.18); color: #bae6fd; border-color: rgba(56, 189, 248, 0.45); }
-.badge-colab   { background: rgba(249, 115, 22, 0.18); color: #fed7aa; border-color: rgba(249, 115, 22, 0.45); }
-.badge-gpu     { background: rgba(139, 92, 246, 0.22);  color: #ddd6fe; border-color: rgba(139, 92, 246, 0.50); }
-.badge-stable   { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.45); }
-.badge-frontier { background: rgba(244, 63, 94, 0.18);  color: #fecdd3; border-color: rgba(244, 63, 94, 0.45); }
+// Badges (dark): tinted translucent fills with light text, AA over the page.
+.badge-beginner     { background: rgba(34, 197, 94, 0.20);  color: #bbf7d0; border-color: rgba(34, 197, 94, 0.45); }
+.badge-intermediate { background: rgba(217, 119, 6, 0.24);  color: #fde68a; border-color: rgba(217, 119, 6, 0.50); }
+.badge-advanced     { background: rgba(239, 68, 68, 0.20);  color: #fecaca; border-color: rgba(239, 68, 68, 0.45); }
+.badge-browser { background: rgba(56, 189, 248, 0.20); color: #bae6fd; border-color: rgba(56, 189, 248, 0.45); }
+.badge-colab   { background: rgba(249, 115, 22, 0.20); color: #fed7aa; border-color: rgba(249, 115, 22, 0.45); }
+.badge-gpu     { background: rgba(139, 92, 246, 0.26);  color: #ddd6fe; border-color: rgba(139, 92, 246, 0.50); }
+.badge-stable   { background: rgba(16, 185, 129, 0.20); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.45); }
+.badge-frontier { background: rgba(244, 63, 94, 0.20);  color: #fecdd3; border-color: rgba(244, 63, 94, 0.45); }

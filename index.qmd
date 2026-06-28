@@ -1,76 +1,179 @@
 ---
 title: ""
-pagetitle: "Larnix — learn AI/ML, from zero, in your browser"
+pagetitle: "Larnix — learn AI/ML the fun way, in your browser"
 toc: false
 section-divs: false
+anchor-sections: false
 ---
 
+::: {.lx-landing}
+
 ::: {.lx-hero}
-# Learn AI/ML — from zero, in your browser.
+[✦ Free · runs in your browser · ₹0]{.lx-eyebrow .lx-reveal .lx-reveal-1}
 
-::: {.lx-lead}
-A free, open-access school that takes a complete beginner — on a low-spec laptop,
-at ₹0 — from "what is AI" to building and shipping real machine-learning systems.
-Plain language, one idea per chapter, and code you actually run.
+# [Learn AI/ML]{} [the fun way.]{.lx-pop} {.lx-reveal .lx-reveal-2}
+
+::: {.lx-lead .lx-reveal .lx-reveal-3}
+From "what is AI" to building real machine-learning systems — plain language,
+one idea per chapter, and code you actually run. No setup, no fees, no gatekeeping.
 :::
 
-[Start learning →](modules/00-orientation/ch01-train-your-first-model.qmd){.btn .btn-light .btn-lg}
-[Read the roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md){.btn .btn-outline-light .btn-lg}
-:::
-
-## Why Larnix
-
-::: {.lx-features}
-::: {.lx-feature}
-[🖥️]{.lx-ico}
-
-### Runs in your browser
-Beginner chapters execute Python with **zero install** via Pyodide. No account, no
-download — press *Run* and watch a real model train.
-:::
-
-::: {.lx-feature}
-[₹0]{.lx-ico}
-
-### Free, the whole way
-The core path costs nothing: in-browser for the early modules, free Colab/Kaggle
-for the GPU ones, and a free local fallback wherever a lesson touches an API.
-:::
-
-::: {.lx-feature}
-[🎓]{.lx-ico}
-
-### Beginner → frontier
-Seventeen modules, from "what is AI" through classical ML, deep learning,
-transformers, LLMs, RAG/agents, MLOps, and a build-your-own-LLM capstone.
-:::
-
-::: {.lx-feature}
-[✅]{.lx-ico}
-
-### Every example works
-Each chapter ships runnable code with auto-graded exercises and a quiz — and every
-example is executed in CI, so nothing on the page is broken.
+::: {.lx-cta .lx-reveal .lx-reveal-4}
+[Start learning ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay}
+[See the roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md){.btn-clay .btn-clay--ghost}
 :::
 :::
 
-## Start here
+## The course {.lx-section}
 
-::: {.lx-modcard}
-[M0]{.lx-modnum}
-
-::: {.lx-modcard-body}
-### Orientation — *Train your first model, in your browser*
-🟢 Beginner · runs in the browser · ~20 min. Load data, train a scikit-learn
-classifier, read its accuracy — your first complete machine-learning loop.
-:::
+::: {.lx-sub}
+Seventeen modules, beginner to frontier. Start at M0 today — more unlock as the
+curriculum is authored.
 :::
 
-[Begin Chapter 1 →](modules/00-orientation/ch01-train-your-first-model.qmd){.btn .btn-primary}
+::: {.lx-grid .lx-grid--3}
 
-::: {.callout-note appearance="simple"}
-**Status:** Phase P0 — the platform, proven end-to-end on one sample chapter. More
-modules land as the curriculum is authored. See the
-[roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md) and
-[About](about.qmd).
+::: {.lx-course .lx-tile .clay--teal}
+::: {.lx-course-top}
+[M0]{.lx-coursenum}
+
+### Orientation
+:::
+Train your first model in your browser — load data, fit a classifier, read its
+accuracy. Your first full machine-learning loop.
+[🟢 Beginner]{.lx-pill} [▸ Available]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--amber .lx-course--soon}
+::: {.lx-course-top}
+[M1]{.lx-coursenum}
+
+### Foundations
+:::
+The maths and Python you actually need — vectors, probability, and clean code —
+taught from zero with runnable examples.
+[🟢 Beginner]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--coral .lx-course--soon}
+::: {.lx-course-top}
+[M4]{.lx-coursenum}
+
+### Classical ML
+:::
+Regression, trees, and ensembles — the workhorses — with honest evaluation and
+the "did it actually learn?" habit.
+[🟡 Intermediate]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--violet .lx-course--soon}
+::: {.lx-course-top}
+[M7]{.lx-coursenum}
+
+### Transformers & LLMs
+:::
+Attention, transformers, and how large language models really work — built up
+step by step, not hand-waved.
+[🔴 Advanced]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--sky .lx-course--soon}
+::: {.lx-course-top}
+[M11]{.lx-coursenum}
+
+### Build your own LLM
+:::
+The signature capstone — pretrain a small language model end to end, on a free
+GPU, with a smaller-model fallback.
+[🔴 Advanced]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--mint .lx-course--soon}
+::: {.lx-course-top}
+[M16]{.lx-coursenum}
+
+### Career-ready
+:::
+Portfolio projects, MLOps, and interview prep — turn what you built into a job.
+[🟡 Intermediate]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+:::
+
+## Track your progress {.lx-section}
+
+::: {.lx-sub}
+No account needed — your quiz scores and finished chapters are saved right in
+your browser. Pick up where you left off.
+:::
+
+::: {.clay}
+::: {.lx-progress}
+::: {.lx-track}
+::: {.lx-fill}
+:::
+:::
+::: {.lx-steps}
+[M0]{.lx-step .lx-step--now} [M1]{.lx-step} [M4]{.lx-step} [M7]{.lx-step} [M11]{.lx-step} [🎓]{.lx-step}
+:::
+:::
+**You're on chapter 1 of the journey.** Finish it to light up M0, then keep going.
+:::
+
+## Made for learners like you {.lx-section}
+
+::: {.lx-sub}
+Larnix is new — these are the people we built it for, in their own words.
+:::
+
+::: {.lx-grid .lx-grid--3}
+
+::: {.lx-quote .lx-tile .clay--coral}
+"I switched careers from accounting. I needed something that starts at zero and
+doesn't assume I already know calculus."
+
+::: {.lx-who}
+[CS]{.lx-avatar style="background:#c92a26"}
+::: {}
+[The career switcher]{.lx-name}
+[wants a clear path, not 40 open tabs]{.lx-role}
+:::
+:::
+:::
+
+::: {.lx-quote .lx-tile .clay--violet}
+"My laptop is old and I have no budget. Being able to run real models in the
+browser, for free, is the whole reason I can do this."
+
+::: {.lx-who}
+[NP]{.lx-avatar style="background:#6d28d9"}
+::: {}
+[The low-spec beginner]{.lx-name}
+[needs it to actually run, at ₹0]{.lx-role}
+:::
+:::
+:::
+
+::: {.lx-quote .lx-tile .clay--sky}
+"I'm a CS student tired of tutorials that hand-wave the maths. I want to see
+every step and run it myself."
+
+::: {.lx-who}
+[DV]{.lx-avatar style="background:#0369a1"}
+::: {}
+[The curious student]{.lx-name}
+[wants depth, and to press Run]{.lx-role}
+:::
+:::
+:::
+
+:::
+
+::: {.lx-cta-band}
+## Ready to train your first model?
+It takes about twenty minutes, runs in this browser tab, and costs nothing.
+
+[Start Chapter 1 ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay .btn-clay--ghost}
+:::
+
 :::

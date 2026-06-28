@@ -5,36 +5,36 @@
 
 ---
 
-## D0014 — GUI polish pass: self-hosted Inter, landing page, premium light/dark; sepia still deferred
+## D0014 — GUI: playful claymorphism design system (Fredoka + Nunito); sepia still deferred
 
 - **Date:** 2026-06-28
 - **Status:** Accepted
-- **Context.** After P0 shipped, a scoped pre-P1 design pass was requested to give the platform a
-  rich/premium look. The theme is inherited by all future chapters, so polishing it now is cheap and
-  low-risk (the a11y gate guards contrast); content-type-specific UI is deferred until that content
-  exists.
+- **Context.** A scoped pre-P1 design pass was requested to make the platform feel premium. A first
+  clean Inter-based polish was not distinctive enough; the user asked for a more creative, playful
+  educational look (referencing modern UI galleries). Guided by the `frontend-design` skill, the
+  brief became: claymorphism cards, a course catalog, a progress demo, testimonials, an enrollment
+  CTA, and vibrant colours.
 - **Decisions.**
-  1. **Typography = self-hosted Inter** (latin subset, weights 400/500/600/700, ~100KB) in
-     `fonts/`, with a system-font fallback. Self-hosted (not a CDN) to stay ₹0, private, and
-     offline. `@font-face` lives in `theme/_larnix-components.scss` with a project-root-relative
-     `url("fonts/…")`; Quarto bundles the files next to the compiled theme CSS (the `../../fonts/`
-     and `resources:` approaches both broke Quarto's dependency copier — see Consequences).
-  2. **Refined design tokens + components** — neutral palette, spacing, radii, soft shadows; a hero,
-     value-prop cards, and a module card; refined Key Takeaways box, badges, code, callouts, buttons.
-     Colours are CSS custom properties so the dark theme overrides them in one place.
-  3. **Real landing page** (`index.qmd`) — hero + CTAs + "why Larnix" + a start-here module card,
-     replacing the stale scaffold copy.
-  4. **Premium light + dark now; sepia still deferred.** Light/dark use Quarto's native two-bundle
-     toggle. A true 3-way light/dark/**sepia** switcher needs custom JS (Quarto's toggle is 2-theme);
-     to keep this pass high-quality and low-risk it stays a tracked follow-up (supersedes the sepia
-     note in D0008 — still open).
-- **Rationale.** Foundational + cheap now, expensive to retrofit across ~240 chapters; CSS-first, no
-  heavy deps, accessibility preserved.
-- **Consequences.** The hero gradient uses fixed dark-teal tokens (not the theme brand) so white text
-  stays AA in both modes. `a11y_check.py` `THEME_PAIRS` extended to the new text/hero/muted/heading
-  colours — all pass AA (worst 6.05:1). Inter font path was the main friction: Quarto resolves theme
-  `url()` relative to the project root and copies it as a dependency, so fonts must sit at `/fonts`
-  with `url("fonts/…")`. Sepia remains the one outstanding design item.
+  1. **Aesthetic = playful claymorphism.** Soft "puffy" 3-D cards (large radii + layered inset/outer
+     shadows), a warm cream canvas with floating colour blobs, vibrant pastel-fill clay cards, and a
+     choreographed staggered page-load reveal. Distinctive type: **Fredoka** (rounded display) +
+     **Nunito** (friendly body), self-hosted (OFL, ~140KB) — replacing Inter.
+  2. **A real marketing landing** (`index.qmd`): hero (gradient-text headline + clay CTAs), a course
+     catalog (M0 live + later modules "soon"), an honest browser-progress demo (ties to the real
+     `localStorage` quiz scores — no accounts), persona-framed "made for learners like you" cards
+     (honest, not fabricated named reviews), and an enrollment CTA band.
+  3. **Scope:** the playful clay treatment is for the **landing**; chapter reading stays calm
+     (same fonts + clay-lite Key Takeaways/badges, but no blob background) so long-form stays legible.
+  4. **Accessibility kept:** vibrant comes from pastel fills + colour accents, with dark text for AA;
+     the a11y gate's `THEME_PAIRS` was extended to the full palette and now supports a **3:1
+     large-text threshold** (WCAG) for the big hero gradient word. All pairs pass.
+  5. **Sepia** (D0008) remains a tracked follow-up.
+- **Rationale.** A memorable, friendly identity that fits a beginner-first learning platform; CSS-only
+  motion, self-hosted fonts, ₹0, accessible.
+- **Consequences.** Replaces the earlier Inter polish. New tokens/components in
+  `theme/_larnix-components.scss`; `a11y_check.py` gained per-pair contrast thresholds. Honest content
+  choices: testimonials are persona-based with a "Larnix is new" framing; "enrollment" is "start free,
+  no signup" (no accounts exist in P0).
 
 ---
 
