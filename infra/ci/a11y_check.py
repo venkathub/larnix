@@ -119,6 +119,21 @@ THEME_PAIRS = [
     ("dark: nav brand", "#5eead4", _DARK_BASE),
     ("dark: code label", "#b3acc7", "#2a2440"),
     ("dark: running label", "#2dd4bf", "#2a2440"),
+    # ── Sepia reading mode (warm paper; light Bootstrap base + token override) ──
+    ("sepia: body text", "#43392c", "#f3e9d2"),
+    ("sepia: heading", "#2c2519", "#f3e9d2"),
+    ("sepia: muted text", "#6a5c45", "#f3e9d2"),
+    ("sepia: primary link", "#0b6e6e", "#f3e9d2"),
+    ("sepia: nav text", "#43392c", blend((248, 241, 225, 0.85), "#f3e9d2")),
+    ("sepia: nav brand", "#0b6e6e", blend((248, 241, 225, 0.85), "#f3e9d2")),
+    ("sepia: nav active tx", "#5f4a17", "#ece0c6"),
+    ("sepia: Key Takeaways heading", "#5f4a17", "#e9dcc0"),
+    ("sepia: code label", "#6a5c45", "#f1e8d3"),
+    ("sepia: editor teal label", "#0b6e6e", "#f1e8d3"),
+    # Clay pastel cards are reused from light on the sepia page; re-assert AA.
+    ("sepia: clay teal", "#0c5f57", "#d4f3ee"),
+    ("sepia: clay amber", "#7a5300", "#fdecbf"),
+    ("sepia: clay violet", "#492c93", "#e8e1fd"),
 ]
 
 

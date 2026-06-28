@@ -70,6 +70,43 @@
   --lx-chip-bg: rgba(255, 255, 255, 0.62);
 }
 
+// ── Sepia reading mode (warm "paper") ───────────────────────────────────────
+// The third reading theme (D0008 / D0014). Quarto's native toggle is light/dark
+// only, so sepia is delivered as a token + Bootstrap-var override layered on the
+// LIGHT stylesheet, switched on by a custom 3-way control that sets
+// `data-lx-mode="sepia"` on <html> (see theme/_after-body.html). `html[...]` beats
+// the `:root` defaults on specificity. All pairs below meet WCAG AA — mirrored in
+// infra/ci/a11y_check.py so the gate enforces it.
+html[data-lx-mode="sepia"] {
+  --lx-bg: #f3e9d2;          // warm paper
+  --lx-card: #fbf4e3;
+  --lx-text: #43392c;
+  --lx-heading: #2c2519;
+  --lx-muted: #6a5c45;
+  --lx-border: #e6d8bd;
+
+  --lx-kt-bg: #e9dcc0; --lx-kt-border: #c9a44e; --lx-kt-heading: #5f4a17; --lx-kt-edge: #dcc89f;
+
+  --lx-nav-bg: rgba(248, 241, 225, 0.85);
+  --lx-nav-text: #43392c;
+  --lx-nav-ink: #0b6e6e;
+  --lx-nav-active-bg: #ece0c6;
+  --lx-nav-active-tx: #5f4a17;
+  --lx-code-bar: #f1e8d3;
+  --lx-code-surface: #f9f2e0;
+  --lx-chip-bg: rgba(255, 255, 255, 0.5);
+
+  // Bootstrap surface/text variables (cosmo sets these on :root for light).
+  --bs-body-bg: #f3e9d2;
+  --bs-body-color: #43392c;
+  --bs-emphasis-color: #2c2519;
+  --bs-secondary-color: rgba(67, 57, 44, 0.72);
+  --bs-tertiary-bg: #ece0c6;
+  --bs-border-color: #e6d8bd;
+  --bs-link-color: #0b6e6e;
+  --bs-link-hover-color: #094f4f;
+}
+
 // ── Base typography ─────────────────────────────────────────────────────────
 body { background: var(--lx-bg); color: var(--lx-text); }
 h1, h2, h3, h4, .h1, .h2, .h3, .navbar-brand {
@@ -488,12 +525,18 @@ body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercis
   background: var(--lx-nav-active-bg); transform: translateY(-1px);
 }
 .navbar .quarto-color-scheme-toggle:hover i { color: var(--lx-nav-ink) !important; }
-// Quarto ships the toggle glyph empty in both modes here, so supply a clear,
-// mode-aware affordance: moon in light (= switch to dark), sun in dark.
+// Quarto ships the toggle glyph empty in both modes here. The custom 3-way
+// reading-mode switcher (theme/_after-body.html) sets `data-lx-mode` on <html>;
+// show the CURRENT mode's glyph (clicking cycles light → sepia → dark). These
+// `html[data-lx-mode]` rules are more specific than / come after the two-state
+// fallbacks below, so they win when the switcher is active.
 .navbar .quarto-color-scheme-toggle { display: inline-grid; place-items: center; }
 .navbar .quarto-color-scheme-toggle i.bi { display: none; }
 .navbar .quarto-color-scheme-toggle::before { content: "🌙"; font-size: 1.05rem; line-height: 1; }
 body.quarto-dark .navbar .quarto-color-scheme-toggle::before { content: "☀️"; }
+html[data-lx-mode="light"] .navbar .quarto-color-scheme-toggle::before { content: "☀️"; }
+html[data-lx-mode="sepia"] .navbar .quarto-color-scheme-toggle::before { content: "📖"; }
+html[data-lx-mode="dark"]  .navbar .quarto-color-scheme-toggle::before { content: "🌙"; }
 .navbar .navbar-toggler { border-color: var(--lx-border); }
 
 // ── Chapter reading polish ──────────────────────────────────────────────────
