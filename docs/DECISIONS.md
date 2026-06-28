@@ -5,6 +5,39 @@
 
 ---
 
+## D0014 — GUI polish pass: self-hosted Inter, landing page, premium light/dark; sepia still deferred
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** After P0 shipped, a scoped pre-P1 design pass was requested to give the platform a
+  rich/premium look. The theme is inherited by all future chapters, so polishing it now is cheap and
+  low-risk (the a11y gate guards contrast); content-type-specific UI is deferred until that content
+  exists.
+- **Decisions.**
+  1. **Typography = self-hosted Inter** (latin subset, weights 400/500/600/700, ~100KB) in
+     `fonts/`, with a system-font fallback. Self-hosted (not a CDN) to stay ₹0, private, and
+     offline. `@font-face` lives in `theme/_larnix-components.scss` with a project-root-relative
+     `url("fonts/…")`; Quarto bundles the files next to the compiled theme CSS (the `../../fonts/`
+     and `resources:` approaches both broke Quarto's dependency copier — see Consequences).
+  2. **Refined design tokens + components** — neutral palette, spacing, radii, soft shadows; a hero,
+     value-prop cards, and a module card; refined Key Takeaways box, badges, code, callouts, buttons.
+     Colours are CSS custom properties so the dark theme overrides them in one place.
+  3. **Real landing page** (`index.qmd`) — hero + CTAs + "why Larnix" + a start-here module card,
+     replacing the stale scaffold copy.
+  4. **Premium light + dark now; sepia still deferred.** Light/dark use Quarto's native two-bundle
+     toggle. A true 3-way light/dark/**sepia** switcher needs custom JS (Quarto's toggle is 2-theme);
+     to keep this pass high-quality and low-risk it stays a tracked follow-up (supersedes the sepia
+     note in D0008 — still open).
+- **Rationale.** Foundational + cheap now, expensive to retrofit across ~240 chapters; CSS-first, no
+  heavy deps, accessibility preserved.
+- **Consequences.** The hero gradient uses fixed dark-teal tokens (not the theme brand) so white text
+  stays AA in both modes. `a11y_check.py` `THEME_PAIRS` extended to the new text/hero/muted/heading
+  colours — all pass AA (worst 6.05:1). Inter font path was the main friction: Quarto resolves theme
+  `url()` relative to the project root and copies it as a dependency, so fonts must sit at `/fonts`
+  with `url("fonts/…")`. Sepia remains the one outstanding design item.
+
+---
+
 ## D0013 — Single Quarto project at the repo root (content layout)
 
 - **Date:** 2026-06-28

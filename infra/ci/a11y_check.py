@@ -54,9 +54,14 @@ AA_NORMAL = 4.5
 
 # Declared theme pairs — KEEP IN SYNC with site/theme/_larnix-components.scss
 # and larnix-dark.scss. Dark badge fills are translucent, flattened over the
-# `darkly` body background (#222222).
-_DARK_BASE = "#222222"
+# dark page background.
+_DARK_BASE = "#1f2428"
 THEME_PAIRS = [
+    ("light: body text", "#1e293b", "#ffffff"),
+    ("light: muted text", "#586374", "#ffffff"),
+    ("light: heading", "#0f172a", "#ffffff"),
+    ("light: hero text on brand", "#ffffff", "#0b6e6e"),
+    ("light: hero text on brand-strong", "#ffffff", "#075050"),
     ("light: beginner badge", "#14532d", "#e6f4ea"),
     ("light: intermediate badge", "#6b3e09", "#fdf0d5"),
     ("light: advanced badge", "#7f1d1d", "#fde2e1"),
@@ -67,6 +72,9 @@ THEME_PAIRS = [
     ("light: frontier badge", "#8f1133", "#fff1f2"),
     ("light: Key Takeaways heading", "#064e4e", "#f3fbfa"),
     ("light: primary link", "#0b6e6e", "#ffffff"),
+    ("dark: body text", "#e2e8f0", _DARK_BASE),
+    ("dark: muted text", "#aeb8c4", _DARK_BASE),
+    ("dark: heading", "#f1f5f9", _DARK_BASE),
     ("dark: beginner badge", "#bbf7d0", blend((34, 197, 94, 0.18), _DARK_BASE)),
     ("dark: intermediate badge", "#fde68a", blend((217, 119, 6, 0.20), _DARK_BASE)),
     ("dark: advanced badge", "#fecaca", blend((239, 68, 68, 0.18), _DARK_BASE)),
@@ -75,7 +83,7 @@ THEME_PAIRS = [
     ("dark: gpu badge", "#ddd6fe", blend((139, 92, 246, 0.22), _DARK_BASE)),
     ("dark: stable badge", "#a7f3d0", blend((16, 185, 129, 0.18), _DARK_BASE)),
     ("dark: frontier badge", "#fecdd3", blend((244, 63, 94, 0.18), _DARK_BASE)),
-    ("dark: Key Takeaways heading", "#99f6e4", "#0f2c2b"),
+    ("dark: Key Takeaways heading", "#99f6e4", "#11302e"),
     ("dark: primary link", "#2dd4bf", _DARK_BASE),
 ]
 

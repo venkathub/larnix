@@ -1,72 +1,178 @@
-// Larnix shared component structure — imported by BOTH the light and dark
-// themes so layout is identical in either mode. Colours are driven by CSS
+// Larnix shared theme components — imported by BOTH the light and dark themes so
+// layout + webfonts are identical in either mode. Colours are driven by CSS
 // custom properties; each theme sets the token values (light here as the
 // default :root, dark overrides them in larnix-dark.scss).
 
-// ── Default (light) tokens ──────────────────────────────────────────────────
+// ── Self-hosted Inter (latin subset) ────────────────────────────────────────
+// Files live in theme/fonts and are bundled next to the compiled theme CSS by
+// Quarto, so the relative url() resolves at runtime for every page.
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 500; font-display: swap;
+  src: url("fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap;
+  src: url("fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+
+// ── Design tokens (light defaults) ──────────────────────────────────────────
 :root {
+  --lx-brand: #0b6e6e;
+  --lx-brand-strong: #075050;
+  --lx-bg: #ffffff;
+  --lx-surface: #f8fafc;
+  --lx-surface-2: #eef2f6;
+  --lx-border: #e2e8f0;
+  --lx-text: #1e293b;
+  --lx-muted: #586374;
+  --lx-heading: #0f172a;
+  --lx-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 4px 16px rgba(15, 23, 42, .06);
+  --lx-shadow-lg: 0 10px 34px rgba(15, 23, 42, .12);
+
+  // Hero gradient — kept dark teal in BOTH themes so white text stays AA.
+  --lx-hero-from: #0b6e6e;
+  --lx-hero-to: #075050;
+
   --lx-kt-bg: #f3fbfa;
   --lx-kt-border: #0b6e6e;
   --lx-kt-heading: #064e4e;
+  --lx-kt-edge: #cdeae8;
 }
 
+// ── Headings ────────────────────────────────────────────────────────────────
+h1, h2, h3, h4, .h1, .h2, .h3 {
+  letter-spacing: -0.02em;
+  color: var(--lx-heading);
+}
+h1, .h1 { letter-spacing: -0.03em; }
+
+.text-muted, .lx-muted { color: var(--lx-muted) !important; }
+
+// ── Hero (landing) ──────────────────────────────────────────────────────────
+.lx-hero {
+  background: linear-gradient(135deg, var(--lx-hero-from) 0%, var(--lx-hero-to) 100%);
+  color: #ffffff;
+  border-radius: 1rem;
+  padding: clamp(2rem, 5vw, 3.75rem);
+  margin: 0.5rem 0 2.5rem;
+  box-shadow: var(--lx-shadow-lg);
+}
+.lx-hero h1 {
+  color: #ffffff;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  margin: 0 0 0.6rem;
+}
+.lx-hero .lx-lead {
+  font-size: 1.18rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.94);
+  max-width: 46ch;
+  margin-bottom: 1.4rem;
+}
+.lx-hero .btn { margin: 0.25rem 0.55rem 0 0; padding: 0.55rem 1.15rem; }
+.lx-hero .btn-light {
+  background: #fff; color: var(--lx-brand-strong); border: none;
+}
+.lx-hero .btn-light:hover { background: #f1f5f9; color: var(--lx-brand-strong); }
+.lx-hero .btn-outline-light {
+  color: #fff; border: 1px solid rgba(255, 255, 255, 0.65); background: transparent;
+}
+.lx-hero .btn-outline-light:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+
+// ── Feature / value cards ───────────────────────────────────────────────────
+.lx-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+.lx-feature {
+  background: var(--lx-bg);
+  border: 1px solid var(--lx-border);
+  border-radius: 0.9rem;
+  padding: 1.2rem 1.3rem;
+  box-shadow: var(--lx-shadow);
+}
+.lx-feature .lx-ico { font-size: 1.5rem; line-height: 1; }
+.lx-feature h3 { font-size: 1.02rem; margin: 0.55rem 0 0.35rem; letter-spacing: -0.01em; }
+.lx-feature p { color: var(--lx-muted); margin: 0; font-size: 0.95rem; line-height: 1.55; }
+
+// ── Module card ─────────────────────────────────────────────────────────────
+.lx-modcard {
+  display: flex; gap: 1.1rem; align-items: flex-start;
+  border: 1px solid var(--lx-border);
+  border-radius: 0.9rem;
+  padding: 1.25rem 1.4rem;
+  background: var(--lx-bg);
+  box-shadow: var(--lx-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+}
+.lx-modcard:hover { transform: translateY(-2px); box-shadow: var(--lx-shadow-lg); }
+.lx-modcard .lx-modnum {
+  font-weight: 700; color: var(--lx-brand); font-size: 1.6rem; line-height: 1;
+  flex: 0 0 auto;
+}
+.lx-modcard h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+.lx-modcard p { margin: 0; color: var(--lx-muted); font-size: 0.93rem; }
+
+// ── Buttons ─────────────────────────────────────────────────────────────────
+.btn { border-radius: 0.55rem; font-weight: 600; }
+
 // ── Key Takeaways box ───────────────────────────────────────────────────────
-// Authors write:  ::: {.key-takeaways}  ### Key Takeaways  1. ...  :::
 .key-takeaways {
   background: var(--lx-kt-bg);
+  border: 1px solid var(--lx-kt-edge);
   border-left: 4px solid var(--lx-kt-border);
-  border-radius: 6px;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.35rem;
+  margin: 1.75rem 0;
+  box-shadow: var(--lx-shadow);
 
-  > h3:first-child,
-  > h2:first-child {
-    margin-top: 0;
-    color: var(--lx-kt-heading);
-    font-size: 1.05rem;
-    text-transform: none;
+  > h3:first-child, > h2:first-child {
+    margin-top: 0; color: var(--lx-kt-heading); font-size: 1.05rem; text-transform: none;
   }
-
   ol, ul { margin-bottom: 0; }
 }
 
 // ── Badges (difficulty / compute / status) ──────────────────────────────────
-// Emitted by the `badge` shortcode. The visible label carries the meaning
-// (never colour alone); the coloured dot is decorative.
 .larnix-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.15em 0.6em;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1.4;
-  white-space: nowrap;
-  border: 1px solid transparent;
-  vertical-align: middle;
+  display: inline-flex; align-items: center; gap: 0.4em;
+  padding: 0.2em 0.65em; border-radius: 999px;
+  font-size: 0.78rem; font-weight: 600; line-height: 1.4;
+  white-space: nowrap; border: 1px solid transparent; vertical-align: middle;
 
   &::before {
-    content: "";
-    width: 0.55em;
-    height: 0.55em;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.9;
-    flex: 0 0 auto;
+    content: ""; width: 0.5em; height: 0.5em; border-radius: 50%;
+    background: currentColor; opacity: 0.9; flex: 0 0 auto;
   }
 }
-
-// difficulty (light)
 .badge-beginner     { background: #e6f4ea; color: #14532d; border-color: #bfe3c9; }
 .badge-intermediate { background: #fdf0d5; color: #6b3e09; border-color: #f3d9a4; }
 .badge-advanced     { background: #fde2e1; color: #7f1d1d; border-color: #f5c2c0; }
-
-// compute (light)
 .badge-browser { background: #e0f2fe; color: #075985; border-color: #b9e2fb; }
 .badge-colab   { background: #fdebd8; color: #8a3b0c; border-color: #f6cfa6; }
 .badge-gpu     { background: #ede9fe; color: #4c1d95; border-color: #d4c9fb; }
-
-// status (light)
 .badge-stable   { background: #e9faf2; color: #075f43; border-color: #bdecd6; }
 .badge-frontier { background: #fff1f2; color: #8f1133; border-color: #f6c9d3; }
+
+// ── Inline code + code blocks ───────────────────────────────────────────────
+code:not(.sourceCode) {
+  background: var(--lx-surface-2); padding: 0.12em 0.4em;
+  border-radius: 0.35em; font-size: 0.88em;
+}
+div.sourceCode, pre.sourceCode, pre > code.sourceCode {
+  border-radius: 0.6rem;
+}
+div.sourceCode { border: 1px solid var(--lx-border); }
+
+// ── Callouts ────────────────────────────────────────────────────────────────
+.callout { border-radius: 0.6rem; }

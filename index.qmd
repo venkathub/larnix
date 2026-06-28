@@ -1,31 +1,76 @@
 ---
-title: "Larnix"
-subtitle: "A free, beginner-to-frontier school for AI/ML — where every chapter runs."
+title: ""
+pagetitle: "Larnix — learn AI/ML, from zero, in your browser"
+toc: false
+section-divs: false
 ---
 
-## What this is
+::: {.lx-hero}
+# Learn AI/ML — from zero, in your browser.
 
-Larnix is a free, open-access course that takes a complete beginner — on a
-low-spec laptop, at zero cost — from "what is AI" to building and shipping real
-machine-learning systems. It follows the Zerodha Varsity teaching style: plain
-language, one idea per chapter, a worked example you can run, a short
-"Key Takeaways" box, and graded practice.
+::: {.lx-lead}
+A free, open-access school that takes a complete beginner — on a low-spec laptop,
+at ₹0 — from "what is AI" to building and shipping real machine-learning systems.
+Plain language, one idea per chapter, and code you actually run.
+:::
 
-This page is the scaffold's hello-world. It exists to prove the site builds from
-a fresh clone and renders. Real content arrives later in Phase P0 with the first
-sample chapter.
+[Start learning →](modules/00-orientation/ch01-train-your-first-model.qmd){.btn .btn-light .btn-lg}
+[Read the roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md){.btn .btn-outline-light .btn-lg}
+:::
 
-## How the platform is built
+## Why Larnix
 
-- **Read it** as a static website (this Quarto site).
-- **Run it** in your browser — beginner chapters execute Python with zero
-  install (wired in a later P0 task).
-- **Practice it** — exercises are auto-graded in the browser; quizzes score
-  client-side.
+::: {.lx-features}
+::: {.lx-feature}
+[🖥️]{.lx-ico}
 
-See the [About](about.qmd) page for the project's goals and the build roadmap.
+### Runs in your browser
+Beginner chapters execute Python with **zero install** via Pyodide. No account, no
+download — press *Run* and watch a real model train.
+:::
 
-::: {.callout-note}
-This is a development scaffold. The design system, in-browser runtime,
-auto-grader, quiz engine, and the first chapter land in subsequent P0 tasks.
+::: {.lx-feature}
+[₹0]{.lx-ico}
+
+### Free, the whole way
+The core path costs nothing: in-browser for the early modules, free Colab/Kaggle
+for the GPU ones, and a free local fallback wherever a lesson touches an API.
+:::
+
+::: {.lx-feature}
+[🎓]{.lx-ico}
+
+### Beginner → frontier
+Seventeen modules, from "what is AI" through classical ML, deep learning,
+transformers, LLMs, RAG/agents, MLOps, and a build-your-own-LLM capstone.
+:::
+
+::: {.lx-feature}
+[✅]{.lx-ico}
+
+### Every example works
+Each chapter ships runnable code with auto-graded exercises and a quiz — and every
+example is executed in CI, so nothing on the page is broken.
+:::
+:::
+
+## Start here
+
+::: {.lx-modcard}
+[M0]{.lx-modnum}
+
+::: {.lx-modcard-body}
+### Orientation — *Train your first model, in your browser*
+🟢 Beginner · runs in the browser · ~20 min. Load data, train a scikit-learn
+classifier, read its accuracy — your first complete machine-learning loop.
+:::
+:::
+
+[Begin Chapter 1 →](modules/00-orientation/ch01-train-your-first-model.qmd){.btn .btn-primary}
+
+::: {.callout-note appearance="simple"}
+**Status:** Phase P0 — the platform, proven end-to-end on one sample chapter. More
+modules land as the curriculum is authored. See the
+[roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md) and
+[About](about.qmd).
 :::

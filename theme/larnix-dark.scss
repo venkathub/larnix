@@ -1,28 +1,53 @@
 /*-- scss:defaults --*/
 // Larnix dark theme — layered on top of `darkly`.
-$primary: #2dd4bf !default; // brighter teal for dark backgrounds
-$link-color: $primary !default;
+$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif !default;
+$font-size-root: 17px !default;
+$line-height-base: 1.7 !default;
+$headings-font-weight: 700 !default;
+
+$primary: #2dd4bf !default;         // brighter teal for dark backgrounds
+$link-color: #2dd4bf !default;
+$link-decoration: none !default;
+$link-hover-decoration: underline !default;
+
+$border-radius: 0.55rem !default;
+$border-radius-lg: 0.9rem !default;
 
 
 /*-- scss:rules --*/
-// Shared component structure (same layout as light) ...
+// Shared component structure (same layout/fonts as light) ...
 @import "larnix-components";
 
 // ... then dark token + colour overrides (these win via cascade order).
 :root {
-  --lx-kt-bg: #0f2c2b;
+  --lx-brand: #14b8a6;
+  --lx-brand-strong: #0d9488;
+  --lx-bg: #1f2428;
+  --lx-surface: #242b31;
+  --lx-surface-2: #2b333a;
+  --lx-border: #3a434c;
+  --lx-text: #e2e8f0;
+  --lx-muted: #aeb8c4;
+  --lx-heading: #f1f5f9;
+  --lx-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 20px rgba(0, 0, 0, .35);
+  --lx-shadow-lg: 0 12px 36px rgba(0, 0, 0, .45);
+
+  --lx-kt-bg: #11302e;
   --lx-kt-border: #2dd4bf;
   --lx-kt-heading: #99f6e4;
+  --lx-kt-edge: #1f5651;
 }
+
+// Hero keeps the dark-teal gradient + white text in dark mode (already AA).
+.lx-hero .btn-light { background: #f1f5f9; color: #0d3b3b; }
 
 // Badges (dark): tinted translucent fills with light text, AA against the page.
 .badge-beginner     { background: rgba(34, 197, 94, 0.18);  color: #bbf7d0; border-color: rgba(34, 197, 94, 0.45); }
 .badge-intermediate { background: rgba(217, 119, 6, 0.20);  color: #fde68a; border-color: rgba(217, 119, 6, 0.50); }
 .badge-advanced     { background: rgba(239, 68, 68, 0.18);  color: #fecaca; border-color: rgba(239, 68, 68, 0.45); }
-
 .badge-browser { background: rgba(56, 189, 248, 0.18); color: #bae6fd; border-color: rgba(56, 189, 248, 0.45); }
 .badge-colab   { background: rgba(249, 115, 22, 0.18); color: #fed7aa; border-color: rgba(249, 115, 22, 0.45); }
 .badge-gpu     { background: rgba(139, 92, 246, 0.22);  color: #ddd6fe; border-color: rgba(139, 92, 246, 0.50); }
-
 .badge-stable   { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.45); }
 .badge-frontier { background: rgba(244, 63, 94, 0.18);  color: #fecdd3; border-color: rgba(244, 63, 94, 0.45); }
