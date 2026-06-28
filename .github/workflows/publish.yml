@@ -1,0 +1,53 @@
+# Build the Quarto site and publish it to GitHub Pages (production).
+#
+# Trigger: every push to main, plus a manual run from the Actions tab.
+# Strategy (P0-D9, see DECISIONS.md): deploy the rendered site to the ROOT of the
+# gh-pages branch. PR previews live under gh-pages/pr-preview/ (see pr-preview.yml),
+# so both production and previews share one branch and one ₹0 in-repo mechanism.
+#
+# Repo setting required once: Settings -> Pages -> "Deploy from a branch" -> gh-pages / (root).
+
+name: Publish site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Only one production deploy at a time; let an in-progress run finish.
+concurrency:
+  group: pages-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.8.27"
+
+      - name: Render site
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          path: site
+
+      - name: Deploy to gh-pages (root)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: site/_site
+          # Keep PR previews living under gh-pages/pr-preview/ intact on production deploys:
+          # exclude that umbrella dir from cleanup, and rebase instead of force-pushing
+          # (force-push would clobber in-flight previews — see pr-preview-action docs).
+          clean: true
+          clean-exclude: |
+            pr-preview/
+          force: false

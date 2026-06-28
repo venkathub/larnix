@@ -5,6 +5,36 @@
 
 ---
 
+## D0007 — PR-preview mechanism: gh-pages branch subfolders (`pr-preview-action`)
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** D0005 (P0-D9) chose **GitHub Pages + a PR preview** but explicitly left the preview
+  *mechanism* open ("PR previews need a little extra wiring"). P0 task 2 must produce a public
+  preview URL on every PR (P0 DoD). GitHub Pages offers two deploy models that don't mix cleanly:
+  the **Actions-native** model (`upload-pages-artifact` + `deploy-pages`, single environment) and
+  the **branch** model (publish to a `gh-pages` branch).
+- **Options considered.**
+  1. **gh-pages branch for both prod + previews (chosen).** Production deploys to the branch root;
+     each PR deploys to `gh-pages/pr-preview/pr-<N>/` via `rossjrw/pr-preview-action`, which comments
+     the URL and cleans up on close. One in-repo, ₹0 mechanism; no external account.
+  2. *Actions-native Pages + Netlify deploy previews.* Cleaner production deploy and best preview
+     UX, but previews require an external Netlify account/service — rejected to keep everything
+     in-repo and ₹0 (`CLAUDE.md` → free-tier-first build principle).
+  3. *Actions-native Pages only, no PR preview.* Fails the P0 "public preview URL" exit criterion.
+- **Decision.** Use the **gh-pages branch** model. `publish.yml` (push to `main`) deploys the
+  rendered `site/_site` to the branch root via `JamesIves/github-pages-deploy-action@v4`, excluding
+  `pr-preview/` from cleanup; `pr-preview.yml` (`pull_request`) deploys per-PR previews via
+  `rossjrw/pr-preview-action@v1`. Quarto pinned to **1.8.27** in CI (matches the Task 1 Docker pin);
+  actions pinned to current majors (`quarto-actions@v2`).
+- **Rationale.** Single coherent branch model that supports subfolder previews, stays docs-as-code
+  and ₹0, and needs no secret beyond the automatic `GITHUB_TOKEN`.
+- **Consequences.** Requires a one-time repo setting (Pages → *Deploy from a branch* → `gh-pages` /
+  root). The live preview URL is verified on the first PR pushed to GitHub (not executable in the
+  local sandbox). Later CI gates (R10 execution, prose/link/spell, a11y, R-gates — tasks 8–11) are
+  added as separate workflows/jobs alongside these two.
+
+---
+
 ## D0006 — P0 quality gates: notebook execution, prose/lint stack, R-gates, a11y, grader & quiz design
 - **Date:** 2026-06-28
 - **Status:** Accepted

@@ -1,0 +1,50 @@
+# Build the Quarto site for a pull request and publish a browsable preview.
+#
+# Trigger: pull_request open/sync/reopen/close. The preview is deployed to
+# gh-pages/pr-preview/pr-<N>/ by rossjrw/pr-preview-action, which also comments
+# the preview URL on the PR and removes the subfolder when the PR closes.
+#
+# This produces the "public preview URL" the P0 Definition of Done requires.
+
+name: PR preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+# One preview deploy per PR at a time.
+concurrency:
+  group: pages-preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Rendering is skipped when the PR is closed: the deploy step only needs to
+      # remove the preview folder in that case.
+      - name: Set up Quarto
+        if: github.event.action != 'closed'
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.8.27"
+
+      - name: Render site
+        if: github.event.action != 'closed'
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          path: site
+
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: site/_site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
