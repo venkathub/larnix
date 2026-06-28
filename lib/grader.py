@@ -11,6 +11,11 @@ It gives every auto-graded exercise one consistent pass/fail UX:
         ("half right",  accuracy([1, 0], [1, 1]), 0.5),
     ])
 
+Loading it in a chapter (single source of truth — P1-D9 / DECISIONS D0016):
+add this file to the page's `resources:` front-matter key so quarto-live copies
+it into the Pyodide VFS at startup, then `from lib.grader import run_tests` in a
+hidden `#| edit: false` cell. No more pasting the helper into every chapter.
+
 On success it prints "All N tests passed ✅". On the first set of failures it
 prints each result and raises AssertionError, so the cell shows an error.
 

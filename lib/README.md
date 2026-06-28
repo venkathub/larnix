@@ -15,8 +15,27 @@ This is the spec's V-1-safe path: the grading logic is plain Python, so it is
 **unit-tested in CPython here** (deterministic, off-browser evidence) and then
 runs identically in the learner's browser via Pyodide.
 
-In a chapter, paste the helper into a `#| edit: false` setup cell (or, later,
-load `lib/grader.py` into the Pyodide VFS), then:
+In a chapter, **single-source** the helper (P1-D9 / DECISIONS D0016) — do not
+paste it. Add it to the page front-matter so quarto-live copies it into the
+Pyodide VFS at startup:
+
+```yaml
+resources:
+  - ../../lib/grader.py        # path relative to the chapter; lands at lib/grader.py in the VFS
+```
+
+Then, because each `#| exercise:` widget runs in its **own** environment, give
+every exercise a one-line `setup` cell that imports the grader:
+
+````markdown
+```{pyodide}
+#| setup: true
+#| exercise: ex_accuracy
+from lib.grader import run_tests
+```
+````
+
+…after which the exercise (and its solution) can call:
 
 ```python
 run_tests([
@@ -27,6 +46,7 @@ run_tests([
 
 On failure it prints each result and raises `AssertionError`, so the cell shows
 an error. Hidden solutions use the `<details>` pattern from `CHAPTER_TEMPLATE.md`.
+This was verified in-browser on M0 Ch1 (see DECISIONS D0016 implementation note).
 
 quarto-live's **native** exercise widget (editor + hint + solution + a `check:`
 grader) is also available and demonstrated in `sandbox-exercise.qmd §B`;

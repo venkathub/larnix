@@ -17,6 +17,41 @@ docker compose -f infra/docker-compose.yml run --rm render
 
 With a native Quarto install: `quarto preview` / `quarto render`.
 
+> **Snap-confined Docker note.** The snap `docker` can only bind-mount paths under
+> `$HOME`. If the repo lives outside `$HOME` (e.g. `/data/...`), the volume mount
+> resolves empty. Work around it by rendering from a copy under `$HOME` (e.g.
+> `rsync -a --exclude .git --exclude _site ./ ~/larnix-render/ && docker run --rm
+> -v "$HOME/larnix-render":/work -w /work ghcr.io/quarto-dev/quarto:1.8.27 quarto
+> render <path>`), or move the clone under `$HOME`.
+
+## Authoring chapters
+
+### Loading the auto-grader (single source — P1-D9 / DECISIONS D0016)
+
+Do **not** paste the grader. Each browser chapter loads `lib/grader.py` from the
+Pyodide VFS:
+
+1. In the chapter front-matter, declare the resource (path relative to the chapter):
+
+   ```yaml
+   resources:
+     - ../../lib/grader.py
+   ```
+
+2. Give **every** `#| exercise:` a one-line setup cell (each exercise runs in its
+   own environment, so a single global import does not reach it):
+
+   ````markdown
+   ```{pyodide}
+   #| setup: true
+   #| exercise: ex_name
+   from lib.grader import run_tests
+   ```
+   ````
+
+The exercise and its solution then call `run_tests([...])`. Verified in-browser on
+M0 Ch1; full pattern + rationale in `lib/README.md` and DECISIONS D0016.
+
 ## CI / deploy
 
 Two GitHub Actions workflows (see `infra/README.md` for the deploy model):

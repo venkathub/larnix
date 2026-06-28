@@ -29,6 +29,7 @@ PYODIDE_SAFE = {
     "numpy", "pandas", "scipy", "matplotlib", "sklearn", "PIL", "sympy",
     "statsmodels", "networkx", "joblib", "threadpoolctl", "micropip",
     "pyodide", "js", "dateutil", "pytz", "six", "regex", "requests",  # pyodide ships a patched requests
+    "lib",  # Larnix in-repo shared helpers (e.g. lib.grader), loaded into the VFS via `resources:` (P1-D9)
 }
 # Known-unsafe heavyweights — fail with a pointed message.
 KNOWN_UNSAFE = {

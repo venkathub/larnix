@@ -53,6 +53,21 @@
   allow-list (with a `# micropip:` annotation for runtime-installed packages), `lib/data.py` +
   vendored CSVs, and `docs/ASSETS.md` + `assets_check.py` (R11). Seaborn-by-default and runtime
   dataset fetching are explicitly **not** adopted in P1.
+- **Implementation note — P1-D9 grader single-source (Task 1, 2026-06-28; verified in-browser).**
+  The mechanism is confirmed end-to-end on M0 Ch1 (Docker-rendered `live-html`, driven with
+  Playwright on a real Pyodide runtime):
+  - Add the helper to the page front-matter: `resources: [ ../../lib/grader.py ]` (path relative to
+    the chapter). Quarto copies it to `_site/lib/grader.py`; quarto-live fetches it and writes it to
+    the Pyodide VFS. `collapsePath` normalises `../../lib/grader.py` → it lands at
+    `/home/pyodide/lib/grader.py`. `''` (cwd) is on `sys.path`, so the import is
+    **`from lib.grader import run_tests`** (namespace package; no `__init__.py` needed).
+  - **Each `#| exercise:` widget runs in its own isolated environment** (`exercise-env-<id>`), which
+    a global/`autorun` cell does **not** reach. So the grader is injected per exercise with a
+    `#| setup: true` + `#| exercise: <id>` cell containing the one-line import. Logic stays
+    single-sourced in `lib/grader.py`; only the import line repeats (one per exercise).
+  - R3 (`browser_import_lint.py`) now allow-lists `lib` so `from lib.grader …` passes; the broader
+    fail-closed R3 hardening remains Task 4. CPython `lib/test_grader.py` (6 tests) stays the
+    off-browser evidence.
 
 ---
 
