@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -51,6 +51,9 @@ jobs:
 
       - name: R6 — free-fallback check
         run: python infra/ci/free_fallback_check.py
+
+      - name: Review-cards schema (spaced-repetition seeding)
+        run: python infra/ci/review_cards_lint.py
 
   notebooks:
     name: Notebook execution (R10)

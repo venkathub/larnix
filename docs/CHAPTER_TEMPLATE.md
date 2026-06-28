@@ -13,6 +13,11 @@ compute: "browser"                # browser | colab | gpu
 status: "stable"                  # stable | frontier
 last_reviewed: "YYYY-MM-DD"
 est_minutes: 25                   # realistic time to read + run
+# ── Optional: spaced-repetition cards seeded from the Key Takeaways (P0-D3) ──
+# review_cards:
+#   - id: <slug>                  # optional, unique within the chapter
+#     q: "<question a learner can self-test>"
+#     a: "<concise answer>"
 # ───────────────────────────────────────────────────────────────────────────────
 ---
 

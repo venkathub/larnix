@@ -13,6 +13,7 @@ GitHub Actions workflows.
 | `currency_check.py` | R1 (P0 task 11) | `status: frontier` chapters must have `last_reviewed` within 90 days; `stable` exempt. |
 | `browser_import_lint.py` | R3 (P0 task 11) | `compute: browser` chapters may import only Pyodide-safe packages (stdlib + curated allow-list; known-unsafe denylist). |
 | `free_fallback_check.py` | R6 (P0 task 11) | Chapters referencing a paid API must also show a free fallback (Ollama/Groq/free tier). |
+| `review_cards_lint.py` | SR seeding (P0 task 13, P0-D3) | Validates the optional `review_cards:` front-matter block (Q/A pairs from Key Takeaways). |
 
 ## Run locally
 

@@ -50,5 +50,24 @@ A worked example is at `site/sandbox-quiz.qmd` (+ `site/quiz-sandbox.yml`).
 
 ## Deferred to later phases
 
-- Spaced-repetition scheduler (P6; the card *convention* is seeded in P0 task 13).
+- Spaced-repetition scheduler (P6; the card *convention* is seeded in P0 task 13 — see below).
 - Certification exam config + learning-track definitions (P6).
+
+## Spaced-repetition card seeding (P0-D3, see DECISIONS D0004)
+
+Chapters seed review cards **inline in front-matter** as a `review_cards:` block,
+derived from the chapter's Key Takeaways. The scheduler that serves them is P6;
+P0 only proves the authoring convention (schema-validated by
+`infra/ci/review_cards_lint.py`) so no later chapter needs retrofitting.
+
+```yaml
+review_cards:
+  - id: what-is-a-model           # optional, unique within the chapter
+    q: "What is a model?"         # required
+    a: "A function learned from data that maps an input to a prediction."  # required
+  - q: "What does accuracy measure?"
+    a: "The fraction of predictions that match the true labels."
+```
+
+Convention: one card per Key Takeaway, phrased as a question the learner can
+self-test. `q`/`a` are plain text.
