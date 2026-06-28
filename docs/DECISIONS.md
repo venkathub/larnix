@@ -77,6 +77,15 @@
   Output is byte-deterministic so the check is stable. Authoring rule this imposes: a hidden solution
   must be a runnable cell given the cells above it. The M0 Ch1 twin was migrated to the generated
   form (its pasted grader removed) and executes clean under `run_notebooks.py`.
+- **Implementation note — P1-D11 module quizzes (Task 3, 2026-06-28; verified in-browser).** The P0
+  quiz engine needs no changes: the `{{< quiz FILE >}}` shortcode is path-agnostic, so a module quiz
+  mounts with `{{< quiz module-quiz.yml >}}`. Two artifacts share the schema — per-chapter `quiz.yml`
+  (2–3 MCQ) and a cumulative `modules/<NN>/module-quiz.yml` (~8–12 MCQ). `quiz_lint.py` now globs
+  `module-quiz.yml` and emits an advisory (non-fatal) NOTE when a module quiz is outside the band.
+  **Mount location = a rendered module landing `modules/<NN>/index.qmd`** (chosen over rendering the
+  GitHub-facing `README.md`); the page is added to render globs + nav in Task 64, and each module's
+  real `index.qmd` + `module-quiz.yml` ships with its assessment task. Proven on a staging M0 landing:
+  rendered 8 questions, scored 8/8, persisted `localStorage["larnix-quiz:m0-module-quiz"]`.
 
 ---
 

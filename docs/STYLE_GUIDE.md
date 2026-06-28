@@ -73,6 +73,20 @@ Rules:
 - Match exercise difficulty to the chapter's tier. A 🟢 chapter must not hide a 🔴 exercise without labelling it a stretch goal.
 - State the expected time to complete.
 
+### Quizzes & module assessment (P1-D11)
+
+Two quiz artifacts share one schema (`infra/ci/quiz_lint.py`), both rendered and
+scored client-side by the P0 quiz engine (score saved to `localStorage`, ₹0):
+
+- **Per-chapter quick check** — a `quiz.yml` (2–3 MCQ) beside each chapter, mounted
+  in the chapter with `{{< quiz quiz.yml >}}`. Immediate recall after the lesson.
+- **Cumulative module quiz** — one `module-quiz.yml` (~8–12 MCQ) per module,
+  mounted on the **module landing page** (`modules/<NN>/index.qmd`) with
+  `{{< quiz module-quiz.yml >}}`. End-of-module consolidation (the Varsity model).
+
+Each MCQ needs an `answer` (0-based) and a one-line `explanation`. The linter flags
+a module quiz outside the ~8–12 band with an advisory note (not a failure).
+
 ---
 
 ## 7. Required components & formatting
