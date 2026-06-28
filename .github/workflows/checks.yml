@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -54,6 +54,9 @@ jobs:
 
       - name: Review-cards schema (spaced-repetition seeding)
         run: python infra/ci/review_cards_lint.py
+
+      - name: Twin drift check (R10 / P1-D10)
+        run: python infra/ci/make_twin.py --check
 
   notebooks:
     name: Notebook execution (R10)

@@ -14,6 +14,7 @@ GitHub Actions workflows.
 | `browser_import_lint.py` | R3 (P0 task 11) | `compute: browser` chapters may import only Pyodide-safe packages (stdlib + curated allow-list; known-unsafe denylist). |
 | `free_fallback_check.py` | R6 (P0 task 11) | Chapters referencing a paid API must also show a free fallback (Ollama/Groq/free tier). |
 | `review_cards_lint.py` | SR seeding (P0 task 13, P0-D3) | Validates the optional `review_cards:` front-matter block (Q/A pairs from Key Takeaways). |
+| `make_twin.py` | Twin drift (P1-D10 / D0016) | **Generates** each browser chapter's CI twin `.ipynb` from its `.qmd` (worked-example cells + a grader bootstrap + per-exercise `<details>` solution + asserts) and, in `--check` mode, fails if a committed twin drifts from source. |
 
 ## Run locally
 
@@ -53,3 +54,7 @@ Dependencies: `infra/ci/requirements.txt` (PyYAML) for the schema linters;
   ships a companion **executable twin** `.ipynb` under `modules/` (the worked
   example + exercise solutions + grader asserts). `run_notebooks.py` executes it,
   giving R10 real teeth; the `.qmd` provides the interactive in-browser UX.
+- **Twins are generated, not hand-written (P1-D10):** derive/refresh a twin with
+  `python infra/ci/make_twin.py --write <chapter.qmd>` (omit the path to do all
+  browser chapters) and commit it. CI runs `make_twin.py --check` to fail on drift,
+  so a chapter edit that isn't reflected in its twin is caught at PR time.

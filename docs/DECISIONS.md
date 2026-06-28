@@ -68,6 +68,15 @@
   - R3 (`browser_import_lint.py`) now allow-lists `lib` so `from lib.grader …` passes; the broader
     fail-closed R3 hardening remains Task 4. CPython `lib/test_grader.py` (6 tests) stays the
     off-browser evidence.
+- **Implementation note — P1-D10 twin generator (Task 2, 2026-06-28).** `infra/ci/make_twin.py`
+  derives each browser chapter's CI twin from its `.qmd`: worked-example `{pyodide}` cells verbatim,
+  a grader-bootstrap cell (locates `lib/grader.py`, imports `run_tests` — single-sourced off-browser
+  too), then, per auto-graded exercise, the hidden `<details>` solution + the `run_tests(...)` block
+  lifted from the exercise cell. `setup:` cells and rubric/stretch exercises (no `run_tests`) are
+  skipped. `--write` regenerates twins; `--check` (wired into CI before R10 execution) fails on drift.
+  Output is byte-deterministic so the check is stable. Authoring rule this imposes: a hidden solution
+  must be a runnable cell given the cells above it. The M0 Ch1 twin was migrated to the generated
+  form (its pasted grader removed) and executes clean under `run_notebooks.py`.
 
 ---
 
