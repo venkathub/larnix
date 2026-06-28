@@ -19,6 +19,8 @@ exclude = [
   "^https?://127\\.0\\.0\\.1",
   "^https?://0\\.0\\.0\\.0",
   "example\\.com",
+  # npmjs.com returns 403 to automated checkers (bot-blocking), not a broken link.
+  "^https?://(www\\.)?npmjs\\.com",
 ]
 
 # Be resilient to rate limits and slow hosts.
