@@ -86,6 +86,13 @@
   GitHub-facing `README.md`); the page is added to render globs + nav in Task 64, and each module's
   real `index.qmd` + `module-quiz.yml` ships with its assessment task. Proven on a staging M0 landing:
   rendered 8 questions, scored 8/8, persisted `localStorage["larnix-quiz:m0-module-quiz"]`.
+- **Implementation note — R3 hardening (Task 4, 2026-06-28).** `browser_import_lint.py` is the
+  load-bearing P1 gate and was already fail-closed (strict allow-list incl. `lib`; unknown imports
+  fail; `KNOWN_UNSAFE` denylist for heavyweights). Added the P1-D7 guard: a pure-Python package
+  installed at runtime must be declared with a `# micropip: <name>` annotation, which exempts only
+  the named module and **never** rescues a `KNOWN_UNSAFE` package (e.g. an annotated `torch` still
+  fails — no pure-Python wheel exists). So a bare `import seaborn`/`import torch` fails, while a
+  deliberate `micropip.install("seaborn")` + `# micropip: seaborn` passes. +6 tests in `test_r_gates`.
 
 ---
 

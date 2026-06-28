@@ -73,6 +73,42 @@ class BrowserImportTests(unittest.TestCase):
                 fh.write('---\ncompute: "browser"\n---\n```{pyodide}\nimport torch\n```\n')
             self.assertTrue(r3.check_file(p))
 
+    def test_micropip_declared_parsing(self):
+        code = "# micropip: seaborn, plotly\nimport seaborn as sns\nimport plotly"
+        self.assertEqual(r3.micropip_declared(code), {"seaborn", "plotly"})
+
+    def test_micropip_annotation_allows_named(self):
+        # seaborn is pure-Python and micropip-installable; declared → passes.
+        self.assertEqual(r3.check_imports({"seaborn"}, {"seaborn"}), [])
+
+    def test_micropip_annotation_is_scoped(self):
+        # Declaring seaborn must not exempt an undeclared neighbour.
+        problems = r3.check_imports({"seaborn", "plotly"}, {"seaborn"})
+        self.assertTrue(problems and all("plotly" in p for p in problems))
+
+    def test_micropip_cannot_rescue_known_unsafe(self):
+        # torch has no pure-Python wheel — annotation must not let it through.
+        self.assertTrue(r3.check_imports({"torch"}, {"torch"}))
+
+    def test_browser_chapter_micropip_seaborn_passes(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "b.qmd")
+            with open(p, "w") as fh:
+                fh.write(
+                    '---\ncompute: "browser"\n---\n'
+                    '```{pyodide}\nimport micropip\n'
+                    'await micropip.install("seaborn")  # micropip: seaborn\n'
+                    'import seaborn as sns\n```\n'
+                )
+            self.assertEqual(r3.check_file(p), [])
+
+    def test_browser_chapter_bare_seaborn_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "b.qmd")
+            with open(p, "w") as fh:
+                fh.write('---\ncompute: "browser"\n---\n```{pyodide}\nimport seaborn\n```\n')
+            self.assertTrue(r3.check_file(p))
+
 
 # ── R6 free fallback ─────────────────────────────────────────────────────────
 class FreeFallbackTests(unittest.TestCase):
