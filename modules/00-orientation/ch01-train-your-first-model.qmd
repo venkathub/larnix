@@ -37,6 +37,7 @@ format:
     toc-depth: 3
     code-copy: true
     code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
 execute:
   enabled: false
 ---
