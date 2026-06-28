@@ -345,6 +345,34 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   border-radius: 999px !important; font-family: "Nunito"; font-weight: 800; font-size: 0.82rem;
 }
 
+// ── "Running" feedback for live cells ───────────────────────────────────────
+// quarto-live toggles a tiny .exercise-editor-eval-indicator spinner while a cell
+// evaluates; amplify it (no JS) so it's obvious the cell is working — including
+// the long first run while Python downloads.
+.exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none))::after {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 6;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, transparent 0%, var(--c-teal) 35%, var(--c-violet) 65%, transparent 100%);
+  background-size: 220% 100%; animation: lx-loadbar 1.05s linear infinite;
+}
+@keyframes lx-loadbar { from { background-position: 220% 0; } to { background-position: -220% 0; } }
+
+// Dim + lock the Run button on the cell that is running.
+.exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code {
+  pointer-events: none; opacity: 0.5;
+}
+
+// Turn the bare spinner into a clear "Running…" chip.
+.exercise-editor-eval-indicator { color: var(--lx-brand) !important; }
+.exercise-editor-eval-indicator:not(.d-none) {
+  display: inline-flex !important; align-items: center; vertical-align: middle;
+  width: 0.85rem; height: 0.85rem;
+}
+.exercise-editor-eval-indicator:not(.d-none)::after {
+  content: "Running…"; margin-left: 0.55rem; font-family: "Nunito"; font-weight: 800;
+  font-size: 0.78rem; color: var(--lx-brand); white-space: nowrap;
+}
+
 // Pyodide cell OUTPUT rendered as a dark terminal window (both page themes).
 .exercise-cell-output {
   position: relative; margin: 0.7rem 0 0;
