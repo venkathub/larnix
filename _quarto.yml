@@ -10,7 +10,7 @@ project:
 
 # "Open in Colab" target — set at publish time (never hardcoded in the shortcode).
 # Override per-environment with LARNIX_COLAB_REPO / LARNIX_COLAB_BRANCH.
-larnix-colab-repo: "OWNER/REPO"
+larnix-colab-repo: "venkathub/larnix"
 larnix-colab-branch: "main"
 
 # Execution settings. `freeze: auto` caches computed cell output so a fresh
@@ -22,7 +22,8 @@ execute:
 website:
   title: "Larnix"
   description: "A free, beginner-to-frontier school for AI/ML — every chapter runs."
-  site-url: "https://larnix.github.io"
+  site-url: "https://venkathub.github.io/larnix"
+  favicon: favicon.svg
   search:
     location: navbar
     type: overlay
@@ -37,7 +38,7 @@ website:
         text: About
     right:
       - icon: github
-        href: https://github.com/larnix
+        href: https://github.com/venkathub/larnix
         aria-label: Larnix on GitHub
   sidebar:
     style: floating
