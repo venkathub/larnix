@@ -1,0 +1,56 @@
+---
+title: "Sandbox — in-browser Python (internal)"
+subtitle: "Not learner content. Proves quarto-live + Pyodide runs Python (incl. scikit-learn) in the browser."
+search: false
+format: live-html
+# `{pyodide}` cells run client-side in the browser, never at render time, so we
+# disable Quarto's render-time execution (no Python/Jupyter kernel needed to build).
+execute:
+  enabled: false
+---
+
+::: {.callout-warning}
+**Internal scratch page.** It exists to prove the in-browser runtime
+(`quarto-live` + Pyodide, per DECISIONS D0005) actually executes Python — and
+specifically scikit-learn, the sample chapter's premise (spike **V-1** / risk
+**R3**). The code blocks below are *live*: press **Run** in a browser. They do
+**not** execute during `quarto render` — execution happens client-side, so this
+page is verified by clicking it in a real browser (or the preview deploy).
+:::
+
+## 1. Python is running in your browser
+
+Press **Run**. The first run downloads the Pyodide runtime (a few seconds), then
+executes — with **zero install** and at **₹0**.
+
+```{pyodide}
+print("Python is running in your browser 🎉")
+2 + 2
+```
+
+## 2. scikit-learn in the browser (the sample-chapter premise)
+
+This loads scikit-learn inside Pyodide, trains a tiny classifier on the Iris
+dataset (bundled with scikit-learn — no network), and prints its accuracy.
+
+```{pyodide}
+#| caption: "Train + score a classifier, entirely in the browser"
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0
+)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+acc = accuracy_score(y_test, model.predict(X_test))
+print(f"Test accuracy: {acc:.2%}")
+```
+
+If the cells above run and report an accuracy, the in-browser runtime is proven
+and the sample chapter's "train your first model, zero install" promise holds.

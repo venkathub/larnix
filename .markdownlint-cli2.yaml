@@ -1,0 +1,32 @@
+# markdownlint-cli2 config — structural linting for Markdown docs.
+# Learner-facing prose tone is handled by Vale; this enforces Markdown hygiene.
+config:
+  default: true
+  # Line length: our prose wraps by hand but varies (tables, links) — off.
+  MD013: false
+  # Inline HTML is intentional (<details> solutions, <br>, badge spans).
+  MD033: false
+  # First line need not be a top-level heading (some docs open with a blockquote).
+  MD041: false
+  # Allow duplicate heading text under different parent sections.
+  MD024:
+    siblings_only: true
+  # Ordered lists: don't force 1/2/3 vs 1/1/1 — allow either style.
+  MD029: false
+  # Fenced code without a language is allowed (chapter "expected output" blocks).
+  MD040: false
+  # Bold lead-ins are used as lightweight pseudo-headings in some planning docs.
+  MD036: false
+  # Quarto chapters carry their title in front-matter; don't double-count it
+  # against a body H1 (front-matter + one H1 is the normal pattern).
+  MD025:
+    front_matter_title: ""
+
+globs:
+  - "**/*.md"
+
+ignores:
+  - "**/_site/**"
+  - "_extensions/**"
+  - "node_modules/**"
+  - ".git/**"

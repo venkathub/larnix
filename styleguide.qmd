@@ -1,0 +1,63 @@
+---
+title: "Design system — internal styleguide"
+subtitle: "Not learner content. Renders every Larnix UI component for review + the a11y gate."
+search: false
+---
+
+::: {.callout-warning}
+This page is an **internal styleguide**, not a chapter. It exists so the design
+system can be eyeballed and so the accessibility gate (alt-text + colour
+contrast) has a single page that exercises every component. Toggle the
+light/dark switch in the navbar to check both themes.
+:::
+
+## Difficulty badges
+
+A chapter's tier, shown as a labelled pill (the colour is reinforced by text, so
+meaning never depends on colour alone):
+
+- {{< badge difficulty=beginner >}}
+- {{< badge difficulty=intermediate >}}
+- {{< badge difficulty=advanced >}}
+
+## Compute badges
+
+Where a chapter runs:
+
+- {{< badge compute=browser >}} — runs in the browser, zero install, ₹0
+- {{< badge compute=colab >}} — opens in Google Colab (free tier)
+- {{< badge compute=gpu >}} — needs a GPU session
+
+## Status badges
+
+How fresh the content is:
+
+- {{< badge status=stable >}}
+- {{< badge status=frontier >}}
+
+## A badge row (as it appears under a chapter title)
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## Key Takeaways box
+
+Authored as a fenced div with class `key-takeaways`:
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The Key Takeaways box is the one block a learner can re-read to recall the
+   whole chapter.
+2. It uses the brand accent and a left border so it stands out from notes/tips.
+3. Authors write `::: {.key-takeaways}` and a numbered list inside.
+:::
+
+## Standard callouts (for reference)
+
+::: {.callout-tip}
+Tip — a practical shortcut.
+:::
+
+::: {.callout-warning}
+Watch out — a common mistake.
+:::

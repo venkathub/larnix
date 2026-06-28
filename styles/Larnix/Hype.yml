@@ -1,0 +1,10 @@
+extends: existence
+message: "Avoid hype — '%s'. Let the ideas impress on their own (STYLE_GUIDE §3)."
+level: error
+ignorecase: true
+tokens:
+  - revolutionary
+  - game-changing
+  - game changer
+  - magical
+  - magic

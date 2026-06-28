@@ -1,0 +1,120 @@
+# Content & code quality gates (extended task by task through P0).
+#
+# Tasks 4 + 7 add the schema gates; task 8 adds the R10 notebook-execution gate;
+# task 9 adds the prose/spell/link gates. Later: a11y (task 10), R1/R3/R6 (task 11).
+
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  schema:
+    name: Schema, a11y & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install CI deps
+        run: pip install -r infra/ci/requirements.txt
+
+      - name: Unit tests (schema linters)
+        working-directory: infra/ci
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint -v
+
+      - name: Unit tests (grader)
+        working-directory: lib
+        run: python -m unittest -v
+
+      - name: Lint chapter front-matter
+        run: python infra/ci/frontmatter_lint.py
+
+      - name: Lint quizzes
+        run: python infra/ci/quiz_lint.py
+
+      - name: Accessibility (alt-text + theme contrast)
+        run: python infra/ci/a11y_check.py
+
+      - name: R1 — currency check
+        run: python infra/ci/currency_check.py
+
+      - name: R3 — browser-import lint
+        run: python infra/ci/browser_import_lint.py
+
+      - name: R6 — free-fallback check
+        run: python infra/ci/free_fallback_check.py
+
+      - name: Review-cards schema (spaced-repetition seeding)
+        run: python infra/ci/review_cards_lint.py
+
+  notebooks:
+    name: Notebook execution (R10)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install notebook deps
+        run: pip install -r infra/ci/requirements-notebooks.txt
+
+      - name: Register Jupyter kernel
+        run: python -m ipykernel install --user --name python3
+
+      - name: Unit tests (R10 runner)
+        working-directory: infra/ci
+        run: python -m unittest test_run_notebooks -v
+
+      - name: Execute notebooks (R10)
+        run: python infra/ci/run_notebooks.py
+
+  prose:
+    name: Prose, spelling & links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tools (pinned)
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/errata-ai/vale/releases/download/v3.9.1/vale_3.9.1_Linux_64-bit.tar.gz \
+            | sudo tar xz -C /usr/local/bin vale
+          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
+            | sudo tar xz -C /usr/local/bin lychee
+          pip install codespell==2.4.2
+          npm install -g markdownlint-cli2@0.18.1
+
+      - name: Vale (tone / banned words)
+        run: vale --glob='!**/_extensions/**' . modules
+
+      - name: markdownlint
+        run: markdownlint-cli2
+
+      - name: codespell
+        run: codespell .
+
+      - name: Link check (lychee)
+        run: lychee --config lychee.toml --no-progress 'docs/**/*.md' '*.qmd' 'modules/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md

@@ -1,0 +1,75 @@
+project:
+  type: website
+  output-dir: _site
+  # Single Quarto project at the repo root (DECISIONS D0013). Render the landing
+  # pages and the module chapters; the CI twins (.ipynb) and fixtures are not
+  # learner pages and are excluded. Chapter sidebar nav lands in P0 task 15.
+  render:
+    - "*.qmd"
+    - "modules/**/*.qmd"
+
+# "Open in Colab" target — set at publish time (never hardcoded in the shortcode).
+# Override per-environment with LARNIX_COLAB_REPO / LARNIX_COLAB_BRANCH.
+larnix-colab-repo: "venkathub/larnix"
+larnix-colab-branch: "main"
+
+# Execution settings. `freeze: auto` caches computed cell output so a fresh
+# `quarto render` does not need to re-execute unchanged pages. CI (P0 task 8)
+# executes notebooks explicitly; the R10 gate owns "everything runs".
+execute:
+  freeze: auto
+
+website:
+  title: "Larnix"
+  description: "A free, beginner-to-frontier school for AI/ML — every chapter runs."
+  site-url: "https://venkathub.github.io/larnix"
+  favicon: favicon.svg
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    title: "Larnix"
+    left:
+      - href: index.qmd
+        text: Home
+      - href: modules/00-orientation/ch01-train-your-first-model.qmd
+        text: Start learning
+      - href: about.qmd
+        text: About
+    right:
+      - icon: github
+        href: https://github.com/venkathub/larnix
+        aria-label: Larnix on GitHub
+  sidebar:
+    style: floating
+    search: true
+    contents:
+      - section: "M0 — Orientation"
+        contents:
+          - text: "Ch1 — Train your first model"
+            href: modules/00-orientation/ch01-train-your-first-model.qmd
+  page-footer:
+    center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
+
+format:
+  html:
+    # Larnix theme layered on cosmo (light) / darkly (dark). The full design
+    # system — Key Takeaways box, difficulty/compute/status badges — lives in
+    # theme/larnix*.scss; badges are authored via the `badge` shortcode
+    # (_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
+    #
+    # NOTE: browser chapters use `format: live-html` and must restate this
+    # theme in their own front-matter (live-html is a distinct format that does
+    # not inherit these `html` settings). Defining live-html here instead would
+    # make the website render every page twice. See DECISIONS D0013.
+    theme:
+      light:
+        - cosmo
+        - theme/larnix.scss
+      dark:
+        - darkly
+        - theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap

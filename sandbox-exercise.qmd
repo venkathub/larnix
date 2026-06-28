@@ -1,0 +1,111 @@
+---
+title: "Sandbox — auto-grader harness (internal)"
+subtitle: "Not learner content. Retires spike V-1: proves Python exercise grading works in-browser."
+search: false
+format: live-html
+execute:
+  enabled: false
+---
+
+::: {.callout-warning}
+**Internal scratch page** retiring spike **V-1** (`P0_SPEC.md §9`): proving
+Python exercise grading works in the browser before the sample chapter relies on
+it. Section A is the harness Larnix actually uses — a `/lib` assert helper run in
+plain `{pyodide}` cells (its logic is unit-tested in CPython under `lib/`).
+Section B shows quarto-live's *native* exercise UI (editor + hint + solution),
+available for richer interactions. Press **Run** in a browser to see grading.
+:::
+
+## A. Assert-graded exercise (the Larnix harness)
+
+First, a setup cell defines the grader helper (the canonical, unit-tested copy
+lives at `lib/grader.py`):
+
+```{pyodide}
+#| edit: false
+_NUMERIC = (int, float)
+
+def _is_number(x):
+    return isinstance(x, _NUMERIC) and not isinstance(x, bool)
+
+def _equalish(got, expected, tol):
+    if _is_number(got) and _is_number(expected):
+        return abs(got - expected) <= tol
+    return got == expected
+
+def run_tests(tests, tol=1e-9):
+    tests = list(tests)
+    failures = []
+    for label, got, expected in tests:
+        ok = _equalish(got, expected, tol)
+        line = f"{'✅' if ok else '❌'} {label}: got {got!r}"
+        if not ok:
+            line += f", expected {expected!r}"
+        print(line)
+        if not ok:
+            failures.append(label)
+    if failures:
+        raise AssertionError(
+            f"{len(failures)} of {len(tests)} test(s) failed: " + ", ".join(failures))
+    print(f"\nAll {len(tests)} tests passed ✅")
+    return True
+```
+
+**Exercise.** Implement `accuracy(y_true, y_pred)` — the fraction of predictions
+that match the truth. Complete the marked line, then press **Run**.
+
+```{pyodide}
+def accuracy(y_true, y_pred):
+    """Return the fraction of matching predictions, as a float in [0, 1]."""
+    correct = sum(1 for a, b in zip(y_true, y_pred) if ____)  # TODO: compare a and b
+    return correct / len(y_true)
+```
+
+```{pyodide}
+# Auto-grader — runs in the sandbox.
+run_tests([
+    ("all correct", accuracy([1, 1, 1], [1, 1, 1]), 1.0),
+    ("half right",  accuracy([1, 0],    [1, 1]),    0.5),
+    ("none right",  accuracy([0, 0],    [1, 1]),    0.0),
+])
+```
+
+<details><summary>Show solution</summary>
+
+```python
+def accuracy(y_true, y_pred):
+    correct = sum(1 for a, b in zip(y_true, y_pred) if a == b)
+    return correct / len(y_true)
+```
+
+Compare each pair with `a == b`; summing the `1`s counts the matches, and
+dividing by the number of labels gives the fraction.
+</details>
+
+## B. quarto-live native exercise UI (richer, optional)
+
+The same runtime ships an exercise widget with **Hint** and **Show solution**
+buttons. Below, `____` is the blank; the hint and solution cells share the
+exercise key `ex_greet`.
+
+```{pyodide}
+#| exercise: ex_greet
+#| caption: "Finish greet()"
+def greet(name):
+    return ____  # TODO
+greet("Larnix")
+```
+
+```{pyodide}
+#| exercise: ex_greet
+#| hint: true
+# Concatenate "Hello, " with name.
+```
+
+```{pyodide}
+#| exercise: ex_greet
+#| solution: true
+def greet(name):
+    return "Hello, " + name
+greet("Larnix")
+```

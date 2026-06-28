@@ -1,0 +1,320 @@
+---
+title: "Train your first model — in your browser"
+module: "M0 — Orientation"
+chapter: 1
+difficulty: "beginner"
+prereqs: []
+learning_objectives:
+  - "Run Python in your browser with zero install"
+  - "Train and call a scikit-learn classifier"
+  - "Read a basic accuracy number and say what it means"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-28"
+est_minutes: 20
+review_cards:
+  - id: what-is-a-model
+    q: "In machine learning, what is a model?"
+    a: "A function learned from example data that maps an input to a prediction."
+  - id: what-is-training
+    q: "What does it mean to train a model?"
+    a: "Adjust the model on labelled examples until its predictions line up with the known answers."
+  - id: what-is-accuracy
+    q: "What does accuracy measure?"
+    a: "The fraction of predictions that match the true labels — a number from 0 to 1, often shown as a percent."
+format:
+  live-html:
+    # live-html does not inherit the project `html` theme, so restate it here
+    # (see DECISIONS D0013 / the note in _quarto.yml).
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You are about to train a real machine-learning model — in this browser tab, with
+nothing installed. No account, no download, no setup. Scroll to the first code
+block, press **Run**, and in a few seconds a model will sort flowers it has never
+seen before, and tell you how often it gets them right.
+
+The flowers are irises. Picture three species laid out on a table. For each
+flower someone measured four things: the length and width of its petals and of
+its sepals (the green leaf-like parts under the petals). Given those four
+numbers, can a computer learn to name the species? That is the whole task — and
+by the end of this page you will have built the thing that does it.
+
+> By the end of this chapter you'll be able to train a classifier, call it on new
+> data, and read its accuracy.
+
+---
+
+## The idea, in plain language
+
+Start with the word that does the heavy lifting: **model**.
+
+A **model** is a function that you *learn from examples* instead of writing by
+hand. You do not sit down and code the rule "if the petals are long and narrow,
+it's species B." Instead you show the computer many flowers whose species you
+already know, and it works out the rule for you.
+
+Three words describe the whole cycle:
+
+- **Training** (also called *fitting*): you hand the model a pile of examples
+  where the answer is known — here, flowers labelled with their species — and it
+  adjusts itself until its guesses match those known answers reasonably well.
+- **Predicting**: you give the trained model a *new* flower it has not seen, and
+  it outputs a species.
+- **Accuracy**: you check how often it is right. If you test it on 40 flowers and
+  it names 38 correctly, that is 38/40 = 0.95, or **95%** accuracy.
+
+One habit matters from day one: you test on flowers the model did **not** train
+on. A model can score well on examples it has already memorised and still fail on
+new ones, the way reciting answers you've seen is not the same as understanding.
+So we split the data into a **training set** (to learn from) and a **test set**
+(to grade on).
+
+That is the entire plan. The code below carries it out in five short steps.
+
+---
+
+## Let's build it (worked example)
+
+These blocks run Python **in your browser** through Pyodide. The first run
+downloads the runtime, which takes a few seconds; after that it is instant. Press
+**Run** on each block in order.
+
+```{pyodide}
+#| caption: "Step 1 — load the example flowers"
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+print("Measurements for", X.shape[0], "flowers, with", X.shape[1], "numbers each.")
+print("First flower's measurements:", X[0])
+print("Its species (as a number 0/1/2):", y[0])
+```
+
+`X` holds the four measurements for every flower; `y` holds the species, written
+as a number (0, 1, or 2) because models work with numbers.
+
+```{pyodide}
+#| caption: "Step 2 — split into a training set and a test set"
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0
+)
+print("Training flowers:", X_train.shape[0])
+print("Test flowers:", X_test.shape[0])
+```
+
+We keep a quarter of the flowers aside as the test set. `random_state=0` makes the
+split the same every time, so your numbers match this page.
+
+```{pyodide}
+#| caption: "Step 3 — train (fit) the model"
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+print("Trained! The model has now seen", X_train.shape[0], "labelled flowers.")
+```
+
+`LogisticRegression` is a small, well-understood classifier — a good first model.
+`fit` is the training step. `max_iter=200` gives it enough rounds to settle.
+
+```{pyodide}
+#| caption: "Step 4 — predict on flowers it has never seen"
+predictions = model.predict(X_test)
+print("Predicted species for the first 10 test flowers:")
+print(predictions[:10])
+print("The true species for those same flowers:")
+print(y_test[:10])
+```
+
+```{pyodide}
+#| caption: "Step 5 — measure accuracy"
+from sklearn.metrics import accuracy_score
+
+acc = accuracy_score(y_test, model.predict(X_test))
+print(f"Accuracy on the test set: {acc:.2%}")
+```
+
+That percentage is the share of test flowers the model named correctly. You built
+a model, trained it, used it on new data, and graded it — the full loop.
+
+> 🔬 Going deeper (optional): try changing `test_size` to `0.5` and re-running
+> from Step 2. With fewer training flowers, does the accuracy move? That tension —
+> more data to learn from versus more data to grade on — comes back often.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **model** is a function learned from labelled examples, not a rule you write
+   by hand.
+2. **Training** (fitting) adjusts the model on known answers; **predicting** runs
+   it on new inputs.
+3. **Accuracy** is the fraction of predictions that match the truth — always
+   measured on data the model did **not** train on.
+4. You did all of this in the browser, at zero cost and zero install.
+:::
+
+---
+
+## Practice
+
+The grader below gives each exercise a consistent pass/fail message. Run this
+setup block once, then do the exercises.
+
+```{pyodide}
+#| edit: false
+def _is_number(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+def _equalish(got, expected, tol):
+    if _is_number(got) and _is_number(expected):
+        return abs(got - expected) <= tol
+    return got == expected
+
+def run_tests(tests, tol=1e-9):
+    tests = list(tests)
+    failures = []
+    for label, got, expected in tests:
+        ok = _equalish(got, expected, tol)
+        line = f"{'✅' if ok else '❌'} {label}: got {got!r}"
+        if not ok:
+            line += f", expected {expected!r}"
+        print(line)
+        if not ok:
+            failures.append(label)
+    if failures:
+        raise AssertionError(
+            f"{len(failures)} of {len(tests)} test(s) failed: " + ", ".join(failures))
+    print(f"\nAll {len(tests)} tests passed ✅")
+    return True
+```
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the one marked line so the model is trained. Replace `____` with the
+call that fits `model` on the training data, then press **Run**.
+
+```{pyodide}
+#| exercise: ex_fit
+from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+model = LogisticRegression(max_iter=200)
+____  # TODO: train the model on X_train and y_train
+
+run_tests([
+    ("model predicts one label per test flower", len(model.predict(X_test)), len(y_test)),
+])
+```
+
+<details><summary>Show solution</summary>
+
+```python
+model.fit(X_train, y_train)
+```
+
+`fit` is the training step: it takes the inputs `X_train` and their known answers
+`y_train`. After it runs, `model.predict` works on new data.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `accuracy(y_true, y_pred)` — the fraction of predictions that match the
+truth, as a number between 0 and 1. Complete the marked line.
+
+```{pyodide}
+#| exercise: ex_accuracy
+def accuracy(y_true, y_pred):
+    """Return the fraction of matching predictions, as a float in [0, 1]."""
+    correct = sum(1 for a, b in zip(y_true, y_pred) if ____)  # TODO: compare a and b
+    return correct / len(y_true)
+
+run_tests([
+    ("all correct", accuracy([1, 1, 1], [1, 1, 1]), 1.0),
+    ("half right",  accuracy([1, 0],    [1, 1]),    0.5),
+    ("none right",  accuracy([0, 0],    [1, 1]),    0.0),
+])
+```
+
+<details><summary>Show solution</summary>
+
+```python
+def accuracy(y_true, y_pred):
+    correct = sum(1 for a, b in zip(y_true, y_pred) if a == b)
+    return correct / len(y_true)
+```
+
+`a == b` is `True` when a prediction matches the truth; summing those `True`s
+counts the matches, and dividing by the number of labels gives the fraction. This
+is what `accuracy_score` computed for you in Step 5.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈15 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Starting from the worked
+example, try to **beat 95% accuracy** on the test set. Ideas: raise `max_iter`,
+or swap `LogisticRegression` for another classifier such as
+`from sklearn.neighbors import KNeighborsClassifier`.
+
+**Rubric — a good solution:**
+
+- Trains on `X_train`/`y_train` only and reports accuracy on the held-out
+  `X_test`/`y_test` (no testing on training data).
+- States the change you made and the accuracy you reached.
+- Reaches at least the worked example's baseline, ideally higher.
+
+<details><summary>Show one possible solution</summary>
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+print(f"k-NN accuracy: {accuracy_score(y_test, knn.predict(X_test)):.2%}")
+```
+
+A nearest-neighbour classifier often does well on Iris. Other approaches are fine
+too — the point is to change one thing, measure honestly on the test set, and
+compare.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You have run the complete machine-learning loop — load, split, train, predict,
+measure — on a classic dataset, without installing anything. Every later module
+reuses this loop on bigger data and stronger models. Next, we look at what the
+accuracy number does *not* tell you, and when it can mislead.

@@ -18,6 +18,7 @@ the gates built here.
 ## 1. Scope
 
 ### 1.1 In scope — subsystems built and proven on ONE sample chapter
+
 All six subsystems (`CLAUDE.md` → Architecture), bootstrapped to MVP and proven end-to-end on a
 single throwaway-quality-but-real sample chapter:
 
@@ -43,6 +44,7 @@ single throwaway-quality-but-real sample chapter:
 **Modules authored at scale:** **none.** Exactly **one sample chapter** (see §3 P0-D1).
 
 ### 1.2 Non-goals (explicit — to prevent scope creep)
+
 - **No module authored at scale.** M0–M16 content is P1+. P0 produces *one* chapter only.
 - **No GPU or `colab` chapter authored.** The Colab button + GPU-notebook CI policy are built and
   validated with a *minimal fixture*, not a real lesson. (GPU content starts P2; M11 rented-GPU is
@@ -108,6 +110,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 ### Pedagogical
 
 **P0-D1 — Which chapter to build as the sample.**
+
 - **(A, rec.) Pyodide scikit-learn "train your first model"** (Iris). Pyodide-safe; real "wow";
   clean assert-grader; reusable as M0/M4 content. *Con:* not 100% the literal M0 ch as planned.
 - (B) A pure-Python M1 chapter (e.g. *functions* or *data structures*). Purest test of the
@@ -116,12 +119,14 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
   not Pyodide-safe → breaks the in-browser gate (see Q-A); would force `colab`.
 
 **P0-D2 — Number of sample chapters.**
+
 - **(A, rec.) Exactly one `browser` chapter + one non-content `colab` fixture.** Matches "one
   sample chapter only"; still proves the Colab pattern. *Con:* GPU CI policy proven on a stub.
 - (B) Two full chapters (one `browser`, one `colab`). Proves more, end-to-end. *Con:* scope creep;
   violates the gate's "one chapter" intent; GPU verification adds wall-clock.
 
 **P0-D3 — Spaced-repetition seeding now vs later.**
+
 - **(A, rec.) Seed the *convention* only:** derive review cards from the Key Takeaways via a
   `review_cards:` block in front-matter/sidecar; ship a schema + one example; build the scheduler
   in P6. *Con:* cards exist but aren't yet scheduled.
@@ -131,6 +136,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 ### Technical
 
 **P0-D4 — In-browser Python runtime.**
+
 - **(A, rec.) `quarto-live` (Pyodide-backed live code cells in Quarto).** Native Quarto
   integration, editable runnable cells inline, least glue. *Con:* younger extension; pin version.
 - (B) Embed **JupyterLite** via iframe. Full Jupyter UX. *Con:* heavier, clunkier page integration,
@@ -138,6 +144,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 - (C) Hand-rolled Pyodide + custom JS. Max control. *Con:* most maintenance; reinvents the wheel.
 
 **P0-D5 — Auto-grader harness design.**
+
 - **(A, rec.) Use `quarto-live`'s native exercise grading + a thin assert convention in `/lib`.**
   Web-search validation (§9) confirms `quarto-live` already provides first-class exercises with
   `setup`, `hints`, `solution`, and **custom grading** (a `check: true` cell that returns pass/fail)
@@ -153,6 +160,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 - (C) Pure inline `assert` cells, no harness. Simplest. *Con:* no consistent pass/fail UX, no reuse.
 
 **P0-D6 — Quiz engine.**
+
 - **(A, rec.) Custom lightweight JS** reading a per-chapter/module `quiz.yml`, scoring MCQ
   client-side, progress in `localStorage`. Zero backend, matches `CLAUDE.md` "start static". *Con:*
   we own the code.
@@ -161,6 +169,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 - (C) Third-party (e.g. H5P). Rich. *Con:* heavy, external dependency, not docs-as-code.
 
 **P0-D7 — CI notebook-execution engine.**
+
 - **(A, rec.) `quarto render` with execution (freeze) for `.qmd` + `nbclient`/`jupyter execute`
   for standalone `.ipynb`.** One toolchain with the site build; fails CI on any cell error. *Con:*
   two code paths (qmd vs ipynb).
@@ -169,6 +178,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 - (C) **papermill**. Parameterized execution. *Con:* overkill for P0's single CPU notebook.
 
 **P0-D8 — Prose / link / spell stack.**
+
 - **(A, rec.) Vale (custom Larnix style enforcing the banned-word list) + markdownlint-cli2 +
   codespell + lychee (link-check).** All fast, CI-friendly, configurable. *Con:* authoring the Vale
   style rules up front.
@@ -176,6 +186,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
   (`STYLE_GUIDE §3`).
 
 **P0-D9 — Hosting / deploy.**
+
 - **(A, rec.) GitHub Pages for production + a PR preview deploy** (Pages or Netlify preview).
   In-repo, free, simple, satisfies the "public preview URL" exit criterion. *Con:* PR previews need
   a little extra wiring.
@@ -183,6 +194,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 - (C) Vercel. Good DX. *Con:* external; less natural for a Quarto static site than Pages/Netlify.
 
 **P0-D10 — Where the R-gates live + how they run.**
+
 - **(A, rec.) Python scripts under `infra/ci/`** (`currency_check.py` [R1], `browser_import_lint.py`
   [R3], `free_fallback_check.py` [R6]; R10 = the execution job in P0-D7), each with a tiny unit
   test, invoked by the Actions workflow on every PR. *Con:* a few scripts to maintain.
@@ -200,6 +212,7 @@ Each decision has a provisional ID (`P0-Dn`). On your confirmation they are logg
 Scope is the single sample chapter; this proves each assessment mechanism once.
 
 ### 4.1 Exercises (sample chapter) — 3, scaffolded per `STYLE_GUIDE §6`
+
 1. **Guided / fill-in-the-blank (🟢, ~5 min).** Complete one line to `.fit()` the classifier.
    *Graded:* assert harness checks the model is fitted and predicts the right shape; hidden
    solution in `<details>`.
@@ -213,17 +226,20 @@ Scope is the single sample chapter; this proves each assessment mechanism once.
 This deliberately exercises **both** grader types: deterministic assert (Ex 1–2) and rubric (Ex 3).
 
 ### 4.2 Module quiz (proof of engine)
+
 A `quiz.yml` with **3 MCQs** on the chapter's ideas (what is a model / what accuracy means /
-what "in the browser" buys you). The JS engine renders, scores client-side, shows correct answers
-+ explanations, and stores the score in `localStorage`. This proves the P1 quiz mechanism.
+what "in the browser" buys you). The JS engine renders, scores client-side, shows correct answers,
+explanations, and stores the score in `localStorage`. This proves the P1 quiz mechanism.
 
 ### 4.3 Capstone + rubric (proof of mechanism, not a real capstone)
+
 P0 has no module, so **no real capstone**. Instead, ship a one-page **sample `capstone.md` with a
 rubric** as a *template artifact* (criteria, levels, "did you measure it?" line per `ROADMAP §1`
 eval thread) so P1 authors inherit a proven rubric format. Clearly marked as a template, not
 graded content.
 
 ### 4.4 Spaced-repetition card seeding
+
 Per P0-D3(A): the sample chapter's **Key Takeaways → 3 review cards** in a `review_cards:` block
 (Q/A pairs), validated by schema in CI. The scheduler that serves them is P6; P0 proves the
 *authoring convention* so no P1 chapter needs retrofitting.
@@ -233,6 +249,7 @@ Per P0-D3(A): the sample chapter's **Key Takeaways → 3 review cards** in a `re
 ## 5. Quality plan
 
 ### 5.1 CI vs Colab-verified
+
 - **Runs in CI (blocking):** the one `browser` sample-chapter notebook executes top-to-bottom via
   P0-D7; the auto-grader cells pass; the front-matter schema validates; the quiz.yml schema
   validates; the `review_cards` schema validates.
@@ -241,6 +258,7 @@ Per P0-D3(A): the sample chapter's **Key Takeaways → 3 review cards** in a `re
   No real GPU lesson in P0.
 
 ### 5.2 Lint / link / spell gates (all blocking on PR)
+
 - **Prose tone:** Vale with the Larnix style — fails on banned words (`simply`, `just`,
   `obviously`, `trivially`, and the hype list) per `STYLE_GUIDE §3`.
 - **Markdown:** markdownlint-cli2.
@@ -248,6 +266,7 @@ Per P0-D3(A): the sample chapter's **Key Takeaways → 3 review cards** in a `re
 - **Links:** lychee link-check (internal + external).
 
 ### 5.3 The four R-gates (P0-D10) — blocking on PR
+
 - **R1 `currency_check.py`** — fails if any `status: frontier` chapter has `last_reviewed` > 90
   days (no-op now; mechanism proven).
 - **R3 browser-import lint** — fails a `compute: browser` chapter that imports a non-Pyodide
@@ -257,14 +276,18 @@ Per P0-D3(A): the sample chapter's **Key Takeaways → 3 review cards** in a `re
 - **R10 runs-in-CI** — every code block executes (5.1); a broken example fails the build.
 
 ### 5.4 Accessibility check (P0-D11) — blocking on PR
+
 A **minimal** a11y gate (the cross-cutting a11y concern in `CLAUDE.md`, instantiated early):
+
 - Alt-text presence on every image/diagram in the rendered site.
 - Theme colour-contrast check on the Key Takeaways box, badges, and dark/sepia modes (WCAG AA).
 - Implemented as a lightweight CI step (e.g. an axe/pa11y-style check against the built pages, or a
   scoped linter). Deliberately small in P0; expanded in later phases as content grows.
 
 ### 5.5 Correctness-review checklist (instantiates `STYLE_GUIDE §11` + `RISKS.md R10`)
+
 A PR checklist the author must tick:
+
 - [ ] Every code cell executed locally and in CI; outputs shown.
 - [ ] Every term defined on first use; no banned words; reads for a true beginner.
 - [ ] Numbers/claims verified; primary sources cited; no invented citations.
@@ -392,11 +415,13 @@ core assumptions hold.** One refinement and one new spike-risk surfaced.
 | **a11y CI** — pa11y / axe-core for alt-text + contrast (P0-D11) | ✅ Confirmed, current | `pa11y/pa11y-ci` (CI-centric runner); axe-core "detects up to 57% of issues, zero false positives" (2025/2026 comparisons). Covers alt-text + colour-contrast (WCAG A/AA). |
 
 ### Refinement (no decision reversed)
+
 - **R-1 → P0-D5.** `quarto-live` ships native exercise grading (`check:` cells, hints, solutions).
   P0-D5(A) is updated to **build on quarto-live's grading primitive** plus a thin `/lib` assert
   helper for consistency, rather than a fully hand-rolled harness. Less custom code; same UX.
 
 ### New spike-risk to retire early in P0
+
 - **V-1 (verify in Task 5/6).** quarto-live's published **grading examples are predominantly R
   (`webr`)**; Python/`pyodide` exercise-grading parity must be **proven on a scratch exercise
   before** authoring the sample chapter. *Fallback:* if Python grading lags, the `/lib` assert

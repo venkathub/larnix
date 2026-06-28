@@ -21,6 +21,7 @@ risking drift from) them:
 | `docs/DECISIONS.md` | Dated decision log | Choices implied here get logged there when made. |
 
 **Reconciliation actions taken in this revision** (cross-check vs PLAN/RISKS/STYLE_GUIDE):
+
 1. Module titles, chapter-count estimates, prerequisites, and difficulty tiers in §2 are now
    **aligned to `Larnix-PLAN.md`** (previously they were independent estimates).
 2. Difficulty uses the style guide's **🟢/🟡/🔴** notation (with B/I/A in prose); compute uses the
@@ -158,6 +159,7 @@ Each phase lists **goal · subsystems + modules · skills/pedagogy · entry crit
 and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
 
 ### P0 — Platform MVP + the pedagogy gate
+
 - **Goal.** Build and *prove* the entire content-delivery machine on **one** complete sample
   chapter before any module is authored at scale ("evals before features").
 - **Subsystems.** Content (chapter template), Build & Publish (Quarto site, theme/design system,
@@ -182,6 +184,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
         free-fallback check, runs-in-CI) per `RISKS.md §5`.
 
 ### P1 — Foundations track (M0–M3)
+
 - **Goal.** Author zero-to-literate entirely in-browser at ₹0: orientation + setup/cost chapter,
   Python, math-that-matters, data wrangling.
 - **Subsystems.** Content (M0–M3), Interactive Compute (Pyodide at scale), Auto-Grading (scaled,
@@ -198,6 +201,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
   - [ ] A non-technical learner can go zero → EDA capstone in-browser; `PORTFOLIO.md` bullet drafted.
 
 ### P2 — Core ML & Deep Learning (M4–M6)
+
 - **Goal.** Classical ML → deep learning → CNNs/RNNs; introduce the free-GPU workflow; prove
   auto-graders work for model-training exercises.
 - **Subsystems.** Content (M4–M6), Interactive Compute (Colab/Kaggle integration, GPU templates),
@@ -214,6 +218,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
   - [ ] Free-tier path confirmed on free Colab/Kaggle; per-module quizzes + rubric'd capstones.
 
 ### P3 — Transformers, LLMs, RL & Reasoning, Generative AI (M7–M10)
+
 - **Goal.** Reach the frontier: transformers from scratch; using/fine-tuning LLMs (LoRA + eval);
   RL/RLHF/DPO/GRPO + reasoning; diffusion/multimodal — runnable free via Ollama + free API tiers.
 - **Subsystems.** Content (M7–M10), Interactive Compute (Ollama + Groq/Gemini fallback pattern;
@@ -229,11 +234,12 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
   - [ ] GPU chapters Colab-verified & recorded; per-module quizzes + rubric'd capstones.
 
 ### P4 — Build Your Own LLM end-to-end (M11)
+
 - **Goal.** The signature module: data → tokenizer → pretrain → distributed training → post-train
   → quantize (GGUF) → serve (Ollama + vLLM), on a rented GPU billed by the second, with a smaller
   free path.
 - **Subsystems.** Content (M11), Interactive Compute (rented-GPU runbook — RunPod/Vast.ai/Modal —
-  + smaller-model free path), Currency/Ops (cost-tracking, asset/license ledger), Assessment (the
+  plus a smaller-model free path), Currency/Ops (cost-tracking, asset/license ledger), Assessment (the
   most rigorous capstone rubric).
   **Modules.** M11.
 - **Skills/pedagogy.** 🔴 tier; cost discipline under real spend (default path ≤ ₹500, with a free
@@ -248,6 +254,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
         manages the "expected GPT-4" risk (`RISKS.md R2`); asset licenses logged (`R11`).
 
 ### P5 — AI Engineering + Production MLOps/LLMOps (M12–M13)
+
 - **Goal.** Turn model-builders into shippers: RAG, agents & MCP; then serving, CI/CD, evals,
   monitoring, cost control for ML and LLM systems.
 - **Subsystems.** Content (M12–M13), Interactive Compute (browser demos + Colab + local Ollama),
@@ -263,6 +270,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
   - [ ] Per-module quizzes + rubric'd capstones; stack choices logged in `DECISIONS.md`.
 
 ### P6 — Responsible AI, Applied Electives, Career & Job-Readiness + Launch (M14–M16)
+
 - **Goal.** Close the loop to "job-ready": responsible AI & OWASP LLM Top 10; an applied elective;
   portfolio/interview prep; certification, learning tracks, spaced-repetition — and public launch.
 - **Subsystems.** Content (M14–M16), Assessment & Certification (exam config, certificate
@@ -282,6 +290,7 @@ and the per-module DoD in `CLAUDE.md`. Phases map 1:1 to PLAN's roadmap.
   - [ ] `PORTFOLIO.md` carries the headline quantified bullet for the whole platform.
 
 ### P7 — Maintenance & currency (ongoing)
+
 - **Goal.** Keep the largest practical risk (`R9`) and staleness (`R1`) in check forever.
 - **Subsystems.** Currency & Ops primarily; all content secondarily.
 - **Activities.** Quarterly review sprint + per-chapter owners; "What changed in AI" changelog;
