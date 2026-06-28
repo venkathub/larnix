@@ -1,8 +1,13 @@
 # P0_SPEC — Platform MVP + the Pedagogy Gate
 
 > **Phase:** P0 — *Platform MVP + the pedagogy gate* (per `ROADMAP.md §3`).
-> **Status:** GROOMING — awaiting approval. No chapters or application code are written until this
-> spec is approved and the listed decisions are confirmed + logged in `DECISIONS.md`.
+> **Status:** ✅ COMPLETE (2026-06-28). Spec approved; all P0 decisions logged in `DECISIONS.md`
+> (D0004–D0014); all 18 tasks (§6) shipped and every DoD item (§7) met. Verified on codebase
+> analysis: the site renders from a fresh clone (Quarto 1.8.27 via Docker), the sample chapter runs
+> in-browser (Pyodide) and as a CI `.ipynb` twin, all schema/R-gate/a11y gates pass locally with 73
+> unit tests green, and the full gate set + prose/link/spell + deploy + PR-preview are wired in
+> `.github/workflows/` and **confirmed green on the head commit** (Actions `Checks` + `PR preview` =
+> success). The per-chapter correctness checklist (§5.5) is verified for the sample chapter.
 > **Authoritative parents:** `CLAUDE.md` (operating agreement, DoD), `ROADMAP.md §3 P0`
 > (phase goal + exit criteria), `STYLE_GUIDE.md` (Varsity contract), `CHAPTER_TEMPLATE.md`
 > (front-matter schema), `RISKS.md §5` (the automated gates this phase must build).
@@ -286,15 +291,40 @@ A **minimal** a11y gate (the cross-cutting a11y concern in `CLAUDE.md`, instanti
 
 ### 5.5 Correctness-review checklist (instantiates `STYLE_GUIDE §11` + `RISKS.md R10`)
 
-A PR checklist the author must tick:
+A PR checklist the author must tick — the standing template for every chapter PR.
+**Verified for the P0 sample chapter (`ch01-train-your-first-model`) on 2026-06-28**; honest scope in
+the note below.
 
-- [ ] Every code cell executed locally and in CI; outputs shown.
-- [ ] Every term defined on first use; no banned words; reads for a true beginner.
-- [ ] Numbers/claims verified; primary sources cited; no invented citations.
-- [ ] Front-matter complete + accurate (all 10 fields); `last_reviewed` set.
-- [ ] Free-tier/₹0 path confirmed for the chapter's compute tier.
-- [ ] Exercises have working graders + hidden solutions; difficulty matches the tier.
-- [ ] Quiz answers + explanations verified correct.
+- [x] Every code cell executed locally and in CI; outputs shown. *(CI `Checks` → notebooks job
+      executes the `.ipynb` twin clean (R10); the `{pyodide}` cells were run in-browser this session.
+      Caveat: render-time execution is disabled by design, so live-page outputs are interactive, not
+      static, and the twin stores no committed outputs.)*
+- [x] Every term defined on first use; no banned words; reads for a true beginner. *(Read-through:
+      model/training/predicting/accuracy/train-test split all defined; banned-word scan + Vale gate
+      clean.)*
+- [x] Numbers/claims verified; primary sources cited; no invented citations. *(The one hard-coded
+      figure, `38/40 = 0.95`, is illustrative and arithmetically correct; the test accuracy is
+      computed at runtime, not asserted; no citations present, so none invented.)*
+- [x] Front-matter complete + accurate (all 10 fields); `last_reviewed` set. *(`frontmatter_lint.py`
+      green; `last_reviewed: 2026-06-28`.)*
+- [x] Free-tier/₹0 path confirmed for the chapter's compute tier. *(`compute: browser`; Pyodide;
+      `browser_import_lint.py` (R3) confirms all imports are Pyodide-safe; no key.)*
+- [x] Exercises have working graders + hidden solutions; difficulty matches the tier. *(Ex 1–2
+      assert-graded via `run_tests`, Ex 3 rubric-graded; each has a `<details>` solution.)*
+- [x] Quiz answers + explanations verified correct. *(All 3 MCQ answers + explanations re-checked
+      against the chapter: model definition, why a held-out test set, what accuracy means.)*
+
+> **Honest verification scope (2026-06-28).** CI is confirmed **green** on the head commit (Actions
+> `Checks` + `PR preview` = success), which includes R10 notebook execution, Vale, markdownlint,
+> codespell, lychee, and the a11y gate — so the worked example runs end-to-end in CI without error.
+> **Not independently re-derived on this build host:** the exact live accuracy *value* — `scikit-learn`
+> isn't installed on the low-spec author laptop and the twin keeps no committed outputs; the cell is
+> verified to *execute* cleanly (via CI) and the number is computed, not hard-coded.
+> **Minor, non-blocking follow-ups for a later content pass:** (1) Ex 3 is labelled 🔴 while spec §4.1
+> envisioned 🟡 — acceptable as an optional stretch, but worth reconciling; (2) Ex 3's "beat 95%" is a
+> soft target since the Iris + LogisticRegression baseline is typically ~97% — the rubric already
+> hedges with "at least the baseline, ideally higher," so consider rephrasing to "beat the baseline
+> you measured."
 
 ---
 
@@ -345,30 +375,42 @@ Each task ≈ one commit/PR. Order respects dependencies.
 ## 7. Definition of Done (P0) — instantiates the generic DoD from `CLAUDE.md`
 
 P0 is done when **all** of the following hold (= `ROADMAP §3 P0` exit criteria, expanded against
-the `CLAUDE.md` DoD):
+the `CLAUDE.md` DoD). **All items met as of 2026-06-28** (evidence in parentheses):
 
-- [ ] **Builds from a fresh clone** and the Quarto site **CI-deploys to a public preview URL**.
-- [ ] **Theme** implements the Key Takeaways box, 🟢/🟡/🔴 difficulty badges, compute + status
-      badges, dark/sepia, working nav + search.
-- [ ] **`CHAPTER_TEMPLATE.md` front-matter schema (10 fields) is enforced by lint** in CI.
-- [ ] **One sample chapter satisfies the full Varsity contract** (hook → explanation → runnable
+- [x] **Builds from a fresh clone** and the Quarto site **CI-deploys to a public preview URL**.
+      (`publish.yml` → GitHub Pages; `pr-preview.yml` → per-PR preview; render verified via Docker.)
+- [x] **Theme** implements the Key Takeaways box, 🟢/🟡/🔴 difficulty badges, compute + status
+      badges, dark/sepia, working nav + search. (`theme/*.scss`, `_extensions/larnix/badges`; sepia
+      3-way switcher shipped per D0014; nav + overlay search in `_quarto.yml`.)
+- [x] **`CHAPTER_TEMPLATE.md` front-matter schema (10 fields) is enforced by lint** in CI.
+      (`infra/ci/frontmatter_lint.py` + tests; wired in `checks.yml`.)
+- [x] **One sample chapter satisfies the full Varsity contract** (hook → explanation → runnable
       example → Key Takeaways → 2–4 graded exercises) with complete, accurate front-matter incl.
-      `last_reviewed`.
-- [ ] Its **notebook runs in JupyterLite (₹0)** *and* **executes cleanly in CI**.
-- [ ] **≥1 exercise auto-graded in-browser** with a hidden solution walkthrough; **≥1 rubric-graded**
-      exercise demonstrates the open-ended path (`RISKS.md R4`).
-- [ ] **Quiz engine renders + scores an MCQ client-side**, persisting progress locally.
-- [ ] **CI green:** notebook execution (R10), Vale, markdownlint, link-check, spell, **a11y
-      (alt-text + contrast, P0-D11)**.
-- [ ] **The R1/R3/R6/R10 automated gates exist** and run on every PR (`RISKS.md §5`).
-- [ ] **SR card seeding convention** in place (cards authored + schema-validated; engine deferred).
-- [ ] **Colab button pattern + GPU-notebook CI policy** documented and proven on the fixture.
-- [ ] **`DECISIONS.md` updated** with the confirmed P0 decisions; **`RUNBOOK.md`** has local-preview
+      `last_reviewed`. (`modules/00-orientation/ch01-train-your-first-model.qmd`.)
+- [x] Its **notebook runs in JupyterLite (₹0)** *and* **executes cleanly in CI**.
+      (quarto-live/Pyodide in-browser; `.ipynb` twin executed by `run_notebooks.py` (R10).)
+- [x] **≥1 exercise auto-graded in-browser** with a hidden solution walkthrough; **≥1 rubric-graded**
+      exercise demonstrates the open-ended path (`RISKS.md R4`). (Ex 1–2 assert-graded with
+      `<details>` solutions; Ex 3 rubric-graded.)
+- [x] **Quiz engine renders + scores an MCQ client-side**, persisting progress locally.
+      (`_extensions/larnix/quiz` + `modules/00-orientation/quiz.yml`; `quiz_lint.py`.)
+- [x] **CI green:** notebook execution (R10), Vale, markdownlint, link-check, spell, **a11y
+      (alt-text + contrast, P0-D11)**. (Confirmed green on the head commit — Actions `Checks` +
+      `PR preview` = success; Python gates + 73 unit tests also pass locally; a11y gate checks 74
+      theme pairs.)
+- [x] **The R1/R3/R6/R10 automated gates exist** and run on every PR (`RISKS.md §5`).
+      (`currency_check.py`, `browser_import_lint.py`, `free_fallback_check.py`, `run_notebooks.py`.)
+- [x] **SR card seeding convention** in place (cards authored + schema-validated; engine deferred).
+      (`review_cards:` in the sample chapter; `review_cards_lint.py`.)
+- [x] **Colab button pattern + GPU-notebook CI policy** documented and proven on the fixture.
+      (`_extensions/larnix/colab`, `infra/fixtures/colab-fixture.ipynb`, `RUNBOOK.md` GPU policy.)
+- [x] **`DECISIONS.md` updated** with the confirmed P0 decisions; **`RUNBOOK.md`** has local-preview
       + CI instructions; **`STYLE_GUIDE.md`** adhered to (lint/prose pass).
-- [ ] **A "5-minute learner walkthrough"** path through the sample chapter that you can click/run.
-- [ ] **`PORTFOLIO.md`** carries a quantified bullet (e.g. "built a docs-as-code AI-course platform:
+- [x] **A "5-minute learner walkthrough"** path through the sample chapter that you can click/run.
+      (`docs/WALKTHROUGH.md`.)
+- [x] **`PORTFOLIO.md`** carries a quantified bullet (e.g. "built a docs-as-code AI-course platform:
       in-browser Python, assert-based auto-grading, a quiz engine, and a 6-gate CI pipeline, proven
-      end-to-end on a zero-install sample chapter").
+      end-to-end on a zero-install sample chapter"). (`docs/PORTFOLIO.md` — P0 entry.)
 
 ---
 

@@ -29,6 +29,7 @@ website:
     type: overlay
   navbar:
     title: "Larnix"
+    pinned: true
     left:
       - href: index.qmd
         text: Home
@@ -73,3 +74,4 @@ format:
     toc-depth: 3
     code-copy: true
     code-overflow: wrap
+    include-after-body: theme/_after-body.html

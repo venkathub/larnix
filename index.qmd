@@ -1,31 +1,116 @@
 ---
-title: "Larnix"
-subtitle: "A free, beginner-to-frontier school for AI/ML — where every chapter runs."
+title: ""
+pagetitle: "Larnix — learn AI/ML by building it, in your browser"
+toc: false
+section-divs: false
+anchor-sections: false
+page-layout: full
 ---
 
-## What this is
+::: {.lx-landing}
 
-Larnix is a free, open-access course that takes a complete beginner — on a
-low-spec laptop, at zero cost — from "what is AI" to building and shipping real
-machine-learning systems. It follows the Zerodha Varsity teaching style: plain
-language, one idea per chapter, a worked example you can run, a short
-"Key Takeaways" box, and graded practice.
+::: {.lx-hero}
+[✦ Free forever · runs in your browser · no signup]{.lx-eyebrow .lx-reveal .lx-reveal-1}
 
-This page is the scaffold's hello-world. It exists to prove the site builds from
-a fresh clone and renders. Real content arrives later in Phase P0 with the first
-sample chapter.
+# [Learn how AI works —]{} [by building it.]{.lx-pop} {.lx-reveal .lx-reveal-2}
 
-## How the platform is built
+::: {.lx-lead .lx-reveal .lx-reveal-3}
+Most courses *explain* AI. Larnix has you **build** it. Train your first model in
+the next twenty minutes — right here in this browser tab — and keep going, one
+idea at a time, until you've built your own language model. No setup, no fees, no
+maths-degree required.
+:::
 
-- **Read it** as a static website (this Quarto site).
-- **Run it** in your browser — beginner chapters execute Python with zero
-  install (wired in a later P0 task).
-- **Practice it** — exercises are auto-graded in the browser; quizzes score
-  client-side.
+::: {.lx-cta .lx-reveal .lx-reveal-4}
+[Train your first model ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay}
+[See the full journey](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md){.btn-clay .btn-clay--ghost}
+:::
+:::
 
-See the [About](about.qmd) page for the project's goals and the build roadmap.
+## The journey: zero to frontier {.lx-section}
 
-::: {.callout-note}
-This is a development scaffold. The design system, in-browser runtime,
-auto-grader, quiz engine, and the first chapter land in subsequent P0 tasks.
+::: {.lx-sub}
+Seventeen modules carry you from "what is AI" to building and shipping real
+systems. Each chapter is short, plain-spoken, and runnable. Begin at M0 today —
+the rest unlock as the curriculum grows.
+:::
+
+::: {.lx-grid .lx-grid--3}
+
+::: {.lx-course .lx-tile .clay--teal}
+::: {.lx-course-top}
+[M0]{.lx-coursenum}
+
+### Orientation
+:::
+Train a real model in twenty minutes: load data, fit a classifier, and watch it
+sort flowers it has never seen. Your first taste of the whole loop.
+[🟢 Beginner]{.lx-pill} [▸ Available]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--amber .lx-course--soon}
+::: {.lx-course-top}
+[M1]{.lx-coursenum}
+
+### Foundations
+:::
+The maths and Python you actually need — vectors, probability, clean code — built
+from zero, with intuition first and symbols second.
+[🟢 Beginner]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--coral .lx-course--soon}
+::: {.lx-course-top}
+[M4]{.lx-coursenum}
+
+### Classical ML
+:::
+The workhorses behind real products — regression, trees, ensembles — and the
+honest question every practitioner asks: did it actually learn?
+[🟡 Intermediate]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--violet .lx-course--soon}
+::: {.lx-course-top}
+[M7]{.lx-coursenum}
+
+### Transformers & LLMs
+:::
+Ever wondered what is inside a chatbot like ChatGPT? Build the attention
+mechanism and the transformer yourself, step by step — nothing hand-waved.
+[🔴 Advanced]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--sky .lx-course--soon}
+::: {.lx-course-top}
+[M11]{.lx-coursenum}
+
+### Build your own LLM
+:::
+The headline capstone: pretrain a small language model end to end, on a free GPU.
+The thing experts do — you will do it too.
+[🔴 Advanced]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--mint .lx-course--soon}
+::: {.lx-course-top}
+[M16]{.lx-coursenum}
+
+### Career-ready
+:::
+Turn what you built into a career — portfolio projects, production MLOps, and
+interview practice that hiring managers respect.
+[🟡 Intermediate]{.lx-pill} [Soon]{.lx-pill}
+:::
+
+:::
+
+::: {.lx-cta-band}
+## Your first model is twenty minutes away.
+It runs in this browser tab, costs nothing, and needs no account. Curious what you
+can build? There is only one way to find out.
+
+[Start Chapter 1 ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay .btn-clay--ghost}
+:::
+
 :::

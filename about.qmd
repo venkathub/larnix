@@ -1,29 +1,51 @@
 ---
 title: "About Larnix"
+page-layout: full
 ---
 
-## The goal
+::: {.lx-plain}
 
-Larnix spans 17 modules — from "what is AI" through classical machine learning,
-deep learning, transformers, large language models, retrieval and agents,
-MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships
-runnable code; every module ends in graded exercises and a build-something
-capstone.
+## Why Larnix exists
 
-The guiding promise: a learner with a low-spec laptop can complete the core of
-the course for ₹0 — in-browser Python for the early modules, free Colab and
-Kaggle tiers for the GPU modules, and a free local model fallback wherever a
-lesson touches an API.
+Artificial intelligence is reshaping how we work, learn, and create — yet for most
+people it stays a black box, gated behind expensive courses, pricey hardware, and
+walls of jargon. We think that is backwards. Understanding the technology shaping
+your future should not depend on your budget or your laptop.
 
-## How it is built
+So Larnix is free, open, and built on one belief: **the fastest way to understand
+something is to build it.** Not to watch someone else build it — to build it
+yourself, line by line, until it clicks.
 
-Larnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter
-files; the site is statically generated and continuously checked: every code
-cell executes in CI, prose is linted, links and spelling are verified, and a set
-of "currency" gates keep fast-moving content honest.
+## How you'll learn
 
-## Status
+- **Build first, theory as you go.** Every chapter has you run real code and see a
+  real result, then explains why it works. You learn by doing, the way you actually
+  remember.
+- **One idea at a time.** Short, single-topic chapters in plain language. New terms
+  are introduced in everyday words before the technical name appears.
+- **It runs where you are.** Beginner chapters execute Python right in your browser,
+  with nothing to install. The GPU-heavy modules run on free cloud tiers, and any
+  lesson that touches a paid service shows a free alternative.
+- **Zero to frontier.** Seventeen modules take you from "what is AI" through
+  classical machine learning, deep learning, transformers, and large language
+  models — ending with you pretraining your own small LLM.
 
-This is the Phase P0 scaffold — the platform itself, proven end-to-end on a
-single sample chapter before any module is written at scale. The build plan
-lives in the project roadmap.
+## What you'll walk away with
+
+The goal is not a certificate you forget. It is the genuine ability to read, build,
+and reason about modern AI systems — to train and evaluate models honestly, to
+explain how a transformer works because you wrote one, and to ship a project you
+are proud to show. In short: from curious beginner to someone who can build.
+
+## Where it is today
+
+Larnix is being built in the open, and it is early. Right now the **platform** is
+complete and proven end to end on the first full chapter — *Train your first model,
+in your browser* — and new modules are being authored from there. You can start that
+chapter today, for free; follow the [roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md)
+to see what is coming next.
+
+If that mission speaks to you, the best first step is the smallest one:
+[train your first model](modules/00-orientation/ch01-train-your-first-model.qmd).
+
+:::

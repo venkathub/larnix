@@ -52,11 +52,31 @@ def blend(rgba: tuple[int, int, int, float], base_hex: str) -> str:
 
 AA_NORMAL = 4.5
 
-# Declared theme pairs — KEEP IN SYNC with site/theme/_larnix-components.scss
-# and larnix-dark.scss. Dark badge fills are translucent, flattened over the
-# `darkly` body background (#222222).
-_DARK_BASE = "#222222"
+# Declared theme pairs — KEEP IN SYNC with theme/_larnix-components.scss
+# (claymorphism palette) and larnix-dark.scss.
+_LIGHT_BG = "#fdf4ea"
+_DARK_BASE = "#181527"
 THEME_PAIRS = [
+    ("light: body text", "#2b2b3a", _LIGHT_BG),
+    ("light: heading", "#1a1a2e", _LIGHT_BG),
+    ("light: muted text", "#5d5d70", _LIGHT_BG),
+    # Hero gradient word — large display text (≥ ~38px bold), WCAG AA large = 3:1.
+    ("light: pop coral", "#e23b34", _LIGHT_BG, 3.0),
+    ("light: pop violet", "#7c3aed", _LIGHT_BG, 3.0),
+    ("light: pop sky", "#0284c7", _LIGHT_BG, 3.0),
+    ("light: clay teal", "#0c5f57", "#d4f3ee"),
+    ("light: clay coral", "#9c2a25", "#ffe0dc"),
+    ("light: clay amber", "#7a5300", "#fdecbf"),
+    ("light: clay violet", "#492c93", "#e8e1fd"),
+    ("light: clay sky", "#0a4a72", "#d6ecfe"),
+    ("light: clay mint", "#0a6a43", "#d4f5e4"),
+    ("light: pill on teal card", "#0c5f57", blend((255, 255, 255, 0.62), "#d4f3ee")),
+    ("light: pill on amber card", "#7a5300", blend((255, 255, 255, 0.62), "#fdecbf")),
+    ("light: primary button", "#ffffff", "#0b6e6e"),
+    ("light: cta gradient end", "#ffffff", "#6d28d9"),
+    ("light: avatar coral", "#ffffff", "#c92a26"),
+    ("light: avatar violet", "#ffffff", "#6d28d9"),
+    ("light: avatar sky", "#ffffff", "#0369a1"),
     ("light: beginner badge", "#14532d", "#e6f4ea"),
     ("light: intermediate badge", "#6b3e09", "#fdf0d5"),
     ("light: advanced badge", "#7f1d1d", "#fde2e1"),
@@ -65,27 +85,68 @@ THEME_PAIRS = [
     ("light: gpu badge", "#4c1d95", "#ede9fe"),
     ("light: stable badge", "#075f43", "#e9faf2"),
     ("light: frontier badge", "#8f1133", "#fff1f2"),
-    ("light: Key Takeaways heading", "#064e4e", "#f3fbfa"),
-    ("light: primary link", "#0b6e6e", "#ffffff"),
-    ("dark: beginner badge", "#bbf7d0", blend((34, 197, 94, 0.18), _DARK_BASE)),
-    ("dark: intermediate badge", "#fde68a", blend((217, 119, 6, 0.20), _DARK_BASE)),
-    ("dark: advanced badge", "#fecaca", blend((239, 68, 68, 0.18), _DARK_BASE)),
-    ("dark: browser badge", "#bae6fd", blend((56, 189, 248, 0.18), _DARK_BASE)),
-    ("dark: colab badge", "#fed7aa", blend((249, 115, 22, 0.18), _DARK_BASE)),
-    ("dark: gpu badge", "#ddd6fe", blend((139, 92, 246, 0.22), _DARK_BASE)),
-    ("dark: stable badge", "#a7f3d0", blend((16, 185, 129, 0.18), _DARK_BASE)),
-    ("dark: frontier badge", "#fecdd3", blend((244, 63, 94, 0.18), _DARK_BASE)),
-    ("dark: Key Takeaways heading", "#99f6e4", "#0f2c2b"),
-    ("dark: primary link", "#2dd4bf", _DARK_BASE),
+    ("light: Key Takeaways heading", "#0c5f57", "#d4f3ee"),
+    ("light: primary link", "#0b6e6e", _LIGHT_BG),
+    ("light: nav text", "#2b2b3a", "#fffdfa"),
+    ("light: nav brand", "#0b6e6e", "#fffdfa"),
+    ("light: details summary", "#0b6e6e", "#ffffff"),
+    ("light: code label", "#5d5d70", "#ece4d8"),
+    ("light: running label", "#0b6e6e", "#ece4d8"),
+    ("terminal text", "#d7f5e3", "#14141f"),
+    ("terminal label", "#9aa3b8", "#0e0e16"),
+    ("dark: body text", "#e7e3f0", _DARK_BASE),
+    ("dark: heading", "#ffffff", _DARK_BASE),
+    ("dark: muted text", "#b3acc7", _DARK_BASE),
+    ("dark: clay teal", "#7ff0e2", "#123f3b"),
+    ("dark: clay coral", "#ffb3ad", "#45211f"),
+    ("dark: clay amber", "#ffd98a", "#3c2f12"),
+    ("dark: clay violet", "#cbbdff", "#2a2350"),
+    ("dark: clay sky", "#a9ddff", "#11314a"),
+    ("dark: clay mint", "#8ef0c0", "#123a2b"),
+    ("dark: pill on teal card", "#7ff0e2", blend((0, 0, 0, 0.34), "#123f3b")),
+    ("dark: pill on amber card", "#ffd98a", blend((0, 0, 0, 0.34), "#3c2f12")),
+    ("dark: beginner badge", "#bbf7d0", blend((34, 197, 94, 0.20), _DARK_BASE)),
+    ("dark: intermediate badge", "#fde68a", blend((217, 119, 6, 0.24), _DARK_BASE)),
+    ("dark: advanced badge", "#fecaca", blend((239, 68, 68, 0.20), _DARK_BASE)),
+    ("dark: browser badge", "#bae6fd", blend((56, 189, 248, 0.20), _DARK_BASE)),
+    ("dark: colab badge", "#fed7aa", blend((249, 115, 22, 0.20), _DARK_BASE)),
+    ("dark: gpu badge", "#ddd6fe", blend((139, 92, 246, 0.26), _DARK_BASE)),
+    ("dark: stable badge", "#a7f3d0", blend((16, 185, 129, 0.20), _DARK_BASE)),
+    ("dark: frontier badge", "#fecdd3", blend((244, 63, 94, 0.20), _DARK_BASE)),
+    ("dark: Key Takeaways heading", "#7ff0e2", "#123f3b"),
+    ("dark: primary link", "#5eead4", _DARK_BASE),
+    ("dark: nav text", "#e7e3f0", _DARK_BASE),
+    ("dark: nav brand", "#5eead4", _DARK_BASE),
+    ("dark: code label", "#b3acc7", "#2a2440"),
+    ("dark: running label", "#2dd4bf", "#2a2440"),
+    # ── Sepia reading mode (warm paper; light Bootstrap base + token override) ──
+    ("sepia: body text", "#43392c", "#f3e9d2"),
+    ("sepia: heading", "#2c2519", "#f3e9d2"),
+    ("sepia: muted text", "#6a5c45", "#f3e9d2"),
+    ("sepia: primary link", "#0b6e6e", "#f3e9d2"),
+    ("sepia: nav text", "#43392c", blend((248, 241, 225, 0.85), "#f3e9d2")),
+    ("sepia: nav brand", "#0b6e6e", blend((248, 241, 225, 0.85), "#f3e9d2")),
+    ("sepia: nav active tx", "#5f4a17", "#ece0c6"),
+    ("sepia: Key Takeaways heading", "#5f4a17", "#e9dcc0"),
+    ("sepia: code label", "#6a5c45", "#f1e8d3"),
+    ("sepia: editor teal label", "#0b6e6e", "#f1e8d3"),
+    # Clay pastel cards are reused from light on the sepia page; re-assert AA.
+    ("sepia: clay teal", "#0c5f57", "#d4f3ee"),
+    ("sepia: clay amber", "#7a5300", "#fdecbf"),
+    ("sepia: clay violet", "#492c93", "#e8e1fd"),
 ]
 
 
 def check_contrast(min_ratio: float = AA_NORMAL) -> list[str]:
+    """Each pair is (name, fg, bg) needing AA 4.5:1, or (name, fg, bg, min) — used
+    for genuinely large display text, where WCAG AA allows 3:1."""
     failures = []
-    for name, fg, bg in THEME_PAIRS:
+    for pair in THEME_PAIRS:
+        name, fg, bg = pair[0], pair[1], pair[2]
+        needed = pair[3] if len(pair) > 3 else min_ratio
         ratio = contrast_ratio(fg, bg)
-        if ratio < min_ratio:
-            failures.append(f"{name}: {fg} on {bg} = {ratio:.2f}:1 (needs >= {min_ratio})")
+        if ratio < needed:
+            failures.append(f"{name}: {fg} on {bg} = {ratio:.2f}:1 (needs >= {needed})")
     return failures
 
 

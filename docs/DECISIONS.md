@@ -5,6 +5,84 @@
 
 ---
 
+## D0014 — GUI: playful claymorphism design system (Fredoka + Nunito); sepia shipped
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** A scoped pre-P1 design pass was requested to make the platform feel premium. A first
+  clean Inter-based polish was not distinctive enough; the user asked for a more creative, playful
+  educational look (referencing modern UI galleries). Guided by the `frontend-design` skill, the
+  brief became: claymorphism cards, a course catalog, a progress demo, testimonials, an enrollment
+  CTA, and vibrant colours.
+- **Decisions.**
+  1. **Aesthetic = playful claymorphism.** Soft "puffy" 3-D cards (large radii + layered inset/outer
+     shadows), a warm cream canvas with floating colour blobs, vibrant pastel-fill clay cards, and a
+     choreographed staggered page-load reveal. Distinctive type: **Fredoka** (rounded display) +
+     **Nunito** (friendly body), self-hosted (OFL, ~140KB) — replacing Inter.
+  2. **A real marketing landing** (`index.qmd`): hero (gradient-text headline + clay CTAs), a course
+     catalog (M0 live + later modules "soon"), an honest browser-progress demo (ties to the real
+     `localStorage` quiz scores — no accounts), persona-framed "made for learners like you" cards
+     (honest, not fabricated named reviews), and an enrollment CTA band.
+  3. **Scope:** the playful clay treatment is for the **landing**; chapter reading stays calm
+     (same fonts + clay-lite Key Takeaways/badges, but no blob background) so long-form stays legible.
+  4. **Accessibility kept:** vibrant comes from pastel fills + colour accents, with dark text for AA;
+     the a11y gate's `THEME_PAIRS` was extended to the full palette and now supports a **3:1
+     large-text threshold** (WCAG) for the big hero gradient word. All pairs pass.
+  5. **Sepia reading mode — shipped** (was the deferred D0008 item; this closes it).
+     Quarto's native theme toggle is light/dark only, so the third reading theme is
+     delivered as a **token + Bootstrap-var override layered on the light stylesheet**
+     (`html[data-lx-mode="sepia"]` in `theme/_larnix-components.scss` — warm "paper"
+     `#f3e9d2` ground, brown ink, warmed nav/code/Key-Takeaways surfaces; clay cards
+     reused from light), switched on by a **custom 3-way control** in
+     `theme/_after-body.html`: it repurposes Quarto's existing navbar toggle to cycle
+     **Light → Sepia → Dark** (current-mode glyph ☀️/📖/🌙 via CSS, descriptive
+     `title`/`aria-label`). Light/dark **reuse Quarto's own `quartoToggleColorScheme`**
+     stylesheet switching (never reimplemented); only the dark base needs the alternate
+     sheet, so sepia rides on light. Choice persists in `localStorage["larnix-mode"]`,
+     and the code keeps Quarto's own `quarto-color-scheme` sentinel in sync so the dark
+     base loads on reload without a flash (the light→sepia warm-on-warm transition is
+     applied after body parse and is visually negligible). All sepia colour pairs meet
+     WCAG AA and are enforced by `infra/ci/a11y_check.py`.
+  6. **Live-cell status: "Setting up…" while downloading packages, not "Running…"** (follow-up fix).
+     quarto-live drives one per-cell indicator (`.exercise-editor-eval-indicator`) for the whole
+     `evaluate()` call, which the theme renders as the in-place Run-button status **"Running…"**. But
+     a cell run involves two distinct download phases that both read as "Running…" yet are really a
+     one-time, multi-second **download**, not code execution: **(a)** the first-load Pyodide runtime +
+     base-package **bootstrap** (the `Downloading Pyodide` / `Downloading package: …` phase), and
+     **(b)** on-demand package installs when a cell first imports something (e.g. the first
+     `import sklearn`). Considered: editing the vendored, minified `live-runtime.js` — rejected
+     (third-party, overwritten on extension upgrade, non-diffable). **Chosen:** a two-part theme-layer
+     fix that swaps the label to a violet **"Setting up…"** for both phases:
+     - **Bootstrap (a) — CSS only.** quarto-live shows its own global `#exercise-loading-indicator`
+       (created `d-none` by `live.lua`, un-hidden during boot, removed when ready) for exactly this
+       window. A `body:has(#exercise-loading-indicator:not(.d-none)) .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none))`
+       selector retargets the running cell's button to "Setting up…" — no JS, no runtime internals.
+     - **On-demand (b) — JS seam.** Wrap `PyodideEvaluator.prototype.evaluate` (exposed on
+       `window._exercise_ojs_runtime`) to pre-load the cell's imports first, tagging the active editor
+       `.lx-loading-pkg` (CSS swaps the label), then delegate to the original `evaluate()` (its load
+       step now a no-op, so "Running…" shows only for real execution). A 150 ms delay before tagging
+       means already-cached packages never flash the setup state; the **first** eval of the page uses
+       no delay so it hands straight off from the bootstrap state without a "Running…" flash.
+
+     Scoped to Pyodide (Python) cells; the wrapper self-heals (no-ops) if runtime internals change.
+- **Rationale.** A memorable, friendly identity that fits a beginner-first learning platform; CSS-only
+  motion, self-hosted fonts, ₹0, accessible.
+- **Consequences.** Replaces the earlier Inter polish. New tokens/components in
+  `theme/_larnix-components.scss`; `a11y_check.py` gained per-pair contrast thresholds. Honest content
+  choices: testimonials are persona-based with a "Larnix is new" framing; "enrollment" is "start free,
+  no signup" (no accounts exist in P0). The live-cell loading fix (decision 6) adds the `.lx-loading-pkg`
+  / `#exercise-loading-indicator` "Setting up…" states in `theme/_larnix-components.scss` and a second
+  `<script>` in `theme/_after-body.html`. Verified end-to-end in a real browser on a cold cache: the
+  full ~4.4 s runtime bootstrap and the on-demand scikit-learn download both read "Setting up…", with
+  "Running…" only during actual code execution. The sepia mode (decision 5) adds the
+  `html[data-lx-mode="sepia"]` token block + 3-state toggle glyphs in `theme/_larnix-components.scss`,
+  the 3-way switcher in `theme/_after-body.html`, and 14 sepia pairs in `infra/ci/a11y_check.py`
+  (gate now checks 74 pairs, all pass). Verified in-browser: Light↔Sepia↔Dark cycle, reload
+  persistence, and Quarto-sentinel sync, with zero console errors. This **closes the last open item**
+  in this ADR; D0008's deferred sepia task is done.
+
+---
+
 ## D0013 — Single Quarto project at the repo root (content layout)
 
 - **Date:** 2026-06-28
@@ -166,6 +244,8 @@
      third theme needs a custom JS 3-way switcher (Quarto's built-in toggle is light/dark only),
      which is more than "simple." Light/dark ship now (fully supported, native toggle); sepia is
      tracked as an explicit follow-up so the "dark/sepia" DoD line is met, not silently dropped.
+     **(Update 2026-06-28: shipped — see D0014 decision 5. Sepia is a token override layered on the
+     light theme with a custom Light→Sepia→Dark switcher; the "dark/sepia" DoD line is now met.)**
 - **Rationale.** Best authoring ergonomics + a11y-by-default for the most-repeated markup; one source
   of truth for component layout; honest scoping of the only non-trivial theme piece.
 - **Consequences.** All chapters use the `badge` shortcode and the `.key-takeaways` fenced div.
