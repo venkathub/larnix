@@ -7,6 +7,7 @@ GitHub Actions workflows.
 | Script | Gate | What it checks |
 |--------|------|----------------|
 | `frontmatter_lint.py` | Front-matter schema (P0 task 4) | The 10 required chapter fields, enum values, date format/non-future, types. |
+| `quiz_lint.py` | Quiz schema (P0 task 7) | `quiz.yml` structure: questions, prompts, ≥2 options, in-range integer `answer`, unique ids. |
 | _(later)_ `currency_check.py` | R1 (task 11) | `status: frontier` chapters reviewed within 90 days. |
 | _(later)_ `browser_import_lint.py` | R3 (task 11) | `compute: browser` chapters import only Pyodide-safe packages. |
 | _(later)_ `free_fallback_check.py` | R6 (task 11) | Paid-API lessons ship a free fallback. |

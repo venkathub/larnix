@@ -1,6 +1,6 @@
 # Content & code quality gates (extended task by task through P0).
 #
-# This task (P0 task 4) adds the front-matter schema gate. Later P0 tasks add
+# Tasks 4 + 7 add the front-matter and quiz schema gates. Later P0 tasks add
 # jobs here: notebook execution (R10, task 8), prose/link/spell (task 9),
 # a11y (task 10), and the R1/R3/R6 gates (task 11).
 
@@ -12,8 +12,8 @@ on:
   pull_request:
 
 jobs:
-  frontmatter:
-    name: Front-matter schema lint
+  schema:
+    name: Schema lints (front-matter + quiz) & unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
       - name: Install CI deps
         run: pip install -r infra/ci/requirements.txt
 
-      - name: Unit tests (frontmatter_lint)
+      - name: Unit tests (CI linters)
         working-directory: infra/ci
         run: python -m unittest -v
 
@@ -37,3 +37,6 @@ jobs:
 
       - name: Lint chapter front-matter
         run: python infra/ci/frontmatter_lint.py
+
+      - name: Lint quizzes
+        run: python infra/ci/quiz_lint.py

@@ -1,0 +1,21 @@
+---
+title: "Sandbox — quiz engine (internal)"
+subtitle: "Not learner content. Proves the quiz.yml -> shortcode -> client-side scoring path."
+search: false
+---
+
+::: {.callout-warning}
+**Internal scratch page** proving the quiz engine (P0-D6 / DECISIONS D0006): a
+`quiz.yml` rendered by the quiz shortcode into a client-side MCQ that scores in
+the browser and stores the best score in `localStorage`. The quiz file is
+schema-checked in CI by `infra/ci/quiz_lint.py`. Pick answers and press
+**Check answers** in a browser to see scoring + persistence.
+:::
+
+The quiz below is authored as `quiz-sandbox.yml` and mounted with one line:
+{{</* quiz quiz-sandbox.yml */>}}
+
+{{< quiz quiz-sandbox.yml >}}
+
+Reload the page after submitting: your best score is read back from
+`localStorage`.
