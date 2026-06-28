@@ -11,7 +11,7 @@
     "href": "about.html",
     "title": "About Larnix",
     "section": "",
-    "text": "Larnix spans 17 modules — from “what is AI” through classical machine learning, deep learning, transformers, large language models, retrieval and agents, MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships runnable code; every module ends in graded exercises and a build-something capstone.\nThe guiding promise: a learner with a low-spec laptop can complete the core of the course for ₹0 — in-browser Python for the early modules, free Colab and Kaggle tiers for the GPU modules, and a free local model fallback wherever a lesson touches an API."
+    "text": "Larnix spans 17 modules — from “what is AI” through classical machine learning, deep learning, transformers, large language models, retrieval and agents, MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships runnable code; every module ends in graded exercises and a build-something capstone.\nThe guiding promise: a learner with a low-spec laptop can complete the core of the course for ₹0 — in-browser Python for the early modules, free Colab and Kaggle tiers for the GPU modules, and a free local model fallback wherever a lesson touches an API.\n\n\n\nLarnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter files; the site is statically generated and continuously checked: every code cell executes in CI, prose is linted, links and spelling are verified, and a set of “currency” gates keep fast-moving content honest.\n\n\n\nThis is the Phase P0 scaffold — the platform itself, proven end-to-end on a single sample chapter before any module is written at scale. The build plan lives in the project roadmap."
   },
   {
     "objectID": "about.html#the-goal",
@@ -24,15 +24,15 @@
     "objectID": "about.html#how-it-is-built",
     "href": "about.html#how-it-is-built",
     "title": "About Larnix",
-    "section": "How it is built",
-    "text": "How it is built\nLarnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter files; the site is statically generated and continuously checked: every code cell executes in CI, prose is linted, links and spelling are verified, and a set of “currency” gates keep fast-moving content honest."
+    "section": "",
+    "text": "Larnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter files; the site is statically generated and continuously checked: every code cell executes in CI, prose is linted, links and spelling are verified, and a set of “currency” gates keep fast-moving content honest."
   },
   {
     "objectID": "about.html#status",
     "href": "about.html#status",
     "title": "About Larnix",
-    "section": "Status",
-    "text": "Status\nThis is the Phase P0 scaffold — the platform itself, proven end-to-end on a single sample chapter before any module is written at scale. The build plan lives in the project roadmap."
+    "section": "",
+    "text": "This is the Phase P0 scaffold — the platform itself, proven end-to-end on a single sample chapter before any module is written at scale. The build plan lives in the project roadmap."
   },
   {
     "objectID": "modules/00-orientation/ch01-train-your-first-model.html",
