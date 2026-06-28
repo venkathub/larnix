@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -42,6 +42,15 @@ jobs:
 
       - name: Accessibility (alt-text + theme contrast)
         run: python infra/ci/a11y_check.py
+
+      - name: R1 — currency check
+        run: python infra/ci/currency_check.py
+
+      - name: R3 — browser-import lint
+        run: python infra/ci/browser_import_lint.py
+
+      - name: R6 — free-fallback check
+        run: python infra/ci/free_fallback_check.py
 
   notebooks:
     name: Notebook execution (R10)

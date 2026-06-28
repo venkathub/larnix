@@ -10,9 +10,9 @@ GitHub Actions workflows.
 | `quiz_lint.py` | Quiz schema (P0 task 7) | `quiz.yml` structure: questions, prompts, ≥2 options, in-range integer `answer`, unique ids. |
 | `run_notebooks.py` | R10 — runs in CI (P0 task 8) | Executes `modules/**/*.ipynb` with `nbclient`; any cell error fails. `fixtures/` holds pass/fail test notebooks. |
 | `a11y_check.py` | a11y — alt-text + contrast (P0 task 10, P0-D11) | Non-empty alt text on content images; WCAG AA contrast on declared theme colour pairs. Stdlib-only; deterministic (no browser). Full page-level axe/pa11y scanning is deferred. |
-| _(later)_ `currency_check.py` | R1 (task 11) | `status: frontier` chapters reviewed within 90 days. |
-| _(later)_ `browser_import_lint.py` | R3 (task 11) | `compute: browser` chapters import only Pyodide-safe packages. |
-| _(later)_ `free_fallback_check.py` | R6 (task 11) | Paid-API lessons ship a free fallback. |
+| `currency_check.py` | R1 (P0 task 11) | `status: frontier` chapters must have `last_reviewed` within 90 days; `stable` exempt. |
+| `browser_import_lint.py` | R3 (P0 task 11) | `compute: browser` chapters may import only Pyodide-safe packages (stdlib + curated allow-list; known-unsafe denylist). |
+| `free_fallback_check.py` | R6 (P0 task 11) | Chapters referencing a paid API must also show a free fallback (Ollama/Groq/free tier). |
 
 ## Run locally
 
