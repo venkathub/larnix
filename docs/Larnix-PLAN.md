@@ -1,6 +1,7 @@
 # Larnix — PLAN: Building a Zerodha Varsity-Style Learning Platform for AI/ML
 
 ## TL;DR
+
 - A free, open-access, **newbie-to-frontier** AI school modeled on Zerodha Varsity's pedagogy (plain language, analogies, short sequenced chapters, Key Takeaways, end-of-module quizzes + certification), now expanded to **17 modules** so coverage runs all the way from "what is AI" to **reinforcement learning + reasoning models** and **building your own custom LLM end-to-end** (data → tokenizer → pretraining → distributed training → post-training → quantize → serve).
 - Two new outcome-defining tracks were added per your asks: a **"Build Your Own LLM" module** (so a graduate can actually train and serve a custom model, not just call an API or fine-tune), and a **Career & Job-Readiness module** (portfolio, ML/LLM system-design interviews, role map) so a finisher is genuinely hireable as an ML/AI/LLM engineer.
 - A full **Prerequisites & Infrastructure section** now specifies exactly what accounts, API keys, and compute each module needs — **free-tier-first** (browser + Colab/Kaggle + Ollama on a laptop costs ₹0), escalating to API keys (OpenAI/Anthropic/Gemini, or free local Ollama) and rented cloud GPUs (RunPod/Lambda/Modal) only when a module genuinely requires them.
@@ -9,6 +10,7 @@
 ---
 
 ## What changed in this revision (your three asks)
+
 1. **"Ensure all topics covered, foundation → advanced → till now."** Added/expanded: **Reinforcement Learning & Reasoning Models** (RLHF/DPO/GRPO, test-time compute, o1/R1-style reasoning), a dedicated **Build-Your-Own-LLM / distributed-training** module, **Model Context Protocol (MCP) and multi-agent systems** in the AI-engineering module, and an **Applied ML electives** module (time series, recommenders, speech). The map below is now genuinely end-to-end.
 2. **"What prerequisites are needed (OpenAI key, Ollama/vLLM, cloud)."** New **Section B0 — Prerequisites & Infrastructure**: a module-by-module table of required accounts, keys, local tools, and cloud GPUs, with a free alternative for every paid item and cost-guardrail guidance.
 3. **"Graduate should land AI jobs and build custom LLMs."** New **Module 16 — Career & Job-Readiness** and a new **Outcomes & Job-Readiness** section mapping the curriculum to concrete roles, portfolio expectations, and interview prep; the custom-LLM capability is now an explicit capstone.
@@ -66,86 +68,103 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 ---
 
 ### Module 0 — How to Use This School / What is AI? 🟢
+
 **Objectives:** demystify AI/ML/DL/GenAI; get every learner running code on day one.
 **Chapters:** What is AI, really? · AI vs ML vs DL vs GenAI (a family tree) · 10-minute history (perceptron → deep learning → transformers → foundation models → reasoning models) · How this school works · Your toolkit (notebooks, Colab, in-browser sandbox) · Run your first model (5 lines).
 **Hands-on:** Hugging Face `pipeline()` for sentiment + image classification with zero theory.
 
 ### Module 1 — Python for AI 🟢
+
 **Objectives:** enough Python for data and ML; clarity over cleverness.
 **Chapters:** types · control flow · functions · data structures · comprehensions · files (CSV/JSON) · errors & debugging · venvs & pip · just-enough OOP · NumPy preview · clean readable code · IDE/Colab · reading tracebacks · Pythonic data idioms.
 **Hands-on:** auto-graded mini-exercises; capstone data-cleaning script. *Includes "Python for Java developers" side-notes (dynamic typing, indentation-as-syntax, duck typing) for the creator's own onboarding.*
 
 ### Module 2 — Math You Actually Need 🟢→🟡
+
 **Objectives:** intuition-first linear algebra, calculus, probability/statistics (picture before symbols).
 **Chapters:** why math for AI · vectors & geometry · matrices as transformations · matmul intuition · dot products & similarity · derivatives = sensitivity · gradients (downhill picture) · the chain rule (engine of backprop) · probability basics · distributions · mean/variance/std · Bayes intuition · correlation vs causation · sampling & uncertainty · linear algebra in NumPy · the math of one neuron.
 **Hands-on:** visualize gradient descent; code dot-product similarity; capstone neuron forward+backward pass.
 
 ### Module 3 — Data & Tooling 🟢→🟡
+
 **Objectives:** load, clean, explore, visualize; reproducible environments.
 **Chapters:** NumPy & vectorization · Pandas Series/DataFrame · indexing · cleaning (missing/types/dupes) · joins & groupby · reshaping · Matplotlib · Seaborn · the EDA workflow · scaling/encoding preview · notebooks vs scripts · environments & reproducibility · data ethics preview · messy real-world data.
 **Hands-on:** full EDA on a public dataset. Mantra: "manual inspection of data has the highest value-to-prestige ratio in ML."
 
 ### Module 4 — Classical Machine Learning 🟡
+
 **Objectives:** the CS229/Ng core — supervised & unsupervised learning, evaluation, bias-variance.
 **Chapters:** what is learning? · linear regression · cost functions & gradient descent · logistic regression · KNN · decision trees · random forests & ensembles · gradient boosting (XGBoost) · SVMs · naive Bayes · k-means · hierarchical clustering · PCA & dimensionality reduction · feature engineering · train/val/test & cross-validation · overfitting & regularization · bias-variance · metrics (precision/recall/F1/ROC-AUC) · imbalanced data · the scikit-learn workflow.
 **Hands-on:** build each algorithm in scikit-learn + "from scratch" exercises. **Capstone:** end-to-end tabular prediction, Kaggle-style.
 
 ### Module 5 — Deep Learning Foundations 🟡
+
 **Objectives:** understand neural nets by building one from scratch (micrograd style), then PyTorch.
 **Chapters:** from logistic regression to a neuron · activations · layers & networks · forward pass · loss functions · backprop spelled out · GD variants (SGD/momentum/Adam) · build micrograd · build an MLP from scratch · enter PyTorch (tensors/autograd) · `nn.Module` & training loops · dropout/batchnorm · initialization & LR tuning · diagnosing training · GPUs & why they matter · saving/loading · a reproducible training harness.
 **Hands-on:** implement backprop by hand. **Capstone:** digit classifier from scratch, then re-implemented in PyTorch.
 
 ### Module 6 — Specialized DL: Vision & Sequences 🟡→🔴
+
 **Objectives:** CNNs, RNN/LSTM, embeddings as the bridge to NLP.
 **Chapters:** images as tensors · convolution intuition · pooling/padding/strides · CNN from scratch · LeNet→ResNet · transfer learning & fine-tuning vision models · data augmentation · sequences & memory · RNNs · LSTM/GRU · vanishing gradients · word embeddings (word2vec) · embeddings for search/similarity · limits of RNNs (motivating attention).
 **Hands-on:** fine-tune a pretrained ResNet; train an LSTM generator. **Capstone:** image-classifier app + char-level sequence model.
 
 ### Module 7 — NLP & the Transformer 🔴
+
 **Objectives:** master attention and the transformer; build a small GPT.
 **Chapters:** the NLP task zoo · tokenization & BPE (build a tokenizer) · attention intuitively · self-attention math · multi-head attention · positional encodings · the full transformer block · encoder/decoder/encoder-decoder · build a small GPT (nanoGPT style) · training dynamics · Hugging Face Transformers · pretraining vs fine-tuning.
 **Hands-on:** implement self-attention. **Capstone:** "Let's build GPT" — a working char-level transformer.
 
 ### Module 8 — Large Language Models 🔴
+
 **Objectives:** how LLMs are built, adapted, and evaluated. Anchored on Huyen *AI Engineering* Ch. 2–3.
 **Chapters:** language models → foundation models · pre-training & next-token prediction · the data behind LLMs · scaling laws & emergent abilities · sampling/decoding (temperature, top-k/p) · structured outputs · SFT · preference tuning & RLHF/DPO (intro) · PEFT (LoRA/QLoRA) · quantization & memory math · why eval is hard · eval metrics (perplexity, functional correctness) · AI-as-a-judge · benchmarks & leaderboards · hallucination & its causes · open vs proprietary (build-vs-buy).
 **Hands-on:** fine-tune a small model with LoRA; build an eval harness. **Capstone:** fine-tune + rigorously evaluate a small LLM.
 
 ### Module 9 — Reinforcement Learning & Reasoning Models 🔴 ✨
+
 **Objectives:** RL from fundamentals through the techniques behind modern reasoning models (o1/o3, DeepSeek-R1) — the "till now" frontier.
 **Chapters:** what is RL (agent/environment/reward) · Markov Decision Processes intuition · value vs policy methods · Q-learning · policy gradients · PPO intuition · reward models · RLHF, deeply (the alignment pipeline) · DPO & preference optimization · RLAIF & Constitutional AI · GRPO and reasoning-model training · test-time compute & chain-of-thought · self-consistency & verifiers · distillation of reasoning · RL for agents (motivating Module 12).
 **Hands-on:** implement a policy-gradient agent on a toy environment; train a tiny reward model; run a small preference-optimization (DPO) loop. **Capstone:** post-train a small model so it reasons/behaves measurably better, with before/after evals.
 
 ### Module 10 — Generative AI: Diffusion, Multimodal, Audio 🔴
+
 **Objectives:** generative models beyond text.
 **Chapters:** the generative landscape (GAN→VAE→diffusion) · diffusion intuition (add noise, learn to reverse) — diffusion models work by destroying training data through the successive addition of Gaussian noise, then learning to recover it by reversing that noising process · the forward/reverse process · DDPM essentials · latent diffusion & Stable Diffusion · text-to-image conditioning (CLIP/text encoders) · sampling & guidance · image fine-tuning (LoRA, DreamBooth, textual inversion) · multimodal (vision-language) models · audio & speech generation · video generation overview · ethics of synthetic media & deepfakes.
 **Hands-on:** run and steer a Diffusers pipeline. **Capstone:** text-to-image mini-app + a multimodal "describe this image" feature.
 
 ### Module 11 — Build Your Own LLM End-to-End 🔴 ✨ (the "custom LLM" you asked for)
+
 **Objectives:** take a model from **raw data to a trained, aligned, served custom LLM** — the full pipeline at small-but-real scale (Raschka's *Build an LLM From Scratch* + Karpathy nanoGPT/llm.c). This module is what makes a graduate able to *develop custom LLMs*, not just consume them.
 **Chapters:** the LLM build pipeline (the whole map) · sourcing & licensing training data · large-scale cleaning, dedup & quality filtering · training a tokenizer (BPE) at scale · dataset packing & sharding · architecture choices (params, context length, attention variants, RoPE) · the pretraining loop at scale · **distributed training: data / tensor / pipeline parallelism** · **FSDP, DeepSpeed & ZeRO, mixed precision** · scaling laws & compute budgeting · checkpointing & resuming · continued pretraining & domain adaptation · **post-training (SFT + preference tuning) to make it useful** · evaluating your custom model · **quantizing & exporting (GGUF)** · **serving with vLLM and Ollama** · the hardware/cost reality (rent vs own GPUs).
 **Hands-on:** pretrain a small (~100M–1B param) model from scratch on a curated corpus using rented cloud GPUs; run a multi-GPU job. **Capstone:** **a custom, domain-specialized LLM** — data → tokenizer → pretrain → fine-tune → evaluate → quantize → serve locally via Ollama and over an API with vLLM. *This is the headline "you can build an LLM" deliverable.*
 
 ### Module 12 — AI Engineering: RAG, Agents & MCP 🟡→🔴
+
 **Objectives:** build real applications on foundation models — the highest-demand skillset. Anchored on Huyen Ch. 5–6 + Hugging Face Agents course.
 **Chapters:** the AI engineering stack (vs ML engineering) · prompting fundamentals (zero/few-shot, system vs user) · prompt-engineering best practices · prompts under version control · embeddings in practice · vector databases (Pinecone/Weaviate/Milvus/Qdrant/Chroma/pgvector) · chunking strategies · RAG architecture (retriever + generator) · hybrid search & reranking · advanced RAG (GraphRAG, agentic RAG, HyDE, self-RAG) · evaluating RAG · tool use & function calling · structured outputs · **Model Context Protocol (MCP) & tool/connector standards** ✨ · agents & planning · **multi-agent systems & orchestration** ✨ · agent failure modes & memory · frameworks (LangChain, LlamaIndex, LangGraph, smolagents) · "RAG is for facts, fine-tuning is for form."
 **Hands-on:** build a RAG pipeline over your own docs; add function-calling tools; wire up an MCP server/client. **Capstone:** a production-style RAG + agent assistant with retrieval, tools, MCP, and evaluation.
 
 ### Module 13 — Production AI: MLOps & LLMOps 🔴
+
 **Objectives:** prototype → reliable production (your signature theme). Anchored on Huyen Ch. 9–10 + DeepLearning.AI MLOps.
 **Chapters:** the ML/AI lifecycle · experiment tracking (MLflow/W&B) · data & model versioning (DVC) · reproducible pipelines · serving (FastAPI, Triton, BentoML, vLLM) · batch vs real-time inference · inference optimization (KV cache, batching, quantization) · cost & latency optimization · semantic caching · model routing & gateways · CI/CD for ML · monitoring & observability · data & concept drift · online eval & feedback · guardrails & fallback patterns · scaling & infra · the AI engineering architecture (context → guardrails → router → cache → agents → monitoring).
 **Hands-on:** containerize & deploy the Module 12 app; add monitoring + drift detection. **Capstone:** a deployed, monitored, cost-instrumented AI service with CI/CD.
 
 ### Module 14 — Responsible AI: Safety, Security, Ethics 🟡→🔴
+
 **Objectives:** ethics, bias, alignment, security as engineering practice.
 **Chapters:** why responsible AI matters · sources of bias & fairness · dataset documentation & transparency · privacy & data protection · the **OWASP Top 10 for LLM Applications (2025)** · prompt injection (direct & indirect — the #1 OWASP LLM risk) · jailbreaking · sensitive-info disclosure & system-prompt leakage · insecure output handling & excessive agency · guardrails & I/O filtering · red-teaming & adversarial testing · alignment & RLHF revisited · governance, regulation & the road ahead.
 **Hands-on:** craft and defend against prompt-injection attacks. **Capstone:** red-team and harden your Module 12/13 app against the OWASP LLM Top 10.
 
 ### Module 15 — Applied ML Electives 🟡→🔴 ✨ (optional breadth, pick what your target job needs)
+
 **Objectives:** job-relevant breadth beyond LLMs.
 **Chapters (modular, pick-and-choose):** time-series forecasting (classical + deep) · recommender systems · speech: ASR & TTS (Whisper, etc.) · tabular deep learning · anomaly detection · graph neural networks (intro).
 **Hands-on / Capstone:** ship one elective end-to-end (e.g., a demand forecaster, a recommender, or a voice-to-text app).
 
 ### Module 16 — Career & Job-Readiness 🟢→🔴 ✨ (so you actually get hired)
+
 **Objectives:** convert skills into offers; make the portfolio and interviews land.
 **Chapters:** the roles map (ML Engineer vs AI Engineer vs LLM/Applied Scientist vs MLOps vs Data Scientist — what each does and screens for) · building a portfolio (GitHub, deployed demos, a technical blog) · Kaggle & competitions · contributing to open source · the AI/ML resume · coding/DSA for ML interviews · ML-theory & ML-breadth interviews · **ML system-design interviews** · **LLM/RAG/agent system-design interviews** · take-home projects & how to ace them · the job search, referrals & networking · staying current (papers, newsletters, communities).
 **Hands-on:** ship a portfolio; run mock interviews. **Capstone:** a polished portfolio of 3–4 deployed projects (incl. the custom LLM from M11 and the production RAG app from M12–13) + a passed mock interview loop.
@@ -168,12 +187,14 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 | **5 — Production / MLOps** | M12–M13 | Git/GitHub, **Docker**, a vector DB, experiment tracking | **Chroma / pgvector** (local), **Qdrant / Pinecone** free tiers; **MLflow / Weights & Biases** free tiers; GitHub free | Managed vector DB, cloud hosting, paid observability |
 
 **Practical setup notes**
+
 - **Ollama** is the recommended default for "run an LLM yourself" from Module 8 onward — one install, no API key, works offline on a laptop; perfect for a broad, cost-sensitive audience. **vLLM** is introduced later (M11/M13) as the *throughput-oriented server* for when you deploy your own model on a GPU.
 - **API keys:** teach learners to create keys, **set hard spend limits**, never commit keys to Git (use `.env`/secrets), and prefer the cheapest small model that demonstrates the concept. Always show a **free fallback** (Ollama/Groq/Gemini free tier) alongside any paid-API example.
 - **Cloud GPUs:** for the custom-LLM capstone, recommend **RunPod / Lambda / Modal / Vast.ai** spot instances billed by the minute; emphasize that *learning to pretrain* needs only a small model on a single modern GPU — frontier-scale compute is explicitly out of scope, and that's fine.
 - **A "Prerequisites & Setup" chapter ships inside Module 0** (accounts, Colab, Ollama, HF token) and a **"Cloud GPU & training setup" chapter ships inside Module 11** (renting a GPU, moving data, running a distributed job) so infra is taught just-in-time, never front-loaded.
 
 ### B1. Content structure & format
+
 - **Hierarchy:** Module → Chapter → (sections + runnable notebook + Key Takeaways + Exercises).
 - **Chapter length:** ~1,500–3,000 words or a 15–25 min notebook, **one concept per chapter**. Heavier modules (7–14) budget ~6–8 hours/week of learner effort.
 - **Theory vs hands-on:** M0–2 ≈ 70/30; M3–10 ≈ 40/60; M11–14 ≈ 30/70.
@@ -181,17 +202,20 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 - **Tone:** conversational, "assume the reader knows nothing," recurring analogies, a running example/project per module.
 
 ### B2. Designing hands-on exercises for a broad audience
+
 - **Two-tier compute (the key decision):** **JupyterLite/Pyodide in-browser** for M0–4 and all quick "try it" cells (zero install, runs client-side); **Colab/Kaggle free GPU** for M5–14 ("Open in Colab" button per chapter); **local setup** taught as an optional M3 chapter; **rented GPU** only in M11.
 - **Scaffolding:** fill-in-the-blank → "implement this function" → open-ended mini-project; hidden solution walkthroughs revealed after an attempt.
 - **Auto-grading:** `assert`-based unit-test graders runnable in-browser; MCQ auto-grading for concept checks.
 
 ### B3. Assessment, practice & certification
+
 - **Per-chapter:** 2–4 exercises + a 3–5 question concept check.
 - **Per-module:** a Varsity-style MCQ quiz + a capstone (auto/peer-reviewed).
 - **Spaced repetition & retrieval practice:** Dunlosky et al. (2013) rate **practice testing and distributed practice** as the two most effective study techniques — surface "review" cards from prior modules at spaced intervals.
 - **Certification & tracks:** mirror Varsity Certified (proctored MCQ + project, ~65% pass). Offer named tracks: **Absolute Beginner → ML Practitioner → AI Engineer (LLMs) → LLM Builder (custom training) → MLOps/Production**, plus a final **"AI Engineer Certified"** gated on the custom-LLM and production-RAG capstones.
 
 ### B4. Platform & tech (Claude-Code-friendly)
+
 - **Authoring:** Jupyter `.ipynb` for code-heavy chapters + Markdown/`.qmd` for prose (diffable, AI-editable).
 - **Publishing:** **Quarto** → one static site (what fast.ai uses; supports code-fold, callouts, LaTeX, multi-format). Alternatives: Jupyter Book, Docusaurus/MDX.
 - **Interactivity:** embed JupyterLite (Quarto live/Pyodide, e.g. `quarto-live`); "Open in Colab" for GPU chapters.
@@ -199,6 +223,7 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 - **Repo as product (docs-as-code):** everything in Git; chapters under `/modules/<n>/`; PR review for every change; CI runs notebook execution, link-checks, Markdown lint, spell-check — ideal for **phase-by-phase Claude Code development** (each phase = PRs against a clear spec).
 
 ### B5. Content-production workflow
+
 - **Per-chapter template:** front-matter (title, module, difficulty, prereqs, objectives) → hook → explanation → runnable worked example → Key Takeaways → exercises → solution → further reading.
 - **Loop:** draft → CI runs all cells → PR review → merge → auto-deploy.
 - **Keeping AI content current (critical):** separate **stable core** (math, classical ML, backprop, transformers — write to last years) from **fast-moving frontier** (specific models, frameworks, vector DBs — isolated, version-pinned, "last reviewed" dated, swappable). Quarterly review cycle with per-chapter owners + a "What changed in AI" changelog; community PRs via forum/Discord.
@@ -230,6 +255,7 @@ Sources blended: fast.ai *Practical Deep Learning*, Andrew Ng's ML & Deep Learni
 By finishing the curriculum and its capstones, a learner can credibly claim — and *demonstrate via portfolio* — the following:
 
 **Can build & ship**
+
 - Train classical ML and deep-learning models from scratch and with PyTorch (M4–6).
 - Build a transformer/GPT from first principles and fine-tune LLMs with LoRA/QLoRA, with rigorous evaluation (M7–8).
 - Apply RL/preference methods (RLHF/DPO/GRPO) to post-train and improve model behavior and reasoning (M9).
@@ -244,6 +270,7 @@ By finishing the curriculum and its capstones, a learner can credibly claim — 
 ---
 
 ## Recommendations (decision-ready)
+
 1. **Two outcomes define success:** (a) a learner can train and serve a custom LLM (M11), and (b) a learner is interview-ready with a deployed portfolio (M16). Sequence the build so these are reachable and prove them with real capstones, not slideware.
 2. **Free-tier-first, taught just-in-time.** Keep M0–10 at ₹0 (browser + Colab/Kaggle + Ollama). Introduce optional paid API keys (always with a free Ollama/Groq/Gemini fallback) from M8, and a rented GPU only in M11 — with hard spend caps and a free local fallback for every paid example.
 3. **Commit to "runnable-everything"** (JupyterLite for beginners + Colab/GPU for heavy work); prove it in Phase 0 before authoring at scale.
@@ -252,6 +279,7 @@ By finishing the curriculum and its capstones, a learner can credibly claim — 
 6. **Keep Varsity's soul:** plain language, one idea per chapter, analogies, Key Takeaways, free/no-signup, three tiers, quizzes → certification. The power is editorial, not technical — don't over-engineer.
 
 ## Caveats
+
 - **Frontier specifics date fast.** Vector-DB rankings, "best" models, GRPO/reasoning techniques, and framework APIs here are late-2025/2026 snapshots — examples, not commitments. The maintenance plan exists precisely for this.
 - **Custom-LLM training is scoped to *small* models.** Learners pretrain ~100M–1B-param models to *understand the full pipeline*; frontier-scale pretraining (billions of params, large clusters) is intentionally out of scope on cost grounds, and the curriculum says so plainly.
 - **In-browser compute has real limits** (memory, package availability, no GPU); the JupyterLite + Colab dual strategy mitigates but doesn't eliminate this.

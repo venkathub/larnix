@@ -1,0 +1,9 @@
+extends: existence
+message: "Avoid '%s' — it can make a stuck reader feel small (STYLE_GUIDE §3)."
+level: error
+ignorecase: true
+tokens:
+  - simply
+  - just
+  - obviously
+  - trivially

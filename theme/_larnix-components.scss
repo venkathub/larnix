@@ -1,0 +1,72 @@
+// Larnix shared component structure — imported by BOTH the light and dark
+// themes so layout is identical in either mode. Colours are driven by CSS
+// custom properties; each theme sets the token values (light here as the
+// default :root, dark overrides them in larnix-dark.scss).
+
+// ── Default (light) tokens ──────────────────────────────────────────────────
+:root {
+  --lx-kt-bg: #f3fbfa;
+  --lx-kt-border: #0b6e6e;
+  --lx-kt-heading: #064e4e;
+}
+
+// ── Key Takeaways box ───────────────────────────────────────────────────────
+// Authors write:  ::: {.key-takeaways}  ### Key Takeaways  1. ...  :::
+.key-takeaways {
+  background: var(--lx-kt-bg);
+  border-left: 4px solid var(--lx-kt-border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+
+  > h3:first-child,
+  > h2:first-child {
+    margin-top: 0;
+    color: var(--lx-kt-heading);
+    font-size: 1.05rem;
+    text-transform: none;
+  }
+
+  ol, ul { margin-bottom: 0; }
+}
+
+// ── Badges (difficulty / compute / status) ──────────────────────────────────
+// Emitted by the `badge` shortcode. The visible label carries the meaning
+// (never colour alone); the coloured dot is decorative.
+.larnix-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  vertical-align: middle;
+
+  &::before {
+    content: "";
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.9;
+    flex: 0 0 auto;
+  }
+}
+
+// difficulty (light)
+.badge-beginner     { background: #e6f4ea; color: #14532d; border-color: #bfe3c9; }
+.badge-intermediate { background: #fdf0d5; color: #6b3e09; border-color: #f3d9a4; }
+.badge-advanced     { background: #fde2e1; color: #7f1d1d; border-color: #f5c2c0; }
+
+// compute (light)
+.badge-browser { background: #e0f2fe; color: #075985; border-color: #b9e2fb; }
+.badge-colab   { background: #fdebd8; color: #8a3b0c; border-color: #f6cfa6; }
+.badge-gpu     { background: #ede9fe; color: #4c1d95; border-color: #d4c9fb; }
+
+// status (light)
+.badge-stable   { background: #e9faf2; color: #075f43; border-color: #bdecd6; }
+.badge-frontier { background: #fff1f2; color: #8f1133; border-color: #f6c9d3; }

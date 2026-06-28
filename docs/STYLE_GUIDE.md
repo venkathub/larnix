@@ -68,6 +68,7 @@ Each chapter ships 2–4 exercises that progress in difficulty:
 3. **Open-ended mini-task** — a small problem with multiple valid solutions, graded by rubric or by a looser check. (Stretch.)
 
 Rules:
+
 - Every coded exercise has a **working auto-grader** and a **hidden solution walkthrough** revealed only after an attempt.
 - Match exercise difficulty to the chapter's tier. A 🟢 chapter must not hide a 🔴 exercise without labelling it a stretch goal.
 - State the expected time to complete.
@@ -77,16 +78,19 @@ Rules:
 ## 7. Required components & formatting
 
 **Difficulty badges** (one per chapter, in front-matter and shown in the UI):
+
 - 🟢 **Beginner** — no prior ML; gentle pace; in-browser where possible.
 - 🟡 **Intermediate** — assumes earlier modules; introduces real tooling.
 - 🔴 **Advanced** — assumes solid fundamentals; production/frontier depth.
 
 **Compute tier** (front-matter `compute`):
+
 - `browser` — runs in JupyterLite/Pyodide, zero install, ₹0.
 - `colab` — needs a free Colab/Kaggle GPU; ships an "Open in Colab" button.
 - `gpu` — needs a rented GPU (M11 only); states the approximate cost.
 
 **Status** (front-matter `status`):
+
 - `stable` — foundational; expected to last years. Reviewed annually.
 - `frontier` — model/tool/framework-specific; expected to date. Reviewed quarterly; version-pinned.
 
@@ -100,6 +104,7 @@ Rules:
 ```
 
 **Callouts** (use sparingly, for genuine signal):
+
 - `> 💡 Tip:` a practical shortcut.
 - `> ⚠️ Watch out:` a common mistake or footgun.
 - `> 🔬 Going deeper:` optional depth a beginner can skip.

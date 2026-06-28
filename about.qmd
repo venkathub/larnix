@@ -1,0 +1,29 @@
+---
+title: "About Larnix"
+---
+
+## The goal
+
+Larnix spans 17 modules — from "what is AI" through classical machine learning,
+deep learning, transformers, large language models, retrieval and agents,
+MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships
+runnable code; every module ends in graded exercises and a build-something
+capstone.
+
+The guiding promise: a learner with a low-spec laptop can complete the core of
+the course for ₹0 — in-browser Python for the early modules, free Colab and
+Kaggle tiers for the GPU modules, and a free local model fallback wherever a
+lesson touches an API.
+
+## How it is built
+
+Larnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter
+files; the site is statically generated and continuously checked: every code
+cell executes in CI, prose is linted, links and spelling are verified, and a set
+of "currency" gates keep fast-moving content honest.
+
+## Status
+
+This is the Phase P0 scaffold — the platform itself, proven end-to-end on a
+single sample chapter before any module is written at scale. The build plan
+lives in the project roadmap.

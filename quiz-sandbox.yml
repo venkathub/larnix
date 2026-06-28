@@ -1,0 +1,27 @@
+title: "Sandbox quiz — quick check"
+id: "sandbox-quiz"
+questions:
+  - id: what-is-a-model
+    prompt: "In this course, a model is best described as…"
+    options:
+      - "A spreadsheet that stores the raw data"
+      - "A function learned from data that maps an input to a prediction"
+      - "A type of web server that hosts notebooks"
+    answer: 1
+    explanation: "A model is the learned function; we fit it on examples and then call it to predict."
+  - id: what-accuracy-means
+    prompt: "If a classifier has 90% accuracy on a test set, it means…"
+    options:
+      - "It got 90% of the test predictions right"
+      - "It is 90% confident in every prediction"
+      - "It used 90% of the data for training"
+    answer: 0
+    explanation: "Accuracy is the fraction of predictions that match the true labels."
+  - id: browser-buys-you
+    prompt: "Running Python in the browser (Pyodide) mainly buys a learner…"
+    options:
+      - "A free GPU"
+      - "Zero install and zero cost to start"
+      - "A permanent cloud database"
+    answer: 1
+    explanation: "The win is no setup and ₹0 — code runs client-side in the browser."

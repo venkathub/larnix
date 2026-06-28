@@ -1,0 +1,20 @@
+---
+title: "Sandbox — Open in Colab button (internal)"
+subtitle: "Not learner content. Proves the colab shortcode + the GPU-notebook CI policy."
+search: false
+---
+
+::: {.callout-warning}
+**Internal scratch page** proving the `colab` shortcode and the GPU-notebook CI
+policy (D0012). GPU/`colab` notebooks are **not** run in CI — they are manually
+executed on Colab and the run is recorded in the PR (`docs/RUNBOOK.md`). The
+button below links to the fixture notebook on GitHub via Colab.
+:::
+
+Authored with one line: {{</* colab infra/fixtures/colab-fixture.ipynb */>}}
+
+{{< colab infra/fixtures/colab-fixture.ipynb >}}
+
+The repository and branch in the link come from `_quarto.yml`
+(`larnix-colab-repo` / `larnix-colab-branch`) — set them at publish time; they
+are never hardcoded in the shortcode.

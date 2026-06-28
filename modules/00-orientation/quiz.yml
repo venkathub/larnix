@@ -1,0 +1,27 @@
+title: "Chapter 1 — quick check"
+id: "m0-ch1-train-your-first-model"
+questions:
+  - id: what-is-a-model
+    prompt: "In this chapter, a model is best described as…"
+    options:
+      - "A spreadsheet that stores the flower measurements"
+      - "A function learned from labelled examples that maps an input to a prediction"
+      - "The chart that shows the accuracy score"
+    answer: 1
+    explanation: "A model is the learned function; we fit it on examples, then call it to predict."
+  - id: why-a-test-set
+    prompt: "Why do we measure accuracy on a separate test set instead of the training data?"
+    options:
+      - "Because the test set is always larger than the training set"
+      - "Because a model can score well on examples it has already seen yet fail on new ones"
+      - "Because scikit-learn refuses to predict on training data"
+    answer: 1
+    explanation: "Testing on unseen data checks whether the model generalises, not just memorises."
+  - id: what-accuracy-means
+    prompt: "The model reports 95% accuracy on the test set. That means…"
+    options:
+      - "It named 95% of the test flowers correctly"
+      - "It is 95% confident about every single flower"
+      - "It used 95% of the flowers for training"
+    answer: 0
+    explanation: "Accuracy is the fraction of predictions that match the true labels."
