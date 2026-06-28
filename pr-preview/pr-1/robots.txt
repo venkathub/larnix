@@ -1,1 +1,1 @@
-Sitemap: https://larnix.github.io/sitemap.xml
+Sitemap: https://venkathub.github.io/larnix/sitemap.xml
