@@ -1,8 +1,7 @@
 # Content & code quality gates (extended task by task through P0).
 #
-# Tasks 4 + 7 add the front-matter and quiz schema gates. Later P0 tasks add
-# jobs here: notebook execution (R10, task 8), prose/link/spell (task 9),
-# a11y (task 10), and the R1/R3/R6 gates (task 11).
+# Tasks 4 + 7 add the schema gates; task 8 adds the R10 notebook-execution gate.
+# Later P0 tasks add: prose/link/spell (task 9), a11y (task 10), R1/R3/R6 (task 11).
 
 name: Checks
 
@@ -27,9 +26,9 @@ jobs:
       - name: Install CI deps
         run: pip install -r infra/ci/requirements.txt
 
-      - name: Unit tests (CI linters)
+      - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -40,3 +39,28 @@ jobs:
 
       - name: Lint quizzes
         run: python infra/ci/quiz_lint.py
+
+  notebooks:
+    name: Notebook execution (R10)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install notebook deps
+        run: pip install -r infra/ci/requirements-notebooks.txt
+
+      - name: Register Jupyter kernel
+        run: python -m ipykernel install --user --name python3
+
+      - name: Unit tests (R10 runner)
+        working-directory: infra/ci
+        run: python -m unittest test_run_notebooks -v
+
+      - name: Execute notebooks (R10)
+        run: python infra/ci/run_notebooks.py

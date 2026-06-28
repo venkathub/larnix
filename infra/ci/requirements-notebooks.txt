@@ -1,0 +1,7 @@
+# R10 notebook-execution gate deps (infra/ci/run_notebooks.py).
+# Pinned to the versions verified locally on the gate fixtures.
+nbclient==0.11.0
+ipykernel==7.3.0
+
+# Chapter-twin runtime deps (numpy, scikit-learn, …) are added and pinned
+# precisely when the first executable chapter notebook lands (P0 task 15).

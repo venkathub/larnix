@@ -5,6 +5,34 @@
 
 ---
 
+## D0010 — R10 for browser chapters: a CI-executed companion notebook ("twin")
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** The R10 gate (`RISKS.md §5`, P0_SPEC §5.1) requires every chapter's code to execute
+  in CI. But a `compute: browser` chapter runs its `{pyodide}` cells **client-side** via quarto-live;
+  they are not executed during a headless `quarto render` (we set `execute.enabled: false` so the
+  build needs no kernel — D0005/task 5). So a render alone gives R10 no teeth for browser chapters.
+- **Options considered.**
+  1. **Companion executable "twin" notebook per browser chapter (chosen).** Each browser chapter
+     ships a `.ipynb` under `modules/` containing the worked-example code + exercise *solutions* +
+     grader asserts; `infra/ci/run_notebooks.py` executes it with `nbclient` (any cell error fails).
+     The interactive `.qmd` gives the in-browser UX; the twin gives the CI guarantee. The same logic
+     runs in both (Pyodide and CPython are both CPython-semantics).
+  2. *Headless-browser smoke test (Playwright)* that loads the rendered page and asserts the pyodide
+     cells ran. Real but slow/flaky and heavy infra — rejected for P0 (revisit if needed later).
+  3. *Render-check only* (markup present, not executed). Rejected: no correctness guarantee.
+- **Decision.** R10 = execute every `modules/**/*.ipynb` with `nbclient` (P0-D7). Browser chapters
+  satisfy it via a committed **twin notebook**; CPU chapters are executable `.ipynb` directly.
+- **Rationale.** Strongest correctness-per-rupee: reuses the grader logic already unit-tested in
+  CPython (D0009), needs no browser in CI, and matches the spec's nbclient choice.
+- **Consequences.** `infra/ci/run_notebooks.py` (+ pass/fail fixtures, 4 tests) and a `notebooks` CI
+  job (its own `requirements-notebooks.txt`: nbclient, ipykernel). Authors accept a small, deliberate
+  duplication between a browser chapter's `{pyodide}` cells and its twin; a future single-source
+  improvement (extracting tagged cells, or loading shared code via the Pyodide VFS) is noted but not
+  built in P0. The sample chapter's twin lands in task 15.
+
+---
+
 ## D0009 — Auto-grader: `/lib` assert helper in `{pyodide}` cells (V-1 resolution)
 - **Date:** 2026-06-28
 - **Status:** Accepted
