@@ -1,6 +1,9 @@
 ---
 title: "About Larnix"
+page-layout: full
 ---
+
+::: {.lx-plain}
 
 ## The goal
 
@@ -27,3 +30,5 @@ of "currency" gates keep fast-moving content honest.
 This is the Phase P0 scaffold — the platform itself, proven end-to-end on a
 single sample chapter before any module is written at scale. The build plan
 lives in the project roadmap.
+
+:::

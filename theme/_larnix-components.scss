@@ -221,13 +221,49 @@ h1, .h1 { font-weight: 700; }
 .lx-quote .lx-role { font-size: 0.82rem; opacity: 0.8; }
 .lx-whoinfo { display: flex; flex-direction: column; }
 
-// ── Landing layout: full-bleed marketing page, no chapter sidebar ────────────
+// ── Landing / plain pages: full-bleed, no chapter sidebar ───────────────────
 body:has(.lx-landing) #quarto-sidebar,
 body:has(.lx-landing) #quarto-margin-sidebar,
-body:has(.lx-landing) .quarto-sidebar-toggle { display: none !important; }
+body:has(.lx-landing) .quarto-sidebar-toggle,
+body:has(.lx-plain) #quarto-sidebar,
+body:has(.lx-plain) #quarto-margin-sidebar,
+body:has(.lx-plain) .quarto-sidebar-toggle { display: none !important; }
 body:has(.lx-landing) #quarto-content,
-body:has(.lx-landing) main.content {
+body:has(.lx-landing) main.content,
+body:has(.lx-plain) #quarto-content,
+body:has(.lx-plain) main.content {
   max-width: 1080px; margin-inline: auto; padding-inline: 1.2rem;
+}
+
+// ── Breadcrumb (secondary nav) typography ───────────────────────────────────
+.quarto-secondary-nav { background: var(--lx-nav-bg); }
+.quarto-page-breadcrumbs .breadcrumb-item,
+.quarto-page-breadcrumbs .breadcrumb-item a {
+  font-family: "Nunito", sans-serif; font-weight: 700; font-size: 0.9rem;
+}
+.quarto-page-breadcrumbs .breadcrumb-item a { color: var(--lx-nav-ink); text-decoration: none; }
+.quarto-page-breadcrumbs .breadcrumb-item a:hover { text-decoration: underline; }
+.quarto-page-breadcrumbs .breadcrumb-item.active,
+.quarto-page-breadcrumbs .breadcrumb-item:last-child {
+  color: var(--lx-heading); font-weight: 800;
+}
+
+// ── Sidebar (module + chapter list) typography ──────────────────────────────
+#quarto-sidebar .sidebar-item-section > .sidebar-item-container .menu-text {
+  font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.02rem;
+  color: var(--lx-heading); letter-spacing: -0.01em;
+}
+#quarto-sidebar .sidebar-section .sidebar-link,
+#quarto-sidebar .sidebar-item .sidebar-link {
+  font-family: "Nunito", sans-serif; font-weight: 700;
+  border-radius: 999px; padding: 0.28rem 0.7rem; color: var(--lx-text);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+#quarto-sidebar .sidebar-section .sidebar-link:hover {
+  background: var(--lx-nav-active-bg); color: var(--lx-nav-ink);
+}
+#quarto-sidebar .sidebar-section .sidebar-link.active {
+  background: var(--lx-nav-active-bg); color: var(--lx-nav-active-tx) !important; font-weight: 800;
 }
 
 // ── CTA band ────────────────────────────────────────────────────────────────
