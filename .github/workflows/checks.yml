@@ -12,7 +12,7 @@ on:
 
 jobs:
   schema:
-    name: Schema lints (front-matter + quiz) & unit tests
+    name: Schema, a11y & unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -39,6 +39,9 @@ jobs:
 
       - name: Lint quizzes
         run: python infra/ci/quiz_lint.py
+
+      - name: Accessibility (alt-text + theme contrast)
+        run: python infra/ci/a11y_check.py
 
   notebooks:
     name: Notebook execution (R10)

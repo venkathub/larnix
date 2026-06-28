@@ -5,6 +5,31 @@
 
 ---
 
+## D0011 — a11y gate (P0-D11): deterministic alt-text + contrast; defer page-level axe
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** D0006 adopted P0-D11: a minimal a11y CI gate (alt-text presence + theme
+  colour-contrast, WCAG AA). The implementation needed a path that runs in CI and on the builder's
+  low-spec laptop. Full axe/pa11y page scanning needs a headless Chromium.
+- **Options considered.**
+  1. *axe/pa11y against the built pages in CI* — most faithful (scans the rendered DOM, generated
+     images, runtime contrast), but needs a headless browser; can't run on the builder laptop or in
+     the current sandbox, and is heavier/slower.
+  2. **Deterministic, browser-free checks (chosen).** `infra/ci/a11y_check.py`: (a) non-empty
+     alt-text on content images (Markdown `![alt]()` + inline `<img>`); (b) WCAG AA contrast on the
+     theme's declared colour pairs (badges, Key Takeaways, links — light + dark, dark fills flattened
+     over the `darkly` body). Stdlib-only, unit-tested, locally provable.
+- **Decision.** Ship the deterministic checker now (alt-text + contrast). Defer full page-level
+  axe/pa11y scanning of the rendered site to a later phase, when real content and images exist.
+- **Rationale.** Deterministic + ₹0 + locally runnable beats a browser-dependent gate for P0, and it
+  enforces the two things we control today (authoring alt-text, and the design system's contrast).
+- **Consequences.** `a11y_check.py` (+ 12 tests) runs in the `schema` CI job (no extra deps). The
+  `THEME_PAIRS` list must be kept in sync with `theme/_larnix-components.scss` / `larnix-dark.scss`
+  (noted in-file). Page-level axe scanning is tracked for a later phase.
+
+---
+
 ## D0010 — R10 for browser chapters: a CI-executed companion notebook ("twin")
 
 - **Date:** 2026-06-28
