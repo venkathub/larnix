@@ -109,7 +109,10 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
 
 - /modules/<NN>-<slug>/ — each module: chapters as .qmd/.ipynb, a module README (objectives,
   prereqs, chapter list, capstone), quiz.yml, capstone.md with a rubric.
-- /site — _quarto.yml, theme/CSS (Key Takeaways box, difficulty badges, dark/sepia), nav, search.
+- Quarto project at the **repo root** (`_quarto.yml`, `_extensions/` shortcodes, `theme/` CSS for the
+  Key Takeaways box, difficulty badges, dark/sepia, nav, search; build output `_site/`). See
+  DECISIONS D0013. (The earlier `/site` location was relocated to root so module chapters render
+  inside one project.)
 - /lib — shared grader utilities, notebook helpers, the in-browser runner glue.
 - /assessments — quiz engine, certification exam config, learning-track definitions.
 - /infra — GitHub Actions workflows, docker-compose for local preview, deploy config.

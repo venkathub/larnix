@@ -36,14 +36,14 @@ so always escape literal examples.)
 
 ### How it works
 
-- `site/_extensions/larnix/quiz/quiz.lua` — shortcode: reads `quiz.yml` at render,
+- `_extensions/larnix/quiz/quiz.lua` — shortcode: reads `quiz.yml` at render,
   converts it to JSON (via Pandoc), embeds it in a mount `<div>`, and registers
   the engine assets once.
-- `site/_extensions/larnix/quiz/resources/larnix-quiz.{js,css}` — the client-side
+- `_extensions/larnix/quiz/resources/larnix-quiz.{js,css}` — the client-side
   engine: renders MCQs, scores on submit, shows correct/incorrect + explanations,
   persists `{best,last,total,at}` to `localStorage` under `larnix-quiz:<id>`.
 
-A worked example is at `site/sandbox-quiz.qmd` (+ `site/quiz-sandbox.yml`).
+A worked example is at `sandbox-quiz.qmd` (+ `quiz-sandbox.yml`).
 
 > **Verification note.** Render confirms the YAML→JSON embed and asset bundling;
 > the actual render/score/persist is confirmed in a browser (preview deploy).

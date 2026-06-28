@@ -5,6 +5,29 @@
 
 ---
 
+## D0013 — Single Quarto project at the repo root (content layout)
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** `CLAUDE.md` placed `_quarto.yml` under `/site` and chapters under `/modules` at the
+  repo root. A Quarto website only renders content inside its project directory, so a chapter in
+  `/modules` could not use the site theme, the badge/quiz/colab shortcodes (`_extensions`), or nav.
+  Authoring the first sample chapter (P0 task 14) forced the choice.
+- **Options considered.** (A) single Quarto project at the repo root, chapters in `/modules`;
+  (B) keep the project in `/site`, chapters in `site/modules/` (changes gate globs, diverges from
+  CLAUDE.md); (C) repo-root `/modules` plus a `site/modules` symlink (fragile in copy-based renders).
+- **Decision.** **(A)** — relocate `_quarto.yml`, `_extensions/`, `theme/`, and the landing/sandbox
+  `.qmd` from `site/` to the repo root; render list = `["*.qmd", "modules/**/*.qmd"]`; output `_site/`.
+  Chapters live in `/modules/<NN>-slug/` per CLAUDE.md; CI content-gate globs (`modules/**`) are
+  unchanged.
+- **Rationale.** The most natural Quarto layout, scales to 240+ chapters in one project, keeps the
+  repo-root `/modules` convention and the existing gate globs, and avoids symlink fragility.
+- **Consequences.** Updated all `site/`-relative paths (workflows render `path: "."`, deploy `_site`;
+  docker-compose `working_dir: /work`; a11y/quiz gate globs; Vale/lychee/markdownlint/codespell
+  configs; docs). `site/README.md` moved to `docs/SITE.md`. CLAUDE.md repo-conventions updated.
+
+---
+
 ## D0012 — GPU/colab notebooks: skipped in CI, manually Colab-verified
 
 - **Date:** 2026-06-28

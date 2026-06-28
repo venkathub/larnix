@@ -37,13 +37,13 @@ jobs:
       - name: Render site
         uses: quarto-dev/quarto-actions/render@v2
         with:
-          path: site
+          path: "."
 
       - name: Deploy to gh-pages (root)
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: site/_site
+          folder: _site
           # Keep PR previews living under gh-pages/pr-preview/ intact on production deploys:
           # exclude that umbrella dir from cleanup, and rebase instead of force-pushing
           # (force-push would clobber in-flight previews — see pr-preview-action docs).

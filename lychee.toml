@@ -5,8 +5,7 @@
 # Don't descend into generated output or the vendored quarto-live extension.
 exclude_path = [
   "_site",
-  "site/_site",
-  "site/_extensions/r-wasm",
+  "_extensions/r-wasm",
   "node_modules",
   ".git",
   ".quarto",

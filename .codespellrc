@@ -1,6 +1,6 @@
 [codespell]
 # Skip vendored, generated, and binary-ish files; lint our own prose + code.
-skip = .git,*/_extensions/r-wasm/*,*/_site/*,*.min.js,*.min.css,*.lock,*/fixtures/*,*/.quarto/*
+skip = .git,*_extensions/r-wasm/*,*/_site/*,*.min.js,*.min.css,*.lock,*/fixtures/*,*/.quarto/*
 # Allow-list: valid terms codespell mistakes for typos (domain acronyms/names).
 ignore-words-list = sme,larnix,pyodide,ans
 quiet-level = 3

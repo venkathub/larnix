@@ -27,6 +27,6 @@ globs:
 
 ignores:
   - "**/_site/**"
-  - "site/_extensions/**"
+  - "_extensions/**"
   - "node_modules/**"
   - ".git/**"

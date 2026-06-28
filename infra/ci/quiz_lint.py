@@ -28,7 +28,7 @@ from pathlib import Path
 
 import yaml
 
-DEFAULT_GLOBS = ["modules/**/quiz*.yml", "site/**/quiz*.yml"]
+DEFAULT_GLOBS = ["modules/**/quiz*.yml", "quiz*.yml"]
 
 
 def _nonempty_str(v) -> bool:

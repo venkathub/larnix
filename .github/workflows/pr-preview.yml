@@ -40,11 +40,11 @@ jobs:
         if: github.event.action != 'closed'
         uses: quarto-dev/quarto-actions/render@v2
         with:
-          path: site
+          path: "."
 
       - name: Deploy PR preview
         uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: site/_site
+          source-dir: _site
           preview-branch: gh-pages
           umbrella-dir: pr-preview

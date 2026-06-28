@@ -62,7 +62,7 @@ print("hello from your browser")
 ```
 ````
 
-`site/sandbox.qmd` is the proof page (imports scikit-learn, trains Iris, prints
+`sandbox.qmd` is the proof page (imports scikit-learn, trains Iris, prints
 accuracy). **Important:** `{pyodide}` cells execute in the visitor's browser, not
 during `quarto render` — so a local/CI render only confirms the runtime assets +
 cell markup are emitted; actual execution is confirmed by opening the page in a
@@ -79,7 +79,7 @@ P0 tasks (see `docs/phases/P0_SPEC.md §6`).
 | Tool | Pin | Notes |
 |------|-----|-------|
 | Quarto CLI | **1.8.27** | Latest confirmed stable patch on the 1.8 line (2026-01-16). The 1.9 line is the current release; bump deliberately and log it. |
-| `quarto-live` extension | **v0.2.0** (internal ext version 0.1.3) | Pyodide in-browser runtime. **Vendored** at `site/_extensions/r-wasm/live/` so a fresh clone builds without a network `quarto add`. Re-add with `quarto add r-wasm/quarto-live@v0.2.0`. |
+| `quarto-live` extension | **v0.2.0** (internal ext version 0.1.3) | Pyodide in-browser runtime. **Vendored** at `_extensions/r-wasm/live/` so a fresh clone builds without a network `quarto add`. Re-add with `quarto add r-wasm/quarto-live@v0.2.0`. |
 
 ## Build & preview locally
 
@@ -93,16 +93,16 @@ authoritative render.
 docker compose -f infra/docker-compose.yml run --rm --service-ports preview
 ```
 
-**One-shot static render** into `site/_site/`:
+**One-shot static render** into `_site/`:
 
 ```bash
 docker compose -f infra/docker-compose.yml run --rm render
 ```
 
 If you *do* have Quarto installed natively, the equivalents are
-`quarto preview site/` and `quarto render site/`.
+`quarto preview` and `quarto render`.
 
 ## Output
 
-Rendered HTML lands in `site/_site/`. Hosting/deploy (GitHub Pages + PR preview)
+Rendered HTML lands in `_site/`. Hosting/deploy (GitHub Pages + PR preview)
 is wired in P0 task 2.

@@ -10,14 +10,14 @@
 # Usage:
 #   Build/preview with live reload on http://localhost:4848 :
 #     docker compose -f infra/docker-compose.yml run --rm --service-ports preview
-#   One-shot static render into site/_site/ :
+#   One-shot static render into _site/ :
 #     docker compose -f infra/docker-compose.yml run --rm render
 
 services:
   preview:
     image: ghcr.io/quarto-dev/quarto:1.8.27
     entrypoint: ["quarto"]
-    working_dir: /work/site
+    working_dir: /work
     command: ["preview", "--host", "0.0.0.0", "--port", "4848", "--no-browser"]
     ports:
       - "4848:4848"
@@ -27,7 +27,7 @@ services:
   render:
     image: ghcr.io/quarto-dev/quarto:1.8.27
     entrypoint: ["quarto"]
-    working_dir: /work/site
+    working_dir: /work
     command: ["render"]
     volumes:
       - ../:/work

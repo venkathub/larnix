@@ -5,17 +5,17 @@
 ## Local preview
 
 The builder laptop runs Docker but not a system Quarto install, so render/preview
-through the pinned image (see `site/README.md` for detail):
+through the pinned image (see `docs/SITE.md` for detail):
 
 ```bash
 # Live preview with reload at http://localhost:4848
 docker compose -f infra/docker-compose.yml run --rm --service-ports preview
 
-# One-shot static render into site/_site/
+# One-shot static render into _site/
 docker compose -f infra/docker-compose.yml run --rm render
 ```
 
-With a native Quarto install: `quarto preview site/` / `quarto render site/`.
+With a native Quarto install: `quarto preview` / `quarto render`.
 
 ## CI / deploy
 
@@ -23,8 +23,8 @@ Two GitHub Actions workflows (see `infra/README.md` for the deploy model):
 
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
-| `.github/workflows/publish.yml` | push to `main`, or manual **Run workflow** (`workflow_dispatch`) | Renders `site/` and deploys to the `gh-pages` branch **root** → production Pages. |
-| `.github/workflows/pr-preview.yml` | `pull_request` (opened/updated/reopened/closed) | Renders `site/` and deploys a preview to `gh-pages/pr-preview/pr-<N>/`; comments the URL; cleans up on close. |
+| `.github/workflows/publish.yml` | push to `main`, or manual **Run workflow** (`workflow_dispatch`) | Renders the site and deploys to the `gh-pages` branch **root** → production Pages. |
+| `.github/workflows/pr-preview.yml` | `pull_request` (opened/updated/reopened/closed) | Renders the site and deploys a preview to `gh-pages/pr-preview/pr-<N>/`; comments the URL; cleans up on close. |
 
 ### First-time enablement
 

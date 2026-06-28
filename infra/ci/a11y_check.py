@@ -119,7 +119,7 @@ def check_alt_text_in_text(text: str) -> list[str]:
     return problems
 
 
-DEFAULT_GLOBS = ["site/**/*.qmd", "modules/**/*.qmd", "modules/**/*.md"]
+DEFAULT_GLOBS = ["*.qmd", "modules/**/*.qmd", "modules/**/*.md"]
 
 
 def _collect(args: list[str]) -> list[str]:

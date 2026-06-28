@@ -1,10 +1,12 @@
 project:
   type: website
   output-dir: _site
-  # Render the whole site directory. Module chapters get wired into the sidebar
-  # in later P0 tasks (nav for the sample chapter lands in task 15).
+  # Single Quarto project at the repo root (DECISIONS D0013). Render the landing
+  # pages and the module chapters; the CI twins (.ipynb) and fixtures are not
+  # learner pages and are excluded. Chapter sidebar nav lands in P0 task 15.
   render:
     - "*.qmd"
+    - "modules/**/*.qmd"
 
 # "Open in Colab" target — set at publish time (never hardcoded in the shortcode).
 # Override per-environment with LARNIX_COLAB_REPO / LARNIX_COLAB_BRANCH.
@@ -43,7 +45,7 @@ format:
     # Larnix theme layered on cosmo (light) / darkly (dark). The full design
     # system — Key Takeaways box, difficulty/compute/status badges — lives in
     # theme/larnix*.scss; badges are authored via the `badge` shortcode
-    # (site/_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
+    # (_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
     theme:
       light:
         - cosmo

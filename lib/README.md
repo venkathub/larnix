@@ -29,7 +29,7 @@ On failure it prints each result and raises `AssertionError`, so the cell shows
 an error. Hidden solutions use the `<details>` pattern from `CHAPTER_TEMPLATE.md`.
 
 quarto-live's **native** exercise widget (editor + hint + solution + a `check:`
-grader) is also available and demonstrated in `site/sandbox-exercise.qmd §B`;
+grader) is also available and demonstrated in `sandbox-exercise.qmd §B`;
 its Python `check`-cell contract is browser-only to verify and under-documented,
 so it is reserved for richer UX, not the default grader.
 

@@ -108,7 +108,7 @@ jobs:
           npm install -g markdownlint-cli2@0.18.1
 
       - name: Vale (tone / banned words)
-        run: vale --glob='!**/_extensions/**' site modules
+        run: vale --glob='!**/_extensions/**' . modules
 
       - name: markdownlint
         run: markdownlint-cli2
@@ -117,4 +117,4 @@ jobs:
         run: codespell .
 
       - name: Link check (lychee)
-        run: lychee --config lychee.toml --no-progress 'docs/**/*.md' 'site/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md
+        run: lychee --config lychee.toml --no-progress 'docs/**/*.md' '*.qmd' 'modules/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md
