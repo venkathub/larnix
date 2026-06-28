@@ -308,6 +308,31 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   border-radius: 999px !important; font-family: "Nunito"; font-weight: 800; font-size: 0.82rem;
 }
 
+// Pyodide cell OUTPUT rendered as a dark terminal window (both page themes).
+.exercise-cell-output {
+  position: relative; margin: 0.7rem 0 0;
+  background: #14141f !important; border: 1px solid #2a2a3d;
+  border-radius: 14px; box-shadow: var(--clay-shadow-sm);
+  padding: 2.3rem 1.1rem 1rem; overflow: auto;
+}
+.exercise-cell-output::before {
+  content: "OUTPUT"; position: absolute; top: 0; left: 0; right: 0; height: 2.3rem;
+  background: #0e0e16; border-bottom: 1px solid #24243a; border-radius: 14px 14px 0 0;
+  display: flex; align-items: center; justify-content: flex-end; padding-right: 1rem;
+  font-family: "Nunito"; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.08em; color: #9aa3b8;
+}
+.exercise-cell-output::after {
+  content: ""; position: absolute; top: 0.82rem; left: 1rem; width: 0.6rem; height: 0.6rem;
+  border-radius: 50%; background: #ff5f57; box-shadow: 1rem 0 #febc2e, 2rem 0 #28c840;
+}
+.exercise-cell-output pre,
+.exercise-cell-output code,
+.exercise-cell-output .cell-output-stdout {
+  background: transparent !important; color: #d7f5e3 !important; border: none !important;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important;
+  white-space: pre-wrap; margin: 0;
+}
+
 .callout { border-radius: 16px !important; box-shadow: var(--clay-shadow-sm); }
 
 // ── Navbar (light, glassy, claymorphism-friendly) ───────────────────────────
@@ -362,6 +387,12 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   background: var(--lx-nav-active-bg); transform: translateY(-1px);
 }
 .navbar .quarto-color-scheme-toggle:hover i { color: var(--lx-nav-ink) !important; }
+// Quarto ships the toggle glyph empty in both modes here, so supply a clear,
+// mode-aware affordance: moon in light (= switch to dark), sun in dark.
+.navbar .quarto-color-scheme-toggle { display: inline-grid; place-items: center; }
+.navbar .quarto-color-scheme-toggle i.bi { display: none; }
+.navbar .quarto-color-scheme-toggle::before { content: "🌙"; font-size: 1.05rem; line-height: 1; }
+body.quarto-dark .navbar .quarto-color-scheme-toggle::before { content: "☀️"; }
 .navbar .navbar-toggler { border-color: var(--lx-border); }
 
 // ── Chapter reading polish ──────────────────────────────────────────────────
