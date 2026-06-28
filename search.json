@@ -2,51 +2,44 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Larnix",
+    "title": "Learn how AI works — by building it.",
     "section": "",
-    "text": "Larnix is a free, open-access course that takes a complete beginner — on a low-spec laptop, at zero cost — from “what is AI” to building and shipping real machine-learning systems. It follows the Zerodha Varsity teaching style: plain language, one idea per chapter, a worked example you can run, a short “Key Takeaways” box, and graded practice.\nThis page is the scaffold’s hello-world. It exists to prove the site builds from a fresh clone and renders. Real content arrives later in Phase P0 with the first sample chapter."
-  },
-  {
-    "objectID": "index.html#what-this-is",
-    "href": "index.html#what-this-is",
-    "title": "Larnix",
-    "section": "",
-    "text": "Larnix is a free, open-access course that takes a complete beginner — on a low-spec laptop, at zero cost — from “what is AI” to building and shipping real machine-learning systems. It follows the Zerodha Varsity teaching style: plain language, one idea per chapter, a worked example you can run, a short “Key Takeaways” box, and graded practice.\nThis page is the scaffold’s hello-world. It exists to prove the site builds from a fresh clone and renders. Real content arrives later in Phase P0 with the first sample chapter."
-  },
-  {
-    "objectID": "index.html#how-the-platform-is-built",
-    "href": "index.html#how-the-platform-is-built",
-    "title": "Larnix",
-    "section": "How the platform is built",
-    "text": "How the platform is built\n\nRead it as a static website (this Quarto site).\nRun it in your browser — beginner chapters execute Python with zero install (wired in a later P0 task).\nPractice it — exercises are auto-graded in the browser; quizzes score client-side.\n\nSee the About page for the project’s goals and the build roadmap.\n\n\n\n\n\n\nNote\n\n\n\nThis is a development scaffold. The design system, in-browser runtime, auto-grader, quiz engine, and the first chapter land in subsequent P0 tasks."
+    "text": "✦ Free forever · runs in your browser · no signup\nLearn how AI works — by building it.\n\nMost courses explain AI. Larnix has you build it. Train your first model in the next twenty minutes — right here in this browser tab — and keep going, one idea at a time, until you’ve built your own language model. No setup, no fees, no maths-degree required.\n\n\nTrain your first model ▸ See the full journey\n\n\nThe journey: zero to frontier\n\nSeventeen modules carry you from “what is AI” to building and shipping real systems. Each chapter is short, plain-spoken, and runnable. Begin at M0 today — the rest unlock as the curriculum grows.\n\n\n\n\nM0\nOrientation\n\nTrain a real model in twenty minutes: load data, fit a classifier, and watch it sort flowers it has never seen. Your first taste of the whole loop. 🟢 Beginner ▸ Available\n\n\n\nM1\nFoundations\n\nThe maths and Python you actually need — vectors, probability, clean code — built from zero, with intuition first and symbols second. 🟢 Beginner Soon\n\n\n\nM4\nClassical ML\n\nThe workhorses behind real products — regression, trees, ensembles — and the honest question every practitioner asks: did it actually learn? 🟡 Intermediate Soon\n\n\n\nM7\nTransformers & LLMs\n\nEver wondered what is inside a chatbot like ChatGPT? Build the attention mechanism and the transformer yourself, step by step — nothing hand-waved. 🔴 Advanced Soon\n\n\n\nM11\nBuild your own LLM\n\nThe headline capstone: pretrain a small language model end to end, on a free GPU. The thing experts do — you will do it too. 🔴 Advanced Soon\n\n\n\nM16\nCareer-ready\n\nTurn what you built into a career — portfolio projects, production MLOps, and interview practice that hiring managers respect. 🟡 Intermediate Soon\n\n\n\nYour first model is twenty minutes away.\nIt runs in this browser tab, costs nothing, and needs no account. Curious what you can build? There is only one way to find out.\nStart Chapter 1 ▸"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About Larnix",
     "section": "",
-    "text": "Larnix spans 17 modules — from “what is AI” through classical machine learning, deep learning, transformers, large language models, retrieval and agents, MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships runnable code; every module ends in graded exercises and a build-something capstone.\nThe guiding promise: a learner with a low-spec laptop can complete the core of the course for ₹0 — in-browser Python for the early modules, free Colab and Kaggle tiers for the GPU modules, and a free local model fallback wherever a lesson touches an API."
+    "text": "Artificial intelligence is reshaping how we work, learn, and create — yet for most people it stays a black box, gated behind expensive courses, pricey hardware, and walls of jargon. We think that is backwards. Understanding the technology shaping your future should not depend on your budget or your laptop.\nSo Larnix is free, open, and built on one belief: the fastest way to understand something is to build it. Not to watch someone else build it — to build it yourself, line by line, until it clicks.\n\n\n\n\nBuild first, theory as you go. Every chapter has you run real code and see a real result, then explains why it works. You learn by doing, the way you actually remember.\nOne idea at a time. Short, single-topic chapters in plain language. New terms are introduced in everyday words before the technical name appears.\nIt runs where you are. Beginner chapters execute Python right in your browser, with nothing to install. The GPU-heavy modules run on free cloud tiers, and any lesson that touches a paid service shows a free alternative.\nZero to frontier. Seventeen modules take you from “what is AI” through classical machine learning, deep learning, transformers, and large language models — ending with you pretraining your own small LLM.\n\n\n\n\nThe goal is not a certificate you forget. It is the genuine ability to read, build, and reason about modern AI systems — to train and evaluate models honestly, to explain how a transformer works because you wrote one, and to ship a project you are proud to show. In short: from curious beginner to someone who can build.\n\n\n\nLarnix is being built in the open, and it is early. Right now the platform is complete and proven end to end on the first full chapter — Train your first model, in your browser — and new modules are being authored from there. You can start that chapter today, for free; follow the roadmap to see what is coming next.\nIf that mission speaks to you, the best first step is the smallest one: train your first model."
   },
   {
-    "objectID": "about.html#the-goal",
-    "href": "about.html#the-goal",
+    "objectID": "about.html#why-larnix-exists",
+    "href": "about.html#why-larnix-exists",
     "title": "About Larnix",
     "section": "",
-    "text": "Larnix spans 17 modules — from “what is AI” through classical machine learning, deep learning, transformers, large language models, retrieval and agents, MLOps, responsible AI, and a build-your-own-LLM capstone. Every chapter ships runnable code; every module ends in graded exercises and a build-something capstone.\nThe guiding promise: a learner with a low-spec laptop can complete the core of the course for ₹0 — in-browser Python for the early modules, free Colab and Kaggle tiers for the GPU modules, and a free local model fallback wherever a lesson touches an API."
+    "text": "Artificial intelligence is reshaping how we work, learn, and create — yet for most people it stays a black box, gated behind expensive courses, pricey hardware, and walls of jargon. We think that is backwards. Understanding the technology shaping your future should not depend on your budget or your laptop.\nSo Larnix is free, open, and built on one belief: the fastest way to understand something is to build it. Not to watch someone else build it — to build it yourself, line by line, until it clicks."
   },
   {
-    "objectID": "about.html#how-it-is-built",
-    "href": "about.html#how-it-is-built",
+    "objectID": "about.html#how-youll-learn",
+    "href": "about.html#how-youll-learn",
     "title": "About Larnix",
-    "section": "How it is built",
-    "text": "How it is built\nLarnix is a docs-as-code project. Chapters are plain-text Quarto and Jupyter files; the site is statically generated and continuously checked: every code cell executes in CI, prose is linted, links and spelling are verified, and a set of “currency” gates keep fast-moving content honest."
+    "section": "",
+    "text": "Build first, theory as you go. Every chapter has you run real code and see a real result, then explains why it works. You learn by doing, the way you actually remember.\nOne idea at a time. Short, single-topic chapters in plain language. New terms are introduced in everyday words before the technical name appears.\nIt runs where you are. Beginner chapters execute Python right in your browser, with nothing to install. The GPU-heavy modules run on free cloud tiers, and any lesson that touches a paid service shows a free alternative.\nZero to frontier. Seventeen modules take you from “what is AI” through classical machine learning, deep learning, transformers, and large language models — ending with you pretraining your own small LLM."
   },
   {
-    "objectID": "about.html#status",
-    "href": "about.html#status",
+    "objectID": "about.html#what-youll-walk-away-with",
+    "href": "about.html#what-youll-walk-away-with",
     "title": "About Larnix",
-    "section": "Status",
-    "text": "Status\nThis is the Phase P0 scaffold — the platform itself, proven end-to-end on a single sample chapter before any module is written at scale. The build plan lives in the project roadmap."
+    "section": "",
+    "text": "The goal is not a certificate you forget. It is the genuine ability to read, build, and reason about modern AI systems — to train and evaluate models honestly, to explain how a transformer works because you wrote one, and to ship a project you are proud to show. In short: from curious beginner to someone who can build."
+  },
+  {
+    "objectID": "about.html#where-it-is-today",
+    "href": "about.html#where-it-is-today",
+    "title": "About Larnix",
+    "section": "",
+    "text": "Larnix is being built in the open, and it is early. Right now the platform is complete and proven end to end on the first full chapter — Train your first model, in your browser — and new modules are being authored from there. You can start that chapter today, for free; follow the roadmap to see what is coming next.\nIf that mission speaks to you, the best first step is the smallest one: train your first model."
   },
   {
     "objectID": "modules/00-orientation/ch01-train-your-first-model.html",

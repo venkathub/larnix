@@ -24,7 +24,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -43,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-40eb207957156c6c712e35318fbcaf2c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-20aa8a6289c7d0dc61126f663040c4cf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-40eb207957156c6c712e35318fbcaf2c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -457,6 +456,167 @@ Warning
 </section>
 
 </main> <!-- /main -->
+<script>
+/* Larnix navbar + reading-mode (loaded after body):
+   1) Highlight the navbar link that matches the CURRENT page (Quarto sometimes
+      marks a deep chapter link active on unrelated pages).
+   2) A 3-way reading-mode switcher — Light → Sepia → Dark — layered on Quarto's
+      native (light/dark-only) toggle. Sepia is the light Bootstrap theme plus a
+      `data-lx-mode="sepia"` token override on <html> (see theme SCSS). Light/dark
+      reuse Quarto's own stylesheet switching so we never reimplement it. */
+(function () {
+  function norm(p) { return (p.replace(/index\.html$/, "").replace(/\/$/, "") || "/"); }
+
+  function fixNavActive() {
+    var here = norm(location.pathname);
+    document.querySelectorAll(".navbar .navbar-nav .nav-link").forEach(function (a) {
+      var href = a.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      var path;
+      try { path = norm(new URL(href, location.href).pathname); } catch (e) { return; }
+      var on = path === here;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+  }
+
+  // ── Reading mode (light / sepia / dark) ───────────────────────────────────
+  var MODES = ["light", "sepia", "dark"];
+  var LABELS = { light: "Light", sepia: "Sepia", dark: "Dark" };
+  var KEY = "larnix-mode";
+
+  function quartoIsDark() { return document.body.classList.contains("quarto-dark"); }
+
+  // Drive Quarto's own light/dark switch only when the base scheme must change
+  // (sepia and light share the light base; only dark needs the alternate sheet).
+  function setQuartoBase(wantDark) {
+    if (wantDark !== quartoIsDark() && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme();
+    }
+  }
+
+  function getMode() {
+    var m = localStorage.getItem(KEY);
+    if (MODES.indexOf(m) >= 0) return m;
+    return quartoIsDark() ? "dark" : "light"; // first visit: follow Quarto's state
+  }
+
+  function updateToggles(mode) {
+    var next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    var label = "Reading mode: " + LABELS[mode] + " — switch to " + LABELS[next];
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.setAttribute("title", label);
+      t.setAttribute("aria-label", label);
+    });
+  }
+
+  function applyMode(mode, persist) {
+    if (MODES.indexOf(mode) < 0) mode = "light";
+    setQuartoBase(mode === "dark");
+    document.documentElement.setAttribute("data-lx-mode", mode);
+    document.documentElement.classList.toggle("lx-sepia", mode === "sepia");
+    if (persist) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+    updateToggles(mode);
+  }
+
+  function cycle(ev) {
+    if (ev) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+    var cur = document.documentElement.getAttribute("data-lx-mode") || getMode();
+    applyMode(MODES[(MODES.indexOf(cur) + 1) % MODES.length], true);
+    return false;
+  }
+
+  function bindToggles() {
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.onclick = cycle; // replace Quarto's inline 2-state onclick with our cycle
+    });
+  }
+
+  function run() {
+    fixNavActive();
+    applyMode(getMode(), false); // restore saved mode (no re-persist)
+    bindToggles();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
+</script>
+
+<script>
+/* Larnix live-cell status: show "Setting up…" (not "Running…") while a cell is
+   downloading/installing its Python packages.
+
+   quarto-live drives a single per-cell indicator (.exercise-editor-eval-indicator)
+   for the whole evaluate() call, so the Run button reads "Running…" even while
+   Pyodide is still fetching packages on first use — a one-time download that can
+   take many seconds and reads as a hang. We split the package-load phase out:
+   pre-load the cell's imports (tagging the active editor .lx-loading-pkg so CSS
+   swaps the label to "Setting up…"), THEN hand off to the original evaluate(),
+   whose own load step is now a no-op, so "Running…" shows only for real
+   execution. A short delay before tagging means already-cached packages (the
+   common case after first run) never flash the setup state. */
+(function () {
+  var LOADING_CLASS = "lx-loading-pkg";
+  var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
+  var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+  var firstRun = true;      // first eval of the page always involves a download
+
+  function activeEditors() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll(".exercise-editor"),
+      function (ed) {
+        var ind = ed.querySelector(".exercise-editor-eval-indicator");
+        return ind && !ind.classList.contains("d-none");
+      }
+    );
+  }
+
+  function patch() {
+    var rt = window._exercise_ojs_runtime;
+    if (!rt || !rt.PyodideEvaluator) return false;
+    var proto = rt.PyodideEvaluator.prototype;
+    if (proto.__lxLoadingPatched) return true;
+    proto.__lxLoadingPatched = true;
+
+    var originalEvaluate = proto.evaluate;
+    proto.evaluate = async function (code) {
+      if (code != null && this.pyodide) {
+        var editors = [];
+        // First eval of the page hands straight off from the runtime bootstrap
+        // (which already shows "Setting up…"), so tag immediately to avoid a
+        // brief "Running…" flash in the gap; later evals keep the anti-flash delay.
+        var delay = firstRun ? 0 : DELAY_MS;
+        firstRun = false;
+        var timer = setTimeout(function () {
+          editors = activeEditors();
+          editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
+        }, delay);
+        try {
+          // Download/install any packages this cell imports, up front.
+          await this.pyodide.loadPackagesFromImports(code);
+        } catch (e) {
+          /* swallow — let the original evaluate() surface the real error */
+        } finally {
+          clearTimeout(timer);
+          editors.forEach(function (ed) { ed.classList.remove(LOADING_CLASS); });
+        }
+      }
+      // Packages are cached now, so the original load step is a no-op and the
+      // cell correctly shows "Running…" only while the code executes.
+      return originalEvaluate.apply(this, arguments);
+    };
+    return true;
+  }
+
+  if (!patch()) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
+    }, POLL_MS);
+  }
+})();
+</script>
+
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

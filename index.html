@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Larnix</title>
+<title>Larnix — learn AI/ML by building it, in your browser – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,7 +24,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -36,16 +35,15 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-40eb207957156c6c712e35318fbcaf2c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-20aa8a6289c7d0dc61126f663040c4cf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-40eb207957156c6c712e35318fbcaf2c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -286,7 +284,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Larnix</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -296,7 +294,7 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -328,71 +326,244 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#what-this-is" id="toc-what-this-is" class="nav-link active" data-scroll-target="#what-this-is">What this is</a></li>
-  <li><a href="#how-the-platform-is-built" id="toc-how-the-platform-is-built" class="nav-link" data-scroll-target="#how-the-platform-is-built">How the platform is built</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Larnix</h1>
-<p class="subtitle lead">A free, beginner-to-frontier school for AI/ML — where every chapter runs.</p>
+
+
+
+<div class="lx-landing">
+<div class="lx-hero">
+<p><span class="lx-eyebrow lx-reveal lx-reveal-1">✦ Free forever · runs in your browser · no signup</span></p>
+<h1 class="lx-reveal lx-reveal-2" id="learn-how-ai-works-by-building-it."><span>Learn how AI works —</span> <span class="lx-pop">by building it.</span></h1>
+<div class="lx-lead lx-reveal lx-reveal-3">
+<p>Most courses <em>explain</em> AI. Larnix has you <strong>build</strong> it. Train your first model in the next twenty minutes — right here in this browser tab — and keep going, one idea at a time, until you’ve built your own language model. No setup, no fees, no maths-degree required.</p>
 </div>
-
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="what-this-is" class="level2">
-<h2 class="anchored" data-anchor-id="what-this-is">What this is</h2>
-<p>Larnix is a free, open-access course that takes a complete beginner — on a low-spec laptop, at zero cost — from “what is AI” to building and shipping real machine-learning systems. It follows the Zerodha Varsity teaching style: plain language, one idea per chapter, a worked example you can run, a short “Key Takeaways” box, and graded practice.</p>
-<p>This page is the scaffold’s hello-world. It exists to prove the site builds from a fresh clone and renders. Real content arrives later in Phase P0 with the first sample chapter.</p>
+<div class="lx-cta lx-reveal lx-reveal-4">
+<p><a href="./modules/00-orientation/ch01-train-your-first-model.html" class="btn-clay">Train your first model ▸</a> <a href="https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md" class="btn-clay btn-clay--ghost">See the full journey</a></p>
+</div>
+</div>
+<h2 class="lx-section" id="the-journey-zero-to-frontier">The journey: zero to frontier</h2>
+<div class="lx-sub">
+<p>Seventeen modules carry you from “what is AI” to building and shipping real systems. Each chapter is short, plain-spoken, and runnable. Begin at M0 today — the rest unlock as the curriculum grows.</p>
+</div>
+<div class="lx-grid lx-grid--3">
+<div class="lx-course lx-tile clay--teal">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M0</span></p>
+<h3 id="orientation">Orientation</h3>
+</div>
+<p>Train a real model in twenty minutes: load data, fit a classifier, and watch it sort flowers it has never seen. Your first taste of the whole loop. <span class="lx-pill">🟢 Beginner</span> <span class="lx-pill">▸ Available</span></p>
+</div>
+<div class="lx-course lx-tile clay--amber lx-course--soon">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M1</span></p>
+<h3 id="foundations">Foundations</h3>
+</div>
+<p>The maths and Python you actually need — vectors, probability, clean code — built from zero, with intuition first and symbols second. <span class="lx-pill">🟢 Beginner</span> <span class="lx-pill">Soon</span></p>
+</div>
+<div class="lx-course lx-tile clay--coral lx-course--soon">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M4</span></p>
+<h3 id="classical-ml">Classical ML</h3>
+</div>
+<p>The workhorses behind real products — regression, trees, ensembles — and the honest question every practitioner asks: did it actually learn? <span class="lx-pill">🟡 Intermediate</span> <span class="lx-pill">Soon</span></p>
+</div>
+<div class="lx-course lx-tile clay--violet lx-course--soon">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M7</span></p>
+<h3 id="transformers-llms">Transformers &amp; LLMs</h3>
+</div>
+<p>Ever wondered what is inside a chatbot like ChatGPT? Build the attention mechanism and the transformer yourself, step by step — nothing hand-waved. <span class="lx-pill">🔴 Advanced</span> <span class="lx-pill">Soon</span></p>
+</div>
+<div class="lx-course lx-tile clay--sky lx-course--soon">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M11</span></p>
+<h3 id="build-your-own-llm">Build your own LLM</h3>
+</div>
+<p>The headline capstone: pretrain a small language model end to end, on a free GPU. The thing experts do — you will do it too. <span class="lx-pill">🔴 Advanced</span> <span class="lx-pill">Soon</span></p>
+</div>
+<div class="lx-course lx-tile clay--mint lx-course--soon">
+<div class="lx-course-top">
+<p><span class="lx-coursenum">M16</span></p>
+<h3 id="career-ready">Career-ready</h3>
+</div>
+<p>Turn what you built into a career — portfolio projects, production MLOps, and interview practice that hiring managers respect. <span class="lx-pill">🟡 Intermediate</span> <span class="lx-pill">Soon</span></p>
+</div>
+</div>
+<section id="your-first-model-is-twenty-minutes-away." class="lx-cta-band">
+<h2>Your first model is twenty minutes away.</h2>
+<p>It runs in this browser tab, costs nothing, and needs no account. Curious what you can build? There is only one way to find out.</p>
+<p><a href="./modules/00-orientation/ch01-train-your-first-model.html" class="btn-clay btn-clay--ghost">Start Chapter 1 ▸</a></p>
 </section>
-<section id="how-the-platform-is-built" class="level2">
-<h2 class="anchored" data-anchor-id="how-the-platform-is-built">How the platform is built</h2>
-<ul>
-<li><strong>Read it</strong> as a static website (this Quarto site).</li>
-<li><strong>Run it</strong> in your browser — beginner chapters execute Python with zero install (wired in a later P0 task).</li>
-<li><strong>Practice it</strong> — exercises are auto-graded in the browser; quizzes score client-side.</li>
-</ul>
-<p>See the <a href="./about.html">About</a> page for the project’s goals and the build roadmap.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This is a development scaffold. The design system, in-browser runtime, auto-grader, quiz engine, and the first chapter land in subsequent P0 tasks.</p>
-</div>
 </div>
 
 
-</section>
 
 </main> <!-- /main -->
+<script>
+/* Larnix navbar + reading-mode (loaded after body):
+   1) Highlight the navbar link that matches the CURRENT page (Quarto sometimes
+      marks a deep chapter link active on unrelated pages).
+   2) A 3-way reading-mode switcher — Light → Sepia → Dark — layered on Quarto's
+      native (light/dark-only) toggle. Sepia is the light Bootstrap theme plus a
+      `data-lx-mode="sepia"` token override on <html> (see theme SCSS). Light/dark
+      reuse Quarto's own stylesheet switching so we never reimplement it. */
+(function () {
+  function norm(p) { return (p.replace(/index\.html$/, "").replace(/\/$/, "") || "/"); }
+
+  function fixNavActive() {
+    var here = norm(location.pathname);
+    document.querySelectorAll(".navbar .navbar-nav .nav-link").forEach(function (a) {
+      var href = a.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      var path;
+      try { path = norm(new URL(href, location.href).pathname); } catch (e) { return; }
+      var on = path === here;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+  }
+
+  // ── Reading mode (light / sepia / dark) ───────────────────────────────────
+  var MODES = ["light", "sepia", "dark"];
+  var LABELS = { light: "Light", sepia: "Sepia", dark: "Dark" };
+  var KEY = "larnix-mode";
+
+  function quartoIsDark() { return document.body.classList.contains("quarto-dark"); }
+
+  // Drive Quarto's own light/dark switch only when the base scheme must change
+  // (sepia and light share the light base; only dark needs the alternate sheet).
+  function setQuartoBase(wantDark) {
+    if (wantDark !== quartoIsDark() && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme();
+    }
+  }
+
+  function getMode() {
+    var m = localStorage.getItem(KEY);
+    if (MODES.indexOf(m) >= 0) return m;
+    return quartoIsDark() ? "dark" : "light"; // first visit: follow Quarto's state
+  }
+
+  function updateToggles(mode) {
+    var next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    var label = "Reading mode: " + LABELS[mode] + " — switch to " + LABELS[next];
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.setAttribute("title", label);
+      t.setAttribute("aria-label", label);
+    });
+  }
+
+  function applyMode(mode, persist) {
+    if (MODES.indexOf(mode) < 0) mode = "light";
+    setQuartoBase(mode === "dark");
+    document.documentElement.setAttribute("data-lx-mode", mode);
+    document.documentElement.classList.toggle("lx-sepia", mode === "sepia");
+    if (persist) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+    updateToggles(mode);
+  }
+
+  function cycle(ev) {
+    if (ev) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+    var cur = document.documentElement.getAttribute("data-lx-mode") || getMode();
+    applyMode(MODES[(MODES.indexOf(cur) + 1) % MODES.length], true);
+    return false;
+  }
+
+  function bindToggles() {
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.onclick = cycle; // replace Quarto's inline 2-state onclick with our cycle
+    });
+  }
+
+  function run() {
+    fixNavActive();
+    applyMode(getMode(), false); // restore saved mode (no re-persist)
+    bindToggles();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
+</script>
+
+<script>
+/* Larnix live-cell status: show "Setting up…" (not "Running…") while a cell is
+   downloading/installing its Python packages.
+
+   quarto-live drives a single per-cell indicator (.exercise-editor-eval-indicator)
+   for the whole evaluate() call, so the Run button reads "Running…" even while
+   Pyodide is still fetching packages on first use — a one-time download that can
+   take many seconds and reads as a hang. We split the package-load phase out:
+   pre-load the cell's imports (tagging the active editor .lx-loading-pkg so CSS
+   swaps the label to "Setting up…"), THEN hand off to the original evaluate(),
+   whose own load step is now a no-op, so "Running…" shows only for real
+   execution. A short delay before tagging means already-cached packages (the
+   common case after first run) never flash the setup state. */
+(function () {
+  var LOADING_CLASS = "lx-loading-pkg";
+  var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
+  var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+  var firstRun = true;      // first eval of the page always involves a download
+
+  function activeEditors() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll(".exercise-editor"),
+      function (ed) {
+        var ind = ed.querySelector(".exercise-editor-eval-indicator");
+        return ind && !ind.classList.contains("d-none");
+      }
+    );
+  }
+
+  function patch() {
+    var rt = window._exercise_ojs_runtime;
+    if (!rt || !rt.PyodideEvaluator) return false;
+    var proto = rt.PyodideEvaluator.prototype;
+    if (proto.__lxLoadingPatched) return true;
+    proto.__lxLoadingPatched = true;
+
+    var originalEvaluate = proto.evaluate;
+    proto.evaluate = async function (code) {
+      if (code != null && this.pyodide) {
+        var editors = [];
+        // First eval of the page hands straight off from the runtime bootstrap
+        // (which already shows "Setting up…"), so tag immediately to avoid a
+        // brief "Running…" flash in the gap; later evals keep the anti-flash delay.
+        var delay = firstRun ? 0 : DELAY_MS;
+        firstRun = false;
+        var timer = setTimeout(function () {
+          editors = activeEditors();
+          editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
+        }, delay);
+        try {
+          // Download/install any packages this cell imports, up front.
+          await this.pyodide.loadPackagesFromImports(code);
+        } catch (e) {
+          /* swallow — let the original evaluate() surface the real error */
+        } finally {
+          clearTimeout(timer);
+          editors.forEach(function (ed) { ed.classList.remove(LOADING_CLASS); });
+        }
+      }
+      // Packages are cached now, so the original load step is a no-op and the
+      // cell correctly shows "Running…" only while the code executes.
+      return originalEvaluate.apply(this, arguments);
+    };
+    return true;
+  }
+
+  if (!patch()) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
+    }, POLL_MS);
+  }
+})();
+</script>
+
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
@@ -408,13 +579,6 @@ Note
       window.document.body.appendChild(a);
     }
     setColorSchemeToggle(hasAlternateSentinel())
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
     const isCodeAnnotation = (el) => {
       for (const clz of el.classList) {
         if (clz.startsWith('code-annotation-')) {                     
