@@ -456,6 +456,42 @@ Warning
 </section>
 
 </main> <!-- /main -->
+<script>
+/* Larnix navbar fixes (loaded after body):
+   1) Highlight the navbar link that matches the CURRENT page (Quarto sometimes
+      marks a deep chapter link active on unrelated pages).
+   2) Keep the theme-toggle tooltip in sync with the mode it switches TO. */
+(function () {
+  function norm(p) { return (p.replace(/index\.html$/, "").replace(/\/$/, "") || "/"); }
+
+  function fixNavActive() {
+    var here = norm(location.pathname);
+    document.querySelectorAll(".navbar .navbar-nav .nav-link").forEach(function (a) {
+      var href = a.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      var path;
+      try { path = norm(new URL(href, location.href).pathname); } catch (e) { return; }
+      var on = path === here;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+  }
+
+  function fixToggleTitle() {
+    var t = document.querySelector(".quarto-color-scheme-toggle");
+    if (!t) return;
+    var dark = document.body.classList.contains("quarto-dark");
+    var label = dark ? "Switch to light mode" : "Switch to dark mode";
+    t.setAttribute("title", label);
+    t.setAttribute("aria-label", label);
+  }
+
+  function run() { fixNavActive(); fixToggleTitle(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+  new MutationObserver(fixToggleTitle).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
