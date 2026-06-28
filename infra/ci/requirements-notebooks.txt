@@ -4,6 +4,8 @@ nbclient==0.11.0
 ipykernel==7.3.0
 
 # Chapter-twin runtime deps (the M0 sample chapter's twin trains a scikit-learn
-# classifier on Iris). Pinned to versions verified executing the twin.
+# classifier on Iris; M1/M3 data chapters load vendored CSVs via lib/data.py).
+# Pinned to versions verified executing the twins.
 numpy==2.5.0
 scikit-learn==1.9.0
+pandas==3.0.4

@@ -93,6 +93,16 @@
   the named module and **never** rescues a `KNOWN_UNSAFE` package (e.g. an annotated `torch` still
   fails — no pure-Python wheel exists). So a bare `import seaborn`/`import torch` fails, while a
   deliberate `micropip.install("seaborn")` + `# micropip: seaborn` passes. +6 tests in `test_r_gates`.
+- **Implementation note — P1-D8 datasets + R11 ledger (Task 5, 2026-06-28; verified in-browser).**
+  `lib/data.py` loads `data/<name>.csv` **relative to cwd**, which resolves identically in the Pyodide
+  VFS (chapter declares the CSV in `resources:`) and the CPython twin (cwd = module dir). Vendored:
+  `modules/03-data/data/penguins.csv` (Palmer Penguins, **CC0-1.0 confirmed via GitHub API**, 344 rows)
+  and a synthetic `modules/01-python/data/habits.csv` (CC0-by-us, 35 rows, deliberately messy for M1).
+  `docs/ASSETS.md` is the license ledger; `infra/ci/assets_check.py` (R11) fails on any un-ledgered
+  `data/` file. Proven in-browser: `load_csv("penguins")` returned 344×8 offline. **Authoring rule:**
+  because quarto-live auto-loads only packages imported *in a cell* (not inside `lib/data.py`), a chapter
+  using `load_csv` must declare `pyodide: packages: [pandas]`. `requirements-notebooks.txt` now pins
+  `pandas==3.0.4` so data-chapter twins execute under R10.
 
 ---
 

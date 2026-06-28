@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -57,6 +57,9 @@ jobs:
 
       - name: Twin drift check (R10 / P1-D10)
         run: python infra/ci/make_twin.py --check
+
+      - name: Dataset license ledger (R11 / P1-D8)
+        run: python infra/ci/assets_check.py
 
   notebooks:
     name: Notebook execution (R10)

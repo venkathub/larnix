@@ -6,7 +6,9 @@ only) so they run unchanged in the browser and in CPython tests.
 | File | Purpose |
 |------|---------|
 | `grader.py` | In-browser **assert-grader** helper: `run_tests([(label, got, expected), …])` with a consistent pass/fail UX (`All N tests passed ✅`) and float tolerance. |
+| `data.py` | **Vendored-dataset loader** (P1-D8): `load_csv("penguins")` reads `data/<name>.csv` relative to the cwd (the module dir) — identical in the Pyodide VFS and the CPython twin. pandas is imported lazily. Chapters declare the CSV (and `pandas`) in front-matter — see the docstring. |
 | `test_grader.py` | CPython unit tests for `grader.py` (run the grading logic off-browser). |
+| `test_data.py` | CPython unit tests for `data.py` (path helpers always; the pandas round-trip when pandas is present). |
 
 ## The auto-grading approach (P0-D5, see DECISIONS D0009)
 
