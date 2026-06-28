@@ -1,0 +1,12 @@
+/*-- scss:defaults --*/
+// Larnix light theme — layered on top of `cosmo`.
+$primary: #0b6e6e !default; // Larnix teal
+$link-color: $primary !default;
+
+// Slightly roomier line length for long-form reading.
+$font-size-root: 17px !default;
+
+
+/*-- scss:rules --*/
+// Shared component structure + light token values / colours.
+@import "larnix-components";

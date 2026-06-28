@@ -35,12 +35,17 @@ website:
 
 format:
   html:
-    # The full design system (Key Takeaways box, difficulty/compute/status
-    # badges, dark/sepia toggle) is layered on in P0 task 3. For now we wire the
-    # theme slots so the scaffold renders with a clean default + light/dark.
+    # Larnix theme layered on cosmo (light) / darkly (dark). The full design
+    # system — Key Takeaways box, difficulty/compute/status badges — lives in
+    # theme/larnix*.scss; badges are authored via the `badge` shortcode
+    # (site/_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
     theme:
-      light: cosmo
-      dark: darkly
+      light:
+        - cosmo
+        - theme/larnix.scss
+      dark:
+        - darkly
+        - theme/larnix-dark.scss
     toc: true
     toc-depth: 3
     code-copy: true

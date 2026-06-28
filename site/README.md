@@ -9,10 +9,41 @@ The Larnix learner-facing website: a [Quarto](https://quarto.org) static site.
 | `_quarto.yml` | Website project config: nav, search, theme slots, execution (`freeze`). |
 | `index.qmd` | Landing page. |
 | `about.qmd` | Project goals + build status. |
+| `styleguide.qmd` | Internal design-system styleguide (renders every component; not learner content; excluded from search). |
+| `theme/larnix.scss` | Light theme (on `cosmo`) — brand tokens + imports the shared component partial. |
+| `theme/larnix-dark.scss` | Dark theme (on `darkly`) — imports the partial, then dark colour overrides. |
+| `theme/_larnix-components.scss` | Shared component structure: Key Takeaways box + badges (imported by both themes). |
+| `_extensions/larnix/badges/` | The `badge` Quarto shortcode (Lua). |
 | `_site/` | Generated output (git-ignored). |
 
+## Design system (see DECISIONS D0008)
+
+**Badges** — author with the shortcode, one dimension per call:
+
+```markdown
+{{< badge difficulty=beginner >}}    <!-- beginner | intermediate | advanced -->
+{{< badge compute=browser >}}        <!-- browser | colab | gpu -->
+{{< badge status=stable >}}          <!-- stable | frontier -->
+```
+
+The label carries the meaning (colour is reinforcement, never the only signal);
+an `aria-label` is emitted for screen readers.
+
+**Key Takeaways box** — author as a fenced div:
+
+```markdown
+::: {.key-takeaways}
+### Key Takeaways
+1. ...
+:::
+```
+
+**Themes** — light/dark via the navbar toggle (native Quarto). A **sepia**
+reading mode is a tracked follow-up (D0008); component colours are
+contrast-checked to WCAG AA. See `styleguide.qmd` rendered to eyeball both modes.
+
 The design system (Key Takeaways box, 🟢/🟡/🔴 difficulty badges, `browser|colab|gpu`
-compute badge, `stable|frontier` status badge, dark/sepia toggle), the in-browser
+compute badge, `stable|frontier` status badge) is in place. The in-browser
 runtime, auto-grader, quiz engine, and the first chapter are layered on in later
 P0 tasks (see `docs/phases/P0_SPEC.md §6`).
 

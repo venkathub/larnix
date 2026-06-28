@@ -5,6 +5,38 @@
 
 ---
 
+## D0008 — Design system: badge shortcode, shared SCSS partial, sepia deferred
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** P0 task 3 builds the visual vocabulary every chapter reuses: the Key Takeaways box,
+  the 🟢/🟡/🔴 difficulty badges, the `browser|colab|gpu` compute badge, the `stable|frontier`
+  status badge, and the dark/sepia reading modes (`STYLE_GUIDE` / P0_SPEC §1.1, §5.4). Two
+  sub-choices needed deciding: how authors mark up badges, and how to deliver three reading themes
+  when Quarto's native light/dark toggle supports only two.
+- **Decisions.**
+  1. **Badges = a Quarto shortcode** (`site/_extensions/larnix/badges`, `{{< badge difficulty=… >}}`
+     / `compute=…` / `status=…`). Cleaner chapter markup than raw fenced divs and one Lua filter to
+     maintain across the 240+ future chapters. The shortcode emits a `<span>` whose **visible label**
+     carries the meaning (never colour alone) plus an `aria-label` ("difficulty: Beginner"); the
+     coloured dot is decorative CSS. *Rejected:* fenced-div CSS classes (zero code but clunky,
+     repeated markup).
+  2. **Theme structure lives in a shared SCSS partial** (`theme/_larnix-components.scss`) imported by
+     **both** `larnix.scss` (light/cosmo) and `larnix-dark.scss` (dark/darkly). Quarto serves
+     light/dark as separate complete stylesheets, so component *layout* must exist in both; colours
+     are driven by CSS custom properties + per-class rules, with dark overriding via cascade order.
+     This avoids the bug where badges kept their colour but lost their pill/dot in dark mode.
+  3. **Sepia reading mode = deferred** to a dedicated micro-task before the P0 DoD sign-off. A clean
+     third theme needs a custom JS 3-way switcher (Quarto's built-in toggle is light/dark only),
+     which is more than "simple." Light/dark ship now (fully supported, native toggle); sepia is
+     tracked as an explicit follow-up so the "dark/sepia" DoD line is met, not silently dropped.
+- **Rationale.** Best authoring ergonomics + a11y-by-default for the most-repeated markup; one source
+  of truth for component layout; honest scoping of the only non-trivial theme piece.
+- **Consequences.** All chapters use the `badge` shortcode and the `.key-takeaways` fenced div.
+  Colour pairs were contrast-checked (WCAG AA, worst 6.05:1) ahead of the automated a11y gate
+  (task 10). A small "sepia switcher" task is added before task 18 (DoD).
+
+---
+
 ## D0007 — PR-preview mechanism: gh-pages branch subfolders (`pr-preview-action`)
 - **Date:** 2026-06-28
 - **Status:** Accepted
