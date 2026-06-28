@@ -31,12 +31,22 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: modules/00-orientation/ch01-train-your-first-model.qmd
+        text: Start learning
       - href: about.qmd
         text: About
     right:
       - icon: github
         href: https://github.com/larnix
         aria-label: Larnix on GitHub
+  sidebar:
+    style: floating
+    search: true
+    contents:
+      - section: "M0 — Orientation"
+        contents:
+          - text: "Ch1 — Train your first model"
+            href: modules/00-orientation/ch01-train-your-first-model.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
@@ -47,7 +57,7 @@ format:
     # theme/larnix*.scss; badges are authored via the `badge` shortcode
     # (_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
     #
-    # NOTE: browser chapters use `format: live-html` and must re-declare this
+    # NOTE: browser chapters use `format: live-html` and must restate this
     # theme in their own front-matter (live-html is a distinct format that does
     # not inherit these `html` settings). Defining live-html here instead would
     # make the website render every page twice. See DECISIONS D0013.

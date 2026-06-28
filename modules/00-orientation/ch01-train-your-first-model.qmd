@@ -24,7 +24,7 @@ review_cards:
     a: "The fraction of predictions that match the true labels — a number from 0 to 1, often shown as a percent."
 format:
   live-html:
-    # live-html does not inherit the project `html` theme, so re-declare it here
+    # live-html does not inherit the project `html` theme, so restate it here
     # (see DECISIONS D0013 / the note in _quarto.yml).
     theme:
       light:
