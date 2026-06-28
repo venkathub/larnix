@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check test_chapter_structure_lint -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -36,6 +36,9 @@ jobs:
 
       - name: Lint chapter front-matter
         run: python infra/ci/frontmatter_lint.py
+
+      - name: Varsity-contract structure (P1-D4)
+        run: python infra/ci/chapter_structure_lint.py
 
       - name: Lint quizzes
         run: python infra/ci/quiz_lint.py

@@ -87,6 +87,13 @@ scored client-side by the P0 quiz engine (score saved to `localStorage`, ₹0):
 Each MCQ needs an `answer` (0-based) and a one-line `explanation`. The linter flags
 a module quiz outside the ~8–12 band with an advisory note (not a failure).
 
+> The full per-chapter PR checklist — Varsity contract + the P1-D4 scaffolding kit
+> ("You'll need from before" recap, guided→implement→stretch, "If you're stuck"
+> hints, `🧱 For Java developers` asides) + correctness review — lives in
+> [`docs/AUTHORING_CHECKLIST.md`](AUTHORING_CHECKLIST.md). Its structural pillars
+> (Key Takeaways box, a runnable cell, hidden-solution exercises) are CI-enforced by
+> `infra/ci/chapter_structure_lint.py`.
+
 ---
 
 ## 7. Required components & formatting

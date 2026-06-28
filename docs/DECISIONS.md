@@ -103,6 +103,16 @@
   because quarto-live auto-loads only packages imported *in a cell* (not inside `lib/data.py`), a chapter
   using `load_csv` must declare `pyodide: packages: [pandas]`. `requirements-notebooks.txt` now pins
   `pandas==3.0.4` so data-chapter twins execute under R10.
+- **Implementation note — P1-D4 scaffolding + module scaffolding (Task 6, 2026-06-28).** The
+  beginner-scaffolding kit is finalized as `docs/AUTHORING_CHECKLIST.md` (a copy-paste per-chapter
+  PR checklist: "You'll need from before" recap, exercises guided→implement→stretch, "If you're
+  stuck" hints, `🧱 For Java developers` asides, plus the §5.5 correctness review). Its structural
+  pillars are CI-enforced by `infra/ci/chapter_structure_lint.py` (every `compute:` chapter `.qmd`
+  must have a Key Takeaways box, ≥1 runnable `{pyodide}` cell, and a `<details>` hidden solution) —
+  prose quality stays human review. Module skeletons (`README.md` + tailored `capstone.md` with brief
+  + rubric) shipped for `modules/01-python`, `02-math`, `03-data`; `module-quiz.yml` and `index.qmd`
+  land with each module's assessment task (per the P1-D11 mount decision). This closes §6.A; M0
+  content authoring begins next.
 
 ---
 
