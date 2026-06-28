@@ -31,5 +31,9 @@ jobs:
         working-directory: infra/ci
         run: python -m unittest -v
 
+      - name: Unit tests (grader)
+        working-directory: lib
+        run: python -m unittest -v
+
       - name: Lint chapter front-matter
         run: python infra/ci/frontmatter_lint.py

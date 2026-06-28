@@ -5,6 +5,36 @@
 
 ---
 
+## D0009 — Auto-grader: `/lib` assert helper in `{pyodide}` cells (V-1 resolution)
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** P0-D5 / D0006 chose to build on quarto-live's native exercise grading **plus** a thin
+  `/lib` assert helper, flagging spike **V-1**: quarto-live's grading examples are R/`webr`, so
+  Python/`pyodide` grading parity had to be proven before the sample chapter relied on it
+  (`P0_SPEC.md §9`). On inspecting the vendored extension (task 5): the bundled grader
+  (`_gradethis.qmd`) is **R-only** (`gradethis`); a `PyodideGrader` exists in the runtime and
+  `exercise`/`check`/`hint`/`solution` cell options work for `{pyodide}`, but the Python `check`-cell
+  contract is under-documented and only verifiable in a browser (no headless execution).
+- **Options considered.**
+  1. **`/lib` assert helper as the primary grader (chosen).** `run_tests([(label, got, expected), …])`
+     in plain `{pyodide}` cells. The grading logic is plain Python, so it is **unit-tested in CPython**
+     (deterministic, off-browser evidence) and runs identically in the browser via Pyodide. Consistent
+     `All N tests passed ✅` UX + float tolerance; hidden solutions via the `<details>` pattern.
+  2. *quarto-live native `check:` grading as primary.* Richer UI, but its Python contract is
+     under-documented and browser-only to verify — can't be gated in CI, weaker correctness story.
+- **Decision.** The **`/lib` assert helper (`lib/grader.py`) is the default auto-grader**; quarto-live's
+  native exercise widget (editor + hint + solution, and optionally `check:`) is **available for richer
+  UX** and demonstrated in `site/sandbox-exercise.qmd §B`, but is not the default grading path. This is
+  the spec's documented V-1 fallback, chosen because it is the only path with off-browser test evidence.
+- **Rationale.** Correctness-first: grading logic that runs in CI (CPython) beats grading we can only
+  eyeball in a browser. Zero extra deps, Pyodide-safe, fully controlled UX.
+- **Consequences.** `lib/grader.py` + `lib/test_grader.py` (6 CPython tests, wired into the `checks`
+  workflow). Chapters paste the helper into a `#| edit: false` setup cell (a future refinement loads
+  `lib/grader.py` into the Pyodide VFS to remove duplication). Spike **V-1 retired**: Python grading
+  logic is proven off-browser; in-browser pass/fail is a human/preview confirmation.
+
+---
+
 ## D0008 — Design system: badge shortcode, shared SCSS partial, sepia deferred
 - **Date:** 2026-06-28
 - **Status:** Accepted
