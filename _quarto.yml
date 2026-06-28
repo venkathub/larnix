@@ -46,6 +46,11 @@ format:
     # system — Key Takeaways box, difficulty/compute/status badges — lives in
     # theme/larnix*.scss; badges are authored via the `badge` shortcode
     # (_extensions/larnix/badges). Sepia reading mode: see DECISIONS D0008.
+    #
+    # NOTE: browser chapters use `format: live-html` and must re-declare this
+    # theme in their own front-matter (live-html is a distinct format that does
+    # not inherit these `html` settings). Defining live-html here instead would
+    # make the website render every page twice. See DECISIONS D0013.
     theme:
       light:
         - cosmo
