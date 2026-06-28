@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0d13eb7e60346607e8f9e865edb7152c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-6fe24cbdd3a70a0b31cef3c5ff1f4e31.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-0d13eb7e60346607e8f9e865edb7152c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-cb9e12fa7e533d3a00e0d999c1233980.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-fa4f2909b5778a94aac850dbd2dd4dd0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-cb9e12fa7e533d3a00e0d999c1233980.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,6 +428,7 @@ Warning
   var LOADING_CLASS = "lx-loading-pkg";
   var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
   var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+  var firstRun = true;      // first eval of the page always involves a download
 
   function activeEditors() {
     return Array.prototype.filter.call(
@@ -450,10 +451,15 @@ Warning
     proto.evaluate = async function (code) {
       if (code != null && this.pyodide) {
         var editors = [];
+        // First eval of the page hands straight off from the runtime bootstrap
+        // (which already shows "Setting up…"), so tag immediately to avoid a
+        // brief "Running…" flash in the gap; later evals keep the anti-flash delay.
+        var delay = firstRun ? 0 : DELAY_MS;
+        firstRun = false;
         var timer = setTimeout(function () {
           editors = activeEditors();
           editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
-        }, DELAY_MS);
+        }, delay);
         try {
           // Download/install any packages this cell imports, up front.
           await this.pyodide.loadPackagesFromImports(code);
