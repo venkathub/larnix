@@ -85,6 +85,9 @@ THEME_PAIRS = [
     ("light: frontier badge", "#8f1133", "#fff1f2"),
     ("light: Key Takeaways heading", "#0c5f57", "#d4f3ee"),
     ("light: primary link", "#0b6e6e", _LIGHT_BG),
+    ("light: nav text", "#2b2b3a", "#fffdfa"),
+    ("light: nav brand", "#0b6e6e", "#fffdfa"),
+    ("light: details summary", "#0b6e6e", "#ffffff"),
     ("dark: body text", "#e7e3f0", _DARK_BASE),
     ("dark: heading", "#ffffff", _DARK_BASE),
     ("dark: muted text", "#b3acc7", _DARK_BASE),
@@ -104,6 +107,8 @@ THEME_PAIRS = [
     ("dark: frontier badge", "#fecdd3", blend((244, 63, 94, 0.20), _DARK_BASE)),
     ("dark: Key Takeaways heading", "#7ff0e2", "#123f3b"),
     ("dark: primary link", "#5eead4", _DARK_BASE),
+    ("dark: nav text", "#e7e3f0", _DARK_BASE),
+    ("dark: nav brand", "#5eead4", _DARK_BASE),
 ]
 
 

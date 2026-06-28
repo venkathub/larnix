@@ -48,6 +48,12 @@ $border-radius-lg: 1.2rem !default;
     inset 0 5px 10px rgba(255, 255, 255, 0.05);
 
   --lx-kt-bg: #123f3b; --lx-kt-border: #2dd4bf; --lx-kt-heading: #7ff0e2; --lx-kt-edge: #1d5650;
+
+  --lx-nav-bg: rgba(24, 21, 39, 0.82);
+  --lx-nav-text: #e7e3f0;
+  --lx-nav-ink: #5eead4;
+  --lx-nav-active-bg: #123f3b;
+  --lx-nav-active-tx: #7ff0e2;
 }
 
 .lx-progress .lx-track { background: #2a2440; box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4); }

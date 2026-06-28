@@ -58,6 +58,13 @@
     inset 0 5px 10px rgba(255, 255, 255, 0.6);
 
   --lx-kt-bg: #d4f3ee; --lx-kt-border: #14b8a6; --lx-kt-heading: #0c5f57; --lx-kt-edge: #b6e7df;
+
+  // navbar + chapter accents
+  --lx-nav-bg: rgba(255, 253, 250, 0.82);
+  --lx-nav-text: #2b2b3a;
+  --lx-nav-ink: #0b6e6e;
+  --lx-nav-active-bg: #d4f3ee;
+  --lx-nav-active-tx: #0c5f57;
 }
 
 // ── Base typography ─────────────────────────────────────────────────────────
@@ -259,8 +266,82 @@ body:has(.lx-landing) main.content {
 
 // ── Code ────────────────────────────────────────────────────────────────────
 code:not(.sourceCode) { background: #f2e9db; padding: 0.12em 0.4em; border-radius: 0.4em; font-size: 0.9em; }
-div.sourceCode { border: 1px solid var(--lx-border); border-radius: 14px; }
-.callout { border-radius: 14px; }
+div.sourceCode {
+  border: 1px solid var(--lx-border); border-radius: 16px;
+  box-shadow: var(--clay-shadow-sm); overflow: hidden;
+}
+pre.sourceCode { padding: 0.9rem 1.05rem; margin: 0; }
+.callout { border-radius: 16px !important; box-shadow: var(--clay-shadow-sm); }
+
+// ── Navbar (light, glassy, claymorphism-friendly) ───────────────────────────
+.navbar {
+  background: var(--lx-nav-bg) !important;
+  -webkit-backdrop-filter: saturate(170%) blur(12px);
+  backdrop-filter: saturate(170%) blur(12px);
+  border-bottom: 1px solid var(--lx-border);
+  box-shadow: 0 8px 24px -16px rgba(43, 43, 58, 0.4);
+}
+.navbar .navbar-brand {
+  font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 1.4rem;
+  color: var(--lx-nav-ink) !important; display: inline-flex; align-items: center; gap: 0.45rem;
+}
+.navbar .navbar-brand::before {
+  content: ""; width: 1.05rem; height: 1.05rem; border-radius: 7px;
+  background: linear-gradient(135deg, var(--c-teal), var(--c-violet));
+  box-shadow: 0 3px 8px -2px rgba(139, 92, 246, 0.6);
+}
+.navbar .navbar-nav .nav-link,
+.navbar .quarto-navbar-tools .nav-link,
+.navbar .quarto-navbar-tools a {
+  color: var(--lx-nav-text) !important; font-family: "Nunito"; font-weight: 800;
+  border-radius: 999px; transition: background 0.15s ease, color 0.15s ease;
+}
+.navbar .navbar-nav .nav-link { padding: 0.35rem 0.95rem; margin: 0 0.1rem; }
+.navbar .navbar-nav .nav-link:hover,
+.navbar .quarto-navbar-tools a:hover { color: var(--lx-nav-ink) !important; }
+.navbar .navbar-nav .nav-link.active,
+.navbar .navbar-nav .show > .nav-link {
+  background: var(--lx-nav-active-bg); color: var(--lx-nav-active-tx) !important;
+}
+.navbar .quarto-navbar-tools a { width: 2.2rem; height: 2.2rem; display: inline-grid;
+  place-items: center; }
+.navbar .quarto-navbar-tools a:hover { background: var(--lx-nav-active-bg); }
+.navbar .navbar-toggler { border-color: var(--lx-border); }
+
+// ── Chapter reading polish ──────────────────────────────────────────────────
+// Promise / tip / "going deeper" blockquotes -> soft clay notes.
+#quarto-document-content blockquote, main blockquote {
+  background: var(--clay-amber-bg); color: var(--clay-amber-tx);
+  border-left: 5px solid var(--c-amber); border-radius: 14px;
+  padding: 0.9rem 1.2rem; margin: 1.5rem 0; box-shadow: var(--clay-shadow-sm);
+}
+main blockquote p:last-child { margin-bottom: 0; }
+
+// Hidden-solution accordions as clay cards.
+details {
+  background: var(--lx-card); border: 1px solid var(--lx-border); border-radius: 14px;
+  padding: 0.4rem 1.1rem; margin: 1rem 0; box-shadow: var(--clay-shadow-sm);
+}
+details > summary {
+  cursor: pointer; font-family: "Nunito"; font-weight: 800; color: var(--lx-nav-ink);
+  list-style: none; padding: 0.45rem 0;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸"; display: inline-block; margin-right: 0.5rem; transition: transform 0.15s ease; }
+details[open] > summary::before { transform: rotate(90deg); }
+details[open] > summary { border-bottom: 1px solid var(--lx-border); margin-bottom: 0.6rem; }
+
+// Sidebar + TOC active states.
+.sidebar-navigation .sidebar-item .sidebar-link.active,
+.sidebar nav a.active, nav#TOC a.active, .toc-active {
+  color: var(--lx-nav-ink) !important; font-weight: 800;
+}
+nav[role="doc-toc"] ul > li > a.active { border-left-color: var(--c-teal) !important; }
+
+// quarto-live "Run" controls -> teal clay pills.
+.btn-exercise-editor, .qwebr-button-run, a[class*="btn-exercise"] {
+  border-radius: 999px !important; font-family: "Nunito"; font-weight: 800;
+}
 
 // ── Motion (staggered reveal + float), respecting reduced-motion ────────────
 @media (prefers-reduced-motion: no-preference) {
