@@ -7,8 +7,10 @@ CI workflows, local-preview tooling, and deploy configuration.
 | Path | Purpose |
 |------|---------|
 | `docker-compose.yml` | Version-pinned Quarto image for local render/preview (no system Quarto needed). See `site/README.md`. |
+| `ci/` | Python CI gate scripts + their unit tests (front-matter lint now; R-gates later). See `ci/README.md`. |
 | `../.github/workflows/publish.yml` | Build + deploy the site to GitHub Pages (production) on push to `main`. |
 | `../.github/workflows/pr-preview.yml` | Build + deploy a per-PR preview; comments the URL on the PR. |
+| `../.github/workflows/checks.yml` | Content/code quality gates (front-matter schema now; notebook exec, prose, a11y, R-gates added task by task). |
 
 Later P0 tasks add more CI: notebook-execution gate (R10, task 8), prose/link/spell
 (task 9), a11y (task 10), and the R1/R3/R6 gates (task 11) — as separate

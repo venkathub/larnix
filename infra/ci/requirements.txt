@@ -1,0 +1,3 @@
+# CI dependencies for the Larnix R-gate / lint scripts (infra/ci/).
+# Kept deliberately tiny — the scripts are otherwise stdlib-only.
+PyYAML==6.0.2
