@@ -328,6 +328,7 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
 
 // Live (pyodide) editor cells: same window chrome, native CodeMirror theme kept.
 .exercise-editor {
+  position: relative;
   border: 1px solid var(--lx-border) !important; border-radius: 16px !important;
   box-shadow: var(--clay-shadow-sm); overflow: hidden;
 }
@@ -346,9 +347,11 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
 }
 
 // ── "Running" feedback for live cells ───────────────────────────────────────
-// quarto-live toggles a tiny .exercise-editor-eval-indicator spinner while a cell
-// evaluates; amplify it (no JS) so it's obvious the cell is working — including
-// the long first run while Python downloads.
+// quarto-live toggles a tiny .exercise-editor-eval-indicator while a cell
+// evaluates; we hide that and drive our own feedback off its class via :has().
+.exercise-editor-eval-indicator { display: none !important; }
+
+// Animated loading bar across the top of the editor while running.
 .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none))::after {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 6;
   border-radius: 16px 16px 0 0;
@@ -356,21 +359,26 @@ div.sourceCode pre.sourceCode { background: transparent; margin: 0; padding: 0.7
   background-size: 220% 100%; animation: lx-loadbar 1.05s linear infinite;
 }
 @keyframes lx-loadbar { from { background-position: 220% 0; } to { background-position: -220% 0; } }
+@keyframes lx-spin { to { transform: rotate(360deg); } }
 
-// Dim + lock the Run button on the cell that is running.
+// While running: the Run Code button is replaced in place by a "Running…" status
+// (spinner + label), and stops accepting clicks.
 .exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code {
-  pointer-events: none; opacity: 0.5;
+  pointer-events: none; font-size: 0; gap: 0.5rem;
+  background: var(--clay-teal-bg) !important; border-color: var(--clay-teal-bg) !important;
+  box-shadow: none !important;
 }
-
-// Turn the bare spinner into a clear "Running…" chip.
-.exercise-editor-eval-indicator { color: var(--lx-brand) !important; }
-.exercise-editor-eval-indicator:not(.d-none) {
-  display: inline-flex !important; align-items: center; vertical-align: middle;
-  width: 0.85rem; height: 0.85rem;
+.exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code svg {
+  display: none !important;
 }
-.exercise-editor-eval-indicator:not(.d-none)::after {
-  content: "Running…"; margin-left: 0.55rem; font-family: "Nunito"; font-weight: 800;
-  font-size: 0.78rem; color: var(--lx-brand); white-space: nowrap;
+.exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::before {
+  content: ""; width: 0.85rem; height: 0.85rem; border-radius: 50%; flex: 0 0 auto;
+  border: 2px solid var(--clay-teal-tx); border-top-color: transparent;
+  animation: lx-spin 0.7s linear infinite;
+}
+.exercise-editor:has(.exercise-editor-eval-indicator:not(.d-none)) .exercise-editor-btn-run-code::after {
+  content: "Running…"; color: var(--clay-teal-tx);
+  font-family: "Nunito"; font-weight: 800; font-size: 0.82rem; white-space: nowrap;
 }
 
 // Pyodide cell OUTPUT rendered as a dark terminal window (both page themes).
