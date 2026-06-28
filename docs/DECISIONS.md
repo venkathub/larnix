@@ -5,6 +5,34 @@
 
 ---
 
+## D0012 — GPU/colab notebooks: skipped in CI, manually Colab-verified
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** P0 builds the "Open in Colab" pattern + GPU-notebook CI policy on a minimal fixture
+  (P0_SPEC §1.1, §5.1) without authoring a real GPU lesson. CI has no GPU runner, so `colab`/`gpu`
+  notebooks cannot (and must not) be executed by the R10 gate.
+- **Decision.**
+  1. **Colab button = a `colab` shortcode** (`site/_extensions/larnix/colab`) emitting the standard
+     "Open in Colab" badge linking to `colab.research.google.com/github/<repo>/blob/<branch>/<path>`.
+     The repo + branch are **not hardcoded** — they come from `_quarto.yml`
+     (`larnix-colab-repo`/`larnix-colab-branch`) or `LARNIX_COLAB_REPO`/`LARNIX_COLAB_BRANCH` env
+     (CLAUDE.md "never hardcode endpoints"). Badge `alt` text is set for a11y.
+  2. **R10 skips GPU/colab notebooks.** `run_notebooks.py` does not execute a notebook whose Quarto
+     front-matter is `compute: colab|gpu` or whose notebook metadata is `larnix.compute=colab` /
+     `larnix.ci=false`. Only browser-twin + CPU notebooks run in CI.
+  3. **Manual Colab-run record** is required in the PR for every changed `colab`/`gpu` notebook
+     (link, runtime type + cost, top-to-bottom confirmation + final output + date) — see `RUNBOOK.md`.
+  4. **Fixtures live outside `modules/`** (`infra/fixtures/colab-fixture.ipynb`) so the content gates
+     (front-matter lint, R-gates) do not treat them as chapters.
+- **Rationale.** Honours the free-tier-first principle (GPU on free Colab/Kaggle), keeps CI correct
+  (never pretends to run GPU), and proves the pattern on a fixture per "evals before features".
+- **Consequences.** `run_notebooks.py` gains a `should_run()` skip + tests; the M11 rented-GPU
+  specifics (provider, model size) remain deferred to P4. The placeholder `OWNER/REPO` in
+  `_quarto.yml` must be set when the repo is published.
+
+---
+
 ## D0011 — a11y gate (P0-D11): deterministic alt-text + contrast; defer page-level axe
 
 - **Date:** 2026-06-28

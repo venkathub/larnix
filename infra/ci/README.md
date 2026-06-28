@@ -8,7 +8,7 @@ GitHub Actions workflows.
 |--------|------|----------------|
 | `frontmatter_lint.py` | Front-matter schema (P0 task 4) | The 10 required chapter fields, enum values, date format/non-future, types. |
 | `quiz_lint.py` | Quiz schema (P0 task 7) | `quiz.yml` structure: questions, prompts, ≥2 options, in-range integer `answer`, unique ids. |
-| `run_notebooks.py` | R10 — runs in CI (P0 task 8) | Executes `modules/**/*.ipynb` with `nbclient`; any cell error fails. `fixtures/` holds pass/fail test notebooks. |
+| `run_notebooks.py` | R10 — runs in CI (P0 task 8) | Executes `modules/**/*.ipynb` with `nbclient`; any cell error fails. **Skips** GPU/`colab` notebooks (front-matter `compute: colab\|gpu` or notebook metadata `larnix.compute`/`ci:false`) — those are manually Colab-verified (D0012). `fixtures/` holds pass/fail test notebooks. |
 | `a11y_check.py` | a11y — alt-text + contrast (P0 task 10, P0-D11) | Non-empty alt text on content images; WCAG AA contrast on declared theme colour pairs. Stdlib-only; deterministic (no browser). Full page-level axe/pa11y scanning is deferred. |
 | `currency_check.py` | R1 (P0 task 11) | `status: frontier` chapters must have `last_reviewed` within 90 days; `stable` exempt. |
 | `browser_import_lint.py` | R3 (P0 task 11) | `compute: browser` chapters may import only Pyodide-safe packages (stdlib + curated allow-list; known-unsafe denylist). |

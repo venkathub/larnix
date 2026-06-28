@@ -11,6 +11,7 @@ The Larnix learner-facing website: a [Quarto](https://quarto.org) static site.
 | `about.qmd` | Project goals + build status. |
 | `styleguide.qmd` | Internal design-system styleguide (renders every component; not learner content; excluded from search). |
 | `sandbox.qmd` | Internal scratch page proving the in-browser runtime runs Python + scikit-learn (`format: live-html`, `{pyodide}` cells). |
+| `sandbox-colab.qmd` | Internal scratch page proving the `colab` "Open in Colab" button shortcode. |
 | `theme/larnix.scss` | Light theme (on `cosmo`) — brand tokens + imports the shared component partial. |
 | `theme/larnix-dark.scss` | Dark theme (on `darkly`) — imports the partial, then dark colour overrides. |
 | `theme/_larnix-components.scss` | Shared component structure: Key Takeaways box + badges (imported by both themes). |

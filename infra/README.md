@@ -8,6 +8,7 @@ CI workflows, local-preview tooling, and deploy configuration.
 |------|---------|
 | `docker-compose.yml` | Version-pinned Quarto image for local render/preview (no system Quarto needed). See `site/README.md`. |
 | `ci/` | Python CI gate scripts + their unit tests (front-matter lint now; R-gates later). See `ci/README.md`. |
+| `fixtures/colab-fixture.ipynb` | Non-content GPU/`colab` notebook proving the "Open in Colab" pattern + GPU-CI policy (D0012); skipped by R10. |
 | `../.vale.ini` + `../styles/Larnix/` | Vale prose style — STYLE_GUIDE §3 tone gate (banned words + no hype) on `.qmd`. |
 | `../.markdownlint-cli2.yaml` | Markdown structural lint config. |
 | `../.codespellrc` | Spell-check skips + allow-list. |

@@ -40,6 +40,16 @@ class RunNotebookTests(unittest.TestCase):
         rc = rn.main(["modules/__definitely_missing__/**/*.ipynb"])
         self.assertEqual(rc, 0)
 
+    def test_gpu_colab_notebook_is_skipped(self):
+        # infra/ci/ -> infra/ -> infra/fixtures/colab-fixture.ipynb
+        infra_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(infra_dir, "fixtures", "colab-fixture.ipynb")
+        self.assertTrue(os.path.exists(path), msg=f"missing fixture: {path}")
+        self.assertFalse(rn.should_run(path))
+
+    def test_plain_notebook_is_run(self):
+        self.assertTrue(rn.should_run(os.path.join(FIXTURES, "pass.ipynb")))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,11 @@ project:
   render:
     - "*.qmd"
 
+# "Open in Colab" target — set at publish time (never hardcoded in the shortcode).
+# Override per-environment with LARNIX_COLAB_REPO / LARNIX_COLAB_BRANCH.
+larnix-colab-repo: "OWNER/REPO"
+larnix-colab-branch: "main"
+
 # Execution settings. `freeze: auto` caches computed cell output so a fresh
 # `quarto render` does not need to re-execute unchanged pages. CI (P0 task 8)
 # executes notebooks explicitly; the R10 gate owns "everything runs".

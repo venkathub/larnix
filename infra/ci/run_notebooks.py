@@ -23,6 +23,42 @@ from pathlib import Path
 
 DEFAULT_GLOBS = ["modules/**/*.ipynb"]
 
+# Notebooks whose front-matter / metadata marks them as GPU/colab are NOT run in
+# CI (no GPU runner). They are manually executed on Colab and recorded in the PR
+# (the GPU-notebook policy, DECISIONS D0012). This reads either chapter
+# front-matter `compute:` or notebook metadata `larnix.compute`.
+_SKIP_COMPUTE = {"colab", "gpu"}
+
+
+def _notebook_compute(path) -> str | None:
+    import json
+
+    # 1) Quarto-style YAML front-matter in a raw/markdown cell.
+    try:
+        from frontmatter_lint import extract_frontmatter
+
+        fm = extract_frontmatter(path)
+        if isinstance(fm, dict) and fm.get("compute"):
+            return str(fm["compute"]).strip().lower()
+    except Exception:  # noqa: BLE001
+        pass
+    # 2) Notebook-level metadata: {"metadata": {"larnix": {"compute": "colab"}}}.
+    try:
+        with open(path, encoding="utf-8") as fh:
+            nb = json.loads(fh.read())
+        larnix = (nb.get("metadata") or {}).get("larnix") or {}
+        if larnix.get("compute"):
+            return str(larnix["compute"]).strip().lower()
+        if larnix.get("ci") is False:
+            return "colab"  # explicit opt-out
+    except (OSError, json.JSONDecodeError):
+        pass
+    return None
+
+
+def should_run(path) -> bool:
+    return _notebook_compute(path) not in _SKIP_COMPUTE
+
 
 def run_ipynb(path, timeout: int = 600) -> tuple[bool, str | None]:
     """Execute one notebook with nbclient. Returns (ok, error_message)."""
@@ -77,7 +113,12 @@ def main(argv: list[str]) -> int:
         return 0
 
     failed = 0
+    ran = 0
     for path in targets:
+        if not should_run(path):
+            print(f"SKIP {path} (GPU/colab — manually Colab-verified, not run in CI)")
+            continue
+        ran += 1
         ok, err = run_ipynb(path)
         if ok:
             print(f"OK   {path}")
@@ -89,7 +130,7 @@ def main(argv: list[str]) -> int:
     if failed:
         print(f"\n{failed} notebook(s) failed to execute")
         return 1
-    print(f"\nAll {len(targets)} notebook(s) executed cleanly")
+    print(f"\nAll {ran} executed notebook(s) ran cleanly")
     return 0
 
 

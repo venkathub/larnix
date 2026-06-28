@@ -46,5 +46,41 @@ Actions → **Publish site** → **Run workflow** → branch `main`.
 
 ## GPU notebook policy
 
-_(Added in P0 task 12: the manual Colab-run record procedure for `colab`/`gpu`
-chapters.)_
+GPU work never runs on the builder's laptop and **never runs in CI** (there is no
+GPU runner). `colab`/`gpu` notebooks are executed manually on a free Colab/Kaggle
+GPU and the run is **recorded in the PR**. CI's R10 gate (`run_notebooks.py`)
+**skips** any notebook marked GPU/`colab` and runs only browser-twin + CPU
+notebooks.
+
+### How a notebook is marked "do not run in CI"
+
+R10 skips a notebook if either is true:
+
+- its Quarto front-matter has `compute: colab` or `compute: gpu`; or
+- its notebook metadata has `"larnix": {"compute": "colab"}` (or `"ci": false`).
+
+The non-content example is `infra/fixtures/colab-fixture.ipynb`.
+
+### Adding an "Open in Colab" button
+
+In the chapter `.qmd`, use the shortcode with the notebook's repo-relative path:
+
+```markdown
+{{</* colab modules/NN-slug/chapter.ipynb */>}}
+```
+
+The repo + branch come from `_quarto.yml` (`larnix-colab-repo`,
+`larnix-colab-branch`) or the `LARNIX_COLAB_REPO` / `LARNIX_COLAB_BRANCH` env
+vars — never hardcoded. Set them once the repo is published.
+
+### Manual Colab-run record (required in the PR)
+
+For every `colab`/`gpu` notebook changed in a PR, paste into the PR description:
+
+1. The Colab link used (from the button).
+2. The Colab runtime type (e.g. **T4 GPU**) and a one-line **cost** statement
+   (free tier, or the rented-GPU rate for M11).
+3. Confirmation it ran top-to-bottom, with the final cell's output (a screenshot
+   or pasted text) and the run date.
+
+A reviewer treats a missing record as a failing check for that notebook.
