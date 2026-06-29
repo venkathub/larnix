@@ -148,6 +148,14 @@ website:
             href: modules/03-data/ch09-eda-workflow.qmd
           - text: "Ch10 — Scaling & encoding"
             href: modules/03-data/ch10-scaling-encoding.qmd
+          - text: "Ch11 — Notebooks vs scripts"
+            href: modules/03-data/ch11-notebooks-vs-scripts.qmd
+          - text: "Ch12 — Environments & reproducibility"
+            href: modules/03-data/ch12-environments-reproducibility.qmd
+          - text: "Ch13 — Data ethics (a preview)"
+            href: modules/03-data/ch13-data-ethics.qmd
+          - text: "Ch14 — Messy real-world data"
+            href: modules/03-data/ch14-messy-real-world-data.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

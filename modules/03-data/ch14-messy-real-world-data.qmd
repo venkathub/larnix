@@ -1,0 +1,379 @@
+---
+title: "Messy real-world data"
+module: "M3 — Data & Tooling"
+chapter: 14
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch4 — Cleaning data"
+learning_objectives:
+  - "Normalise inconsistent text by fixing case and whitespace"
+  - "Parse numbers hidden in strings — currency symbols, commas, and units"
+  - "Consolidate categories that mean the same thing into one label"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: case-and-whitespace
+    q: "Why do '  Male', 'male', and 'M' count as three different values to pandas?"
+    a: "Pandas compares text exactly, character for character. Different capitalisation, stray spaces, and abbreviations all produce distinct strings, so a count or a group-by treats them as separate categories even though a human reads them as one."
+  - id: normalise-text
+    q: "How do you normalise a text column's case and whitespace?"
+    a: "Use the vectorised string methods on the column: .str.strip() removes leading and trailing spaces, and .str.lower() forces one case. Chaining them — .str.strip().str.lower() — collapses spacing and case differences in one pass."
+  - id: number-in-a-string
+    q: "Why can't you do maths on a column like '₹1,200', and how do you fix it?"
+    a: "It is text, not a number — the currency symbol and the thousands comma make it a string, so sums and means fail or concatenate. Strip the non-numeric characters with .str.replace(...), then convert with .astype(float)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You ask a hundred people for their gender on a paper form and type the answers
+into a spreadsheet. Back come `"Male"`, `"male"`, `"M"`, `" Male "` with a stray
+space, and `"MALE"` in a fit of enthusiasm. To you they all mean the same
+thing. To pandas they are **five different values** — because the computer compares
+text exactly, character for character, and a capital `M` is not a lowercase `m`.
+
+That gap between what a human reads and what a machine stores is the daily reality
+of real-world data. The same trouble shows up everywhere:
+
+- **Inconsistent text** — `"Mumbai"`, `"mumbai "`, `"MUMBAI"` are one city to you,
+  three categories to a `value_counts()`.
+- **Numbers wearing a costume** — `"₹1,200"` looks like a price, but the currency
+  symbol and the comma make it *text*, and you can't add text.
+- **The same idea, many spellings** — `"M"`, `"male"`, and `"Male"` all mean one
+  category that you want counted once.
+
+In Chapter 4 you handled *missing* values and wrong *types*: holes in the table and
+columns stored as the wrong dtype. This chapter is about the rows that are present
+and look fine but are written **inconsistently** — the messy strings and formats
+that quietly split one real category into many and hide numbers inside text. The
+fixes are a small, dependable set of pandas **string methods**.
+
+> You'll need from before: counting and repairing columns (M3 Ch4). Here we repair
+> a different kind of mess — not the gaps, but the formatting.
+
+---
+
+## Text the computer sees, not text you read
+
+Start with the gender column from the hook. Put it in a Series and ask
+`value_counts()` how many of each value there are.
+
+```{pyodide}
+#| caption: "Six entries that mean two things — but pandas counts six near-distinct values"
+import pandas as pd
+
+raw = pd.Series(["  Male", "male", "M", "Female ", "FEMALE", "f"])
+raw.value_counts()
+```
+
+Every entry comes back as its **own** category. `"  Male"` (with leading spaces) and
+`"male"` are different; `"Female "` (trailing space) and `"FEMALE"` are different.
+Two real groups — male and female — have shattered into six. Any analysis built on
+this column is wrong before it starts: a group-by would make six groups, a chart
+six bars, a model six categories where there are two.
+
+Two differences cause almost all of this:
+
+- **Whitespace** — invisible spaces at the start or end. `"Male"` and `"Male "`
+  look identical on screen but are not equal.
+- **Case** — `"Male"`, `"male"`, and `"MALE"` differ only in capitalisation.
+
+Pandas gives you a vectorised string toolkit under the `.str` accessor that fixes
+both across a whole column at once — no loop. `.str.strip()` removes leading and
+trailing whitespace; `.str.lower()` forces everything to lowercase. Chain them.
+
+```{pyodide}
+#| caption: "Strip whitespace and lowercase the whole column in one pass"
+import pandas as pd
+
+raw = pd.Series(["  Male", "male", "M", "Female ", "FEMALE", "f"])
+tidied = raw.str.strip().str.lower()
+tidied.value_counts()
+```
+
+The six categories have already collapsed toward three: `"male"`, `"female"`, and
+the stragglers `"m"` and `"f"`. Stripping and lowercasing did the heavy lifting —
+`"  Male"`, `"male"`, and `"MALE"` are now the single string `"male"`. What remains
+is a question of *meaning*, not formatting: `"m"` and `"f"` are abbreviations that
+stand for the full words. That is the next job.
+
+## Consolidating categories that mean the same thing
+
+`.str.strip().str.lower()` fixes how text is *written*. It cannot know that `"m"`
+*means* `"male"` — that is domain knowledge only you have. To fold synonyms and
+abbreviations into one label, write the mapping down explicitly and apply it with
+`.replace()`, which swaps any value it finds as a dictionary key for the
+corresponding value.
+
+```{pyodide}
+#| caption: "Map abbreviations onto full labels so each category is counted once"
+import pandas as pd
+
+raw = pd.Series(["  Male", "male", "M", "Female ", "FEMALE", "f"])
+tidied = raw.str.strip().str.lower()
+
+mapping = {"m": "male", "f": "female"}
+consolidated = tidied.replace(mapping)
+consolidated.value_counts()
+```
+
+Now there are exactly **two** categories: `male` with 3 and `female` with 3. Notice
+the order of operations — strip and lowercase *first*, then map. If you tried to map
+the raw values you would need keys for `"  Male"`, `"MALE"`, `"Male "` and every
+other variant; by normalising case and spacing first, your mapping only has to know
+the *clean* spellings (`"m"`, `"f"`) it still needs to fold in. A small, readable
+dictionary instead of a sprawling one.
+
+This pattern — **normalise, then map** — is how you turn a column that a survey,
+a web form, or three different data-entry clerks filled in into the tidy set of
+categories your analysis expects.
+
+## Numbers hiding inside strings
+
+The other classic mess is a number that arrives dressed as text. Prices, amounts,
+and measurements often carry a symbol or a separator: `"₹1,200"`, `"$3.50"`,
+`"1,050 kg"`. To a person these are clearly quantities. To pandas the currency
+symbol, the thousands comma, and the unit are ordinary characters, so the whole
+value is a **string** — and string columns refuse to do arithmetic. Try to sum them
+and pandas either errors or, worse, glues the texts end to end.
+
+The fix is two steps: **strip the non-numeric characters**, then **convert** what
+remains to a real number with `.astype(float)`.
+
+```{pyodide}
+#| caption: "Strip the currency symbol and comma, then convert the column to numbers"
+import pandas as pd
+
+orders = pd.DataFrame({
+    "item": ["pen", "bag", "lamp"],
+    "price": ["₹1,200", "₹85", "₹2,499"],
+})
+
+orders["price_num"] = (
+    orders["price"]
+    .str.replace("₹", "", regex=False)
+    .str.replace(",", "", regex=False)
+    .astype(float)
+)
+
+print(orders)
+print("total:", orders["price_num"].sum())
+print("mean :", round(orders["price_num"].mean(), 2))
+```
+
+Each `.str.replace(old, new, regex=False)` deletes one offending character: first
+the `₹` symbol, then the thousands comma, leaving a clean numeric string like
+`"1200"`. Only then does `.astype(float)` succeed, turning `"1200"` into `1200.0`.
+With a real numeric column, `.sum()` and `.mean()` work as expected — the total
+comes to **3784.0**, which would have been impossible on the original text. Passing
+`regex=False` tells pandas to treat the pattern as a literal string, which is the
+safe choice when removing punctuation that could otherwise be read as a regular
+expression.
+
+The same recipe handles units and other currencies: drop a `"$"` the same way, or
+strip a trailing `" kg"` before converting. The shape never changes — **remove what
+isn't part of the number, then `astype` the rest** — and a column you couldn't do
+maths on becomes one you can.
+
+A quick word on dates, the third common offender: they arrive as `"2026-06-29"`,
+`"29/06/2026"`, and `"June 29, 2026"`, all text. Pandas has a dedicated tool for
+them, `pd.to_datetime`, which parses many formats into a real date type. The
+principle is the same one running through this whole chapter — a value that *looks*
+like a date or a number is still text until you convert it.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. Pandas compares text **exactly**, so `"  Male"`, `"male"`, and `"M"` are
+   different values — case, whitespace, and abbreviations split one real category
+   into many.
+2. `.str.strip()` removes stray whitespace and `.str.lower()` forces one case;
+   chaining them (`.str.strip().str.lower()`) normalises a whole column at once.
+3. To fold synonyms together, **normalise first, then map** with
+   `.replace({...})` — a small dictionary of clean spellings to one label.
+4. A number wearing a symbol or comma (`"₹1,200"`) is text: strip the non-numeric
+   characters with `.str.replace(..., regex=False)`, then `.astype(float)` before
+   doing any maths.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made values so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Write `clean_text(s)` that normalises one string: trim the whitespace from both
+ends and lowercase it. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_clean_text
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_clean_text
+def clean_text(s):
+    """Trim leading/trailing whitespace and lowercase the string."""
+    return ____  # TODO: s.strip().lower()
+
+run_tests([
+    ("trims+lowers", clean_text("  Hello "), "hello"),
+    ("already clean", clean_text("male"), "male"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Python strings have the same two methods pandas uses on a column. `s.strip()`
+removes the spaces at each end, and `.lower()` forces lowercase. Chain them on the
+input: strip first, then lower.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def clean_text(s):
+    return s.strip().lower()
+```
+
+`s.strip()` drops the leading and trailing spaces, turning `"  Hello "` into
+`"Hello"`; `.lower()` then makes it `"hello"`. A string that is already clean, like
+`"male"`, passes through unchanged. This is exactly what `.str.strip().str.lower()`
+does to a whole column, one value at a time.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `to_number(s)` that turns a price string into a `float`. Strip a leading
+currency symbol (handle both `₹` and `$`) and any thousands commas, then convert
+what's left. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_to_number
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_to_number
+def to_number(s):
+    """Strip a currency symbol and thousands commas, then return a float."""
+    return ____  # TODO: float(s.replace("₹", "").replace("$", "").replace(",", ""))
+
+run_tests([
+    ("rupees", to_number("₹1,200"), 1200.0),
+    ("plain", to_number("3.5"), 3.5),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Remove each unwanted character with `str.replace(old, "")`, which deletes every
+copy of `old`. Chain three of them — one for `"₹"`, one for `"$"`, one for `","` —
+so a value with none of them (like `"3.5"`) is untouched. Then wrap the result in
+`float(...)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def to_number(s):
+    return float(s.replace("₹", "").replace("$", "").replace(",", ""))
+```
+
+Each `.replace(old, "")` strips one character: `"₹1,200"` loses its `₹` to become
+`"1,200"`, then its comma to become `"1200"`, which `float(...)` reads as `1200.0`.
+A plain `"3.5"` has none of those characters, so the three replaces leave it alone
+and `float(...)` returns `3.5`. This is the single-value version of the
+`.str.replace(...).astype(float)` chain you used on a column.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Take a messy category column such
+as `["M", "male", " Male "]`, normalise it (strip + lowercase + map to one label),
+and report the **unique values before and after** so the consolidation is visible.
+
+**Rubric — a good answer:**
+
+- Builds a Series from a messy category column and shows its unique values *before*
+  cleaning (three or more variants).
+- Normalises with `.str.strip().str.lower()` and folds abbreviations together with
+  `.replace({...})`.
+- Reports the unique values *after*, showing they collapse to the single intended
+  label.
+
+<details><summary>If you're stuck</summary>
+
+`series.unique()` lists the distinct values, so print it once before and once after
+cleaning. Between the two prints, chain `.str.strip().str.lower()` and then
+`.replace({"m": "male"})` to fold the abbreviation into the full word.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+
+messy = pd.Series(["M", "male", " Male "])
+print("before:", list(messy.unique()))
+
+cleaned = messy.str.strip().str.lower().replace({"m": "male"})
+print("after :", list(cleaned.unique()))
+```
+
+Before cleaning, `unique()` shows three variants — `['M', 'male', ' Male ']` —
+because case and the stray spaces make them distinct. After
+`.str.strip().str.lower()` they all become `"male"`, and `.replace({"m": "male"})`
+folds the abbreviation in, so `after` prints the single label `['male']`: one real
+category, counted once.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch14.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Real datasets rarely arrive tidy. With Chapter 4's missing-value and type tools and
+this chapter's string toolkit, you can take a column written by many hands —
+inconsistent case, stray spaces, currency symbols, abbreviations — and turn it into
+clean text and real numbers your analysis can trust. Next we move from cleaning
+single columns to combining whole tables: joining datasets together and grouping
+rows to summarise them.

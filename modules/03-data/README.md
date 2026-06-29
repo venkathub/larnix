@@ -26,7 +26,7 @@ capstone deliberately uses a *different* public dataset to test transfer.
 
 ## Chapters
 
-🟢→🟡 · `browser` · `stable`. (Authored across P1; Ch11+Ch12 may merge — P1-D5.)
+🟢→🟡 · `browser` · `stable`.
 
 | # | Chapter | Tier |
 |---|---------|------|
@@ -40,10 +40,10 @@ capstone deliberately uses a *different* public dataset to test transfer.
 | 8 | [Statistical plots](ch08-statistical-plots.qmd) | 🟡 |
 | 9 | [The EDA workflow](ch09-eda-workflow.qmd) | 🟡 |
 | 10 | [Scaling & encoding (a preview)](ch10-scaling-encoding.qmd) | 🟡 |
-| 11 | Notebooks vs scripts — conceptual | 🟢 |
-| 12 | Environments & reproducibility — conceptual | 🟡 |
-| 13 | Data ethics (a preview) | 🟢 |
-| 14 | Messy real-world data | 🟡 |
+| 11 | [Notebooks vs scripts — conceptual](ch11-notebooks-vs-scripts.qmd) | 🟢 |
+| 12 | [Environments & reproducibility — conceptual](ch12-environments-reproducibility.qmd) | 🟡 |
+| 13 | [Data ethics (a preview)](ch13-data-ethics.qmd) | 🟢 |
+| 14 | [Messy real-world data](ch14-messy-real-world-data.qmd) | 🟡 |
 
 ## Assessment
 

@@ -1,0 +1,35 @@
+title: "Chapter 13 — quick check"
+id: "m3-ch13-ethics"
+questions:
+  - id: why-license-matters
+    prompt: "Why does a dataset's license matter before you build on it?"
+    options:
+      - "It tells you how accurate the measurements are"
+      - "It says what you are allowed to do with the data — use, copy, ship, or redistribute it"
+      - "It guarantees the dataset has no missing values"
+    answer: 1
+    explanation: "A license sets your legal permissions. Penguins is CC0 (public domain), so this course may vendor and redistribute it; data with no stated license is not yours to redistribute."
+  - id: under-representation-effect
+    prompt: "If one group has far fewer rows than the others, what does that do to conclusions about that group?"
+    options:
+      - "It makes them stronger, because rare groups are more important"
+      - "It has no effect, since a count is a count"
+      - "It weakens them — fewer rows means noisier, less reliable estimates"
+    answer: 2
+    explanation: "Under-representation means less evidence. A claim about Chinstrap penguins rests on 68 rows, so it is more fragile than the same claim about Adelie's 152."
+  - id: what-is-pii
+    prompt: "What is PII, and why avoid printing it?"
+    options:
+      - "Personally identifiable information — names, emails, IDs; printing it can leak real people's details into shared output"
+      - "Partially incomplete input — rows with missing values you should drop"
+      - "Public information index — a score of how open a dataset is"
+    answer: 0
+    explanation: "PII singles out a real person. Notebook output gets committed to git and rendered publicly, so printing identifiers can leak them; the safe default is not to collect or print them."
+  - id: what-a-data-note-records
+    prompt: "What does a short 'data note' record?"
+    options:
+      - "The exact code used to load every column"
+      - "The source, the license, and one honest caveat about the data"
+      - "A list of every row that has a missing value"
+    answer: 1
+    explanation: "A data note is three lines — where the data came from, what license governs it, and one caveat (such as class imbalance) — so the next reader inherits the context."

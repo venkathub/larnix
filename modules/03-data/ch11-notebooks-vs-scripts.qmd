@@ -1,0 +1,291 @@
+---
+title: "Notebooks vs scripts"
+module: "M3 — Data & Tooling"
+chapter: 11
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch14 — Notebooks, the IDE & Colab"
+learning_objectives:
+  - "Explain how a notebook (cells, run in any order) differs from a script (a .py file, run top-to-bottom)"
+  - "Recognise the hidden-state trap of running notebook cells out of order"
+  - "Choose the right tool: a notebook to explore, a script to automate and reproduce"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 14
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: notebook-vs-script
+    q: "What is the core difference between a notebook and a script?"
+    a: "A notebook is a sequence of cells you can run in any order, with results shown inline — great for exploring. A script is a .py file that runs top-to-bottom every time — great for automating and reproducing."
+  - id: hidden-state
+    q: "What is the hidden-state trap in notebooks?"
+    a: "Because you can run cells out of order, a notebook can show a result that no clean top-to-bottom run would reproduce. The fix is to 'Restart & Run All' before trusting it."
+  - id: which-tool
+    q: "When do you reach for a notebook, and when for a script?"
+    a: "A notebook to explore data and see plots inline; a script when the work must run the same way every time — a pipeline, a scheduled job, or shared production code."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You've been writing code in cells on this page — a **notebook**. But the data jobs
+that run every night, retrain a model, or ship in a product are almost always
+plain **scripts**: `.py` files run from a terminal. Same Python, two very different
+working styles — and knowing when to use each is part of being a data person, not
+only a learner.
+
+A notebook lets you run little pieces in any order and see results (and plots)
+right next to the code — perfect for *exploring*. A script runs from the first line
+to the last, every single time — perfect for *reproducing* and *automating*. This
+chapter is the *what and why* of the two, and the one trap that catches everybody.
+
+> You'll need from before: that you've met notebooks, an editor, and Colab
+> (M1 Ch14). This page itself is a notebook-style environment.
+
+---
+
+## A notebook: cells, run in any order
+
+A notebook is a list of **cells**. You run one, see its output, tweak it, run it
+again — all while the variables you've defined stay alive in memory. That instant
+feedback is why notebooks rule **exploratory data analysis**: load a CSV, peek at
+it, plot it, adjust, repeat.
+
+The cell below behaves like a notebook cell — it runs, shares its state with the
+page, and shows output inline. Press **Run**:
+
+```{pyodide}
+#| caption: "A cell runs its lines top-to-bottom and shows output inline"
+steps = ["load data", "clean it", "plot it"]
+for i, step in enumerate(steps, start=1):
+    print(f"{i}. {step}")
+```
+
+Inside one cell, the lines still run **top-to-bottom**. The freedom — and the
+danger — is at the level of *cells*: you can run them in any order you like.
+
+## A script: a .py file, run top-to-bottom
+
+A **script** is a text file ending in `.py`. You run it from a terminal with
+`python yourfile.py`, and it executes from the first line to the last, with no
+cells and no inline output beyond what you `print`. Run it again tomorrow and it
+does exactly the same thing — that predictability is why pipelines and production
+code are scripts.
+
+> 💡 **On your own computer** (this page runs in the browser, so the commands below
+> are for your real machine, not here). This is a real transcript — a tiny script
+> and what `python` actually printed when it ran:
+>
+> ```bash
+> $ cat greet.py
+> name = "Larnix"
+> total = 2 + 2
+> print(f"{name}: 2 + 2 = {total}")
+>
+> $ python greet.py
+> Larnix: 2 + 2 = 4
+> ```
+
+No cells, no "run this bit first" — the file ran top-to-bottom and printed one
+line. Run it a hundred times and you get that same line a hundred times.
+
+## The trap: hidden state
+
+Because a notebook lets you run cells out of order, it can show a result that a
+clean run would never produce. Define a variable in cell 5, use it in cell 2, then
+delete cell 5 — cell 2 still "works" because the value is lingering in memory, until
+you restart and everything breaks.
+
+> ⚠️ Watch out: before you trust a notebook's results — or share them — use
+> **"Restart & Run All"**. If it doesn't run top-to-bottom from a clean start, the
+> result isn't real. This is the single most common notebook bug.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A script is the familiar model: a `main` you run start-to-finish, like
+`java Main`. A notebook is closer to a long-lived REPL/JShell session where earlier
+statements stay in scope — powerful for experimenting, but the session's
+accumulated state is exactly what makes "it worked in my session" unreproducible.
+"Restart & Run All" is the notebook equivalent of a clean rebuild.
+:::
+
+## Which one, when?
+
+- **Notebook** — exploring a new dataset, trying plots, explaining an analysis with
+  prose and charts side by side (this course is notebooks for that reason).
+- **Script** — a cleaning or training step that must run the same way every time, a
+  job on a schedule, code another program imports, anything headed for production.
+
+A common real workflow: *explore* in a notebook, then *move the settled code into a
+script* so it runs reliably without you.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **notebook** is cells you can run in any order with inline output — best for
+   **exploring**.
+2. A **script** is a `.py` file that runs **top-to-bottom** every time — best for
+   **reproducing and automating**.
+3. The notebook trap is **hidden state** from out-of-order runs; **"Restart & Run
+   All"** before you trust a result.
+4. Explore in a notebook, then move the settled code into a script.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+A file's extension tells you what it is. Complete `is_script` so it returns `True`
+for a Python script (a name ending in `.py`). Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_isscript
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_isscript
+def is_script(filename):
+    """True if filename is a Python script (ends with '.py')."""
+    return ____  # TODO: does the name end with ".py"?
+
+run_tests([
+    ("a script", is_script("clean.py"), True),
+    ("a notebook", is_script("explore.ipynb"), False),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Strings have a method `.endswith(...)` that returns `True` or `False`. Try
+`filename.endswith(".py")`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def is_script(filename):
+    return filename.endswith(".py")
+```
+
+`.endswith(".py")` is `True` for `"clean.py"` and `False` for `"explore.ipynb"` —
+the extension is how you tell a script from a notebook on disk.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+When you move notebook cells into a script, you join their lines into one file.
+Write `make_script(lines)` — join a list of code lines into a single string, one per
+line. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_makescript
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_makescript
+def make_script(lines):
+    """Join code lines into one script string, one line each."""
+    return ____  # TODO: join the lines with a newline character
+
+run_tests([
+    ("two lines", make_script(["a = 1", "print(a)"]), "a = 1\nprint(a)"),
+    ("one line", make_script(["print('hi')"]), "print('hi')"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`"\n".join(lines)` glues the items together with a newline between each — exactly
+how lines sit in a `.py` file.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def make_script(lines):
+    return "\n".join(lines)
+```
+
+`"\n".join(lines)` puts a newline *between* items (not after the last), so two cells
+become two lines of a script — the first step in turning exploration into a
+repeatable file.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). In two or three sentences, describe
+a data task you'd do in a **notebook** and a different one you'd put in a **script**,
+and say why each fits.
+
+**Rubric — a good answer:**
+
+- Names a notebook task that is **exploratory** (peeking at data, plotting, trying
+  ideas) and says why inline, out-of-order work helps.
+- Names a script task that must be **reproducible or automated** (a nightly clean, a
+  shared pipeline) and says why top-to-bottom running matters.
+- Mentions the explore-then-move-to-a-script workflow, or the "Restart & Run All"
+  habit.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+answer = """
+I'd explore a new sales CSV in a notebook: load it, run df.describe(), draw a few
+plots, and adjust as I learn — the inline output makes that fast.
+I'd put the nightly cleaning step in a script (clean_sales.py) so it runs the same
+way every night with no one watching. I explore first, then move the settled code
+into the script, and I 'Restart & Run All' the notebook before trusting any result.
+"""
+print(answer.strip())
+```
+
+The split is exploration vs reliability: notebooks for *figuring it out*, scripts
+for *running it the same way every time*.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch11.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You know which tool fits which job — and the hidden-state trap that makes "Restart &
+Run All" a reflex. Next we tackle the habit that makes *either* one trustworthy on
+someone else's machine: **environments & reproducibility** — pinned versions and
+fixed random seeds, so your analysis gives the same answer everywhere.

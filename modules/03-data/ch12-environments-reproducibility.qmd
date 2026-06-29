@@ -1,0 +1,296 @@
+---
+title: "Environments & reproducibility"
+module: "M3 — Data & Tooling"
+chapter: 12
+difficulty: "intermediate"
+prereqs:
+  - "M1 Ch13 — Environments & packages"
+  - "M3 Ch11 — Notebooks vs scripts"
+learning_objectives:
+  - "Explain why a data analysis must be reproducible — same inputs, same result, on any machine"
+  - "Use a fixed random seed so code that uses randomness gives identical output every run"
+  - "Name the three things to pin for reproducibility: package versions, the data, and the seed"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: why-reproducible
+    q: "Why does a data analysis need to be reproducible?"
+    a: "So the same inputs give the same result on your machine, a teammate's, and a server — otherwise results can't be trusted, checked, or built on."
+  - id: random-seed
+    q: "What does setting a random seed do?"
+    a: "It fixes the starting point of the random-number generator, so code that uses randomness produces the same numbers every run — making the analysis reproducible."
+  - id: three-to-pin
+    q: "What three things do you pin for a reproducible analysis?"
+    a: "The package versions (requirements.txt), the exact data (a vendored file or a versioned source), and the random seed."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You finish an analysis, send it to a teammate, and they get *different numbers*. Or
+you rerun your own notebook next month and the result has shifted. Nothing is
+"broken" — the work was not **reproducible**. For data work that's a real
+problem: a result nobody can reproduce is a result nobody should trust.
+
+Reproducibility means *same inputs → same result, anywhere*. Three things make it
+happen: pinned **package versions** (M1 Ch13), the exact **data**, and — the new
+idea here — a fixed **random seed** so anything random comes out the same every
+time. This chapter is the *what and why* of all three.
+
+> You'll need from before: pinning versions in a `requirements.txt` (M1 Ch13), and
+> the notebook "Restart & Run All" habit (M3 Ch11).
+
+---
+
+## Why randomness breaks reproducibility
+
+Lots of data work uses randomness: shuffling rows, splitting train/test sets,
+sampling, initialising a model. By default the random-number generator starts from
+a different place each run, so you get different numbers each time — and so does
+your teammate. That's exactly what makes results drift.
+
+The fix is a **seed**: a fixed starting point for the generator. Set the same seed
+and the "random" numbers are identical every run, on every machine. Press **Run** a
+few times — the output never changes:
+
+```{pyodide}
+#| caption: "A fixed seed makes 'random' output identical every run"
+import numpy as np
+
+rng = np.random.default_rng(42)   # 42 is the seed — any fixed number works
+print(rng.integers(0, 100, size=5))
+```
+
+Run it again: same five numbers. Change the seed to a different fixed number and
+you'll get a *different* but equally repeatable sequence. The randomness is still
+useful — it's now **anchored**.
+
+> 💡 **On your own computer** (this page runs in the browser; the commands below are
+> for your real machine). This is a real transcript — the same seeded script run
+> twice gives byte-for-byte identical output:
+>
+> ```bash
+> $ cat sample.py
+> import numpy as np
+> rng = np.random.default_rng(42)
+> print(rng.integers(0, 100, size=5))
+>
+> $ python sample.py
+> [ 8 77 65 43 43]
+> $ python sample.py
+> [ 8 77 65 43 43]
+> ```
+
+Two runs, identical output — because the seed anchors the generator. Without that
+line, the two runs would print different numbers.
+
+## The three things to pin
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+This is the data-science version of a reproducible build. Pinned
+`requirements.txt` ≈ locked dependency versions (a Maven BOM / Gradle lockfile);
+the vendored dataset ≈ a checked-in test fixture rather than a live external call;
+and the random seed ≈ controlling nondeterminism (like fixing a clock or RNG in a
+test) so a run is repeatable. The goal is the same: same inputs in, same artifact
+out, on any machine.
+:::
+
+A reproducible analysis pins **three** things:
+
+1. **Package versions** — a `requirements.txt` of `name==version` lines (M1 Ch13),
+   so everyone runs the same pandas, the same NumPy.
+2. **The data** — the *exact* bytes you analysed. This course **vendors** its
+   datasets (a CSV checked into the repo, loaded offline via `lib/data.py`) rather
+   than fetching a URL that might change or vanish.
+3. **The random seed** — one fixed seed near the top, so every shuffle, split, and
+   sample repeats.
+
+> ⚠️ Watch out: a seed makes randomness repeatable, but it does **not** make a tiny
+> or biased sample correct. Reproducible and *right* are different goals — pin the
+> seed for repeatability, and still check your data and method.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Reproducible** means same inputs → same result, on any machine — the baseline
+   for trusting a data analysis.
+2. A fixed **random seed** anchors the random-number generator, so randomness comes
+   out identical every run.
+3. Pin **three** things: package versions (`requirements.txt`), the exact **data**
+   (vendored, not a changing URL), and the **seed**.
+4. A seed buys repeatability, not correctness — still check that the data and method
+   are sound.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+A seeded generator gives the same numbers every time. Complete `first_draw` so it
+seeds a generator with `seed` and returns its first integer in `[0, 100)`. Replace
+`____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_seed
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_seed
+import numpy as np
+
+def first_draw(seed):
+    """Seed a generator and return its first integer in [0, 100)."""
+    rng = ____  # TODO: make a generator seeded with `seed`
+    return int(rng.integers(0, 100))
+
+run_tests([
+    ("seed 42 repeats", first_draw(42), first_draw(42)),
+    ("is an int", isinstance(first_draw(0), int), True),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`np.random.default_rng(seed)` builds a generator anchored to that seed. Calling it
+twice with the same seed gives the same first number.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def first_draw(seed):
+    rng = np.random.default_rng(seed)
+    return int(rng.integers(0, 100))
+```
+
+Because the generator is seeded, `first_draw(42)` returns the same number every
+call — which is why the two `first_draw(42)` results are equal.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `is_reproducible(seed)` — return `True` if two separately seeded generators
+produce the **same** five numbers (they always should, with the same seed). Complete
+the marked lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_repro
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_repro
+import numpy as np
+
+def is_reproducible(seed):
+    """True if two generators seeded the same way give the same 5 numbers."""
+    a = np.random.default_rng(seed).integers(0, 100, size=5)
+    b = ____  # TODO: a second generator seeded the same way, same 5 numbers
+    return list(a) == list(b)
+
+run_tests([
+    ("seed 42", is_reproducible(42), True),
+    ("seed 7", is_reproducible(7), True),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Build `b` exactly like `a`: `np.random.default_rng(seed).integers(0, 100, size=5)`.
+Same seed, same sequence, so the lists are equal.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def is_reproducible(seed):
+    a = np.random.default_rng(seed).integers(0, 100, size=5)
+    b = np.random.default_rng(seed).integers(0, 100, size=5)
+    return list(a) == list(b)
+```
+
+Two generators seeded with the same number walk the same path, so `a` and `b` hold
+the same five integers — the essence of a reproducible random step.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). In two or three sentences, explain
+to a teammate how you'd make a data analysis reproducible, naming the three things
+you'd pin.
+
+**Rubric — a good answer:**
+
+- Names **pinned package versions** (a `requirements.txt`).
+- Names the **exact data** (vendored / versioned, not a changing URL).
+- Names a **fixed random seed**, and notes it gives repeatability, not correctness.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+answer = """
+To make my analysis reproducible I pin three things: a requirements.txt so everyone
+installs the same package versions, the exact dataset (checked into the repo, not a
+URL that could change), and a fixed random seed at the top so every shuffle and
+split repeats. That gets the same result on any machine — though I still check the
+data and method are sound, since a seed makes randomness repeatable, not correct.
+"""
+print(answer.strip())
+```
+
+Pinning versions + data + seed is the recipe; the caveat that repeatability isn't
+correctness is what separates a careful answer from a rote one.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch12.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now make a data analysis run the same way for everyone — pinned versions,
+vendored data, a fixed seed. That's the last habit M3 sets up before the craft turns
+practical again: next we confront **data ethics** — where data comes from, who it
+represents, and what that means for the conclusions you draw.

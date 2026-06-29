@@ -1,0 +1,35 @@
+title: "Chapter 12 — quick check"
+id: "m3-ch12-reproducibility"
+questions:
+  - id: what-reproducible
+    prompt: "What does it mean for an analysis to be reproducible?"
+    options:
+      - "It runs quickly"
+      - "Same inputs give the same result on any machine"
+      - "It uses the newest version of every package"
+    answer: 1
+    explanation: "Reproducible means same inputs → same result, anywhere — the baseline for trusting a result."
+  - id: what-seed-does
+    prompt: "What does setting a random seed do?"
+    options:
+      - "Makes the code run faster"
+      - "Fixes the generator's starting point, so 'random' output is identical every run"
+      - "Removes all randomness from the program forever"
+    answer: 1
+    explanation: "A seed anchors the random-number generator, so a shuffle or sample repeats exactly — without removing the usefulness of randomness."
+  - id: three-to-pin
+    prompt: "Which three things do you pin for a reproducible analysis?"
+    options:
+      - "The editor, the operating system, and the screen size"
+      - "Package versions, the exact data, and the random seed"
+      - "The function names, the comments, and the file size"
+    answer: 1
+    explanation: "Pin package versions (requirements.txt), the exact data (vendored/versioned), and the random seed."
+  - id: seed-not-correct
+    prompt: "A fixed seed makes your sampling repeatable. Does that make the result correct?"
+    options:
+      - "Yes — a seed guarantees the analysis is right"
+      - "No — a seed gives repeatability, not correctness; you still check the data and method"
+      - "Only if the seed is 42"
+    answer: 1
+    explanation: "Reproducible and right are different goals: a tiny or biased sample is still wrong even if it repeats exactly."

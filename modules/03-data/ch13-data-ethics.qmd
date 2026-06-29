@@ -1,0 +1,385 @@
+---
+title: "Data ethics (a preview)"
+module: "M3 — Data & Tooling"
+chapter: 13
+difficulty: "beginner"
+prereqs:
+  - "M3 Ch9 — The EDA workflow"
+learning_objectives:
+  - "Check a dataset's provenance and license before you build on it"
+  - "Spot under-representation and imbalance that weaken conclusions about a group"
+  - "Avoid storing or sharing personal data carelessly"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: why-provenance
+    q: "What two things should you record about a dataset before you build on it?"
+    a: "Its provenance (where the data came from and how it was collected) and its license (what you are allowed to do with it). Penguins is CC0 — public domain — which is why this course can vendor it."
+  - id: under-representation
+    q: "What does under-representation do to a conclusion about a group?"
+    a: "It weakens it. If a group has few rows, any average, rate, or model estimate for that group is noisy and easily wrong — the data cannot yet say much about it."
+  - id: pii-habit
+    q: "What is PII, and what is the safe default when handling it?"
+    a: "Personally identifiable information — names, emails, phone numbers, IDs that single out a real person. The safe default is not to collect it, not to print it, and not to share it unless you have a clear reason and consent."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You have spent this module learning to *load, clean, and read* a table. Before you
+build anything on top of one, there are three plain questions worth asking — and
+they take about a minute each:
+
+1. **Where did this data come from, and may I use it?** (provenance and license)
+2. **Who is in it, and who is missing?** (representation)
+3. **Does it name real people?** (privacy)
+
+This is not a lecture on ethics. These are practical checks that save you from
+shipping a wrong conclusion, breaking a license, or leaking someone's details.
+We'll run each check against the penguins dataset you already know, then write the
+short "data note" that records the answers so the next person (often future-you)
+does not have to re-discover them.
+
+> You'll need from before: the EDA recipe (M3 Ch9) — shape, types, missing values,
+> and `value_counts`. The same tools answer these three questions.
+
+---
+
+## Where the data came from (provenance)
+
+**Provenance** is the story of a dataset: who collected it, from what, when, and
+how. The penguins table is body measurements of 344 penguins recorded at Palmer
+Station, Antarctica, by researcher Kristen Gorman and the Palmer LTER program. That
+single sentence already tells you a lot — these are *real measurements of birds*,
+taken by field scientists, in one place, in a few seasons. It is not a sample of
+penguins worldwide, and it was never meant to be.
+
+Provenance matters because it bounds what the data can honestly tell you. A model
+trained on these three Antarctic species says nothing reliable about a penguin in a
+zoo, and a number computed here describes *these* birds in *those* seasons — not
+penguins in general. Knowing the source keeps you from over-claiming.
+
+## Why the license matters
+
+A dataset's **license** says what you are allowed to do with it — copy it, ship it
+inside a course, build a product on it, or nothing at all. The penguins data is
+released under **CC0**, which places it in the **public domain**: anyone may use it
+for any purpose, no permission or attribution required. That license is the reason
+this course can **vendor** the CSV — store a copy right next to the chapter — and
+why every exercise can load it offline at zero cost.
+
+Swap in a dataset scraped from a website with no stated license, and none of that
+is safe. "I found it online" is not a license. Before you commit a file to a repo
+or train on it, find the license; if there isn't one, treat the data as *not yours
+to redistribute* and look for a properly licensed alternative.
+
+## Representation: who is in the data, and who is thin
+
+A dataset is a sample, and a sample can be lopsided. When one group has far fewer
+rows than another, every statement about that group rests on less evidence — the
+average is noisier, a rate could swing on a handful of records, and a model sees
+too few examples to learn the group well. Under-representation does not announce
+itself; you have to count.
+
+Two cheap checks surface it: count the rows per group, and count the missing
+values. Let's do both on penguins.
+
+```{pyodide}
+#| caption: "Rows per species — the class balance of the dataset"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df["species"].value_counts()
+```
+
+The counts are **Adelie 152, Gentoo 124, Chinstrap 68**. Chinstrap has fewer than
+half the rows of Adelie. That imbalance is not "wrong" — it is merely how the
+sampling fell — but it has a consequence: any claim about Chinstrap penguins stands on 68
+records, so it is more fragile than the same claim about Adelie. If you later trained
+a classifier, this is exactly the kind of imbalance that makes a model quietly good
+at the common class and weak at the rare one.
+
+Missing values are the other side of representation: a column can be present but
+empty for some rows, which thins out the group you can actually analyse.
+
+```{pyodide}
+#| caption: "Missing sex values, and each species' share of the table"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+
+missing_sex = int(df["sex"].isna().sum())
+print("rows missing sex:", missing_sex)
+
+counts = df["species"].value_counts()
+shares = (counts / len(df) * 100).round(1)
+print("species share of table (%):")
+print(shares)
+```
+
+Eleven rows have **no recorded `sex`**. If you set out to compare body mass by sex,
+those 11 penguins drop out of the comparison before you start — a small but real
+narrowing of the data. And the species shares (**Adelie ≈ 44%, Gentoo ≈ 36%,
+Chinstrap ≈ 20%**) put a number on the imbalance you saw above. Neither finding
+stops you from using the data; both change how strongly you should phrase a
+conclusion drawn from the thin parts of it.
+
+> 🔬 The habit to keep: when a result depends on a small or patchy group, say so
+> out loud — "based on 68 Chinstrap records" — instead of presenting it as if it
+> rested on the full 344.
+
+## Privacy: don't collect or print what you don't need
+
+**PII** — personally identifiable information — is any field that can single out a
+real person: a name, email, phone number, address, or government ID. The penguins
+data is comfortable to work with precisely because it has **none**: a penguin is not
+a person, the measurements were taken with research consent, and no row points back
+to an individual human. That is why it is safe to print every row in a public
+notebook.
+
+Most datasets you meet later will not be so clean. The habits that keep you out of
+trouble are simple:
+
+- **Don't collect** identifiers you don't need. The best way to avoid leaking a
+  phone number is to never store it.
+- **Don't print** PII into notebook output, logs, or charts — that output gets
+  committed to git, shared in a PR, and rendered on a public site.
+- **Reduce before you share**: aggregate (counts and averages reveal far less than
+  raw rows) or drop and pseudonymise identifying columns.
+
+A handy test: *if this output leaked, could it embarrass or endanger anyone in the
+data?* For penguins the answer is no. For a table of customers, it often is yes —
+and the fix is to compute on the data without putting the raw identifiers on screen.
+
+## Write a short data note
+
+The cheapest way to make all of the above stick is a **data note**: three lines you
+write once, at the top of the analysis, recording the source, the license, and one
+honest caveat. It costs a minute and pays off every time someone (including you)
+reopens the work.
+
+For penguins it reads:
+
+> **Source:** Palmer Station LTER / Kristen Gorman — body measurements of 344
+> penguins, three species, near Palmer Station, Antarctica.
+> **License:** CC0 (public domain) — free to use and redistribute.
+> **Caveat:** classes are imbalanced (Chinstrap only 68 rows) and 11 rows are
+> missing `sex`, so conclusions about the smaller groups are weaker.
+
+That note is not bureaucracy. It is the difference between an analysis a stranger
+can trust and a pile of numbers with no provenance.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Provenance and license come first.** Know where data came from and what you may
+   do with it; penguins is **CC0 (public domain)**, which is why this course can
+   vendor it offline.
+2. **Count before you conclude.** Row counts and missing-value counts expose
+   under-representation — penguins is imbalanced (Adelie 152, Gentoo 124, Chinstrap
+   68) and 11 rows lack `sex`, so claims about the thin groups are weaker.
+3. **Protect people.** Don't collect, print, or share PII you don't need; penguins
+   is safe to show because it names no person.
+4. **Write a three-line data note** — source, license, one caveat — so the next
+   reader inherits the context instead of guessing.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made numbers so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Representation starts with a **share**: what fraction of the whole is one group?
+Complete `share(count, total)` so it returns the proportion, rounded to two decimal
+places. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_share
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_share
+def share(count, total):
+    """Return count / total as a proportion rounded to 2 decimals."""
+    return ____  # TODO: round(count / total, 2)
+
+run_tests([
+    ("quarter", share(1, 4), 0.25),
+    ("three quarters", share(3, 4), 0.75),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A share is one division: the group's `count` divided by the `total`. Wrap it in
+`round(..., 2)` so the result has two decimal places.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def share(count, total):
+    return round(count / total, 2)
+
+run_tests([
+    ("quarter", share(1, 4), 0.25),
+    ("three quarters", share(3, 4), 0.75),
+])
+```
+
+`count / total` is the proportion; `round(..., 2)` trims it to two decimals so
+`1 / 4` reads as a clean `0.25`. This is the same calculation behind "Chinstrap is
+about 20% of the table".
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now do it for every group at once. Write `class_shares(counts)`, which takes a dict
+of `class → count` and returns a dict of `class → rounded share`. Complete the
+marked lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_class_shares
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_class_shares
+def class_shares(counts):
+    """Map each class to its share of the total, rounded to 2 decimals."""
+    total = ____            # TODO: sum of all the counts
+    return ____             # TODO: {k: round(v / total, 2) for k, v in counts.items()}
+
+run_tests([
+    ("imbalanced", class_shares({"a": 3, "b": 1}), {"a": 0.75, "b": 0.25}),
+    ("even", class_shares({"x": 1, "y": 1}), {"x": 0.5, "y": 0.5}),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`sum(counts.values())` gives the total across every class. Then build a new dict
+with a comprehension, dividing each value by that total and rounding to two
+decimals.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def class_shares(counts):
+    total = sum(counts.values())
+    return {k: round(v / total, 2) for k, v in counts.items()}
+
+run_tests([
+    ("imbalanced", class_shares({"a": 3, "b": 1}), {"a": 0.75, "b": 0.25}),
+    ("even", class_shares({"x": 1, "y": 1}), {"x": 0.5, "y": 0.5}),
+])
+```
+
+`sum(counts.values())` is the denominator; the dict comprehension applies the same
+`round(v / total, 2)` to each class. Run it on `{"Adelie": 152, "Gentoo": 124,
+"Chinstrap": 68}` and you get the species shares from the chapter.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset and
+examine it for representation issues: count the rows missing `sex` (you'll find 11)
+and the rows per species (the imbalance). Then write a **three-line data note** —
+source, license (CC0), and one bias caveat — as comments or `print` statements.
+
+**Rubric — a good answer:**
+
+- Loads penguins and computes the evidence: missing-`sex` count and per-species
+  counts read from the data, not typed in by hand.
+- Names the **source** and states the **license as CC0 (public domain)**.
+- Records **one honest caveat** about bias — the class imbalance or the missing
+  `sex` rows — and ties it to weaker conclusions for the thin groups.
+
+<details><summary>If you're stuck</summary>
+
+Use `df["sex"].isna().sum()` for the missing count and `df["species"].value_counts()`
+for the per-species rows. Then write three lines: where it came from, that it is CC0,
+and which group is too thin to lean on.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+
+missing_sex = int(df["sex"].isna().sum())
+counts = df["species"].value_counts()
+print("rows missing sex:", missing_sex)
+print(counts)
+
+print("\n--- data note ---")
+print("Source: Palmer Station LTER / Kristen Gorman — 344 penguins, 3 species.")
+print("License: CC0 (public domain) — free to use and redistribute.")
+print(f"Caveat: imbalanced (Chinstrap {int(counts['Chinstrap'])} rows) and "
+      f"{missing_sex} rows miss sex, so conclusions about small groups are weaker.")
+```
+
+The note records exactly what a later reader needs: the provenance, the permissive
+CC0 license that makes the data safe to reuse, and one caveat that flags where the
+data is too thin to support a strong claim.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch13.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now have a one-minute habit to run on any dataset before you trust it: check its
+provenance and license, count who is in it and who is thin, guard anyone's personal
+details, and write a three-line data note. This is a *preview* — Module 16 returns
+to responsible AI in depth, covering fairness metrics, dataset documentation, and
+model cards. For now, you close Module 3 able to not only read a table, but judge
+whether it deserves your trust.
