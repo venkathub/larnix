@@ -121,8 +121,14 @@
   and zero banned/hype words; the **full site renders (61 docs)** and **builds from a fresh clone**.
   Representative ₹0 in-browser sweep covered every distinct mechanism — Pyodide execution, the
   single-source grader, the pandas+Penguins VFS load (344×8 offline), Matplotlib canvas rendering, and
-  quiz scoring+persistence — across all four modules (the exhaustive per-chapter browser pass remains
-  §6.F Task 66). **New render-safety guard:** `chapter_structure_lint.py` now fails any `{pyodide}`
+  quiz scoring+persistence — across all four modules. **§6.F Task 66 (exhaustive ₹0 sweep)
+  completed 2026-06-29:** every one of the **50 chapters** was loaded in a real browser and a
+  worked-example cell run on Pyodide — all 50 produced correct output (or a Matplotlib canvas) with
+  no errors. Offline dataset load confirmed live: `habits.csv` (M1 Ch6 → "Loaded 35 rows") and Palmer
+  Penguins (M3 Ch4 "19 missing cells", Ch5 groupby `Adelie 3700.66`, Ch9 `(344, 8)`, Ch13 species
+  counts). The four capstone code paths run client-side (Iris via M0 Ch1; habits cleaning via M1 Ch6;
+  one-neuron gradient check 3.27e-11 via M2 Ch16; EDA stack via M3 Ch9), and the four module-quiz
+  landings score and persist to `localStorage` in-browser. **New render-safety guard:** `chapter_structure_lint.py` now fails any `{pyodide}`
   chapter missing `format: live-html` + `execute: enabled: false` (caught M2 Ch12, which a sub-agent
   authored without that block — `quarto render` had tried to spawn a python3 kernel). The M0 root
   `index.qmd` catalog and the `_quarto.yml` sidebar list M0–M3 as live; `WALKTHROUGH.md` and
