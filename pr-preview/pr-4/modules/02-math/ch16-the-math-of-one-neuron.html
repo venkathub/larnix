@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>The math of one neuron – Larnix</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
+<link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
+<link href="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Larnix</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
+<span class="menu-text">Start learning</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/venkathub/larnix"> <i class="bi bi-github" role="img" aria-label="Larnix on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/ch16-the-math-of-one-neuron.html">Ch16 — The math of one neuron</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../modules/00-orientation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">M0 — Orientation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch1 — Train your first model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch02-what-you-need-and-what-it-costs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch2 — What you need &amp; what it costs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch03-what-is-ai-really.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch3 — What is AI, really?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch04-ai-ml-dl-genai.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch4 — AI vs ML vs DL vs GenAI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch05-history-of-ai.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch5 — A 10-minute history of AI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../modules/01-python/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">M1 — Python for AI</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch01-variables-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch1 — Variables &amp; types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch02-control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch2 — Control flow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch03-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch3 — Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch04-data-structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch4 — Data structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch05-comprehensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch5 — Comprehensions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch06-reading-writing-files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch6 — Reading &amp; writing files</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch07-errors-exceptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch7 — Errors &amp; exceptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch08-reading-a-traceback.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch8 — Reading a traceback</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch09-a-little-oop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch9 — A little OOP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch10-clean-readable-code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch10 — Clean, readable code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch11-pythonic-idioms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch11 — Pythonic data idioms</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch12-numpy-preview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch12 — A NumPy preview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch13-environments-packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch13 — Environments &amp; packages</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../modules/02-math/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">M2 — Math You Actually Need</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch01-why-math-for-ai.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch1 — Why math for AI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch02-vectors-geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch2 — Vectors &amp; geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch03-matrices-as-transformations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch3 — Matrices as transformations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch04-matrix-multiplication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch4 — Matrix multiplication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch05-dot-products-similarity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch5 — Dot products &amp; similarity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch06-derivatives-sensitivity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch6 — Derivatives = sensitivity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch07-gradients.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch7 — Gradients</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch08-chain-rule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch8 — The chain rule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch09-probability-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch9 — Probability basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch10-distributions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch10 — Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch11-mean-variance-std.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch11 — Mean, variance &amp; standard deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch12-bayes-intuitively.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch12 — Bayes, intuitively</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch13-correlation-vs-causation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch13 — Correlation vs causation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch14-sampling-uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch14 — Sampling &amp; uncertainty</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch15-linear-algebra-in-numpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch15 — Linear algebra in NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/ch16-the-math-of-one-neuron.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Ch16 — The math of one neuron</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../modules/03-data/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">M3 — Data &amp; Tooling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch01-numpy-vectorization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch1 — NumPy &amp; vectorization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch02-pandas-series-dataframe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch2 — Pandas Series &amp; DataFrame</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch03-indexing-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch3 — Indexing &amp; selection</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch04-cleaning-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch4 — Cleaning data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch05-joins-groupby.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch5 — Joins &amp; groupby</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch06-reshaping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch6 — Reshaping</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch07-plotting-matplotlib.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch7 — Plotting with Matplotlib</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch08-statistical-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch8 — Statistical plots</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch09-eda-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch9 — The EDA workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch10-scaling-encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch10 — Scaling &amp; encoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch11-notebooks-vs-scripts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch11 — Notebooks vs scripts</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch12-environments-reproducibility.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch12 — Environments &amp; reproducibility</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch13-data-ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch13 — Data ethics (a preview)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/ch14-messy-real-world-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ch14 — Messy real-world data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
+  <li><a href="#the-forward-pass-from-inputs-to-a-prediction" id="toc-the-forward-pass-from-inputs-to-a-prediction" class="nav-link" data-scroll-target="#the-forward-pass-from-inputs-to-a-prediction">The forward pass: from inputs to a prediction</a></li>
+  <li><a href="#the-loss-a-number-that-says-how-wrong-we-are" id="toc-the-loss-a-number-that-says-how-wrong-we-are" class="nav-link" data-scroll-target="#the-loss-a-number-that-says-how-wrong-we-are">The loss: a number that says how wrong we are</a></li>
+  <li><a href="#the-backward-pass-the-chain-rule-does-the-work" id="toc-the-backward-pass-the-chain-rule-does-the-work" class="nav-link" data-scroll-target="#the-backward-pass-the-chain-rule-does-the-work">The backward pass: the chain rule does the work</a></li>
+  <li><a href="#gradient-checking-proving-the-hand-derivation-is-right" id="toc-gradient-checking-proving-the-hand-derivation-is-right" class="nav-link" data-scroll-target="#gradient-checking-proving-the-hand-derivation-is-right">Gradient checking: proving the hand-derivation is right</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
+  </ul></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
+  <ul class="collapse">
+  <li><a href="#exercise-1-guided-4-min" id="toc-exercise-1-guided-4-min" class="nav-link" data-scroll-target="#exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</a></li>
+  <li><a href="#exercise-2-implement-8-min" id="toc-exercise-2-implement-8-min" class="nav-link" data-scroll-target="#exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-3-implement-8-min" id="toc-exercise-3-implement-8-min" class="nav-link" data-scroll-target="#exercise-3-implement-8-min">Exercise 3 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-4-stretch-optional-10-min" id="toc-exercise-4-stretch-optional-10-min" class="nav-link" data-scroll-target="#exercise-4-stretch-optional-10-min">Exercise 4 — Stretch (optional, ≈10 min) 🔴</a></li>
+  </ul></li>
+  <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
+  <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/ch16-the-math-of-one-neuron.html">Ch16 — The math of one neuron</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">The math of one neuron</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><span class="larnix-badge badge-difficulty badge-intermediate" role="img" aria-label="difficulty: Intermediate">Intermediate</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
+<section id="the-hook" class="level2">
+<h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
+<p>This is the chapter the whole module has been building toward. Every piece you’ve met — a dot product, a derivative, a gradient, the chain rule — clicks together here into the smallest learning machine there is: <strong>one neuron</strong>. Deep learning stacks this exact unit by the million. Understand one, and the rest is repetition.</p>
+<p>A neuron does two small things. It takes a row of numbers and mixes them into a single score (a <strong>weighted sum</strong>). Then it bends that score into a prediction between 0 and 1 (an <strong>activation</strong>). That’s the forward pass. Learning is the backward pass: measuring how wrong the prediction was, then using the chain rule to work out how to nudge each weight to be a little less wrong next time.</p>
+<p>We’ll do both passes <strong>by hand</strong>, in code you can read line by line, and then prove our hand-derived gradient is correct by checking it against a numeric estimate.</p>
+<blockquote class="blockquote">
+<p>You’ll need from before: the dot product (Ch5), the derivative as sensitivity (Ch6), the gradient (Ch7), the chain rule (Ch8), and NumPy arrays (Ch15).</p>
+</blockquote>
+<hr>
+</section>
+<section id="the-forward-pass-from-inputs-to-a-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="the-forward-pass-from-inputs-to-a-prediction">The forward pass: from inputs to a prediction</h2>
+<p>A neuron holds two things it can adjust: a <strong>weight</strong> for each input (<code>w</code>) and a single <strong>bias</strong> (<code>b</code>). Given an input vector <code>x</code>, it computes:</p>
+<ol type="1">
+<li><strong>The weighted sum</strong> <code>z = w · x + b</code>. This is the dot product from Chapter 5 — a similarity score between the weights and the input — shifted by the bias.</li>
+<li><strong>The activation</strong> <code>a = σ(z)</code>, where σ (sigmoid) is <code>1 / (1 + e^(−z))</code>. It squashes any real number into the range 0 to 1, so the output reads like a probability.</li>
+</ol>
+<p>Let’s use one concrete example all the way through. Input <code>x = [2, 3]</code>, weights <code>w = [0.5, −1.0]</code>, bias <code>b = 0.5</code>, and the true answer we wanted is <code>y = 1.0</code>.</p>
+<div>
+<div id="pyodide-1" class="exercise-cell">
+
+</div>
+<script type="pyodide-1-contents">
+eyJhdHRyIjp7ImNhcHRpb24iOiJUaGUgZm9yd2FyZCBwYXNzIG9mIG9uZSBuZXVyb24sIHN0ZXAgYnkgc3RlcCIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmRlZiBzaWdtb2lkKHopOlxuICAgIHJldHVybiAxLjAgLyAoMS4wICsgbnAuZXhwKC16KSlcblxueCA9IG5wLmFycmF5KFsyLjAsIDMuMF0pXG53ID0gbnAuYXJyYXkoWzAuNSwgLTEuMF0pXG5iID0gMC41XG55ID0gMS4wXG5cbnogPSBmbG9hdCh3IEAgeCArIGIpICAgICAgICAgICMgd2VpZ2h0ZWQgc3VtIChkb3QgcHJvZHVjdCArIGJpYXMpXG5hID0gZmxvYXQoc2lnbW9pZCh6KSkgICAgICAgICAjIGFjdGl2YXRpb24sIHNxdWFzaGVkIGludG8gMC4uMVxubG9zcyA9IGZsb2F0KChhIC0geSkgKiogMikgICAgIyBzcXVhcmVkIGVycm9yOiBob3cgd3Jvbmcgd2Ugd2VyZVxuXG5wcmludChcInogKHdlaWdodGVkIHN1bSkgPVwiLCByb3VuZCh6LCA0KSlcbnByaW50KFwiYSAocHJlZGljdGlvbikgICA9XCIsIHJvdW5kKGEsIDYpKVxucHJpbnQoXCJsb3NzICAgICAgICAgICAgID1cIiwgcm91bmQobG9zcywgNikpIn0=
+</script>
+</div>
+<p>Running it: <code>z = 0.5·2 + (−1.0)·3 + 0.5 = −1.5</code>, the sigmoid squashes that to <code>a ≈ 0.182426</code>, and since we wanted <code>y = 1.0</code> the <strong>squared-error loss</strong> is <code>(0.182426 − 1.0)² ≈ 0.668428</code>. The prediction is far too low — so the neuron has something to learn.</p>
+</section>
+<section id="the-loss-a-number-that-says-how-wrong-we-are" class="level2">
+<h2 class="anchored" data-anchor-id="the-loss-a-number-that-says-how-wrong-we-are">The loss: a number that says how wrong we are</h2>
+<p>To learn, the neuron needs a single number measuring its mistake. We use <strong>squared error</strong>: <code>L = (a − y)²</code>. It’s zero when the prediction is perfect and grows as the prediction drifts from the truth. Squaring (like in Ch11’s variance) keeps it positive and punishes big misses more. Learning means changing <code>w</code> and <code>b</code> to make <code>L</code> smaller — and to know which way to change them, we need the <strong>gradient of <code>L</code></strong>.</p>
+</section>
+<section id="the-backward-pass-the-chain-rule-does-the-work" class="level2">
+<h2 class="anchored" data-anchor-id="the-backward-pass-the-chain-rule-does-the-work">The backward pass: the chain rule does the work</h2>
+<p>The loss depends on <code>a</code>, which depends on <code>z</code>, which depends on each weight. That’s a chain — exactly Chapter 8. To get how the loss responds to weight <code>w_i</code>, multiply the links:</p>
+<p><span class="math display">\[\frac{\partial L}{\partial w_i} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial w_i}\]</span></p>
+<p>Each link is something you already know how to differentiate:</p>
+<ul>
+<li><code>dL/da = 2(a − y)</code> — the derivative of the squared error.</li>
+<li><code>da/dz = a(1 − a)</code> — the derivative of the sigmoid (a tidy result worth remembering: the sigmoid’s slope is its own output times one minus itself).</li>
+<li><code>dz/dw_i = x_i</code> and <code>dz/db = 1</code> — the weighted sum is linear in each weight, so its slope is the matching input itself (and 1 for the bias).</li>
+</ul>
+<p>Multiply the first two once to get <code>dL/dz</code>, then fan it out to every weight by its input. Here’s the whole backward pass:</p>
+<div>
+<div id="pyodide-2" class="exercise-cell">
+
+</div>
+<script type="pyodide-2-contents">
+eyJhdHRyIjp7ImNhcHRpb24iOiJUaGUgYmFja3dhcmQgcGFzcyBieSBoYW5kOiBncmFkaWVudCBvZiB0aGUgbG9zcyBmb3IgZXZlcnkgd2VpZ2h0IGFuZCB0aGUgYmlhcyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmRlZiBzaWdtb2lkKHopOlxuICAgIHJldHVybiAxLjAgLyAoMS4wICsgbnAuZXhwKC16KSlcblxueCA9IG5wLmFycmF5KFsyLjAsIDMuMF0pXG53ID0gbnAuYXJyYXkoWzAuNSwgLTEuMF0pXG5iID0gMC41XG55ID0gMS4wXG5cbiMgZm9yd2FyZCBhZ2Fpbiwgc28gdGhpcyBjZWxsIHN0YW5kcyBhbG9uZVxueiA9IHcgQCB4ICsgYlxuYSA9IHNpZ21vaWQoeilcblxuIyBiYWNrd2FyZDogY2hhaW4gcnVsZSwgbGluayBieSBsaW5rXG5kTF9kYSA9IDIgKiAoYSAtIHkpICAgICAgICAjIGRlcml2YXRpdmUgb2YgKGEgLSB5KV4yXG5kYV9keiA9IGEgKiAoMSAtIGEpICAgICAgICAjIGRlcml2YXRpdmUgb2YgdGhlIHNpZ21vaWRcbmRMX2R6ID0gZExfZGEgKiBkYV9keiAgICAgICMgY29tYmluZSB0aGUgZmlyc3QgdHdvIGxpbmtzXG5cbmdyYWRfdyA9IGRMX2R6ICogeCAgICAgICAgICMgZHovZHdfaSA9IHhfaSAgKGZhbiBvdXQgdG8gZWFjaCB3ZWlnaHQpXG5ncmFkX2IgPSBkTF9keiAqIDEuMCAgICAgICAjIGR6L2RiICAgPSAxXG5cbnByaW50KFwiZExfZHogICA9XCIsIHJvdW5kKGZsb2F0KGRMX2R6KSwgNikpXG5wcmludChcImdyYWRfdyAgPVwiLCBbcm91bmQoZmxvYXQoZyksIDYpIGZvciBnIGluIGdyYWRfd10pXG5wcmludChcImdyYWRfYiAgPVwiLCByb3VuZChmbG9hdChncmFkX2IpLCA2KSkifQ==
+</script>
+</div>
+<p>That gives <code>dL/dz ≈ −0.243877</code>, so <code>grad_w ≈ [−0.487753, −0.731630]</code> (each is <code>dL/dz</code> times its input, 2 and 3) and <code>grad_b ≈ −0.243877</code>. The negative signs say: to reduce the loss, <em>increase</em> these weights and the bias — which would push the prediction up toward the target <code>y = 1.0</code>, exactly what we want.</p>
+</section>
+<section id="gradient-checking-proving-the-hand-derivation-is-right" class="level2">
+<h2 class="anchored" data-anchor-id="gradient-checking-proving-the-hand-derivation-is-right">Gradient checking: proving the hand-derivation is right</h2>
+<p>How do we know that calculus is correct and not a slip of algebra? We check it <strong>numerically</strong>. A derivative is a slope, and we can estimate any slope without calculus by nudging the input a tiny amount <code>eps</code> each way and measuring the rise over run: <code>(L(p + eps) − L(p − eps)) / (2·eps)</code>. If our analytic gradient matches this numeric estimate to many decimals, it’s right.</p>
+<div>
+<div id="pyodide-3" class="exercise-cell">
+
+</div>
+<script type="pyodide-3-contents">
+eyJhdHRyIjp7ImNhcHRpb24iOiJOdW1lcmljIGdyYWRpZW50IGNoZWNrOiBhbmFseXRpYyBncmFkaWVudCB2cyBmaW5pdGUgZGlmZmVyZW5jZXMiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImltcG9ydCBudW1weSBhcyBucFxuXG5kZWYgc2lnbW9pZCh6KTpcbiAgICByZXR1cm4gMS4wIC8gKDEuMCArIG5wLmV4cCgteikpXG5cbnggPSBucC5hcnJheShbMi4wLCAzLjBdKVxudyA9IG5wLmFycmF5KFswLjUsIC0xLjBdKVxuYiA9IDAuNVxueSA9IDEuMFxuXG5kZWYgbG9zc19hdCh3LCBiKTpcbiAgICByZXR1cm4gZmxvYXQoKHNpZ21vaWQodyBAIHggKyBiKSAtIHkpICoqIDIpXG5cbiMgYW5hbHl0aWMgZ3JhZGllbnQgKGZyb20gdGhlIGJhY2t3YXJkIHBhc3MgYWJvdmUpXG5hID0gc2lnbW9pZCh3IEAgeCArIGIpXG5kTF9keiA9IDIgKiAoYSAtIHkpICogYSAqICgxIC0gYSlcbmFuYWx5dGljID0gbnAuYXJyYXkoW2RMX2R6ICogeFswXSwgZExfZHogKiB4WzFdLCBkTF9kel0pXG5cbiMgbnVtZXJpYyBncmFkaWVudCBieSBmaW5pdGUgZGlmZmVyZW5jZXNcbmVwcyA9IDFlLTVcbm51bWVyaWMgPSBbXVxuZm9yIGkgaW4gcmFuZ2UoMik6ICAgICAgICAgICAgICAgICAgICAgICAjIHRoZSB0d28gd2VpZ2h0c1xuICAgIHdwID0gdy5jb3B5KCk7IHdwW2ldICs9IGVwc1xuICAgIHdtID0gdy5jb3B5KCk7IHdtW2ldIC09IGVwc1xuICAgIG51bWVyaWMuYXBwZW5kKChsb3NzX2F0KHdwLCBiKSAtIGxvc3NfYXQod20sIGIpKSAvICgyICogZXBzKSlcbm51bWVyaWMuYXBwZW5kKChsb3NzX2F0KHcsIGIgKyBlcHMpIC0gbG9zc19hdCh3LCBiIC0gZXBzKSkgLyAoMiAqIGVwcykpICAjIHRoZSBiaWFzXG5udW1lcmljID0gbnAuYXJyYXkobnVtZXJpYylcblxubWF4X2Vycm9yID0gZmxvYXQobnAubWF4KG5wLmFicyhhbmFseXRpYyAtIG51bWVyaWMpKSlcbnByaW50KFwiYW5hbHl0aWMgPVwiLCBbcm91bmQoZmxvYXQoZyksIDYpIGZvciBnIGluIGFuYWx5dGljXSlcbnByaW50KFwibnVtZXJpYyAgPVwiLCBbcm91bmQoZmxvYXQoZyksIDYpIGZvciBnIGluIG51bWVyaWNdKVxucHJpbnQoXCJtYXggZXJyb3IgPSB7Oi4yZX1cIi5mb3JtYXQobWF4X2Vycm9yKSkifQ==
+</script>
+</div>
+<p>The two gradients agree to a <strong>maximum error of about 3.27e-11</strong> — eleven decimal places. The hand-derived chain rule is correct. That tiny leftover is rounding in the finite-difference estimate, not a mistake in the calculus.</p>
+<p>This is not a toy check: gradient checking is exactly how practitioners catch bugs when they implement backpropagation in a real network. One neuron or one billion, the recipe is the same — forward pass, loss, chain rule backward, verify.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<section id="key-takeaways-1" class="level3 key-takeaways">
+<h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
+<ol type="1">
+<li>A neuron’s <strong>forward pass</strong> is a dot product plus a bias (<code>z = w·x + b</code>) followed by an activation (<code>a = σ(z)</code>) that squashes the score into 0..1.</li>
+<li>The <strong>loss</strong> <code>(a − y)²</code> is one number measuring how wrong the prediction is; learning means making it smaller.</li>
+<li>The <strong>backward pass</strong> uses the chain rule to get the gradient of the loss for every weight: <code>dL/dw_i = 2(a − y) · a(1 − a) · x_i</code>.</li>
+<li>A <strong>numeric gradient check</strong> (finite differences) confirms the hand-derived gradient — here they matched to about 3e-11.</li>
+<li>This single unit, stacked and trained, is all of deep learning. You’ve now done its math by hand.</li>
+</ol>
+</section>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>.</p>
+<section id="exercise-1-guided-4-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</h3>
+<p>The activation is the sigmoid. Complete <code>sigmoid(z)</code> so it returns <code>1 / (1 + e^(−z))</code>. Replace <code>____</code>, then press <strong>Run</strong>.</p>
+<script type="exercise-setup-ex_sigmoid-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfc2lnbW9pZCIsInNldHVwIjp0cnVlfSwiY29kZSI6ImZyb20gbGliLmdyYWRlciBpbXBvcnQgcnVuX3Rlc3RzIn0=
+</script>
+<div>
+<div id="pyodide-5" class="exercise-cell">
+
+</div>
+<script type="pyodide-5-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfc2lnbW9pZCJ9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmRlZiBzaWdtb2lkKHopOlxuICAgIFwiXCJcIlNxdWFzaCBhbnkgcmVhbCBudW1iZXIgaW50byB0aGUgcmFuZ2UgMC4uMS5cIlwiXCJcbiAgICByZXR1cm4gX19fXyAgIyBUT0RPOiAxIG92ZXIgKDEgcGx1cyBlIHRvIHRoZSBtaW51cyB6KVxuXG5ydW5fdGVzdHMoW1xuICAgIChcInplcm8gbWFwcyB0byBhIGhhbGZcIiwgZmxvYXQoc2lnbW9pZCgwKSksIDAuNSksXG4gICAgKFwic2lnbW9pZCgyKVwiLCByb3VuZChmbG9hdChzaWdtb2lkKDIpKSwgNCksIDAuODgwOCksXG5dKSJ9
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+<code>e^(−z)</code> is <code>np.exp(-z)</code>. The formula is one divided by <code>(1 + np.exp(-z))</code>.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(z):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>z))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+At <code>z = 0</code>, <code>e^0 = 1</code>, so the value is <code>1 / (1 + 1) = 0.5</code> — the sigmoid’s midpoint. Large positive <code>z</code> drives it toward 1; large negative <code>z</code> toward 0.
+</details>
+</section>
+<section id="exercise-2-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
+<p>Now the whole forward pass. Write <code>neuron_forward(x, w, b)</code> that returns the activation <code>σ(w · x + b)</code>. Use NumPy for the dot product. Complete the marked line.</p>
+<script type="exercise-setup-ex_forward-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZm9yd2FyZCIsInNldHVwIjp0cnVlfSwiY29kZSI6ImZyb20gbGliLmdyYWRlciBpbXBvcnQgcnVuX3Rlc3RzIn0=
+</script>
+<div>
+<div id="pyodide-7" class="exercise-cell">
+
+</div>
+<script type="pyodide-7-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZm9yd2FyZCJ9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmRlZiBuZXVyb25fZm9yd2FyZCh4LCB3LCBiKTpcbiAgICBcIlwiXCJGb3J3YXJkIHBhc3M6IHdlaWdodGVkIHN1bSBwbHVzIGJpYXMsIHRoZW4gYSBzaWdtb2lkLlwiXCJcIlxuICAgIHogPSBfX19fICAjIFRPRE86IGRvdCBwcm9kdWN0IG9mIHcgYW5kIHgsIHBsdXMgdGhlIGJpYXMgYlxuICAgIHJldHVybiAxLjAgLyAoMS4wICsgbnAuZXhwKC16KSlcblxucnVuX3Rlc3RzKFtcbiAgICAoXCJvdXIgd29ya2VkIGV4YW1wbGVcIiwgcm91bmQoZmxvYXQobmV1cm9uX2ZvcndhcmQoWzIsIDNdLCBbMC41LCAtMS4wXSwgMC41KSksIDQpLCAwLjE4MjQpLFxuICAgIChcImlucHV0cyBvZiBvbmVcIiwgcm91bmQoZmxvYXQobmV1cm9uX2ZvcndhcmQoWzEsIDFdLCBbMSwgMV0sIDAuMCkpLCA0KSwgMC44ODA4KSxcbl0pIn0=
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+The weighted sum is the dot product of <code>w</code> and <code>x</code> plus the bias. With NumPy arrays that’s <code>np.array(w) @ np.array(x) + b</code>.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> neuron_forward(x, w, b):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    z <span class="op">=</span> np.array(w) <span class="op">@</span> np.array(x) <span class="op">+</span> b</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>z))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>np.array(w) @ np.array(x)</code> is the weighted sum; adding <code>b</code> shifts it; the sigmoid squashes the result. For our example <code>z = −1.5</code>, so the output is <code>≈ 0.1824</code>.
+</details>
+</section>
+<section id="exercise-3-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-implement-8-min">Exercise 3 — Implement (≈8 min) 🟡</h3>
+<p>The key step of the backward pass. Write <code>dL_dz(a, y)</code> — the gradient of the squared-error loss with respect to the weighted sum <code>z</code>. By the chain rule this is <code>2(a − y) · a(1 − a)</code>. Complete the marked line.</p>
+<script type="exercise-setup-ex_grad-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZ3JhZCIsInNldHVwIjp0cnVlfSwiY29kZSI6ImZyb20gbGliLmdyYWRlciBpbXBvcnQgcnVuX3Rlc3RzIn0=
+</script>
+<div>
+<div id="pyodide-9" class="exercise-cell">
+
+</div>
+<script type="pyodide-9-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZ3JhZCJ9LCJjb2RlIjoiZGVmIGRMX2R6KGEsIHkpOlxuICAgIFwiXCJcIkdyYWRpZW50IG9mIChhIC0geSleMiB3aXRoIHJlc3BlY3QgdG8geiwgdGhyb3VnaCB0aGUgc2lnbW9pZC5cIlwiXCJcbiAgICByZXR1cm4gX19fXyAgIyBUT0RPOiAyKihhIC0geSkgdGltZXMgYSooMSAtIGEpXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwidW5kZXItcHJlZGljdGluZ1wiLCByb3VuZChkTF9keigwLjUsIDEuMCksIDQpLCAtMC4yNSksXG4gICAgKFwib3Zlci1wcmVkaWN0aW5nXCIsIHJvdW5kKGRMX2R6KDAuNSwgMC4wKSwgNCksIDAuMjUpLFxuXSkifQ==
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+Two links of the chain multiplied: <code>dL/da = 2*(a - y)</code> and <code>da/dz = a*(1 - a)</code>. The answer is their product, <code>2 * (a - y) * a * (1 - a)</code>.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dL_dz(a, y):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> (a <span class="op">-</span> y) <span class="op">*</span> a <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+At <code>a = 0.5</code>, the sigmoid slope <code>a(1 − a)</code> is <code>0.25</code>. If the truth is <code>y = 1.0</code> we under-predicted, so the gradient is negative (<code>−0.25</code>) — pushing the prediction up. If <code>y = 0.0</code> we over-predicted, so it’s positive (<code>+0.25</code>) — pushing it down.
+</details>
+</section>
+<section id="exercise-4-stretch-optional-10-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-4-stretch-optional-10-min">Exercise 4 — Stretch (optional, ≈10 min) 🔴</h3>
+<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Put it all together: write a forward pass, derive <code>grad_w</code> and <code>grad_b</code> analytically, then <strong>gradient-check</strong> them against finite differences for an input of your choice. Print the max error.</p>
+<p><strong>Rubric — a good answer:</strong></p>
+<ul>
+<li>Computes the forward pass and the analytic gradient for <code>w</code> and <code>b</code>.</li>
+<li>Estimates the same gradient numerically with <code>(L(p+eps) − L(p−eps)) / (2·eps)</code>.</li>
+<li>Reports the max absolute difference and confirms it is tiny (well under <code>1e-6</code>).</li>
+</ul>
+<details>
+<summary>
+Show one possible answer
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(z):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>z))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="op">-</span><span class="fl">2.0</span>, <span class="fl">0.5</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.array([<span class="fl">0.3</span>, <span class="fl">0.8</span>, <span class="op">-</span><span class="fl">0.5</span>])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loss_at(w, b):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>((sigmoid(w <span class="op">@</span> x <span class="op">+</span> b) <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> sigmoid(w <span class="op">@</span> x <span class="op">+</span> b)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>dL_dz <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (a <span class="op">-</span> y) <span class="op">*</span> a <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> a)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>analytic <span class="op">=</span> np.append(dL_dz <span class="op">*</span> x, dL_dz)   <span class="co"># grad_w then grad_b</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>eps <span class="op">=</span> <span class="fl">1e-5</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>numeric <span class="op">=</span> []</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(w)):</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    wp <span class="op">=</span> w.copy()<span class="op">;</span> wp[i] <span class="op">+=</span> eps</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    wm <span class="op">=</span> w.copy()<span class="op">;</span> wm[i] <span class="op">-=</span> eps</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    numeric.append((loss_at(wp, b) <span class="op">-</span> loss_at(wm, b)) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> eps))</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>numeric.append((loss_at(w, b <span class="op">+</span> eps) <span class="op">-</span> loss_at(w, b <span class="op">-</span> eps)) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> eps))</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>max_error <span class="op">=</span> <span class="bu">float</span>(np.<span class="bu">max</span>(np.<span class="bu">abs</span>(analytic <span class="op">-</span> np.array(numeric))))</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"max error = </span><span class="sc">{:.2e}</span><span class="st">"</span>.<span class="bu">format</span>(max_error))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Any reasonable input gives a max error around <code>1e-10</code> or smaller — confirmation that the hand-derived gradient is correct, on data different from the chapter’s example.
+</details>
+<hr>
+</section>
+</section>
+<section id="check-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-ch16-one-neuron","questions":[{"answer":"0","explanation":"z = w·x + b is the weighted sum (a dot product plus a bias); a = sigmoid(z) squashes it into the range 0..1.","id":"forward-pass","options":["A weighted sum of the inputs plus a bias, then an activation that squashes it into 0..1","The average of the inputs","The largest input value"],"prompt":"What does a neuron’s forward pass compute?"},{"answer":"1","explanation":"A tidy result worth remembering: the sigmoid’s slope equals its own output times one minus its output, a(1 - a).","id":"sigmoid-derivative","options":["Always 1","a · (1 - a) — the output times one minus itself","2 · (a - y)"],"prompt":"The derivative of the sigmoid, da/dz, is…"},{"answer":"1","explanation":"Multiply the links: the loss derivative 2(a - y), the sigmoid slope a(1 - a), and dz/dw_i = x_i.","id":"chain-rule-weight","options":["dL/da only","dL/da · da/dz · dz/dw_i, which works out to 2(a - y) · a(1 - a) · x_i","x_i divided by the loss"],"prompt":"By the chain rule, the gradient of the loss with respect to a weight w_i is…"},{"answer":"1","explanation":"Finite differences, (L(p+eps) - L(p-eps)) / (2·eps), estimate the slope without calculus, so they verify the analytic gradient. Here they matched to about 3e-11.","id":"gradient-check","options":["Because calculus cannot find this gradient","To check the hand-derived (analytic) gradient — if they match to many decimals, it is correct","Because it is faster than the analytic gradient"],"prompt":"Why compute a numeric gradient with finite differences?"}],"title":"Chapter 16 — quick check"}</script></div>
+<hr>
+</section>
+<section id="where-this-fits-whats-next" class="level2">
+<h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
+<p>You have now done, by hand, the exact computation that runs billions of times inside a trained network: forward pass, loss, chain-rule backward, gradient check. Stacking these neurons into layers and repeating the nudge is <strong>gradient descent</strong> — the engine of every model in this course.</p>
+<p>That closes Module 2. You came in worried about math; you leave having built a neuron’s brain from a dot product and a derivative. Next, in <strong>Module 3 — Data &amp; Tooling</strong>, you turn from the math to the craft: loading real datasets, exploring them, and preparing the numbers that a neuron like this one learns from.</p>
+
+
+<script type="pyodide-data">
+eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
+</script>
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzkgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzksIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzkgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzkuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS03LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNyA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNywge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNy5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIC8vIERlZmF1bHQgZXhlcmNpc2UgY29uZmlndXJhdGlvblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbihcbiAgICB7XG4gICAgICBpZDogXCJweW9kaWRlLTUtY29udGVudHNcIixcbiAgICAgIGVudmlyOiBgZXhlcmNpc2UtZW52LSR7YmxvY2suYXR0ci5leGVyY2lzZX1gLFxuICAgICAgZXJyb3I6IGZhbHNlLFxuICAgICAgY2FwdGlvbjogJ0V4ZXJjaXNlJyxcbiAgICB9LFxuICAgIGJsb2NrLmF0dHJcbiAgKTtcblxuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbnZpZXdvZiBfcHlvZGlkZV92YWx1ZV81ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl81LCB7fSk7XG5fcHlvZGlkZV9mZWVkYmFja181ID0ge1xuICBjb25zdCB7IFB5b2RpZGVHcmFkZXIgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IGVtcHR5RmVlZGJhY2sgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTtcblxuICBjb25zdCBncmFkZXIgPSBuZXcgUHlvZGlkZUdyYWRlcihfcHlvZGlkZV92YWx1ZV81LmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTMiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8zID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0zLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzMgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzMsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzIgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0xLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzEgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJweW9kaWRlT2pzID0ge1xuICBjb25zdCB7XG4gICAgUHlvZGlkZUV2YWx1YXRvcixcbiAgICBQeW9kaWRlRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUHl0aG9uLFxuICAgIHN0YXJ0UHlvZGlkZVdvcmtlcixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoLFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gUHlvZGlkZSBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICBsZXQgcHlvZGlkZVByb21pc2UgPSAoYXN5bmMgKCkgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgUHlvZGlkZWA7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHN0YXJ0UHlvZGlkZVdvcmtlcihkYXRhLm9wdGlvbnMpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiBtaWNyb3BpcGA7XG4gICAgYXdhaXQgcHlvZGlkZS5sb2FkUGFja2FnZShcIm1pY3JvcGlwXCIpO1xuICAgIGNvbnN0IG1pY3JvcGlwID0gYXdhaXQgcHlvZGlkZS5weWltcG9ydChcIm1pY3JvcGlwXCIpO1xuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIG1pY3JvcGlwLmluc3RhbGwocGtnKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcbiAgICBhd2FpdCBtaWNyb3BpcC5kZXN0cm95KCk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCBweW9kaWRlLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKGUubmFtZSAhPT0gXCJFcnJub0Vycm9yXCIpIHRocm93IGU7XG4gICAgICAgICAgaWYgKGUuZXJybm8gIT09IDIwKSB7XG4gICAgICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yICR7ZS5lcnJub30gXCIke2Vycm9yVGV4dH1cIi5gKTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHRyeSB7XG4gICAgICAgIHJldHVybiBhd2FpdCBweW9kaWRlLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuVVRGOFRvU3RyaW5nKGVycm9yVGV4dFB0cik7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICB9XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFB5b2RpZGUgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUHl0aG9uKHB5b2RpZGUpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHB5b2RpZGU7XG4gIH0pKCkuY2F0Y2goKGVycikgPT4ge1xuICAgIHN0YXR1c1RleHQuc3R5bGUuY29sb3IgPSBcInZhcigtLWV4ZXJjaXNlLWVkaXRvci1obC1lciwgI0FEMDAwMClcIjtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gZXJyLm1lc3NhZ2U7XG4gICAgLy9pbmRpY2F0b3JDb250YWluZXIucXVlcnlTZWxlY3RvcihcIi5zcGlubmVyLWdyb3dcIikuY2xhc3NMaXN0LmFkZChcImQtbm9uZVwiKTtcbiAgICB0aHJvdyBlcnI7XG4gIH0pO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCBweW9kaWRlID0gYXdhaXQgcHlvZGlkZVByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFB5b2RpZGVFdmFsdWF0b3IocHlvZGlkZSwgY29udGV4dCk7XG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHlvZGlkZVByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gICAgcHJvY2VzcyxcbiAgfTtcbn1cbiJ9XX0=
+</script>
+<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
+<div id="exercise-loading-status" class="d-flex gap-2">
+
+</div>
+<div class="spinner-grow spinner-grow-sm">
+
+</div>
+</div>
+<script type="vfs-file">
+WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
+</script>
+</section>
+
+</main> <!-- /main -->
+<script>
+/* Larnix navbar + reading-mode (loaded after body):
+   1) Highlight the navbar link that matches the CURRENT page (Quarto sometimes
+      marks a deep chapter link active on unrelated pages).
+   2) A 3-way reading-mode switcher — Light → Sepia → Dark — layered on Quarto's
+      native (light/dark-only) toggle. Sepia is the light Bootstrap theme plus a
+      `data-lx-mode="sepia"` token override on <html> (see theme SCSS). Light/dark
+      reuse Quarto's own stylesheet switching so we never reimplement it. */
+(function () {
+  function norm(p) { return (p.replace(/index\.html$/, "").replace(/\/$/, "") || "/"); }
+
+  function fixNavActive() {
+    var here = norm(location.pathname);
+    document.querySelectorAll(".navbar .navbar-nav .nav-link").forEach(function (a) {
+      var href = a.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      var path;
+      try { path = norm(new URL(href, location.href).pathname); } catch (e) { return; }
+      var on = path === here;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+  }
+
+  // ── Reading mode (light / sepia / dark) ───────────────────────────────────
+  var MODES = ["light", "sepia", "dark"];
+  var LABELS = { light: "Light", sepia: "Sepia", dark: "Dark" };
+  var KEY = "larnix-mode";
+
+  function quartoIsDark() { return document.body.classList.contains("quarto-dark"); }
+
+  // Drive Quarto's own light/dark switch only when the base scheme must change
+  // (sepia and light share the light base; only dark needs the alternate sheet).
+  function setQuartoBase(wantDark) {
+    if (wantDark !== quartoIsDark() && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme();
+    }
+  }
+
+  function getMode() {
+    var m = localStorage.getItem(KEY);
+    if (MODES.indexOf(m) >= 0) return m;
+    return quartoIsDark() ? "dark" : "light"; // first visit: follow Quarto's state
+  }
+
+  function updateToggles(mode) {
+    var next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    var label = "Reading mode: " + LABELS[mode] + " — switch to " + LABELS[next];
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.setAttribute("title", label);
+      t.setAttribute("aria-label", label);
+    });
+  }
+
+  function applyMode(mode, persist) {
+    if (MODES.indexOf(mode) < 0) mode = "light";
+    setQuartoBase(mode === "dark");
+    document.documentElement.setAttribute("data-lx-mode", mode);
+    document.documentElement.classList.toggle("lx-sepia", mode === "sepia");
+    if (persist) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+    updateToggles(mode);
+  }
+
+  function cycle(ev) {
+    if (ev) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+    var cur = document.documentElement.getAttribute("data-lx-mode") || getMode();
+    applyMode(MODES[(MODES.indexOf(cur) + 1) % MODES.length], true);
+    return false;
+  }
+
+  function bindToggles() {
+    document.querySelectorAll(".quarto-color-scheme-toggle").forEach(function (t) {
+      t.onclick = cycle; // replace Quarto's inline 2-state onclick with our cycle
+    });
+  }
+
+  function run() {
+    fixNavActive();
+    applyMode(getMode(), false); // restore saved mode (no re-persist)
+    bindToggles();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
+</script>
+
+<script>
+/* Larnix live-cell status: show "Setting up…" (not "Running…") while a cell is
+   downloading/installing its Python packages.
+
+   quarto-live drives a single per-cell indicator (.exercise-editor-eval-indicator)
+   for the whole evaluate() call, so the Run button reads "Running…" even while
+   Pyodide is still fetching packages on first use — a one-time download that can
+   take many seconds and reads as a hang. We split the package-load phase out:
+   pre-load the cell's imports (tagging the active editor .lx-loading-pkg so CSS
+   swaps the label to "Setting up…"), THEN hand off to the original evaluate(),
+   whose own load step is now a no-op, so "Running…" shows only for real
+   execution. A short delay before tagging means already-cached packages (the
+   common case after first run) never flash the setup state. */
+(function () {
+  var LOADING_CLASS = "lx-loading-pkg";
+  var DELAY_MS = 150;       // don't flash "Setting up…" for instant cached loads
+  var POLL_MS = 100, MAX_TRIES = 200; // wait up to ~20s for the runtime to load
+  var firstRun = true;      // first eval of the page always involves a download
+
+  function activeEditors() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll(".exercise-editor"),
+      function (ed) {
+        var ind = ed.querySelector(".exercise-editor-eval-indicator");
+        return ind && !ind.classList.contains("d-none");
+      }
+    );
+  }
+
+  function patch() {
+    var rt = window._exercise_ojs_runtime;
+    if (!rt || !rt.PyodideEvaluator) return false;
+    var proto = rt.PyodideEvaluator.prototype;
+    if (proto.__lxLoadingPatched) return true;
+    proto.__lxLoadingPatched = true;
+
+    var originalEvaluate = proto.evaluate;
+    proto.evaluate = async function (code) {
+      if (code != null && this.pyodide) {
+        var editors = [];
+        // First eval of the page hands straight off from the runtime bootstrap
+        // (which already shows "Setting up…"), so tag immediately to avoid a
+        // brief "Running…" flash in the gap; later evals keep the anti-flash delay.
+        var delay = firstRun ? 0 : DELAY_MS;
+        firstRun = false;
+        var timer = setTimeout(function () {
+          editors = activeEditors();
+          editors.forEach(function (ed) { ed.classList.add(LOADING_CLASS); });
+        }, delay);
+        try {
+          // Download/install any packages this cell imports, up front.
+          await this.pyodide.loadPackagesFromImports(code);
+        } catch (e) {
+          /* swallow — let the original evaluate() surface the real error */
+        } finally {
+          clearTimeout(timer);
+          editors.forEach(function (ed) { ed.classList.remove(LOADING_CLASS); });
+        }
+      }
+      // Packages are cached now, so the original load step is a no-op and the
+      // cell correctly shows "Running…" only while the code executes.
+      return originalEvaluate.apply(this, arguments);
+    };
+    return true;
+  }
+
+  if (!patch()) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
+    }, POLL_MS);
+  }
+})();
+</script>
+
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W119
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../modules/02-math";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/venkathub\.github\.io\/larnix");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Larnix — free, open-access AI/ML education. Built docs-as-code.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
