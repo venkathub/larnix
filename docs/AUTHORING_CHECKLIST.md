@@ -64,3 +64,8 @@
 - [ ] ₹0 / `browser` path confirmed; R3 import lint clean.
 - [ ] Plots/diagrams have meaningful alt-text (the takeaway, not "a chart"); no
       colour-only meaning.
+- [ ] **Matplotlib plots (M2/M3):** every plot `{pyodide}` cell carries a `#| fig-alt:`
+      describing the takeaway, AND the surrounding prose states that takeaway in words —
+      because quarto-live renders a live `<canvas>` that does not carry the alt attribute,
+      so the prose is the real accessible description. Plot cells are non-raising and need
+      no `pyodide: packages` (matplotlib is a Pyodide built-in, auto-loaded on import).

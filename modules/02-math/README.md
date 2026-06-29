@@ -32,7 +32,7 @@ gradients). All visuals via Matplotlib in the browser.
 
 | # | Chapter | Tier |
 |---|---------|------|
-| 1 | Why math for AI (and how little you need to start) | 🟢 |
+| 1 | [Why math for AI (and how little you need to start)](ch01-why-math-for-ai.qmd) | 🟢 |
 | 2 | Vectors & geometry | 🟢 |
 | 3 | Matrices as transformations | 🟢 |
 | 4 | Matrix multiplication, intuitively | 🟡 |

@@ -91,6 +91,10 @@ website:
             href: modules/01-python/ch13-environments-packages.qmd
           - text: "Ch14 — Notebooks, the IDE & Colab"
             href: modules/01-python/ch14-notebooks-ide-colab.qmd
+      - section: "M2 — Math You Actually Need"
+        contents:
+          - text: "Ch1 — Why math for AI"
+            href: modules/02-math/ch01-why-math-for-ai.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
