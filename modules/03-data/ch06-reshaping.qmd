@@ -1,0 +1,424 @@
+---
+title: "Reshaping"
+module: "M3 — Data & Tooling"
+chapter: 6
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch5 — Joins & groupby"
+learning_objectives:
+  - "Tell wide data apart from long (tidy) data and say when each is useful"
+  - "Reshape a table between the two layouts with melt and pivot"
+  - "Summarise repeated values into a wide grid with pivot_table and an aggregate"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: wide-vs-long
+    q: "What is the difference between wide and long (tidy) data?"
+    a: "Wide data spreads one variable across many columns (one row per subject, a column per measurement). Long (tidy) data stacks those measurements into rows: one column names the variable, another holds the value, so each row is a single observation."
+  - id: what-melt-does
+    q: "What does df.melt() do?"
+    a: "It reshapes wide to long: it gathers the measurement columns into two columns — 'variable' (the old column names) and 'value' (the cell contents) — keeping any id_vars columns as identifiers. The result has one row per value."
+  - id: what-pivot-does
+    q: "What is the difference between pivot and pivot_table?"
+    a: "pivot reshapes long back to wide and needs one value per index/column cell. pivot_table does the same but first applies an aggregate (mean, sum, count, …), so it can summarise many values that land in the same cell."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Picture a class register on paper. Across the top run the subjects — *Maths*,
+*Science*, *English* — and down the side run the students. Each cell holds one
+score. It is compact and easy to read at a glance: that is **wide** data, one row
+per student with a column for every subject.
+
+Now picture the same marks typed into a logbook, one line at a time: *Asha, Maths,
+80*. *Asha, Science, 91*. *Ravi, Maths, 72*. Every line is a single score with its
+labels beside it. That is **long** data — taller, more repetitive to read, but far
+easier for a computer to group, filter, and chart.
+
+Neither layout is "right." They are the same numbers in two shapes, and real work
+constantly moves between them: a colleague hands you a wide spreadsheet, your
+plotting library wants it long, your report wants it wide again. This chapter is
+about that move. Two pandas tools cover almost all of it — **`melt`** turns wide
+into long, and **`pivot`** turns long back into wide — with **`pivot_table`**
+adding a summary step when several values share a cell.
+
+> You'll need from before: `groupby` and split-apply-combine (M3 Ch5). A
+> `pivot_table` is groupby's close cousin — a grouped summary arranged into a grid.
+
+---
+
+## Wide vs long, side by side
+
+Let's make the class register concrete. Here it is as a **wide** table: one row
+per student, one column per subject.
+
+```{pyodide}
+#| caption: "Wide data: one row per student, a column for each subject"
+import pandas as pd
+
+wide = pd.DataFrame({
+    "student": ["Asha", "Ravi"],
+    "math": [80, 72],
+    "science": [91, 65],
+})
+wide
+```
+
+This is comfortable for a human reader. But notice a hidden awkwardness: the
+*subject* is not stored as data — it is hidden in the column **names**. To ask
+"what was the average score across all subjects?" you have to know which columns
+are subjects and which (`student`) is not. That is exactly the question that long
+data makes easy.
+
+In **long** (also called **tidy**) form, every row is one observation — one
+student, one subject, one score:
+
+| student | subject | score |
+|---------|---------|-------|
+| Asha    | math    | 80    |
+| Asha    | science | 91    |
+| Ravi    | math    | 72    |
+| Ravi    | science | 65    |
+
+The table is taller and repeats `Asha` and `Ravi`, but now *subject* is a real
+column you can group by, filter on, and feed to a chart. The rule of thumb for
+tidy data is: **each variable is a column, each observation is a row.** Most pandas
+tools — `groupby`, plotting, many models — are happiest with data in this shape.
+
+## `melt`: wide → long
+
+`df.melt()` gathers columns into rows. You tell it which columns are
+**identifiers** to keep as-is (`id_vars`), and it stacks every *other* column into
+two new columns: one holding the old column names, one holding the values.
+
+```{pyodide}
+#| caption: "melt stacks the subject columns into variable/value rows"
+import pandas as pd
+
+wide = pd.DataFrame({
+    "student": ["Asha", "Ravi"],
+    "math": [80, 72],
+    "science": [91, 65],
+})
+long = wide.melt(id_vars="student", var_name="subject", value_name="score")
+long
+```
+
+Read what happened: `student` stayed an identifier, and the two measurement
+columns (`math`, `science`) were unpivoted into a `subject` column (the old names)
+and a `score` column (the old values). Two rows became four — one per score. The
+`var_name` and `value_name` arguments rename the two new columns; without them
+pandas calls them `variable` and `value`.
+
+Now a question like "average score per subject" is a plain `groupby`, because
+`subject` is real data:
+
+```{pyodide}
+#| caption: "Long data makes a per-subject summary a one-liner"
+import pandas as pd
+
+wide = pd.DataFrame({
+    "student": ["Asha", "Ravi"],
+    "math": [80, 72],
+    "science": [91, 65],
+})
+long = wide.melt(id_vars="student", var_name="subject", value_name="score")
+long.groupby("subject")["score"].mean()
+```
+
+That returns `math 76.0` and `science 78.0`. Try writing the same summary against
+the wide table and you'll feel the difference — you'd have to name each subject
+column by hand. Reshaping first, then summarising, is a pattern you'll reuse
+constantly.
+
+## `pivot`: long → wide
+
+`pivot` is the reverse of `melt`. It spreads one column's values out into new
+columns. You give it three things: the column to use as the row index, the column
+whose values become the new column **headers**, and the column that fills the
+**cells**.
+
+```{pyodide}
+#| caption: "pivot spreads the long table back into a wide grid"
+import pandas as pd
+
+long = pd.DataFrame({
+    "student": ["Asha", "Asha", "Ravi", "Ravi"],
+    "subject": ["math", "science", "math", "science"],
+    "score": [80, 91, 72, 65],
+})
+back = long.pivot(index="student", columns="subject", values="score")
+back
+```
+
+We are back to a student-by-subject grid. `melt` and `pivot` are a matched pair:
+one tall-ifies, the other wide-ns. The catch with `pivot` is that it expects
+**exactly one value** for each index/column combination. If two rows wanted to land
+in the same cell — say Asha had two maths scores — `pivot` raises an error, because
+it would not know which one to keep. That is where `pivot_table` comes in.
+
+## `pivot_table`: long → wide, with a summary
+
+`pivot_table` works like `pivot` but adds an **aggregate** step. When several
+values fall into the same cell, it combines them with a function you choose
+(`aggfunc`) — `"mean"`, `"sum"`, `"count"`, and so on. Think of it as a `groupby`
+whose result is laid out as a grid.
+
+Here are six sales rows, with repeats: the North store has two `tea` lines.
+
+```{pyodide}
+#| caption: "pivot_table aggregates the repeats — total units per store and product"
+import pandas as pd
+
+sales = pd.DataFrame({
+    "store": ["North", "North", "North", "South", "South", "South"],
+    "product": ["tea", "tea", "coffee", "tea", "coffee", "coffee"],
+    "units": [10, 6, 4, 8, 5, 7],
+})
+sales.pivot_table(index="store", columns="product", values="units", aggfunc="sum")
+```
+
+The two North `tea` rows (10 and 6) were summed into a single cell of **16**;
+South `coffee` (5 and 7) became **12**. A plain `pivot` could not have done this —
+it would have choked on the duplicate `(North, tea)` pair. Swap `aggfunc="mean"`
+and the same grid reports averages instead of totals. The default `aggfunc` is
+`"mean"`, so always state the one you want to be sure.
+
+If you stripped the column layout away, `pivot_table` is doing exactly what
+`sales.groupby(["store", "product"])["units"].sum()` does — the same
+split-apply-combine from Chapter 5, arranged as a rectangle that is easy to
+read and to drop into a report.
+
+### A quick pass on real data
+
+The same move works on the penguins table. Each penguin has a `species` and an
+`island`; `pivot_table` can count how many penguins sit in each
+species-by-island cell in one call:
+
+```{pyodide}
+#| caption: "pivot_table on penguins: a count of birds per species and island"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.pivot_table(index="species", columns="island", values="body_mass_g", aggfunc="count")
+```
+
+The grid shows where each species was seen — Gentoo only on Biscoe, Chinstrap only
+on Dream, Adelie across all three — with `NaN` marking empty
+combinations. One line turned 344 rows into a compact cross-tab.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Wide** data spreads a variable across columns (one row per subject); **long**
+   (tidy) data stacks it into rows, one observation per row. Same numbers, two
+   shapes.
+2. **`melt`** reshapes wide → long, gathering measurement columns into a
+   `variable`/`value` pair while keeping `id_vars` as identifiers.
+3. **`pivot`** reshapes long → wide, but needs exactly one value per cell;
+   **`pivot_table`** adds an `aggfunc` so it can summarise repeats into each cell.
+4. Tidy (long) data is what `groupby`, plotting, and most models expect, so
+   reshaping first then summarising is an everyday pattern.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made data so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+When you `melt` a wide DataFrame (with no `id_vars`), every cell becomes its own
+row. Complete `long_row_count` so it returns how many rows the melted table has.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_long_row_count
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_long_row_count
+import pandas as pd
+
+def long_row_count(data):
+    """Build a DataFrame from data, melt it, and return the long row count."""
+    return ____  # TODO: int(pd.DataFrame(data).melt().shape[0])
+
+run_tests([
+    ("2x2 wide", long_row_count({"a": [1, 2], "b": [3, 4]}), 4),
+    ("one column", long_row_count({"x": [1, 2, 3]}), 3),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Build the table with `pd.DataFrame(data)`, call `.melt()` on it, and read
+`.shape[0]` — that is the row count. Wrap it in `int(...)` so the return type is a
+plain integer. With no `id_vars`, melt stacks *every* cell, so the long row count
+the long row count is the rows times the columns.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def long_row_count(data):
+    return int(pd.DataFrame(data).melt().shape[0])
+```
+
+`pd.DataFrame(data).melt()` unpivots every column into `variable`/`value` rows, one
+row per original cell; `.shape[0]` counts those rows and `int(...)` returns a plain
+integer. A 2×2 wide table has four cells, so it melts to four rows — rows times
+columns.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+After a `melt`, the original column names live in the `variable` column. Write
+`n_variables` to report how many **distinct** original columns there were — the
+number of unique values in `variable`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_n_variables
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_n_variables
+import pandas as pd
+
+def n_variables(data):
+    """Melt the data and count how many distinct original columns it had."""
+    return ____  # TODO: int(pd.DataFrame(data).melt()["variable"].nunique())
+
+run_tests([
+    ("three cols", n_variables({"a": [1], "b": [2], "c": [3]}), 3),
+    ("one col", n_variables({"x": [1, 2]}), 1),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Melt the frame, select the `"variable"` column (it holds the old column names),
+and call `.nunique()` to count its distinct values. Wrap the result in `int(...)`.
+Each original column name appears once per row it filled, but `.nunique()` counts
+each name only once.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def n_variables(data):
+    return int(pd.DataFrame(data).melt()["variable"].nunique())
+```
+
+After `melt`, the `variable` column repeats each old column name once per value.
+`.nunique()` counts the distinct names, so three original columns give `3`
+regardless of how many rows they held.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Take a small wide table — say a
+few days across two outlets — `melt` it to long, then `pivot` it back to wide.
+Confirm you recover the **original shape** by comparing `.shape` before and after.
+
+**Rubric — a good answer:**
+
+- Builds a small wide DataFrame, then melts it to long with `melt` (keeping a
+  sensible `id_vars` column as the identifier).
+- Pivots the long table back to wide with `pivot`, using the identifier as the
+  index and the melted `variable` column as the new headers.
+- Compares the original and round-tripped shapes (e.g. prints both `.shape`
+  tuples) and states whether they match.
+
+<details><summary>If you're stuck</summary>
+
+Keep one column (like `day`) as `id_vars` when you melt, so you have something to
+pivot back on. After pivoting, the index column moves into the row labels; use
+`.reset_index()` to bring it back as a column before comparing shapes, and remember
+`pivot` leaves a name on the columns axis you can clear.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+
+wide = pd.DataFrame({
+    "day": ["Mon", "Tue"],
+    "cafe": [12, 9],
+    "kiosk": [7, 5],
+})
+print("original shape:", wide.shape)
+
+long = wide.melt(id_vars="day", var_name="outlet", value_name="cups")
+back = long.pivot(index="day", columns="outlet", values="cups").reset_index()
+back.columns.name = None  # drop the leftover 'outlet' axis name
+
+print("round-tripped shape:", back.shape)
+print("shapes match:", wide.shape == back.shape)
+```
+
+The melt turns the two outlet columns into long `outlet`/`cups` rows; the pivot
+spreads them back into a day-by-outlet grid. After `reset_index`, the recovered
+table has the same `(2, 3)` shape as the original — a clean round trip that shows
+`melt` and `pivot` are inverses.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now move a table between wide and long on demand: `melt` to tidy it for
+grouping and charting, `pivot` to lay it back out for a report, and `pivot_table`
+to summarise repeats into a clean grid. Reshaping is the quiet skill that makes the
+rest of your pandas work flow — most "I can't get this into the right form" moments
+end with one of these three calls. That wraps the core data-wrangling toolkit;
+next we turn from shaping data to telling its story with charts.

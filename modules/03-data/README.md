@@ -35,11 +35,11 @@ capstone deliberately uses a *different* public dataset to test transfer.
 | 3 | [Indexing & selection](ch03-indexing-selection.qmd) | 🟢 |
 | 4 | [Cleaning data](ch04-cleaning-data.qmd) | 🟡 |
 | 5 | [Joins & groupby](ch05-joins-groupby.qmd) | 🟡 |
-| 6 | Reshaping | 🟡 |
-| 7 | Plotting with Matplotlib | 🟢 |
-| 8 | Statistical plots | 🟡 |
-| 9 | The EDA workflow | 🟡 |
-| 10 | Scaling & encoding (a preview) | 🟡 |
+| 6 | [Reshaping](ch06-reshaping.qmd) | 🟡 |
+| 7 | [Plotting with Matplotlib](ch07-plotting-matplotlib.qmd) | 🟢 |
+| 8 | [Statistical plots](ch08-statistical-plots.qmd) | 🟡 |
+| 9 | [The EDA workflow](ch09-eda-workflow.qmd) | 🟡 |
+| 10 | [Scaling & encoding (a preview)](ch10-scaling-encoding.qmd) | 🟡 |
 | 11 | Notebooks vs scripts — conceptual | 🟢 |
 | 12 | Environments & reproducibility — conceptual | 🟡 |
 | 13 | Data ethics (a preview) | 🟢 |

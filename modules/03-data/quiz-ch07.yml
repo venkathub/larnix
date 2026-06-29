@@ -1,0 +1,35 @@
+title: "Chapter 7 — quick check"
+id: "m3-ch07-plotting"
+questions:
+  - id: chart-for-relationship
+    prompt: "You want to see whether two numeric columns — flipper length and body mass — move together. Which chart fits?"
+    options:
+      - "A scatter plot, with one column on each axis and a dot per record"
+      - "A bar chart, with one bar per record"
+      - "A histogram of flipper length"
+    answer: 0
+    explanation: "A scatter plot puts one numeric column on each axis and draws a dot per record, so the shape of the cloud shows whether the two move together (a relationship)."
+  - id: chart-for-distribution
+    prompt: "You want to see how the values of a single numeric column are spread out. Which chart fits?"
+    options:
+      - "A line chart joining the values in order"
+      - "A histogram, which bins the values and shows how many land in each bin"
+      - "A scatter plot of the column against itself"
+    answer: 1
+    explanation: "A histogram bins one numeric column and draws a bar for the count in each bin, showing the distribution — its centre, spread, and shape."
+  - id: chart-for-categories
+    prompt: "You want to compare how many penguins belong to each species. Which chart fits?"
+    options:
+      - "A histogram of the species names"
+      - "A scatter plot of species against count"
+      - "A bar chart, one bar per species, with height showing the count"
+    answer: 2
+    explanation: "A bar chart draws one bar per category with its height as the value, so counts across a small set of named groups compare directly from a common baseline."
+  - id: why-label-axes
+    prompt: "Why should every chart have axis labels and a title?"
+    options:
+      - "It makes the chart render faster in the browser"
+      - "Matplotlib raises an error without them"
+      - "A chart is read on its own, so labels say what each number means and what the picture is about"
+    answer: 2
+    explanation: "Charts are read away from the code that made them. Axis labels (with units) say what each number means and the title says what the chart is about; without them a reader cannot tell what they are seeing."

@@ -1,0 +1,415 @@
+---
+title: "Plotting with Matplotlib"
+module: "M3 — Data & Tooling"
+chapter: 7
+difficulty: "beginner"
+prereqs:
+  - "M3 Ch2 — Pandas Series & DataFrame"
+learning_objectives:
+  - "Make the four everyday charts: a line, a bar, a scatter, and a histogram"
+  - "Label every chart with axis labels and a title so it reads on its own"
+  - "Choose the chart type that fits the question you are asking"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: four-charts
+    q: "What are the four everyday charts and the question each answers?"
+    a: "A line chart shows a trend over an ordered sequence (often time); a bar chart compares a value across categories; a scatter plot shows the relationship between two numeric columns; a histogram shows the distribution of one numeric column."
+  - id: label-every-chart
+    q: "Why label the axes and give every chart a title?"
+    a: "A chart is read on its own, away from the code that made it. Axis labels say what each number means (and its units), and the title says what the picture is about — without them a reader cannot tell what they are looking at."
+  - id: matplotlib-skeleton
+    q: "What is the basic Matplotlib skeleton for one chart?"
+    a: "import matplotlib.pyplot as plt; fig, ax = plt.subplots(figsize=(5, 3)); call a plot method on ax (ax.plot / ax.bar / ax.scatter / ax.hist); label it with ax.set_xlabel, ax.set_ylabel, and ax.set_title; then plt.show()."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You already met a table in pandas and learned to size it up — shape, head, a numeric
+summary. But a column of 344 numbers still hides its story. A **picture** hands that
+story over in one glance: whether a value is rising, which category is biggest, whether
+two measurements move together, or how a single column is spread out.
+
+**Matplotlib** is the drawing tool the whole Python data world is built on. You won't
+learn all of it here — you'll learn the *four charts you reach for every day* and the
+small, repeatable recipe that draws each one:
+
+- A **line chart** — for a value that changes over an ordered sequence, often time.
+- A **bar chart** — for comparing one value across a handful of categories.
+- A **scatter plot** — for the relationship between two numeric columns.
+- A **histogram** — for the distribution of a single numeric column.
+
+The skill we're after is less about memorising code and more about a habit: *pick the
+chart that fits your question, then label it so anyone can read it.*
+
+> You'll need from before: loading a table and pulling out a column as a Series
+> (M3 Ch2). Matplotlib loads itself the moment you write `import matplotlib.pyplot`,
+> so there is nothing extra to install.
+
+---
+
+## The one recipe behind every chart
+
+Almost every Matplotlib chart you'll draw follows the same five-step shape. Learn it
+once and the four charts become variations on a theme:
+
+```python
+import matplotlib.pyplot as plt          # 1. the plotting tool
+
+fig, ax = plt.subplots(figsize=(5, 3))    # 2. a figure and a set of axes to draw on
+ax.plot(x, y)                             # 3. a plot method: plot / bar / scatter / hist
+ax.set_xlabel("...")                      # 4. label the axes and give it a title
+ax.set_ylabel("...")
+ax.set_title("...")
+plt.show()                                # 5. render the figure
+```
+
+Two names are worth pinning down. The **figure** (`fig`) is the whole picture — the
+canvas. The **axes** (`ax`) is the area inside it with the x- and y-axis where the data
+is actually drawn. `plt.subplots()` hands you both at once; `figsize=(5, 3)` sets the
+width and height in inches. From there you call one plot method on `ax`, label it, and
+show it. That's the entire pattern — only step 3 changes between chart types.
+
+Step 4 is not optional. A chart is read on its own, away from the code that made it, so
+**unlabelled axes are a bug, not a style choice.** Every chart below names what each
+axis means and what the whole picture is about.
+
+## A line chart: a value over an ordered sequence
+
+A **line chart** joins points in order with a line, which makes it the natural choice
+for something that *changes along a sequence* — most often over time. The connecting
+line draws the eye along the trend: rising, falling, or flat.
+
+```{pyodide}
+#| caption: "A line chart of active users per month — the line traces the trend"
+#| fig-alt: "Line chart with month from 1 to 6 on the x-axis and active users on the y-axis. The line rises steadily from 120 in month 1 to 260 in month 6, with a small marker on each month's point."
+import matplotlib.pyplot as plt
+
+months = [1, 2, 3, 4, 5, 6]
+active_users = [120, 135, 160, 180, 215, 260]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(months, active_users, marker="o")
+ax.set_xlabel("month")
+ax.set_ylabel("active users")
+ax.set_title("Active users by month")
+plt.show()
+```
+
+The line climbs from left to right, so the takeaway reads straight off the picture:
+**active users grew every month, from 120 up to 260** over the half-year. The `marker="o"`
+puts a dot on each measured month so you can see the six real data points the line
+connects. Reach for a line chart whenever your x-axis has a natural order — days,
+months, epochs of training — and you care about the *shape of the change* across it.
+
+## A bar chart: comparing across categories
+
+A **bar chart** draws one bar per category, with the bar's height showing its value. It
+is the right tool for comparing a count or an amount across a small set of named groups,
+where there is no "order" to the x-axis — only different things to line up side by side.
+
+Let's count how many penguins of each species are in the dataset and compare them. We
+get the counts with `value_counts()` from the previous chapter, then hand the category
+names and their heights to `ax.bar`.
+
+```{pyodide}
+#| caption: "A bar chart of penguin species counts — one bar per species"
+#| fig-alt: "Bar chart with three bars, one per penguin species on the x-axis and the number of penguins on the y-axis. Adelie is tallest at 152, Gentoo next at 124, and Chinstrap shortest at 68."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+counts = df["species"].value_counts()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.bar(counts.index, counts.values)
+ax.set_xlabel("species")
+ax.set_ylabel("number of penguins")
+ax.set_title("Penguin species counts")
+plt.show()
+```
+
+The bars make the comparison instant: **Adelie is the most common species at 152 birds,
+Gentoo follows at 124, and Chinstrap is the smallest group at 68.** Heights are easy to
+compare because they all start from the same baseline of zero — which is exactly why a
+bar chart beats a table when your question is "which category is biggest?" Use bars for
+categories; if your x-axis were a time sequence instead, you'd reach for a line.
+
+## A scatter plot: the relationship between two columns
+
+The line and bar charts each describe values along *one* axis of meaning. A **scatter
+plot** describes **two numeric columns at once**: put one on the x-axis, the other on
+the y-axis, and draw one dot per record. The *shape of the cloud* tells you whether the
+two move together.
+
+Penguins offer a natural pair to test: do birds with longer flippers also weigh more?
+
+```{pyodide}
+#| caption: "A scatter plot of flipper length vs body mass — one dot per penguin"
+#| fig-alt: "Scatter plot with flipper length in millimetres on the x-axis from about 170 to 230 and body mass in grams on the y-axis from about 2700 to 6300. The dots form an upward-sloping band from lower-left to upper-right, so longer flippers go with heavier birds."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+sub = df[["flipper_length_mm", "body_mass_g"]].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.scatter(sub["flipper_length_mm"], sub["body_mass_g"], s=10, alpha=0.6)
+ax.set_xlabel("flipper length (mm)")
+ax.set_ylabel("body mass (g)")
+ax.set_title("Flipper length vs body mass")
+plt.show()
+```
+
+The dots form a clear **upward-sloping band** from lower-left to upper-right, so the
+takeaway is that **penguins with longer flippers tend to be heavier** — a positive
+relationship. The `s=10` shrinks each dot and `alpha=0.6` makes them slightly
+see-through, so where many penguins overlap you can still tell the cloud is dense rather
+than a single blob. Reach for a scatter plot whenever your question is "do these two
+numbers move together?"
+
+## A histogram: the distribution of one column
+
+A scatter needs two columns. A **histogram** needs only one, and answers a different
+question: *how are the values of this column spread out?* It chops the range into equal
+slices called **bins**, counts how many values land in each, and draws a bar of that
+height. The result is the column's **distribution** — its silhouette.
+
+```{pyodide}
+#| caption: "A histogram of penguin body mass — its distribution across 12 bins"
+#| fig-alt: "Histogram with body mass in grams on the x-axis from about 2700 to 6300 and the number of penguins on the y-axis. Bars rise to a peak in the 3500 to 4000 gram range, then tail off gradually toward the heavier masses on the right."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+mass = df["body_mass_g"].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(mass, bins=12, edgecolor="white")
+ax.set_xlabel("body mass (g)")
+ax.set_ylabel("number of penguins")
+ax.set_title("Distribution of penguin body mass")
+plt.show()
+```
+
+Read the shape left to right. The bars are **tallest around 3500–4000 g** — that is
+where most penguins sit — and then **trail off toward the heavier birds** on the right.
+So the takeaway is that body mass clusters near 3500–4000 g with a typical range of
+roughly 3000–5500 g and a gentle tail of heavier penguins. The number of bins is a dial
+you choose: too few blurs real detail into one fat bar, too many makes random wobble
+look like structure. Twelve is a sensible start here.
+
+## Choosing the right chart
+
+The hardest part is not the code — it's matching the chart to the question. A quick map:
+
+- **"How does this change over time / an ordered sequence?"** → a **line** chart.
+- **"Which category is biggest?"** → a **bar** chart.
+- **"Do these two numbers move together?"** → a **scatter** plot.
+- **"How is this one column spread out?"** → a **histogram**.
+
+Pick the wrong chart and a true pattern can hide; pick the right one and it jumps out.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The four everyday charts each answer one question: a **line** for a trend over an
+   ordered sequence, a **bar** for comparing categories, a **scatter** for a
+   relationship between two columns, and a **histogram** for one column's distribution.
+2. Every chart follows one recipe: `import matplotlib.pyplot as plt`,
+   `fig, ax = plt.subplots(figsize=(5, 3))`, a plot method on `ax`, then `plt.show()`.
+3. Always **label** the chart — `ax.set_xlabel`, `ax.set_ylabel`, `ax.set_title` — so it
+   can be read on its own, units and all.
+4. The skill is **choosing** the chart that fits the question; the wrong chart can hide
+   a pattern the right one makes obvious.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`. The
+first two prepare the *data* for a chart with tiny hand-made inputs, so the answers are
+exact — you cannot assert on a drawn picture, but you can check the numbers behind it.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+A line chart needs a list of y-values to draw. To plot the parabola `y = x²`, you need
+the squares of the x-values. Complete `squared(xs)` so it returns the square of each
+value. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_squared
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_squared
+def squared(xs):
+    """Return a list of the squares of the values in xs (y-values for a parabola)."""
+    return ____  # TODO: [x * x for x in xs]
+
+run_tests([
+    ("squares", squared([1, 2, 3]), [1, 4, 9]),
+    ("with zero", squared([0, 5]), [0, 25]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A list comprehension builds the new list in one line: for every `x` in `xs`, compute
+`x * x`. The result is the list of y-values you would pass to `ax.plot(xs, ys)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def squared(xs):
+    return [x * x for x in xs]
+```
+
+`[x * x for x in xs]` walks the input list and squares each value, returning a new list
+the same length — so `[1, 2, 3]` becomes `[1, 4, 9]`, the y-values that trace a parabola
+when plotted against the x-values.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+A bar chart compares a count per category, so first you need those counts. Write
+`category_counts(items)` that returns a dictionary mapping each value to how many times
+it appears — the heights for a bar chart. Use `collections.Counter`. Complete the marked
+line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_counts
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_counts
+def category_counts(items):
+    """Return a dict mapping each item to its count (bar heights for a bar chart)."""
+    from collections import Counter
+    return ____  # TODO: dict(Counter(items))
+
+run_tests([
+    ("counts", category_counts(["a", "a", "b"]), {"a": 2, "b": 1}),
+    ("empty", category_counts([]), {}),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`Counter(items)` tallies how often each value appears and behaves like a dictionary.
+Wrap it in `dict(...)` to return a plain dictionary — `{"a": 2, "b": 1}` for
+`["a", "a", "b"]`, and an empty `{}` for an empty list.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from collections import Counter
+
+def category_counts(items):
+    return dict(Counter(items))
+```
+
+`Counter(items)` counts each distinct value in one pass; `dict(...)` turns the result
+into a plain dictionary. Those key→count pairs are exactly the category names and bar
+heights you would hand to `ax.bar(counts.keys(), counts.values())`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Make a **labelled bar chart** of a
+category count of your choice — the penguin species counts work well, or any list of
+categories you like. Then write one sentence describing what the chart shows.
+
+**Rubric — a good answer:**
+
+- Draws a bar chart with `ax.bar` from a set of category counts.
+- Labels both axes with `ax.set_xlabel` / `ax.set_ylabel` and gives it a title with
+  `ax.set_title`.
+- Describes in words what the chart shows — which category is biggest, and by roughly
+  how much.
+
+<details><summary>If you're stuck</summary>
+
+Get the counts with `df["species"].value_counts()`, then pass `counts.index` (the
+names) and `counts.values` (the heights) to `ax.bar`. Don't forget the three label
+calls before `plt.show()`, and read the tallest bar off the picture for your sentence.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+counts = df["species"].value_counts()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.bar(counts.index, counts.values)
+ax.set_xlabel("species")
+ax.set_ylabel("number of penguins")
+ax.set_title("Penguin species counts")
+plt.show()
+
+print("Adelie is the most common species (152 birds), then Gentoo (124),")
+print("with Chinstrap the smallest group (68) — Adelie is over twice Chinstrap.")
+```
+
+The three bars start from a common baseline of zero, so their heights compare directly:
+Adelie is tallest at 152, Gentoo next at 124, and Chinstrap shortest at 68. The chart
+answers a category-comparison question at a glance, which is what bar charts are for.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch07.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now draw the four everyday charts, label them so they stand on their own, and —
+the real skill — pick the one that fits your question. That turns a wall of numbers into
+a picture you can reason about. Next we go deeper into the charts that describe data
+statistically: reading a histogram for shape, a boxplot for spread and outliers, and a
+scatter for the strength of a relationship.

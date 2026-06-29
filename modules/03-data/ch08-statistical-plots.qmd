@@ -1,0 +1,383 @@
+---
+title: "Statistical plots"
+module: "M3 — Data & Tooling"
+chapter: 8
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch7 — Plotting with Matplotlib"
+  - "M2 Ch11 — Mean, variance & standard deviation"
+learning_objectives:
+  - "Read a histogram as the shape of one variable's distribution"
+  - "Read a boxplot for the median, the spread, and any outliers"
+  - "Read a scatter plot for the relationship between two variables"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: histogram-shows
+    q: "What does a histogram show?"
+    a: "The distribution of one variable — its values grouped into bins, with bar heights showing how many records fall in each bin, so you can see the centre, the spread, and the shape (symmetric or skewed)."
+  - id: boxplot-shows
+    q: "What does a boxplot show?"
+    a: "A five-number summary of one variable: the box spans the first to the third quartile (the middle 50%) with a line at the median; the whiskers reach the rest of the typical range; and points beyond the whiskers are flagged as outliers."
+  - id: scatter-shows
+    q: "What does a scatter plot reveal?"
+    a: "The relationship between two variables — one per axis, one dot per record. An upward band means they rise together (positive), a downward band means one falls as the other rises (negative), and a shapeless cloud means little relationship."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A column of 342 numbers tells you almost nothing when you stare at it. `.describe()`
+helps — a mean here, a standard deviation there — but a table of summary statistics
+still asks you to imagine the data. A *picture* hands it to you directly. One glance
+at the right chart and you know whether your penguins cluster around a typical weight,
+how spread out they are, and whether two measurements move together.
+
+This chapter is about three workhorse charts that answer three different questions:
+
+- A **histogram** answers *"what does one column look like?"* — its distribution.
+- A **boxplot** answers *"where is the middle, how wide is the spread, anything weird?"*
+- A **scatter plot** answers *"do these two columns move together?"* — a relationship.
+
+We'll read all three from the **Palmer Penguins** dataset you already met: 344 birds
+measured at Palmer Station, Antarctica. Each plot is a few lines of Matplotlib on top
+of a pandas column, and the skill we're after is less about the code and more about
+*reading the result*.
+
+> You'll need from before: drawing axes with Matplotlib (M3 Ch7), and the idea of a
+> mean, variance, and standard deviation as the centre and spread of data (M2 Ch11).
+> Matplotlib loads itself the moment you `import matplotlib.pyplot`, so there is
+> nothing to install.
+
+---
+
+## A histogram: the shape of one distribution
+
+A column of body masses ranges from light birds to heavy ones, but how are the values
+*spread out* in between? A **histogram** answers that. It chops the range into equal
+slices called **bins**, counts how many values fall in each bin, and draws a bar of
+that height. The result is the **distribution** — the silhouette of the data.
+
+```{pyodide}
+#| caption: "A histogram of penguin body mass — its distribution in 12 bins"
+#| fig-alt: "Histogram with body mass in grams on the x-axis from about 2700 to 6300 and the number of penguins on the y-axis. Bars rise to a peak in the 3500 to 4000 gram range, then tail off gradually toward the heavier masses on the right."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+mass = df["body_mass_g"].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(mass, bins=12, edgecolor="white")
+ax.set_xlabel("body mass (g)")
+ax.set_ylabel("number of penguins")
+ax.set_title("Distribution of penguin body mass")
+plt.show()
+```
+
+Read the shape from left to right. The bars are **tallest around 3500–4000 g**, so
+that is where most penguins sit — the *centre* of the distribution, near the mean of
+about **4202 g**. The bars then **trail off to the right**, toward the 6000 g birds,
+making a longer tail on the heavy side than the light side. That mild lean is called a
+**right skew**, and it is exactly why the mean (4202 g) sits a little *above* the
+median (4050 g): a few heavy penguins pull the average up. The takeaway: this column
+has a single hump centred near 4200 g, a typical range of roughly 3000–5500 g, and a
+gentle tail toward heavier birds.
+
+The **bin count matters**. Too few bins and you blur real detail into one fat bar; too
+many and random wobble looks like structure. Twelve bins is a reasonable starting
+point here; nudging it up or down a little is a normal part of looking at data.
+
+## A boxplot: median, spread, and outliers
+
+A histogram shows the whole shape. A **boxplot** is more compact: it draws a
+*five-number summary* so you can compare the centre and spread of a column at a glance.
+
+The pieces are worth naming. The **box** spans the **first quartile (Q1)** to the
+**third quartile (Q3)** — the middle 50% of the data, a range called the
+**interquartile range (IQR)**. The **line inside the box** is the **median** (the
+middle value). The **whiskers** stretch out to the rest of the typical data, reaching
+at most 1.5 × IQR past each quartile. Any point beyond a whisker is drawn on its own
+and flagged as a possible **outlier**.
+
+```{pyodide}
+#| caption: "A boxplot of body mass — the box is the middle 50%, the line is the median"
+#| fig-alt: "Vertical boxplot of body mass in grams. The box spans roughly 3550 to 4750 grams with a median line near 4050 grams. Whiskers extend down to about 2700 and up to about 6300 grams, with no individual points drawn beyond the whiskers."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+mass = df["body_mass_g"].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.boxplot(mass)
+ax.set_ylabel("body mass (g)")
+ax.set_title("Body mass: median, spread, and outliers")
+plt.show()
+```
+
+Read it from the middle outward. The median line sits near **4050 g** — half the
+penguins are lighter, half heavier. The box runs from about **3550 g (Q1)** to
+**4750 g (Q3)**, so the middle 50% of birds span an IQR of roughly **1200 g**. The
+whiskers reach down to the lightest bird (≈ 2700 g) and up to the heaviest (≈ 6300 g),
+and crucially **no points are drawn past the whiskers** — by the 1.5 × IQR rule, this
+column has *no flagged outliers*. The takeaway: a typical penguin weighs about 4050 g,
+the central half of the flock falls within a 1200 g band, and nothing is extreme
+enough to stand out as anomalous.
+
+That last point is what makes boxplots a first stop in data cleaning: a stray dot far
+above the top whisker is your cue to check for a typo or a genuinely unusual record
+before it skews everything downstream.
+
+## A scatter plot: a relationship between two variables
+
+The histogram and boxplot each describe **one** column. A **scatter plot** describes
+**two** at once: put one variable on the x-axis, the other on the y-axis, and draw one
+dot per record. The *pattern* of the cloud tells you whether the two move together.
+
+Penguins offer a natural pair: do birds with longer flippers also weigh more?
+
+```{pyodide}
+#| caption: "Flipper length vs body mass — each dot is one penguin"
+#| fig-alt: "Scatter plot with flipper length in millimetres on the x-axis from about 170 to 230 and body mass in grams on the y-axis from about 2700 to 6300. The dots form an upward-sloping band from lower-left to upper-right, so longer flippers go with heavier birds."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+sub = df[["flipper_length_mm", "body_mass_g"]].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.scatter(sub["flipper_length_mm"], sub["body_mass_g"], s=10, alpha=0.6)
+ax.set_xlabel("flipper length (mm)")
+ax.set_ylabel("body mass (g)")
+ax.set_title("Flipper length vs body mass")
+plt.show()
+```
+
+The dots form a clear **upward-sloping band** from lower-left to upper-right: penguins
+with longer flippers tend to be heavier. That is a **positive relationship**, and a
+strong one — the correlation here is about **r ≈ 0.87**, close to the maximum of 1.0,
+which is why the cloud looks almost like a fuzzy line rather than a shapeless blob. The
+takeaway: flipper length and body mass rise together tightly enough that knowing one
+gives you a good guess at the other.
+
+Read scatter shapes like a vocabulary:
+
+- **Upward band** → positive relationship (both rise together).
+- **Downward band** → negative relationship (one falls as the other rises).
+- **Shapeless cloud** → little or no relationship.
+
+One caution worth carrying forward: a relationship is **not** proof that one variable
+*causes* the other. Longer flippers do not *make* a penguin heavy; both grow together
+because bigger birds are bigger all over. "Correlation is not causation" is a phrase
+you'll meet again — a scatter shows the *what*, never the *why*.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **histogram** shows the **distribution** of one column — bin the values, draw
+   bar heights, and read the centre, the spread, and the shape (symmetric or skewed).
+2. A **boxplot** shows a five-number summary of one column: the **box** is the middle
+   50% (Q1–Q3), the **line** is the **median**, the whiskers reach the typical range,
+   and points beyond them are **outliers**.
+3. A **scatter plot** shows the **relationship** between two columns: an upward band is
+   positive, a downward band is negative, a shapeless cloud is none.
+4. Penguin body mass centres near **4050–4200 g** with a mild right skew, and flipper
+   length vs body mass is a strong positive relationship (**r ≈ 0.87**).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`. The
+first two use tiny hand-made lists so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+A histogram and a boxplot both lean on the centre and spread of a column. Write
+`mean_and_std(values)` to return a tuple `(mean, std)`, each rounded to 2 decimals,
+using NumPy's **population** standard deviation. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mean_std
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mean_std
+import numpy as np
+
+def mean_and_std(values):
+    """Return (mean, population std) of values, each rounded to 2 decimals."""
+    a = np.array(values)
+    return ____  # TODO: (round(float(a.mean()), 2), round(float(a.std()), 2))
+
+run_tests([
+    ("simple", mean_and_std([2, 4, 6, 8]), (5.0, 2.24)),
+    ("flat", mean_and_std([5, 5, 5]), (5.0, 0.0)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`a.mean()` is the average and `a.std()` is the population standard deviation. Wrap
+each in `float(...)`, then `round(..., 2)`, and return them as a tuple
+`(rounded_mean, rounded_std)`. The std of `[2, 4, 6, 8]` is `sqrt(5) ≈ 2.236`, which
+rounds to `2.24`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def mean_and_std(values):
+    a = np.array(values)
+    return (round(float(a.mean()), 2), round(float(a.std()), 2))
+```
+
+`np.array(values)` turns the list into a NumPy array; `.mean()` averages it and
+`.std()` gives the population standard deviation (dividing by `n`, not `n − 1`).
+`float(...)` makes the types predictable and `round(..., 2)` trims each to two
+decimals, so `[2, 4, 6, 8]` returns `(5.0, 2.24)`.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+A histogram is, at heart, *counting how many values land in each bin*. Write
+`count_in_range(values, lo, hi)` that returns how many values fall in one bin —
+between `lo` and `hi` **inclusive** of both ends. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count_range
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count_range
+def count_in_range(values, lo, hi):
+    """Count how many values satisfy lo <= v <= hi (one histogram bin)."""
+    return ____  # TODO: int(sum(1 for v in values if lo <= v <= hi))
+
+run_tests([
+    ("middle bin", count_in_range([1, 2, 3, 4, 5], 2, 4), 3),
+    ("none", count_in_range([1, 2, 3], 10, 20), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Loop over the values and keep the ones where `lo <= v <= hi` is true. A generator
+expression `sum(1 for v in values if lo <= v <= hi)` counts them; wrap it in
+`int(...)` so the return type is a plain integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def count_in_range(values, lo, hi):
+    return int(sum(1 for v in values if lo <= v <= hi))
+```
+
+The chained comparison `lo <= v <= hi` is `True` only when `v` is inside the bin
+(both ends included). Summing `1` for each match counts them, and `int(...)` returns
+a plain integer — so `[1, 2, 3, 4, 5]` has 3 values in `[2, 4]`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset and draw
+**either** a histogram **or** a boxplot of `body_mass_g`, then describe the
+distribution in a `print` statement: where is it centred, how spread out is it, and is
+there any skew?
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and plots `body_mass_g` as a histogram or a boxplot.
+- Describes the centre (median ≈ 4050 g, mean ≈ 4202 g) and the spread (most birds
+  roughly 3000–5500 g).
+- Comments on the shape — a mild right skew, since the mean sits above the median.
+
+<details><summary>If you're stuck</summary>
+
+Select the column with `df["body_mass_g"].dropna()`, then call `ax.hist(mass, bins=12)`
+for a histogram or `ax.boxplot(mass)` for a boxplot. For the description, read the
+centre off `mass.mean()` and `mass.median()` and compare them: a mean above the median
+signals a right skew.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+mass = df["body_mass_g"].dropna()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(mass, bins=12, edgecolor="white")
+ax.set_xlabel("body mass (g)")
+ax.set_ylabel("number of penguins")
+ax.set_title("Distribution of penguin body mass")
+plt.show()
+
+mean, median = round(mass.mean(), 1), mass.median()
+print("centre: mean", mean, "g, median", median, "g")
+print("spread: most birds roughly 3000-5500 g")
+print("shape: mild right skew, because the mean sits above the median")
+```
+
+The histogram has a single hump near 3500–4000 g and a longer tail toward heavier
+birds. Because the mean (≈ 4202 g) sits above the median (4050 g), a few heavy
+penguins pull the average up — the signature of a mild right skew.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch08.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now turn a column into a picture and *read* it: a histogram for the shape of a
+distribution, a boxplot for the median and spread and any outliers, and a scatter for
+the relationship between two variables. That trio is the visual core of exploratory
+data analysis — the looking-before-modelling step every project starts with. Next we
+close the module by pulling these habits together into a small end-to-end analysis.

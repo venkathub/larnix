@@ -138,6 +138,16 @@ website:
             href: modules/03-data/ch04-cleaning-data.qmd
           - text: "Ch5 — Joins & groupby"
             href: modules/03-data/ch05-joins-groupby.qmd
+          - text: "Ch6 — Reshaping"
+            href: modules/03-data/ch06-reshaping.qmd
+          - text: "Ch7 — Plotting with Matplotlib"
+            href: modules/03-data/ch07-plotting-matplotlib.qmd
+          - text: "Ch8 — Statistical plots"
+            href: modules/03-data/ch08-statistical-plots.qmd
+          - text: "Ch9 — The EDA workflow"
+            href: modules/03-data/ch09-eda-workflow.qmd
+          - text: "Ch10 — Scaling & encoding"
+            href: modules/03-data/ch10-scaling-encoding.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
