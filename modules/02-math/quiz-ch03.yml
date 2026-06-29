@@ -1,0 +1,35 @@
+title: "Chapter 3 — quick check"
+id: "m2-ch3-matrices"
+questions:
+  - id: matrix-moves-space
+    prompt: "What is the best way to picture a 2x2 matrix?"
+    options:
+      - "A table of numbers you memorise"
+      - "An action that moves points in space"
+      - "A single number that scales everything equally"
+    answer: 1
+    explanation: "A matrix takes a point and hands back a moved point — stretching, squashing, rotating, or flipping space."
+  - id: matrix-vector-product
+    prompt: "Applying [[a,b],[c,d]] to the vector [x,y] gives…"
+    options:
+      - "[a*x + b*y, c*x + d*y]"
+      - "[a*x, d*y]"
+      - "[a + b + x, c + d + y]"
+    answer: 0
+    explanation: "Top row makes the first coordinate (a*x + b*y); bottom row makes the second (c*x + d*y)."
+  - id: stretch-matrix
+    prompt: "Applying [[2,0],[0,1]] to the point [3,4] gives…"
+    options:
+      - "[6, 8]"
+      - "[6, 4]"
+      - "[3, 4]"
+    answer: 1
+    explanation: "It doubles x (2*3 = 6) and leaves y alone (1*4 = 4), so [3,4] becomes [6,4]."
+  - id: identity-matrix
+    prompt: "What does the identity matrix [[1,0],[0,1]] do to a point?"
+    options:
+      - "Doubles both coordinates"
+      - "Flips it across the y-axis"
+      - "Leaves it exactly where it is"
+    answer: 2
+    explanation: "The identity returns every point unchanged — it is the 'multiply by 1' of matrices."

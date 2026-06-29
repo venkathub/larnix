@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m2-ch4-matmul"
+questions:
+  - id: row-dot-column
+    prompt: "What is [1, 2] · [3, 4]?"
+    options:
+      - "4"
+      - "11"
+      - "21"
+    answer: 1
+    explanation: "A dot product multiplies matching pairs and adds: 1*3 + 2*4 = 3 + 8 = 11."
+  - id: entry-rule
+    prompt: "In the product C = A·B, which numbers make the entry in row i, column j?"
+    options:
+      - "Row i of A dotted with column j of B"
+      - "Row i of A added to row j of B"
+      - "Column i of A times row j of B element by element, kept separate"
+    answer: 0
+    explanation: "Each entry C[i][j] is the dot product of row i of A with column j of B."
+  - id: product-meaning
+    prompt: "What does multiplying two transformation matrices represent?"
+    options:
+      - "Averaging the two transformations into a milder one"
+      - "Composing them — doing one transformation and then the other"
+      - "Undoing the first transformation with the second"
+    answer: 1
+    explanation: "A matrix product is the single matrix for doing one transformation and then the other."
+  - id: order-matters
+    prompt: "For matrices A and B, is A·B always equal to B·A?"
+    options:
+      - "Yes, multiplication order never changes the result"
+      - "No — the order of two transformations can change where points land"
+      - "Only when both matrices are 2x2"
+    answer: 1
+    explanation: "Matrix multiplication is not commutative; doing the moves in a different order can give a different result."

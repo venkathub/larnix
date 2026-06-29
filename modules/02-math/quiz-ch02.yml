@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m2-ch2-vectors"
+questions:
+  - id: vector-meaning
+    prompt: "What does the 2D vector [2, 1] represent?"
+    options:
+      - "A point two right and one up — and an arrow from the origin to it"
+      - "Two separate numbers with no geometric meaning"
+      - "The single number 21"
+    answer: 0
+    explanation: "A 2D vector [x, y] names a point and an arrow from the origin (0, 0) to that point."
+  - id: vector-add
+    prompt: "What is [1, 2] + [3, 4]?"
+    options:
+      - "[3, 8]"
+      - "[4, 6]"
+      - "[4, 4]"
+    answer: 1
+    explanation: "Add componentwise: [1+3, 2+4] = [4, 6]."
+  - id: magnitude
+    prompt: "What is the length (magnitude) of the vector [3, 4]?"
+    options:
+      - "7.0"
+      - "12.0"
+      - "5.0"
+    answer: 2
+    explanation: "sqrt(3*3 + 4*4) = sqrt(9 + 16) = sqrt(25) = 5.0."
+  - id: scaling
+    prompt: "What happens to a vector's arrow when you multiply it by 2?"
+    options:
+      - "It keeps its direction but doubles in length"
+      - "It rotates by 90 degrees"
+      - "It shrinks to half its length"
+    answer: 0
+    explanation: "Scaling by a positive number keeps the direction and multiplies the length by that number."

@@ -1,0 +1,319 @@
+---
+title: "Matrices as transformations"
+module: "M2 — Math You Actually Need"
+chapter: 3
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch2 — Vectors & geometry"
+learning_objectives:
+  - "See a 2x2 matrix as something that moves points — stretching, squashing, rotating, or flipping space"
+  - "Apply a matrix to a vector by hand: [[a,b],[c,d]] on [x,y] gives [a*x + b*y, c*x + d*y]"
+  - "Recognise the identity matrix as the move that leaves every point where it is"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: matrix-moves-space
+    q: "What does a 2x2 matrix do to a vector?"
+    a: "It moves the point the vector marks — stretching, squashing, rotating, or flipping it into a new vector."
+  - id: matrix-vector-product
+    q: "Applying [[a,b],[c,d]] to the vector [x,y] gives what?"
+    a: "[a*x + b*y, c*x + d*y] — each output number is a row of the matrix combined with the vector."
+  - id: identity-matrix
+    q: "What does the identity matrix [[1,0],[0,1]] do?"
+    a: "Nothing — it leaves every point exactly where it was, like multiplying a number by 1."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Last chapter a vector was a **point** on the grid — an arrow from the origin to a
+spot. Now picture a whole sheet of those points, like a printed grid on a rubber
+sheet. A **matrix** is a way to grab that sheet and *move* it: pull it wider, press
+it flatter, spin it, or flip it over. Every point rides along to a new spot.
+
+That is the whole idea of this chapter. A 2x2 matrix is not a table of numbers to
+memorise — it is an **action on space**. Feed it a point, and it hands you back a
+moved point. Before any of the mechanics, hold that picture: *a matrix moves
+things.*
+
+> You'll need from before: a vector as a point/arrow on the x-y grid, and reading
+> off its two coordinates [x, y] (M2 Ch2). That's the only tool we carry in.
+
+---
+
+## What a matrix does, before how
+
+Say you have a point `[x, y]` and a 2x2 matrix written as two rows:
+
+```
+[[a, b],
+ [c, d]]
+```
+
+Applying the matrix to the point produces a **new point**:
+
+```
+[a*x + b*y,
+ c*x + d*y]
+```
+
+Read it as a recipe with two lines. The **first** output number comes from the top
+row `[a, b]` combined with the point: `a*x + b*y`. The **second** output number
+comes from the bottom row `[c, d]`: `c*x + d*y`. Two rows in, two coordinates out.
+The point has moved.
+
+What kind of move depends on the four numbers:
+
+- **Stretch / squash** — a diagonal matrix like `[[2, 0], [0, 1]]` doubles the
+  x-direction and leaves y alone, so space widens. `[[1, 0], [0, 0.5]]` presses the
+  y-direction flat.
+- **Do nothing** — the **identity** matrix `[[1, 0], [0, 1]]` returns every point
+  unchanged. Try it on `[5, -2]`: `1*5 + 0*(-2) = 5` and `0*5 + 1*(-2) = -2`, so you
+  get `[5, -2]` back. It is the "multiply by 1" of matrices.
+- **Flip / rotate** — other numbers reflect points across an axis or spin them
+  around the origin (you'll meet rotation properly in Ch4).
+
+Let's check the recipe on one point. Take the stretch `[[2, 0], [0, 3]]` and the
+point `[1, 1]`:
+
+```
+first  = 2*1 + 0*1 = 2
+second = 0*1 + 3*1 = 3
+```
+
+So `[1, 1]` moves to `[2, 3]` — pushed right and up. The matrix moved the point, and
+the four numbers decided where.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A 2x2 matrix is a `double[][]` — a nested array `{{a, b}, {c, d}}` (in Python, a
+nested list `[[a, b], [c, d]]`). Applying it to a length-2 vector is a small
+loop of multiply-and-add: for each output row, sum `row[k] * v[k]` across the
+columns. You could hand-write that loop for a 2x2, and for a 3x3 you'd nest
+another. In practice a library (NumPy here, the way you'd reach for a BLAS-backed
+routine on the JVM) does it for **any** size, fast — but the arithmetic underneath
+is the same multiply-add you'd write yourself.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Pictures make this concrete. Take the four corners of the **unit square** —
+`(0,0)`, `(1,0)`, `(1,1)`, `(0,1)` — and apply the stretch matrix `[[2, 0], [0, 1]]`
+to each corner. The matrix doubles every x-coordinate and leaves y unchanged, so the
+square should widen into a rectangle. We plot the corners **before** (blue) and
+**after** (orange) so you can see the move.
+
+```{pyodide}
+#| caption: "A stretch matrix widens the unit square into a rectangle"
+#| fig-alt: "An x-y grid showing two outlines. The blue unit square has corners at (0,0), (1,0), (1,1), (0,1). The orange dashed outline is twice as wide, reaching x = 2 while keeping height 1 — the matrix doubled every x-coordinate and left y unchanged, turning the square into a rectangle."
+import matplotlib.pyplot as plt
+
+# Corners of the unit square; repeat the first corner to close the outline.
+square = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
+
+# A stretch matrix: double the x-direction, leave y alone.
+M = [[2, 0], [0, 1]]
+
+def apply(m, v):
+    x, y = v[0], v[1]
+    return [m[0][0]*x + m[0][1]*y, m[1][0]*x + m[1][1]*y]
+
+moved = [apply(M, p) for p in square]
+
+before_x = [p[0] for p in square]
+before_y = [p[1] for p in square]
+after_x = [p[0] for p in moved]
+after_y = [p[1] for p in moved]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(before_x, before_y, "o-", color="tab:blue", label="before")
+ax.plot(after_x, after_y, "s--", color="tab:orange", label="after [[2,0],[0,1]]")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.set_title("A matrix moves the square")
+ax.set_aspect("equal")
+ax.legend()
+plt.show()
+```
+
+The takeaway is in the picture: the blue square became a wider orange rectangle. The
+matrix did not touch the y-coordinates (the shape is the same height), but it doubled
+every x-coordinate (twice as wide). That is what "a matrix moves space" looks like —
+each corner rode the matrix to its new spot, and the whole shape stretched with them.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A 2x2 matrix is an **action on space**: feed it a point and it hands back a moved
+   point — stretched, squashed, rotated, or flipped.
+2. Applying `[[a,b],[c,d]]` to `[x,y]` gives `[a*x + b*y, c*x + d*y]` — top row makes
+   the first coordinate, bottom row makes the second.
+3. A **diagonal** matrix like `[[2,0],[0,1]]` scales each direction on its own — here,
+   doubling x and leaving y, which widens a square into a rectangle.
+4. The **identity** matrix `[[1,0],[0,1]]` leaves every point unchanged — the
+   "multiply by 1" of matrices.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Complete `apply(matrix, v)` so it applies a 2x2 matrix to a 2-vector. The first
+output coordinate is filled in for you; write the second using the bottom row
+`[m[1][0], m[1][1]]`. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_apply
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_apply
+def apply(m, v):
+    """Apply 2x2 matrix m to 2-vector v, returning the moved point."""
+    return [m[0][0]*v[0] + m[0][1]*v[1], ____]  # TODO: bottom row · v
+
+run_tests([
+    ("stretch [1,1]", apply([[2, 0], [0, 3]], [1, 1]), [2, 3]),
+    ("identity [5,-2]", apply([[1, 0], [0, 1]], [5, -2]), [5, -2]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The second coordinate mirrors the first, but with the **bottom** row of the matrix:
+`m[1][0]*v[0] + m[1][1]*v[1]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def apply(m, v):
+    return [m[0][0]*v[0] + m[0][1]*v[1], m[1][0]*v[0] + m[1][1]*v[1]]
+```
+
+Each output coordinate pairs one row of the matrix with the whole vector: top row
+makes the first number, bottom row makes the second. For `[[2,0],[0,3]]` on `[1,1]`
+that is `[2*1 + 0*1, 0*1 + 3*1] = [2, 3]`.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+A horizontal stretch scales only the x-direction. Write `stretch_x(v, factor)` so it
+multiplies the x-component by `factor` and leaves the y-component alone — exactly what
+the diagonal matrix `[[factor, 0], [0, 1]]` would do. Complete the returned list.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_stretch
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_stretch
+def stretch_x(v, factor):
+    """Stretch a 2-vector horizontally: scale x by factor, keep y."""
+    return ____  # TODO: [x times factor, y unchanged]
+
+run_tests([
+    ("double width", stretch_x([3, 4], 2), [6, 4]),
+    ("five times", stretch_x([1, 1], 5), [5, 1]),
+    ("factor 1 keeps it", stretch_x([2, 2], 1), [2, 2]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You want a two-item list. The first item is `v[0] * factor`; the second is `v[1]`,
+untouched. A factor of `1` should give the point back unchanged.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def stretch_x(v, factor):
+    return [v[0] * factor, v[1]]
+```
+
+Only the x-component is scaled, so `[3, 4]` with factor `2` becomes `[6, 4]` — twice
+as far right, same height. A factor of `1` leaves the point where it was, the
+horizontal version of the identity.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). The matrix `[[-1, 0], [0, 1]]`
+**flips** points across the y-axis: it negates x and keeps y. Apply it (by hand or in
+code) to a couple of points such as `[3, 2]` and `[1, 4]`, then describe in a sentence
+what happened to each point and to the shape overall.
+
+**Rubric — a good answer:**
+
+- Computes the moved point for at least two inputs, e.g. `[3, 2]` → `[-3, 2]`.
+- Notes that the x-coordinate's sign flipped while y stayed the same.
+- Describes the move as a mirror reflection across the y-axis (left becomes right).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def apply(m, v):
+    return [m[0][0]*v[0] + m[0][1]*v[1], m[1][0]*v[0] + m[1][1]*v[1]]
+
+flip = [[-1, 0], [0, 1]]
+for point in ([3, 2], [1, 4]):
+    print(point, "->", apply(flip, point))
+```
+
+Each point's x-coordinate changes sign while y is untouched: `[3, 2]` → `[-3, 2]`
+and `[1, 4]` → `[-1, 4]`. The whole shape is mirrored across the y-axis — what was on
+the right is now the same distance to the left, like a reflection in a vertical
+mirror.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now see a matrix as a move: a recipe that takes a point and returns a moved point,
+stretching or flipping space. Next we ask what happens when you do **two** moves in a
+row — stretch *then* rotate — which leads to **matrix multiplication, intuitively**
+(Ch4): combining two transformations into one.

@@ -33,9 +33,9 @@ gradients). All visuals via Matplotlib in the browser.
 | # | Chapter | Tier |
 |---|---------|------|
 | 1 | [Why math for AI (and how little you need to start)](ch01-why-math-for-ai.qmd) | 🟢 |
-| 2 | Vectors & geometry | 🟢 |
-| 3 | Matrices as transformations | 🟢 |
-| 4 | Matrix multiplication, intuitively | 🟡 |
+| 2 | [Vectors & geometry](ch02-vectors-geometry.qmd) | 🟢 |
+| 3 | [Matrices as transformations](ch03-matrices-as-transformations.qmd) | 🟢 |
+| 4 | [Matrix multiplication, intuitively](ch04-matrix-multiplication.qmd) | 🟡 |
 | 5 | Dot products & similarity | 🟢 |
 | 6 | Derivatives = sensitivity | 🟡 |
 | 7 | Gradients | 🟡 |

@@ -95,6 +95,12 @@ website:
         contents:
           - text: "Ch1 — Why math for AI"
             href: modules/02-math/ch01-why-math-for-ai.qmd
+          - text: "Ch2 — Vectors & geometry"
+            href: modules/02-math/ch02-vectors-geometry.qmd
+          - text: "Ch3 — Matrices as transformations"
+            href: modules/02-math/ch03-matrices-as-transformations.qmd
+          - text: "Ch4 — Matrix multiplication"
+            href: modules/02-math/ch04-matrix-multiplication.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
