@@ -1,0 +1,35 @@
+title: "Chapter 14 — quick check"
+id: "m1-ch14-notebooks"
+questions:
+  - id: same-language
+    prompt: "How do an in-browser notebook, a local IDE, and Colab differ?"
+    options:
+      - "Each uses a different programming language"
+      - "They run the same Python; they differ in install, cost, and compute"
+      - "Only the IDE can run real Python"
+    answer: 1
+    explanation: "All three run the same Python — what changes is setup, cost, and how much hardware (like a GPU) you can reach."
+  - id: best-for-learning
+    prompt: "Which place is best for quick learning and trying an idea?"
+    options:
+      - "An in-browser notebook (zero install, ₹0)"
+      - "A rented GPU server"
+      - "A compiled command-line program"
+    answer: 0
+    explanation: "The in-browser notebook needs nothing installed and costs ₹0, which is why M1 lives here."
+  - id: need-a-gpu
+    prompt: "You need a free GPU to train a model. Where do you go?"
+    options:
+      - "Your laptop's built-in notebook"
+      - "Google Colab or Kaggle"
+      - "A plain text editor"
+    answer: 1
+    explanation: "Colab and Kaggle both offer a free cloud GPU, so your laptop never does the heavy lifting."
+  - id: real-project
+    prompt: "Where does a real, multi-file project belong?"
+    options:
+      - "A local code editor / IDE such as VS Code"
+      - "A throwaway browser cell"
+      - "Nowhere — projects can't have many files"
+    answer: 0
+    explanation: "A local IDE keeps your files on disk and adds a debugger and project-wide search, the home of a real project."

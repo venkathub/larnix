@@ -86,6 +86,10 @@ website:
             href: modules/01-python/ch11-pythonic-idioms.qmd
           - text: "Ch12 — A NumPy preview"
             href: modules/01-python/ch12-numpy-preview.qmd
+          - text: "Ch13 — Environments & packages"
+            href: modules/01-python/ch13-environments-packages.qmd
+          - text: "Ch14 — Notebooks, the IDE & Colab"
+            href: modules/01-python/ch14-notebooks-ide-colab.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

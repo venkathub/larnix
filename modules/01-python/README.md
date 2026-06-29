@@ -43,8 +43,8 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 | 10 | [Clean, readable code](ch10-clean-readable-code.qmd) |
 | 11 | [Pythonic data idioms](ch11-pythonic-idioms.qmd) |
 | 12 | [A NumPy preview](ch12-numpy-preview.qmd) |
-| 13 | Environments & packages (venv/pip) — conceptual |
-| 14 | Notebooks, the IDE & Colab — conceptual |
+| 13 | [Environments & packages](ch13-environments-packages.qmd) — conceptual |
+| 14 | [Notebooks, the IDE & Colab](ch14-notebooks-ide-colab.qmd) — conceptual |
 
 ## Assessment
 

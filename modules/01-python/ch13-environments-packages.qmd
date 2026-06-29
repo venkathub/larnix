@@ -1,0 +1,299 @@
+---
+title: "Environments & packages"
+module: "M1 — Python for AI"
+chapter: 13
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+  - "M1 Ch12 — A NumPy preview"
+learning_objectives:
+  - "Explain why projects isolate their packages in a virtual environment"
+  - "Read and write a requirements.txt line that pins a package version"
+  - "Recognise pip and micropip as the tools that install packages"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: why-venv
+    q: "Why do projects use a virtual environment (venv)?"
+    a: "To isolate each project's packages, so different projects can use different versions without clashing — and so a project is reproducible."
+  - id: pin-version
+    q: "What does a requirements.txt line like pandas==2.3.0 do?"
+    a: "It pins an exact version, so anyone (and any machine) installs the same package and the project keeps working tomorrow."
+  - id: pip-vs-micropip
+    q: "What installs packages with pip on a normal machine, and what is its in-browser counterpart?"
+    a: "pip installs from PyPI into your environment; in the browser (Pyodide), micropip is the equivalent that loads packages into the in-memory runtime."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You've imported `numpy` and used `csv` without a thought — but where do those
+packages come from, and what happens when two projects need *different* versions of
+the same one? Project A wants pandas 1.5, project B wants pandas 2.3. Install one
+and you break the other.
+
+The fix every real project uses is a **virtual environment**: a private box of
+packages, one per project, that can't clash with anything else. This chapter is the
+*what and why* of environments and packages — the habits that keep a project
+runnable tomorrow and on someone else's machine.
+
+> You'll need from before: that you `import` packages to use them (Ch6, Ch12), and
+> that code runs in the browser here via Pyodide (Ch2).
+
+---
+
+## Packages, and where Python looks for them
+
+A **package** is reusable code someone else wrote — `numpy`, `pandas`, `csv`. When
+you `import` one, Python searches a list of folders (`sys.path`) for it. The cell
+below is a runnable look at that search path and what's available right now, in this
+browser runtime:
+
+```{pyodide}
+#| caption: "Where this Python looks for packages, and one that's already here"
+import sys
+import numpy
+
+print("Python:", sys.version.split()[0])
+print("It searches these folders for packages (first few):")
+for path in sys.path[:4]:
+    print("  -", path or "(the current folder)")
+
+print("Already installed here — numpy", numpy.__version__)
+```
+
+In the browser, packages live in Pyodide's in-memory runtime, and the tool that
+adds more is **`micropip`** — the browser counterpart of `pip`. On your own
+computer, the tool is **`pip`**, and you keep each project's packages separate with
+a **virtual environment**.
+
+## Virtual environments, on your own machine
+
+A **virtual environment** (`venv`) is a folder holding one project's own Python and
+its own packages. You create one, "activate" it, and any `pip install` from then on
+goes into *that* project alone. When you're done, you record the exact versions in a
+**`requirements.txt`** so anyone can rebuild the same setup.
+
+> 💡 **On your own computer** (this page runs in the browser, so the commands below
+> are for your real machine, not here). These are real commands; the `pip freeze`
+> output is from an actual run:
+>
+> ```bash
+> python -m venv .venv             # create the isolated environment
+> source .venv/bin/activate        # turn it on  (Windows: .venv\Scripts\activate)
+> pip install wrapt==1.16.0        # install into THIS project only
+> pip freeze                       # list exact installed versions
+> # -> wrapt==1.16.0
+> pip freeze > requirements.txt    # save them so the project is reproducible
+> ```
+
+Anyone who later runs `pip install -r requirements.txt` in their own fresh venv gets
+the very same versions — the project runs the same on every machine.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A `venv` plays the role of an isolated dependency set per project — think of
+`requirements.txt` as Python's `pom.xml`/`build.gradle` dependency list, and
+`pip`/`micropip` as Maven/Gradle fetching from a registry (PyPI). The big
+difference: there's no compile step and no central `target/` — packages install
+straight into the active environment, which is why isolating that environment
+matters.
+:::
+
+> ⚠️ Watch out: pinning exact versions (`==2.3.0`) is what makes a project
+> reproducible. An unpinned `pip install pandas` grabs whatever is newest that day,
+> so the same code can behave differently next month.
+
+---
+
+## Let's build it (worked example)
+
+You won't run `pip` in the browser, but the **`requirements.txt` format** is plain
+text you can build and read with the Python you already know. Here we turn a few
+packages into pinned requirement lines. Press **Run**.
+
+```{pyodide}
+#| caption: "Build requirements.txt lines from names and versions"
+wanted = [("numpy", "2.5.0"), ("pandas", "2.3.0"), ("scikit-learn", "1.9.0")]
+
+lines = [f"{name}=={version}" for name, version in wanted]
+for line in lines:
+    print(line)
+```
+
+Each line is `name==version` — the same shape `pip freeze` printed in the transcript
+above. Reading and writing this format is all you need to keep a project pinned.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **package** is reusable code you `import`; Python finds it on `sys.path`, and
+   **pip** (or **micropip** in the browser) installs more.
+2. A **virtual environment** gives each project its own packages, so versions can't
+   clash between projects.
+3. A **`requirements.txt`** of `name==version` lines **pins** exact versions, making
+   a project reproducible on any machine.
+4. Pin versions deliberately — unpinned installs grab whatever is newest and can
+   change behaviour later.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete `pin` so it builds a `requirements.txt` line from a package name and
+version. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pin
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_pin
+def pin(name, version):
+    """Return a requirements line that pins name to version, e.g. 'numpy==2.5.0'."""
+    return ____  # TODO: build the "name==version" string
+
+run_tests([
+    ("pins numpy", pin("numpy", "2.5.0"), "numpy==2.5.0"),
+    ("pins pandas", pin("pandas", "2.3.0"), "pandas==2.3.0"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You want the text `name`, then `==`, then `version`. An f-string makes this readable:
+`f"{name}=={version}"`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def pin(name, version):
+    return f"{name}=={version}"
+```
+
+The f-string drops `name` and `version` into the `name==version` shape that pip
+reads — exactly what a `requirements.txt` line looks like.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `parse_requirement(line)` — split a `requirements.txt` line like
+`"pandas==2.3.0"` into a `(name, version)` tuple. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_parse
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_parse
+def parse_requirement(line):
+    """Split 'name==version' into a (name, version) tuple."""
+    name, version = ____  # TODO: split line on "==" into two parts
+    return name, version
+
+run_tests([
+    ("splits pandas", parse_requirement("pandas==2.3.0"), ("pandas", "2.3.0")),
+    ("splits numpy", parse_requirement("numpy==2.5.0"), ("numpy", "2.5.0")),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`"pandas==2.3.0".split("==")` returns the list `["pandas", "2.3.0"]`. Unpacking that
+into `name, version` gives you the two pieces.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def parse_requirement(line):
+    name, version = line.split("==")
+    return name, version
+```
+
+`line.split("==")` breaks the text at the `==` into a two-item list, which unpacks
+straight into `name` and `version`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). In two or three sentences, explain
+to a teammate why your project should ship a pinned `requirements.txt` rather than
+asking everyone to `pip install pandas` with no version. Then write the three
+requirement lines your project would pin (pick real packages and versions).
+
+**Rubric — a good answer:**
+
+- Explains that pinning gives everyone the **same versions**, so the project is
+  reproducible and doesn't break when a package updates.
+- Mentions that a **virtual environment** keeps those packages from clashing with
+  other projects.
+- Lists three `name==version` lines.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+requirements = [
+    "numpy==2.5.0",
+    "pandas==2.3.0",
+    "matplotlib==3.9.0",
+]
+print("\n".join(requirements))
+```
+
+"Pinning exact versions means everyone installs the same packages, so the code runs
+the same on my machine, yours, and the server — and an upstream update next month
+can't silently change our results. We install them into a per-project virtual
+environment so they never clash with another project's versions."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch13.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now know how real projects keep their packages isolated and pinned — the habit
+that makes code reproducible. The last Python chapter looks at *where* you write
+code in the first place: notebooks, an editor, and free cloud GPUs via Colab — and
+when to reach for each.
