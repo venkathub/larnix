@@ -35,6 +35,8 @@ DEFAULT_GLOBS = ["modules/**/*.qmd"]
 _KEY_TAKEAWAYS = re.compile(r":::+\s*\{\.key-takeaways\}")
 _PYODIDE_CELL = re.compile(r"^`{3,}\{pyodide\}", re.MULTILINE)
 _HIDDEN_SOLUTION = re.compile(r"<details\b", re.IGNORECASE)
+_LIVE_HTML = re.compile(r"live-html", re.MULTILINE)
+_EXEC_DISABLED = re.compile(r"enabled:\s*false", re.MULTILINE)
 
 # (label, compiled-regex, fix-hint) for each required pillar.
 PILLARS = [
@@ -61,6 +63,18 @@ def check_text(text: str) -> list[str]:
     for label, rx, hint in PILLARS:
         if not rx.search(text):
             problems.append(f"missing {label} — {hint}")
+    # Render-safety: a chapter with runnable {pyodide} cells must declare the
+    # live-html format and disable Quarto's jupyter execution, or `quarto render`
+    # tries to spawn a python3 kernel and fails (P1 §6.F regression guard).
+    if _PYODIDE_CELL.search(text):
+        if not _LIVE_HTML.search(text):
+            problems.append(
+                "missing live-html format — a {pyodide} chapter needs "
+                "`format:\\n  live-html:` in its front-matter")
+        if not _EXEC_DISABLED.search(text):
+            problems.append(
+                "missing execute: enabled: false — without it `quarto render` "
+                "tries to run cells with a python3 kernel and fails")
     return problems
 
 

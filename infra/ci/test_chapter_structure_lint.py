@@ -16,6 +16,11 @@ import chapter_structure_lint as cs  # noqa: E402
 GOOD = """\
 ---
 compute: "browser"
+format:
+  live-html:
+    toc: true
+execute:
+  enabled: false
 ---
 
 ## Build it
@@ -60,6 +65,15 @@ class CheckTextTests(unittest.TestCase):
     def test_missing_hidden_solution(self):
         text = GOOD.replace("<details>", "<div>")
         self.assertTrue(any("hidden-solution" in p for p in cs.check_text(text)))
+
+    def test_pyodide_chapter_missing_live_html(self):
+        # A {pyodide} chapter without live-html would crash `quarto render`.
+        text = GOOD.replace("live-html", "html")
+        self.assertTrue(any("live-html" in p for p in cs.check_text(text)))
+
+    def test_pyodide_chapter_missing_execute_disabled(self):
+        text = GOOD.replace("enabled: false", "toc-depth: 2")
+        self.assertTrue(any("execute" in p for p in cs.check_text(text)))
 
 
 class ChapterDetectionTests(unittest.TestCase):

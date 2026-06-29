@@ -25,6 +25,22 @@ review_cards:
   - id: rare-disease-false-alarm
     q: "Why is a positive test for a rare disease often a false alarm?"
     a: "The healthy group is so much larger that its small false-positive rate still produces more positives than the few true cases — so most positives are false."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
 ---
 
 {{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
