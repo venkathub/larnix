@@ -35,7 +35,7 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 | 2 | [Control flow](ch02-control-flow.qmd) |
 | 3 | [Functions](ch03-functions.qmd) |
 | 4 | [Data structures](ch04-data-structures.qmd) |
-| 5 | Comprehensions |
+| 5 | [Comprehensions](ch05-comprehensions.qmd) |
 | 6 | Reading & writing files (CSV/JSON) |
 | 7 | Errors & exceptions |
 | 8 | Reading a traceback |
