@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m0-ch6-how-school-works"
+questions:
+  - id: tier-badge
+    prompt: "How do you tell a chapter's difficulty before you start it?"
+    options:
+      - "By counting the number of code cells"
+      - "By reading the tier badge (🟢 Beginner / 🟡 Intermediate / 🔴 Advanced) at the top"
+      - "Every chapter is the same difficulty"
+    answer: 1
+    explanation: "Each chapter shows a difficulty badge so you know its level up front."
+  - id: assessment-ladder
+    prompt: "Which lists the three checks in increasing size?"
+    options:
+      - "Quizzes → exercises → capstones"
+      - "Exercises → quizzes → capstones"
+      - "Capstones → exercises → quizzes"
+    answer: 1
+    explanation: "Small auto-graded exercises, then quizzes (per-chapter + per-module), then a build-something capstone."
+  - id: capstone-number
+    prompt: "What must every capstone include?"
+    options:
+      - "At least 1000 words of writing"
+      - "A measured number — 'did you measure it?'"
+      - "A paid API call"
+    answer: 1
+    explanation: "Every capstone reports a number; a result you did not measure cannot score well."
+  - id: review-cards
+    prompt: "What are review cards for?"
+    options:
+      - "Grading your exercises"
+      - "Short question/answer prompts that help you remember Key Takeaways over time"
+      - "Unlocking paid features"
+    answer: 1
+    explanation: "Review cards are spaced-repetition prompts drawn from each chapter's Key Takeaways."

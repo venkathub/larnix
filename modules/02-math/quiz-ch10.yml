@@ -1,0 +1,35 @@
+title: "Chapter 10 — quick check"
+id: "m2-ch10-distributions"
+questions:
+  - id: what-is-a-distribution
+    prompt: "What does a distribution describe?"
+    options:
+      - "A single most likely value of a random quantity"
+      - "The shape of randomness — which values are common and which are rare across all outcomes"
+      - "The exact sequence in which random samples are drawn"
+    answer: 1
+    explanation: "A distribution describes the whole range at once: which values are common and which are rare, i.e. the shape that the randomness takes."
+  - id: uniform-vs-normal
+    prompt: "Which histogram shape goes with which distribution?"
+    options:
+      - "Uniform is a bell; normal is flat"
+      - "Uniform is flat (every value equally likely); normal is a bell (values cluster near the middle)"
+      - "Both are bells, only the width differs"
+    answer: 1
+    explanation: "A uniform distribution makes every outcome equally likely, so its histogram is flat; a normal distribution clusters values near the centre, so its histogram is a bell."
+  - id: see-by-sampling
+    prompt: "How do you make a distribution visible in code?"
+    options:
+      - "Draw many samples from it and plot a histogram of the counts per bin"
+      - "Print the first sample and read its value"
+      - "Sort the samples and take the middle one"
+    answer: 0
+    explanation: "You reconstruct the shape from draws: take many samples and plot a histogram (counts per bin); the bars trace the underlying shape, sharpening as samples grow."
+  - id: why-seed
+    prompt: "Why pass a fixed seed, as in np.random.default_rng(0)?"
+    options:
+      - "It makes the samples more normal-shaped"
+      - "It makes the random draws reproducible, so the plot and numbers are the same every run"
+      - "It speeds up sampling by skipping the random generator"
+    answer: 1
+    explanation: "A fixed seed replays the same 'random' sequence every run, making results reproducible and easier to compare or debug — it does not change the distribution's shape."

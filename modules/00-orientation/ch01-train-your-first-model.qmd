@@ -12,6 +12,12 @@ compute: "browser"
 status: "stable"
 last_reviewed: "2026-06-28"
 est_minutes: 20
+# Single-source the auto-grader: quarto-live downloads this file into the Pyodide
+# VFS at startup, so chapters call run_tests() without pasting the helper (P1-D9 /
+# DECISIONS D0016). Path is relative to this chapter; it lands in the VFS as
+# `lib/grader.py`, imported below as `from lib.grader import run_tests`.
+resources:
+  - ../../lib/grader.py
 review_cards:
   - id: what-is-a-model
     q: "In machine learning, what is a model?"
@@ -180,41 +186,22 @@ a model, trained it, used it on new data, and graded it — the full loop.
 
 ## Practice
 
-The grader below gives each exercise a consistent pass/fail message. Run this
-setup block once, then do the exercises.
-
-```{pyodide}
-#| edit: false
-def _is_number(x):
-    return isinstance(x, (int, float)) and not isinstance(x, bool)
-
-def _equalish(got, expected, tol):
-    if _is_number(got) and _is_number(expected):
-        return abs(got - expected) <= tol
-    return got == expected
-
-def run_tests(tests, tol=1e-9):
-    tests = list(tests)
-    failures = []
-    for label, got, expected in tests:
-        ok = _equalish(got, expected, tol)
-        line = f"{'✅' if ok else '❌'} {label}: got {got!r}"
-        if not ok:
-            line += f", expected {expected!r}"
-        print(line)
-        if not ok:
-            failures.append(label)
-    if failures:
-        raise AssertionError(
-            f"{len(failures)} of {len(tests)} test(s) failed: " + ", ".join(failures))
-    print(f"\nAll {len(tests)} tests passed ✅")
-    return True
-```
+Each exercise below is auto-graded by `run_tests`, the shared Larnix grader. It is
+loaded for you from `lib/grader.py` — you do not paste or define it.
 
 ### Exercise 1 — Guided (≈5 min) 🟢
 
 Complete the one marked line so the model is trained. Replace `____` with the
 call that fits `model` on the training data, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_fit
+# Loads the shared auto-grader into this exercise from lib/grader.py — copied into
+# the Pyodide filesystem at startup via the page's `resources:` key (single source
+# of truth, DECISIONS D0016). One setup cell per exercise (its own environment).
+from lib.grader import run_tests
+```
 
 ```{pyodide}
 #| exercise: ex_fit
@@ -247,6 +234,13 @@ model.fit(X_train, y_train)
 
 Write `accuracy(y_true, y_pred)` — the fraction of predictions that match the
 truth, as a number between 0 and 1. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_accuracy
+# Same shared grader, loaded into this exercise's environment (DECISIONS D0016).
+from lib.grader import run_tests
+```
 
 ```{pyodide}
 #| exercise: ex_accuracy

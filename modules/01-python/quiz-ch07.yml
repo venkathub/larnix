@@ -1,0 +1,35 @@
+title: "Chapter 7 — quick check"
+id: "m1-ch7-errors"
+questions:
+  - id: uncaught
+    prompt: "What happens when an exception is not caught?"
+    options:
+      - "The program quietly continues with a wrong value"
+      - "The program stops and prints a traceback"
+      - "Python ignores the line"
+    answer: 1
+    explanation: "An uncaught exception halts the program and prints a traceback describing the error."
+  - id: try-except-role
+    prompt: "What is the point of try/except?"
+    options:
+      - "To make code run faster"
+      - "To run risky code and recover if it raises an error, instead of crashing"
+      - "To declare variable types"
+    answer: 1
+    explanation: "try holds the risky code; except handles the error so the program keeps going."
+  - id: specific-exception
+    prompt: "Why catch `except ValueError` rather than a bare `except`?"
+    options:
+      - "A bare except is a syntax error"
+      - "A bare except also hides unrelated bugs like typos; a specific one handles only what you expect"
+      - "ValueError is the only exception that exists"
+    answer: 1
+    explanation: "Catching the narrowest exception lets real bugs surface instead of being silently swallowed."
+  - id: which-error
+    prompt: "Which exception does `int('8h')` raise?"
+    options:
+      - "KeyError"
+      - "ValueError"
+      - "ZeroDivisionError"
+    answer: 1
+    explanation: "'8h' is the wrong kind of value for int(), so it raises ValueError."

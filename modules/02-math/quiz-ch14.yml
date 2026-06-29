@@ -1,0 +1,35 @@
+title: "Chapter 14 — quick check"
+id: "m2-ch14-sampling"
+questions:
+  - id: why-sample
+    prompt: "Why estimate a population mean from a sample instead of measuring the whole population?"
+    options:
+      - "Samples always give the exact population mean, so the population is redundant"
+      - "Measuring the entire population is usually impossible, too costly, or it does not exist yet, so a sample is the realistic way to estimate it"
+      - "A sample mean is more accurate than the population mean it estimates"
+    answer: 1
+    explanation: "Populations are typically too large, expensive, or not fully available (future customers). A sample is a practical stand-in, and its mean estimates the population mean."
+  - id: sampling-variability
+    prompt: "What is sampling variability?"
+    options:
+      - "An error caused by measuring the values incorrectly"
+      - "The fact that different samples produce slightly different estimates, because each is a different random subset"
+      - "The number of values that fall below the sample mean"
+    answer: 1
+    explanation: "Each sample is a different random handful, so each sample mean lands a little differently. That unavoidable wobble between samples is sampling variability — the uncertainty in the estimate."
+  - id: standard-error-formula
+    prompt: "How is the standard error of the mean computed?"
+    options:
+      - "The standard deviation times the sample size (std * n)"
+      - "The standard deviation divided by the square root of the sample size (std / sqrt(n))"
+      - "The sample size divided by the standard deviation (n / std)"
+    answer: 1
+    explanation: "The standard error is std / sqrt(n): more spread raises it, while a larger sample (under a square root) lowers it."
+  - id: uncertainty-vs-n
+    prompt: "What happens to the uncertainty of the estimate as the sample grows?"
+    options:
+      - "It shrinks — the standard error gets smaller as the sample size increases"
+      - "It stays exactly the same regardless of sample size"
+      - "It grows, because more values add more noise"
+    answer: 0
+    explanation: "Because n is under a square root in std / sqrt(n), a bigger sample shrinks the standard error. To halve the uncertainty you need four times the data — the law of large numbers."

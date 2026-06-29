@@ -1,0 +1,412 @@
+---
+title: "Scaling & encoding (a preview)"
+module: "M3 — Data & Tooling"
+chapter: 10
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch4 — Cleaning data"
+learning_objectives:
+  - "Explain why features are scaled to a common range before modelling"
+  - "Apply min-max scaling to [0,1] and standardization (z-score) to mean 0 / std 1"
+  - "One-hot encode a category with pd.get_dummies so a model can read it as numbers"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: why-scale
+    q: "Why do we scale features to a common range before modelling?"
+    a: "Many models judge columns by their raw size, so a feature measured in thousands can drown out one measured in tenths even when both matter. Scaling puts every feature on comparable footing so each gets a fair say."
+  - id: minmax-vs-zscore
+    q: "What is the difference between min-max scaling and standardization?"
+    a: "Min-max scaling squeezes a column into a fixed [0,1] range using its min and max. Standardization (z-score) subtracts the mean and divides by the standard deviation, giving mean 0 and std 1 with no fixed bounds — it is less disturbed by outliers' position."
+  - id: one-hot
+    q: "What does one-hot encoding do, and why is it needed?"
+    a: "It turns one categorical column into several 0/1 columns, one per category, with a 1 in the column for that row's category. Models do arithmetic on numbers, not text labels, so a category has to become numeric — and one-hot avoids implying a false order between categories."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Imagine judging a baking contest where one score is the cake's weight in grams
+(say 1,200) and another is its sweetness on a scale of 0 to 10 (say 7). If you
+naively add the scores, the weight swamps the sweetness — not because weight
+matters more, but because its **numbers are bigger**. Many machine-learning models
+fall into exactly this trap: they read a column measured in thousands as more
+important than a column measured in tenths, purely because of its raw size.
+
+This chapter is a **preview** of *feature preparation* — the step between a clean
+table and a model. We won't train anything yet; the goal is to see the two moves
+you'll reach for again and again:
+
+- **Scaling** numeric columns onto a common range, so no feature wins on size alone.
+- **Encoding** a text category into numbers, so a model can read it at all.
+
+We'll use the Palmer Penguins again — a familiar table from earlier chapters — and
+prepare two of its columns the way you would before handing them to a model.
+
+> You'll need from before: loading a CSV and selecting columns (M3 Ch2), and
+> cleaning out missing values (M3 Ch4). We'll assume the columns we touch are clean.
+
+---
+
+## Why models care about scale
+
+A model that measures distance or sums up weighted features treats a column's raw
+numbers at face value. Penguin **body mass** runs from about 2,700 to 6,300 grams;
+**bill length** runs from about 32 to 60 millimetres. To such a model, a 100-gram
+difference in mass looks a hundred times larger than a 1-millimetre difference in
+bill length — even though, biologically, both might be equally telling.
+
+Left unscaled, the big-numbered column dominates: it dictates which penguins look
+"close" and which look "far apart", and the smaller column barely registers.
+**Scaling** fixes this by rewriting every numeric column onto a shared range, so
+each one contributes on its own merits rather than on the accident of its units.
+
+Let's see the size gap first-hand, then close it.
+
+```{pyodide}
+#| caption: "Two columns on wildly different scales — mass in thousands, bill in tens"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins").dropna(subset=["body_mass_g", "bill_length_mm"])
+print("body_mass_g  range:", df["body_mass_g"].min(), "to", df["body_mass_g"].max())
+print("bill_length_mm range:", df["bill_length_mm"].min(), "to", df["bill_length_mm"].max())
+```
+
+One column lives in the thousands, the other in the tens. The two scaling recipes
+below put them on equal footing — one by squeezing into a fixed window, the other
+by re-centring around the average.
+
+## Min-max scaling to [0, 1]
+
+The simplest recipe is **min-max scaling**: slide and squeeze a column so its
+smallest value becomes `0`, its largest becomes `1`, and everything else lands
+proportionally in between. The formula is:
+
+$$
+x_{\text{scaled}} = \frac{x - \min}{\max - \min}
+$$
+
+Subtracting the minimum moves the smallest value to `0`; dividing by the *range*
+(`max - min`) shrinks the largest down to `1`. Every column treated this way ends
+up in the same `[0, 1]` window, whatever its original units.
+
+```{pyodide}
+#| caption: "Min-max scaling body_mass_g into the [0,1] range"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins").dropna(subset=["body_mass_g"])
+mass = df["body_mass_g"]
+
+scaled = (mass - mass.min()) / (mass.max() - mass.min())
+print("scaled min:", round(float(scaled.min()), 2))
+print("scaled max:", round(float(scaled.max()), 2))
+print("first three scaled:", [round(float(v), 3) for v in scaled.head(3)])
+```
+
+The scaled column now runs from exactly `0.0` to `1.0`. A penguin sitting halfway
+between the lightest and heaviest birds scores around `0.5`. Because the whole
+operation is vectorized, pandas applies it to all 342 values at once — no loop.
+
+Min-max scaling is intuitive and keeps the *shape* of the data, but it has one
+soft spot: a single very large outlier stretches the `max`, squashing every other
+value into a thin band near zero. When outliers are a worry, the next recipe is
+steadier.
+
+## Standardization (z-score) to mean 0, std 1
+
+**Standardization** re-expresses each value as *how many standard deviations it
+sits from the mean*. That number is called a **z-score**:
+
+$$
+z = \frac{x - \text{mean}}{\text{std}}
+$$
+
+Subtracting the mean re-centres the column on `0`; dividing by the standard
+deviation rescales the spread so the column's std becomes `1`. Unlike min-max,
+there is no fixed ceiling — a z-score can be `-2.5` or `+3.1` — but typical values
+cluster between about `-3` and `+3`. A z-score of `0` means "exactly average";
+`+1` means "one standard deviation above average".
+
+```{pyodide}
+#| caption: "Standardizing body_mass_g to mean 0, std 1 (population std, ddof=0)"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins").dropna(subset=["body_mass_g"])
+mass = df["body_mass_g"]
+
+z = (mass - mass.mean()) / mass.std(ddof=0)
+print("z mean:", round(float(z.mean()), 2))
+print("z std:", round(float(z.std(ddof=0)), 2))
+print("first three z-scores:", [round(float(v), 2) for v in z.head(3)])
+```
+
+The new column has mean `0.0` and std `1.0`, exactly as promised. Note the
+`ddof=0`: that asks pandas for the **population** standard deviation (divide by
+`n`), which is what most scaling tools — including scikit-learn's `StandardScaler`
+— use. Pandas defaults to the *sample* std (divide by `n - 1`), so passing `ddof=0`
+keeps our numbers aligned with the standard tool you'll meet later.
+
+So which do you pick? Min-max when you want a guaranteed bounded range (some models
+and image pipelines expect `[0, 1]`); standardization when your data has outliers
+or roughly bell-shaped spread. Both share the same purpose: put every numeric
+feature on comparable footing so the model weighs them by signal, not by size.
+
+## One-hot encoding a category
+
+Scaling handles *numbers*. But penguins also have a **species** column holding
+text — `Adelie`, `Chinstrap`, `Gentoo`. A model that multiplies and adds cannot
+read the word "Gentoo"; it needs numbers.
+
+A tempting shortcut is to map the species to `0, 1, 2`. That quietly lies to the
+model: it implies `Gentoo (2)` is "twice" `Chinstrap (1)` and that the categories
+have an order, which they do not. **One-hot encoding** avoids the lie. It replaces
+the single text column with one `0/1` column *per category*: a row gets a `1` in
+the column for its own species and `0` everywhere else. No category is treated as
+bigger than another.
+
+Pandas does this in one call with `pd.get_dummies`:
+
+```{pyodide}
+#| caption: "One-hot encoding species into one 0/1 column per category"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+encoded = pd.get_dummies(df["species"])
+print("new columns:", list(encoded.columns))
+print("shape:", encoded.shape)
+encoded.head()
+```
+
+One text column became **three** numeric columns — `Adelie`, `Chinstrap`,
+`Gentoo` — one per species in the data. Read any row and exactly one of the three
+holds a `1` (or `True`, pandas' 0/1 flavour): that row's species. The information
+is identical to the original label, but now it is in a form a model can do
+arithmetic on, with no false ordering implied.
+
+In a full pipeline you would scale the numeric columns *and* one-hot the
+categorical ones, then glue them back into a single table of numbers — the input a
+model actually trains on. That assembly is a later chapter; for now you've met the
+two moves it is built from.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. Many models read a column's **raw size** as importance, so features are
+   **scaled** to a common range to give each a fair say.
+2. **Min-max** scaling maps a column to `[0, 1]` with `(x - min) / (max - min)` —
+   bounded, but sensitive to outliers.
+3. **Standardization** (z-score) maps a column to mean `0`, std `1` with
+   `(x - mean) / std` — unbounded, steadier with outliers; use `ddof=0` to match
+   standard tools.
+4. **One-hot encoding** with `pd.get_dummies` turns one text category into one
+   `0/1` column per value, so a model reads it as numbers with no false order.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made lists so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Write `min_max_scale(values)`, which scales a list of numbers into `[0, 1]` using
+the min-max formula. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_min_max
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_min_max
+def min_max_scale(values):
+    """Scale a list of numbers into the [0, 1] range with min-max scaling."""
+    lo = min(values)
+    hi = max(values)
+    return ____  # TODO: [(v - lo) / (hi - lo) for v in values]
+
+run_tests([
+    ("0..10", min_max_scale([0, 5, 10]), [0.0, 0.5, 1.0]),
+    ("shifted", min_max_scale([2, 4, 6]), [0.0, 0.5, 1.0]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The lowest value should map to `0` and the highest to `1`. For each value `v`,
+subtract the low end and divide by the range: `(v - lo) / (hi - lo)`. Build the
+new list with a comprehension over `values`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def min_max_scale(values):
+    lo = min(values)
+    hi = max(values)
+    return [(v - lo) / (hi - lo) for v in values]
+
+run_tests([
+    ("0..10", min_max_scale([0, 5, 10]), [0.0, 0.5, 1.0]),
+    ("shifted", min_max_scale([2, 4, 6]), [0.0, 0.5, 1.0]),
+])
+```
+
+Subtracting `lo` moves the smallest value to `0`; dividing by `hi - lo` (the range)
+pulls the largest down to `1`. The middle value of `[2, 4, 6]` lands at `0.5`,
+exactly halfway.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `standardize(values)`, which returns the z-score of each value, rounded to
+two decimals. Use NumPy's **population** standard deviation (`np.array(...).std()`,
+which divides by `n`). Complete the marked lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_standardize
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_standardize
+import numpy as np
+
+def standardize(values):
+    """Return each value's z-score, rounded to 2 decimals (population std)."""
+    a = np.array(values, dtype=float)
+    return ____  # TODO: [round(float((v - a.mean()) / a.std()), 2) for v in values]
+
+run_tests([
+    ("four values", standardize([2, 4, 6, 8]), [-1.34, -0.45, 0.45, 1.34]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`a.mean()` is the average and `a.std()` is the population standard deviation (NumPy
+divides by `n` by default). For each value, compute `(v - a.mean()) / a.std()`,
+wrap it in `float(...)`, and `round(..., 2)`. For `[2, 4, 6, 8]` the mean is `5` and
+the std is `√5 ≈ 2.236`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def standardize(values):
+    a = np.array(values, dtype=float)
+    return [round(float((v - a.mean()) / a.std()), 2) for v in values]
+
+run_tests([
+    ("four values", standardize([2, 4, 6, 8]), [-1.34, -0.45, 0.45, 1.34]),
+])
+```
+
+The mean of `[2, 4, 6, 8]` is `5` and the population std is `√5 ≈ 2.236`. So
+`(2 - 5) / 2.236 ≈ -1.34` and `(8 - 5) / 2.236 ≈ 1.34`, with the two middle values
+at `±0.45`. The z-scores are symmetric because the values are evenly spaced around
+their mean.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset and
+one-hot encode the `species` column with `pd.get_dummies`. Report **how many new
+columns** appear and what each one represents, then explain in a sentence why a
+model needs numbers rather than the original text labels.
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and calls `pd.get_dummies` on `df["species"]`.
+- Reports that **3** new columns appear (`Adelie`, `Chinstrap`, `Gentoo`) — one per
+  species — and that each row has a single `1`/`True` marking its species.
+- Explains that a model does arithmetic on numbers, so text categories must become
+  numeric, and one-hot avoids implying a false order between the species.
+
+<details><summary>If you're stuck</summary>
+
+`pd.get_dummies(df["species"])` returns the encoded table. Its number of columns is
+`encoded.shape[1]`, and `list(encoded.columns)` names them. Compare a row of the
+encoded table to its original species to see the single `1`.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+encoded = pd.get_dummies(df["species"])
+
+print("new column count:", encoded.shape[1])
+print("new columns:", list(encoded.columns))
+print(encoded.head())
+print(
+    "A model multiplies and adds numbers, so 'Gentoo' must become numeric. "
+    "One-hot uses one 0/1 column per species, so no species is treated as "
+    "larger than another."
+)
+```
+
+This prints `3` new columns — `Adelie`, `Chinstrap`, `Gentoo` — one per species,
+each row carrying a single `True`. Mapping species to `0, 1, 2` instead would
+falsely imply an order and relative size; one-hot encoding sidesteps that.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch10.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've previewed the two everyday moves of feature preparation: **scaling** numeric
+columns (min-max or z-score) so none wins on size alone, and **one-hot encoding** a
+category so a model can read it as numbers. These are the bridge between a clean
+table and a model's input. The actual modelling — fitting a line or a classifier to
+prepared features and measuring how well it does — is where the next module picks
+up.

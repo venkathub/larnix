@@ -1,0 +1,353 @@
+---
+title: "Reading a traceback"
+module: "M1 — Python for AI"
+chapter: 8
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+  - "M1 Ch7 — Errors & exceptions"
+learning_objectives:
+  - "Explain that a traceback is what an uncaught exception prints"
+  - "Read a traceback bottom-up to find the exception type, message, and the line in your code"
+  - "Recognise the common exception types and what each one usually means"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: what-is-traceback
+    q: "What is a traceback, and what produces one?"
+    a: "The report Python prints when an exception is not caught. It names the error and shows the call stack leading to it."
+  - id: read-bottom-up
+    q: "Which line of a traceback do you read first, and what's on it?"
+    a: "The last line. It holds the ExceptionType and the message. The lines above are the call stack, most recent call last."
+  - id: find-your-line
+    q: "In a traceback, how do you find the bug in your own code?"
+    a: "Scan the stack frames for a file path that is yours; the line shown there is where the error happened in your code."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You run your habits cleaner, and the screen fills with red text — a wall of file
+paths, arrows, and line numbers. It looks like the program exploded. It didn't.
+That wall is a **traceback**, and it's the most useful gift Python gives you: a
+step-by-step record of exactly how it reached the error, ending with what the
+error was. Learn to read it and a scary wall becomes a map straight to the bug.
+
+> You'll need from before: what an exception is and how an uncaught one stops the
+> program (Ch7), and that values have types (Ch1).
+
+---
+
+## What a traceback is
+
+A **traceback** is what Python prints when an exception is **not** caught. (Caught
+it with `try`/`except` last chapter? Then there's no traceback — you handled it.)
+An uncaught exception stops the program, and on the way out Python prints the
+trail of calls that led to the failure.
+
+The single most important habit: **read it bottom-up.** The very last line is the
+punchline; everything above it is the story of how you got there.
+
+## The last line: type and message
+
+The bottom line of every traceback has the same shape:
+
+```text
+ExceptionType: message
+```
+
+The part before the colon is the **exception type** — `NameError`, `ValueError`,
+and friends. The part after is the **message**, a human-readable hint. Read this
+line first, always. It usually tells you most of what you need.
+
+## The lines above: the call stack
+
+Above that last line is the **call stack** — the chain of function calls that were
+in progress when the error happened, printed **most recent call last**. So the
+frame nearest the bottom (directly above the error line) is where the error actually
+occurred; the frames above it are who called whom to get there.
+
+Here is a complete traceback. Read it from the bottom:
+
+```text
+Traceback (most recent call last):
+  File "clean.py", line 12, in <module>
+    summary = average_steps(rows)
+  File "clean.py", line 7, in average_steps
+    return total / len(rows)
+ZeroDivisionError: division by zero
+```
+
+Walk it bottom-up:
+
+1. **Last line** — `ZeroDivisionError: division by zero`. The *type* is
+   `ZeroDivisionError`; the *message* says you divided by zero.
+2. **Frame directly above** — `File "clean.py", line 7, in average_steps`, on
+   `return total / len(rows)`. That's the **buggy line**: `len(rows)` was `0`.
+3. **Frame above that** — line 12 called `average_steps(rows)`. That's *how* you
+   reached the bug — useful context, but the fix lives on line 7.
+
+The bug: `average_steps` was handed an empty list. Read bottom-up, three lines
+told you the type, the message, and the exact line to fix.
+
+## The common types
+
+You'll meet the same handful again and again. The type name alone often points
+straight at the cause:
+
+- **`NameError`** — you used a name that doesn't exist (often a typo, or a
+  variable used before it's defined).
+- **`TypeError`** — an operation got the wrong *type*, like `"3" + 4`.
+- **`KeyError`** — a dict key isn't there, like `row["stpes"]`.
+- **`ValueError`** — the right type but a bad *value*, like `int("8h")`.
+- **`IndexError`** — a list index is out of range, like `rows[99]` on a short list.
+- **`ZeroDivisionError`** — you divided by zero.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A Python traceback is Java's stack trace — with the reading order flipped. Java
+prints the exception type and message **first**, then frames top-down; Python
+prints frames first and the `ExceptionType: message` **last**, so you read Python
+bottom-up. `NameError`/`TypeError`/`KeyError` are runtime errors much like
+`NullPointerException` or `ClassCastException`. And remember from Ch7: Python has
+**no checked exceptions**, so nothing is declared in a signature — the traceback
+at runtime is your full source of truth about what went wrong and where.
+:::
+
+---
+
+## Let's build it (worked example)
+
+We can't let a cell raise an uncaught error here (it would stop the page), so we
+catch each error and print the same two facts the bottom line of a traceback shows:
+the **type name** and the **message**. Press **Run**.
+
+```{pyodide}
+#| caption: "Catch an error and report its type and message — the traceback's last line"
+def run_safely(label, func):
+    try:
+        func()
+    except Exception as e:
+        print(label, "raised", type(e).__name__, "->", e)
+
+run_safely("int('8h')", lambda: int("8h"))
+run_safely("missing key", lambda: {"steps": 7500}["stpes"])
+run_safely("divide by zero", lambda: 1 / 0)
+```
+
+Each line shows `type(e).__name__` (the exception type, like `ValueError`) and the
+message — exactly what you'd read off the bottom of a traceback, without crashing
+the page.
+
+You can also capture the **whole** traceback as a string with the `traceback`
+module, then print it on your own terms:
+
+```{pyodide}
+#| caption: "Capture a full traceback text inside except — no crash"
+import traceback
+
+try:
+    rows = []
+    total = 21000
+    total / len(rows)          # len(rows) is 0 -> ZeroDivisionError
+except ZeroDivisionError:
+    report = traceback.format_exc()
+
+print(report.strip())
+print("\nLast line says:", report.strip().splitlines()[-1])
+```
+
+`traceback.format_exc()` returns the same multi-line text Python would have
+printed — captured safely in a string. The last line is the type and message,
+right where you've learned to look.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **traceback** is what an **uncaught** exception prints — the trail of calls
+   that led to the error.
+2. **Read it bottom-up.** The last line is `ExceptionType: message`; read that
+   first.
+3. The lines above are the **call stack**, most recent call last; scan them for
+   **your** file and line to find the bug.
+4. The **type name** alone often names the cause — `NameError`, `TypeError`,
+   `KeyError`, `ValueError`, `IndexError`, `ZeroDivisionError`.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+The last line of a traceback is `ExceptionType: message`. Complete `error_type` so
+it returns the **type name** of an exception object. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_errortype
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_errortype
+def error_type(exc):
+    """Return the exception's type name, e.g. 'ValueError'."""
+    return ____  # TODO: the type name of exc, as a string
+
+run_tests([
+    ("ValueError name", error_type(ValueError("x")), "ValueError"),
+    ("KeyError name", error_type(KeyError("k")), "KeyError"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`type(exc)` gives the class; its `.__name__` attribute is the bare string, like
+`"ValueError"`. That's the same word that starts a traceback's last line.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def error_type(exc):
+    return type(exc).__name__
+```
+
+`type(exc)` is the exception's class and `.__name__` is its name as a string — the
+exact text before the colon on a traceback's bottom line.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `failure_type(func)` that calls `func()` inside a `try`/`except`. If it
+raises, return the exception's **type name** (a string); if it doesn't raise,
+return `"no error"`. This reports the punchline a traceback would have shown.
+Complete the marked lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_failuretype
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_failuretype
+def failure_type(func):
+    """Call func(); return the raised exception's type name, or 'no error'."""
+    try:
+        func()
+    except Exception as e:
+        return ____  # TODO: the type name of the caught exception
+    return ____      # TODO: returned only if func() did not raise
+
+run_tests([
+    ("bad int is ValueError", failure_type(lambda: int("x")), "ValueError"),
+    ("divide by zero", failure_type(lambda: 1 / 0), "ZeroDivisionError"),
+    ("clean call", failure_type(lambda: 5), "no error"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+In the `except`, you already named the exception `e`, so its type name is
+`type(e).__name__`. The final `return` runs only when no exception was raised —
+that's the `"no error"` case.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def failure_type(func):
+    try:
+        func()
+    except Exception as e:
+        return type(e).__name__
+    return "no error"
+```
+
+If `func()` raises, control jumps to the `except` and returns the caught type's
+name. If it returns normally, the `except` is skipped and the function falls
+through to `"no error"`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Read this traceback, then in a
+comment name (a) the **exception type** and (b) the **line number in the buggy
+file** you would fix.
+
+```text
+Traceback (most recent call last):
+  File "report.py", line 18, in <module>
+    print(mood_label(row))
+  File "report.py", line 9, in mood_label
+    return LABELS[row["mood"]]
+KeyError: 'tired'
+```
+
+**Rubric — a good answer:**
+
+- Reads the **last line** to name the type: `KeyError`.
+- Identifies the buggy line as **line 9** (the frame nearest the error, in your
+  file `report.py`), not line 18 (that line only *called* the function).
+- Notes the cause in a word: the dict `LABELS` has no key `'tired'`.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+# (a) Exception type: KeyError
+# (b) Line to fix: line 9 -> LABELS[row["mood"]]
+# Why: read bottom-up. The last line is "KeyError: 'tired'", so 'tired'
+# is a mood with no entry in LABELS. The frame directly above the error is
+# report.py line 9 -- that's the buggy line in our code. Line 18 only
+# called the function. Fix: add 'tired' to LABELS or use LABELS.get(...).
+```
+
+The bottom line gives the type and the missing key; the nearest stack frame in
+your own file gives the line. Line 18 is context, not the fix.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch08.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now turn a wall of red text into a one-line diagnosis: read bottom-up, name
+the type, find your line. That closes out errors. Next we move from scripts to
+structure — the next chapter, **enough OOP to be useful** — bundling data and the
+functions that work on it into classes you can reuse.

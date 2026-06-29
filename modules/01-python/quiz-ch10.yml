@@ -1,0 +1,35 @@
+title: "Chapter 10 — quick check"
+id: "m1-ch10-clean-code"
+questions:
+  - id: better-name
+    prompt: "Which variable name reads most clearly for a list of daily step counts?"
+    options:
+      - "d"
+      - "day_steps"
+      - "x2"
+    answer: 1
+    explanation: "A descriptive name like day_steps says what the value holds, so the code reads without decoding."
+  - id: named-constant
+    prompt: "Why write `GOAL = 8000` instead of repeating the number 8000 in your code?"
+    options:
+      - "It makes the program run faster"
+      - "It names what the number means and lets you change the target in one place"
+      - "Python requires constants for comparisons"
+    answer: 1
+    explanation: "A named constant documents the value and centralises it, so a change is one edit instead of many."
+  - id: why-comment
+    prompt: "What makes a comment worth keeping?"
+    options:
+      - "It restates exactly what the line of code does"
+      - "It explains WHY the code does something the reader can't see from the code"
+      - "It repeats the function name"
+    answer: 1
+    explanation: "Good code shows the WHAT; a comment earns its place by giving the WHY behind it."
+  - id: dry
+    prompt: "What does the DRY (don't repeat yourself) idea recommend for logic you'd otherwise copy?"
+    options:
+      - "Paste it wherever it's needed so each copy is independent"
+      - "Put it in one function and call that function"
+      - "Add a comment above each copy"
+    answer: 1
+    explanation: "Putting shared logic in one function means a fix is made once, not in every copy."

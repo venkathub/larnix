@@ -1,0 +1,35 @@
+title: "Chapter 11 — quick check"
+id: "m3-ch11-notebooks-scripts"
+questions:
+  - id: core-difference
+    prompt: "What is the core difference between a notebook and a script?"
+    options:
+      - "A notebook is faster Python; a script is slower Python"
+      - "A notebook is cells you can run in any order with inline output; a script is a .py file that runs top-to-bottom every time"
+      - "A notebook cannot use packages; a script can"
+    answer: 1
+    explanation: "Same Python — different working style: cells run in any order (great for exploring) vs a file run start-to-finish (great for reproducing)."
+  - id: hidden-state
+    prompt: "Why can a notebook show a result that a clean run would not reproduce?"
+    options:
+      - "Because notebooks round numbers differently"
+      - "Because you can run cells out of order, so stale values linger in memory (hidden state)"
+      - "Because notebooks delete variables at random"
+    answer: 1
+    explanation: "Out-of-order execution leaves values in memory that no top-to-bottom run would produce — the hidden-state trap."
+  - id: restart-run-all
+    prompt: "What habit makes a notebook's results trustworthy?"
+    options:
+      - "Running the last cell twice"
+      - "'Restart & Run All' — a clean top-to-bottom run from a fresh kernel"
+      - "Saving the file before closing"
+    answer: 1
+    explanation: "If it doesn't run cleanly top-to-bottom from a restart, the result isn't real."
+  - id: which-tool
+    prompt: "Which task best fits a script (rather than a notebook)?"
+    options:
+      - "Peeking at a new dataset and trying a few plots"
+      - "A nightly data-cleaning job that must run the same way every time"
+      - "Explaining an analysis with prose and charts side by side"
+    answer: 1
+    explanation: "Scripts run top-to-bottom every time, so they suit automated, reproducible jobs; notebooks suit interactive exploration."

@@ -1,0 +1,35 @@
+title: "Chapter 12 — quick check"
+id: "m2-ch12-bayes"
+questions:
+  - id: what-bayes-does
+    prompt: "What does Bayes' rule do?"
+    options:
+      - "It updates a prior belief with new evidence to give a posterior belief"
+      - "It proves that any positive test result is always correct"
+      - "It finds the average of a list of measurements"
+    answer: 0
+    explanation: "Bayes combines a prior belief with the evidence to produce a posterior — your updated confidence after seeing the data."
+  - id: why-false-alarm
+    prompt: "For a rare disease, why is a positive test usually a false alarm?"
+    options:
+      - "The test is poorly made and gives random answers"
+      - "The healthy group is so large that its small false-positive rate produces more positives than the few true cases"
+      - "Positive results are always more common than negative ones"
+    answer: 1
+    explanation: "With 9,900 healthy people, a 5% slip-up flags 495 of them — more than the 99 true cases among the 100 sick people."
+  - id: what-is-base-rate
+    prompt: "What does 'base rate' (prevalence) mean?"
+    options:
+      - "How accurate the test is when someone is sick"
+      - "How common the condition is in the population before any test"
+      - "The cost of running the test once"
+    answer: 1
+    explanation: "The base rate is the prior proportion of people who have the condition — here, 1% — and it strongly shapes the posterior."
+  - id: which-is-posterior
+    prompt: "In the worked example, which number is the posterior P(sick | positive)?"
+    options:
+      - "0.99, the test's sensitivity"
+      - "0.01, the prevalence"
+      - "0.1667, the chance of being sick given a positive result"
+    answer: 2
+    explanation: "The posterior is the updated belief after the evidence: 99 / 594 = 0.1667, about 16.7%."

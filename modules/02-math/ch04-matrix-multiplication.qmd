@@ -1,0 +1,364 @@
+---
+title: "Matrix multiplication, intuitively"
+module: "M2 — Math You Actually Need"
+chapter: 4
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch3 — Matrices as transformations"
+learning_objectives:
+  - "Read a matrix product as doing one transformation and then another"
+  - "Compute a 2x2 product as the dot product of each row with each column"
+  - "Explain why the order of two transformations can change the result"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: row-dot-column
+    q: "How do you find one entry of a matrix product?"
+    a: "Take the dot product of a row of the first matrix with a column of the second: [a, b]·[c, d] = a*c + b*d."
+  - id: product-is-composition
+    q: "What does multiplying two matrices mean geometrically?"
+    a: "It composes their transformations — the product is the single matrix for doing one transformation and then the other."
+  - id: order-matters
+    q: "Is A·B always the same as B·A?"
+    a: "No. Matrix multiplication is not commutative, so the order of two transformations can change the result."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Think of a matrix as an **instruction** for moving points around: stretch, flip,
+rotate. Now suppose you want to do two of them in a row — "stretch the picture
+wide, **then** flip it upside down." You could carry each point through the first
+instruction and then the second. Or you could fold both instructions into **one**
+matrix and do them together in a single step.
+
+That folding-together is exactly what matrix multiplication is. Multiplying two
+matrices means **composing** their transformations: the product is the single
+matrix that does one transformation and then the other. Before we touch a formula,
+hold onto that picture — a product is "do this, then that."
+
+> You'll need from before: a matrix as a transformation that moves points, and how
+> a 2x2 matrix acts on a vector (M2 Ch3). That's the one tool we carry in.
+
+---
+
+## One entry at a time: row dot column
+
+Here is the whole computation, built from a piece you already half-know. To
+multiply two matrices you walk across a **row** of the first and down a **column**
+of the second, multiply the pairs, and add them up. That add-up-the-products step
+is a **dot product**:
+
+$$[a, b] \cdot [c, d] = a \times c + b \times d$$
+
+A concrete one: $[1, 2] \cdot [3, 4] = 1 \times 3 + 2 \times 4 = 3 + 8 = 11$. Two
+more to fix the pattern: $[2, 0] \cdot [5, 7] = 10 + 0 = 10$, and
+$[1, 1] \cdot [1, 1] = 1 + 1 = 2$. Each one collapses two pairs of numbers into a
+single number.
+
+For two 2x2 matrices $A$ and $B$, the product $C = A \cdot B$ fills in each entry
+this way: **the entry in row $i$, column $j$ of $C$ is the dot product of row $i$
+of $A$ with column $j$ of $B$.**
+
+$$
+A = \begin{bmatrix} a & b \\ c & d \end{bmatrix},\quad
+B = \begin{bmatrix} e & f \\ g & h \end{bmatrix},\quad
+A \cdot B = \begin{bmatrix} a e + b g & a f + b h \\ c e + d g & c f + d h \end{bmatrix}
+$$
+
+Top-left of the answer comes from the **top row** of $A$ and the **left column** of
+$B$. Top-right comes from the top row of $A$ and the right column of $B$. Four
+entries, four little dot products — that is the entire rule.
+
+### Why this is "do one, then the other"
+
+When you apply matrix $A$ to a vector you get a new vector; apply $B$ to that and
+you get a third. Doing both, $B(A v)$, is the same as building the combined matrix
+once and applying it a single time. So a sequence of transformations becomes a
+single multiplication — which is why a model can squeeze many layers of "move the
+data this way" into compact matrix math.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+In code, a 2x2 (or N x N) multiply is plain nested loops: an outer loop over the
+rows of `A`, an inner loop over the columns of `B`, and an innermost accumulate
+that sums `A[i][k] * B[k][j]`. Three loops, an `O(n^3)` shape — the same triple
+loop you would write for any grid-by-grid combine in Java.
+
+That is also why libraries like **NumPy** (and the **BLAS** kernels under it)
+exist. For a 2x2 the loop is fine, but real models multiply matrices with
+thousands of rows and columns, millions of times. NumPy hands that inner loop to
+optimized, cache-aware native code, so you write `A @ B` and get speed you would
+never reach hand-rolling the loops yourself. You learn the loop to understand it;
+you call the library to run it fast.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* two transformations stack. Take a unit square, apply transformation
+$A$ (a horizontal stretch), then apply transformation $B$ (a vertical flip) to the
+result. Watching the square change twice makes "compose" concrete.
+
+```{pyodide}
+#| caption: "One square, two transformations applied in sequence"
+#| fig-alt: "Three outlines of a unit square: the original lower-left square, the same square stretched wide after transformation A, and that wide square flipped below the x-axis after transformation B — showing two transformations stacking in order."
+import matplotlib.pyplot as plt
+
+# Corners of a unit square, traced as a closed loop for plotting.
+square = [(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
+
+def apply(M, pts):
+    (a, b), (c, d) = M
+    return [(a * x + b * y, c * x + d * y) for (x, y) in pts]
+
+A = [[2, 0], [0, 1]]    # stretch horizontally (x doubles)
+B = [[1, 0], [0, -1]]   # flip vertically (y flips sign)
+
+after_A = apply(A, square)
+after_B = apply(B, after_A)
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(*zip(*square), label="original")
+ax.plot(*zip(*after_A), label="after A (stretch)")
+ax.plot(*zip(*after_B), label="after B (then flip)")
+ax.axhline(0, color="gray", linewidth=0.5)
+ax.axvline(0, color="gray", linewidth=0.5)
+ax.set_aspect("equal")
+ax.legend()
+ax.set_title("A, then B")
+plt.show()
+```
+
+The square widens first (transformation $A$), then the wide square flips below the
+axis (transformation $B$). Two instructions, applied in order — and that ordered
+pair of moves is precisely what one matrix product captures.
+
+Now the punchline: folding "A then B" into one matrix is the product $B \cdot A$
+(the second transformation sits on the left). Applying that single combined matrix
+lands every point in the same place as doing $A$ and then $B$.
+
+```{pyodide}
+#| caption: "Composing A then B equals applying the single product B·A"
+#| fig-alt: "Printed output confirming the combined matrix B times A applied once moves the point (1, 1) to the same place as applying A and then B separately."
+def matmul(X, Y):
+    # entry [i][j] = dot product of row i of X with column j of Y
+    return [[X[i][0] * Y[0][j] + X[i][1] * Y[1][j] for j in range(2)]
+            for i in range(2)]
+
+A = [[2, 0], [0, 1]]    # stretch horizontally
+B = [[1, 0], [0, -1]]   # flip vertically
+combined = matmul(B, A)  # "A then B" as one matrix
+print("B·A =", combined)
+
+x, y = 1, 1
+ax_, ay = A[0][0] * x + A[0][1] * y, A[1][0] * x + A[1][1] * y       # after A
+bx, by = B[0][0] * ax_ + B[0][1] * ay, B[1][0] * ax_ + B[1][1] * ay  # then B
+cx, cy = combined[0][0] * x + combined[0][1] * y, combined[1][0] * x + combined[1][1] * y
+print("A then B:", (bx, by), "| combined at once:", (cx, cy))
+```
+
+Both paths send $(1, 1)$ to the same point. The combined matrix is not a shortcut
+you have to trust — it is the two transformations, multiplied into one.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. One entry of a matrix product is a **dot product**: a row of the first matrix
+   with a column of the second, $[a, b] \cdot [c, d] = a \times c + b \times d$.
+2. For 2x2 matrices, $C[i][j]$ is row $i$ of $A$ dotted with column $j$ of $B$ —
+   four entries, four small dot products.
+3. Multiplying matrices **composes** transformations: the product is the single
+   matrix for doing one and then the other.
+4. **Order matters** — $A \cdot B$ and $B \cdot A$ can differ, because doing the
+   moves in a different order can land points in a different place.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Every entry of a product is a dot product, so start there. Complete `dot(row, col)`
+for two 2-element lists: multiply the matching pairs and add them. Replace `____`,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_dot
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_dot
+def dot(row, col):
+    """Dot product of two 2-element lists: a*c + b*d."""
+    return row[0] * col[0] + ____  # TODO: add the second pair, row[1] * col[1]
+
+run_tests([
+    ("[1,2]·[3,4]", dot([1, 2], [3, 4]), 11),
+    ("[2,0]·[5,7]", dot([2, 0], [5, 7]), 10),
+    ("[1,1]·[1,1]", dot([1, 1], [1, 1]), 2),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The first pair is already there: `row[0] * col[0]`. The second pair follows the
+same shape with index `1`: `row[1] * col[1]`. Add the two together.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def dot(row, col):
+    return row[0] * col[0] + row[1] * col[1]
+```
+
+Each pair is multiplied — `row[0]*col[0]` and `row[1]*col[1]` — and the two
+products are added. That single number is what fills one slot of a matrix product.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now build the full product. Write `matmul2(A, B)` for two 2x2 matrices, returning a
+2x2 result where `result[i][j]` is the dot product of row `i` of `A` with column
+`j` of `B`. You may reuse a dot of a row and a column. Complete the marked lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_matmul
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_matmul
+def matmul2(A, B):
+    """Multiply two 2x2 matrices: result[i][j] = row i of A · column j of B."""
+    def dot(row, col):
+        return row[0] * col[0] + row[1] * col[1]
+
+    cols = [[B[0][0], B[1][0]], [B[0][1], B[1][1]]]  # column 0 and column 1 of B
+    return [
+        [dot(A[0], cols[0]), ____],  # TODO: row 0 of A with column 1 of B
+        [dot(A[1], cols[0]), dot(A[1], cols[1])],
+    ]
+
+run_tests([
+    ("identity leaves B", matmul2([[1, 0], [0, 1]], [[2, 3], [4, 5]]), [[2, 3], [4, 5]]),
+    ("double then ones", matmul2([[2, 0], [0, 2]], [[1, 1], [1, 1]]), [[2, 2], [2, 2]]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`cols[1]` is column 1 of `B`. The top-right entry is row 0 of `A` dotted with that
+column: `dot(A[0], cols[1])`. The other three entries are already filled in to
+match.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def matmul2(A, B):
+    def dot(row, col):
+        return row[0] * col[0] + row[1] * col[1]
+
+    cols = [[B[0][0], B[1][0]], [B[0][1], B[1][1]]]
+    return [
+        [dot(A[0], cols[0]), dot(A[0], cols[1])],
+        [dot(A[1], cols[0]), dot(A[1], cols[1])],
+    ]
+
+run_tests([
+    ("identity leaves B", matmul2([[1, 0], [0, 1]], [[2, 3], [4, 5]]), [[2, 3], [4, 5]]),
+    ("double then ones", matmul2([[2, 0], [0, 2]], [[1, 1], [1, 1]]), [[2, 2], [2, 2]]),
+])
+```
+
+Pulling out the columns of `B` first makes each entry a clean `dot(row, col)`.
+Multiplying by the identity copies `B` straight through, and doubling then
+summing ones gives all `2`s — both match the entry-by-entry rule.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈4 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Show with one example that order
+matters: pick two 2x2 matrices `A` and `B` for which `A·B` and `B·A` are
+**different**, compute both products, and print them side by side.
+
+**Rubric — a good answer:**
+
+- Chooses two specific 2x2 matrices and computes both `A·B` and `B·A`.
+- Prints both results so the difference is visible.
+- States in a sentence that the two differ, so order is not interchangeable.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def matmul2(A, B):
+    def dot(row, col):
+        return row[0] * col[0] + row[1] * col[1]
+
+    cols = [[B[0][0], B[1][0]], [B[0][1], B[1][1]]]
+    return [
+        [dot(A[0], cols[0]), dot(A[0], cols[1])],
+        [dot(A[1], cols[0]), dot(A[1], cols[1])],
+    ]
+
+A = [[1, 1], [0, 1]]
+B = [[1, 0], [1, 1]]
+print("A·B =", matmul2(A, B))
+print("B·A =", matmul2(B, A))
+print("Different — so the order of two transformations is not interchangeable.")
+```
+
+Here `A·B = [[2, 1], [1, 1]]` but `B·A = [[1, 1], [1, 2]]`. The same two matrices in
+the other order land points differently, which is what "order matters" means.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now read a matrix product two ways: mechanically, as rows dotted with
+columns, and meaningfully, as one transformation followed by another. That dot
+product at the heart of every entry is about to get its own spotlight. Next we look
+at **dot products & similarity** (Ch5) — the same multiply-and-add, used to measure
+how alike two vectors are.

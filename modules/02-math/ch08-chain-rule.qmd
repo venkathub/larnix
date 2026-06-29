@@ -1,0 +1,350 @@
+---
+title: "The chain rule"
+module: "M2 — Math You Actually Need"
+chapter: 8
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch6 — Derivatives = sensitivity"
+  - "M2 Ch7 — Gradients"
+learning_objectives:
+  - "Read a composition f(g(x)) as a two-step pipeline: an inner step feeds an outer step"
+  - "Apply the chain rule — multiply the outer slope by the inner slope: (f∘g)'(x) = f'(g(x)) * g'(x)"
+  - "See why this multiplying-of-local-slopes is the engine of backpropagation"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: chain-rule-multiplies
+    q: "What does the chain rule do?"
+    a: "It finds the derivative of a composition f(g(x)) by multiplying the outer derivative by the inner derivative: (f∘g)'(x) = f'(g(x)) * g'(x)."
+  - id: chain-as-pipeline
+    q: "Why does multiplying slopes make sense for a pipeline of steps?"
+    a: "A nudge to x is scaled by the inner step's slope, then that change is scaled again by the outer step's slope. Two scalings in a row multiply, so the overall sensitivity is the product of the local slopes."
+  - id: chain-rule-is-backprop
+    q: "How does the chain rule relate to backpropagation?"
+    a: "Backprop applies the chain rule through a deep stack of functions: a small change ripples through the composed steps by multiplying each step's local slope, giving the gradient of the error with respect to any weight."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Picture a pair of gears. You turn the first gear; it drives a second gear; the second
+gear moves the hand of a dial. If the first gear turns the second **twice** as fast,
+and the second turns the dial **three** times as fast, then turning your hand moves
+the dial **six** times as fast — `2 × 3`. The two ratios *multiply*.
+
+That is the whole of the **chain rule**. A model rarely does one thing to an input;
+it does a step, then a step on top of that — a **composition** `f(g(x))`: first the
+*inner* step `g`, then the *outer* step `f` on its result. To find how sensitive the
+final output is to a nudge in `x`, you multiply the local slopes:
+
+`(f ∘ g)'(x) = f'(g(x)) * g'(x)`  — the **outer slope times the inner slope**.
+
+A small change in `x` is scaled by the inner step's slope, and *that* change is scaled
+again by the outer step's slope. Two scalings in a row multiply. This single move —
+ripple a nudge through composed steps by multiplying each local slope — is the
+**engine of backpropagation**, the algorithm that trains every neural network.
+
+> You'll need from before: a derivative read as a **local slope / sensitivity** (M2
+> Ch6 — nudge the input, see how fast the output responds) and the idea that a slope
+> is the number a model follows to improve (M2 Ch7 — gradients). That's all we carry
+> in.
+
+---
+
+## A two-step chain: predict, then measure the error
+
+Here is the two-step pipeline a model lives in. **Step 1 (inner):** turn an input `x`
+into a prediction. **Step 2 (outer):** turn that prediction into an error. To learn,
+the model needs to know how the *error* responds to a nudge in `x` — but `x` only
+touches the error *through* the prediction. The chain rule stitches the two steps
+together.
+
+Take a concrete, exact case. Let the inner step double its input,
+
+`u = g(x) = 2 * x`,  so the inner slope is  `g'(x) = 2`  (every step in `x` moves `u`
+twice as far).
+
+Let the outer step square its input,
+
+`y = f(u) = u * u`,  so the outer slope is  `f'(u) = 2 * u`  (from Ch6: the slope of
+`u²` is `2u`).
+
+The chain rule multiplies them, evaluating the outer slope at the inner value `u`:
+
+`dy/dx = f'(u) * g'(x) = (2 * u) * 2 = 4 * u = 8 * x.`
+
+Read it as numbers. At `x = 3` the inner step gives `u = 6`, so the outer slope is
+`2 * 6 = 12` and the inner slope is `2`; their product is `12 * 2 = 24`. A tiny nudge
+to `x` near `3` moves `y` about **24 times** as far. The composed slope is never one
+of the two slopes alone — it is the two **multiplied**.
+
+The same arithmetic, stripped to its core, is a one-line helper:
+
+`chain(outer_slope, inner_slope) = outer_slope * inner_slope`
+
+so `chain(2, 3) = 6`, `chain(5, 0) = 0` (a flat outer step kills the whole signal —
+a zero anywhere in the product zeroes it), and `chain(-1, 4) = -4` (a downhill outer
+step flips the sign). That tiny multiply, repeated through every step of a deep
+network, is backpropagation.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Think of a composition as a `Function` pipeline:
+`x -> g -> u -> f -> y`, the same shape as `g.andThen(f)`. Each stage has a *local
+gain* — its derivative — saying how much it amplifies a small wobble passing through
+it. The chain rule says the pipeline's total gain is the **product** of the per-stage
+gains, exactly like multiplying conversion factors down a unit chain
+(`m/s × s = m`).
+
+This is precisely what **reverse-mode automatic differentiation** (autodiff) — the
+"backward pass" / backpropagation in PyTorch's `autograd` or JAX's `grad` — does.
+The forward pass records each operation and its local slope; the backward pass walks
+that record in reverse, multiplying the local slopes together to get the derivative
+of the final output with respect to each input. No symbolic calculus at runtime, no
+hand-derived formulas: a stack of recorded steps, multiplied back to front.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* the chain rule produce the right slope. We plot the composed function
+`y = (2x)²` and, at `x = 1`, draw the straight **tangent** line whose slope we get by
+**multiplying the two local slopes**. At `x = 1` the inner step gives `u = 2`, so the
+inner slope is `2` and the outer slope is `2u = 4`; their product is `4 * 2 = 8`,
+which is `8 * x` at `x = 1`. As a cross-check, the cell also prints the
+central-difference derivative from Ch6 — built with no calculus rules — and the two
+agree.
+
+```{pyodide}
+#| caption: "At x = 1 the chain-rule slope (outer 4 × inner 2 = 8) matches the curve's tangent"
+#| fig-alt: "An upward-curving function y = (2x) squared rising steeply to the right, with a straight tangent line touching it at the point (1, 4). The tangent rises 8 units for every 1 unit across, matching the curve's direction at that point and pulling away from the curve on either side. Printed text confirms the chain-rule slope 8 equals the numeric central-difference slope."
+import matplotlib.pyplot as plt
+
+def inner(x):
+    return 2 * x          # u = 2x, inner slope 2
+
+def outer(u):
+    return u * u          # y = u^2, outer slope 2u
+
+def composed(x):
+    return outer(inner(x))   # y = (2x)^2
+
+# The chain rule: outer slope (2u) times inner slope (2), at x0.
+x0 = 1.0
+u0 = inner(x0)
+chain_slope = (2 * u0) * 2               # = 8 * x0
+
+# A no-calculus cross-check: the central difference from Ch6.
+h = 1e-5
+numeric_slope = (composed(x0 + h) - composed(x0 - h)) / (2 * h)
+print(f"chain-rule slope at x={x0}: {chain_slope}")
+print(f"numeric slope at x={x0}:    {round(numeric_slope, 6)}")
+
+xs = [i / 20 for i in range(-10, 41)]    # -0.5 … 2.0
+ys = [composed(x) for x in xs]
+tangent = [composed(x0) + chain_slope * (x - x0) for x in xs]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(xs, ys, color="tab:blue", label="y = (2x)²")
+ax.plot(xs, tangent, "--", color="tab:orange", label="tangent at x=1 (slope 8)")
+ax.scatter([x0], [composed(x0)], color="tab:red", zorder=5)
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.set_title("The chain rule gives the composition's slope")
+ax.legend()
+plt.show()
+```
+
+Read the picture: the orange tangent rises 8 units for every 1 across, and it hugs
+the curve's direction right at the touch-point — so `8` is genuinely the slope of
+`(2x)²` at `x = 1`. We did not differentiate the squared expression directly; we
+multiplied the inner slope `2` by the outer slope `4`. The printed central difference
+lands on the same `8`, confirming the product is the true sensitivity. Multiply the
+local slopes, and the composition's slope falls out.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The **chain rule** finds the derivative of a composition `f(g(x))` by
+   **multiplying** the outer derivative by the inner derivative:
+   `(f ∘ g)'(x) = f'(g(x)) * g'(x)`.
+2. It works because a nudge is **scaled twice** — once by the inner slope, once by
+   the outer slope — and two scalings in a row multiply.
+3. Concretely, for `u = 2x` (slope `2`) and `y = u²` (slope `2u`),
+   `dy/dx = (2u) * 2 = 8x`; at `x = 3`, `u = 6` and `dy/dx = 24`.
+4. This multiplying of **local slopes** through composed steps is the engine of
+   **backpropagation** — how real networks learn.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The chain rule multiplies slopes. Complete `chain(outer_slope, inner_slope)` so it
+returns their product. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_chain
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_chain
+def chain(outer_slope, inner_slope):
+    """The chain rule: the composition's slope is outer slope times inner slope."""
+    return ____  # TODO: multiply outer_slope by inner_slope
+
+run_tests([
+    ("2 outer, 3 inner", chain(2, 3), 6),
+    ("a zero outer slope kills it", chain(5, 0), 0),
+    ("a negative outer slope flips sign", chain(-1, 4), -4),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The chain rule is a single multiplication — the outer step's slope times the inner
+step's slope: `outer_slope * inner_slope`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def chain(outer_slope, inner_slope):
+    return outer_slope * inner_slope
+```
+
+`chain(2, 3)` is `2 * 3 = 6`. A `0` anywhere in the product gives `0` — a flat step
+blocks the signal — and a negative slope flips the sign, so `chain(-1, 4) = -4`.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now use the chain rule on a real composition. For `y = (2x)²` the inner step is
+`u = 2x` (slope `2`) and the outer step is `u²` (slope `2u`), so
+`dydx = (2 * (2 * x)) * 2 = 8 * x`. Write the body of `dydx(x)`. Complete the marked
+line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_dydx
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_dydx
+def dydx(x):
+    """Slope of y = (2x)^2 by the chain rule: outer slope (2u) times inner slope 2."""
+    return ____  # TODO: (2 * (2 * x)) * 2, which simplifies to 8 * x
+
+run_tests([
+    ("slope at x=3", dydx(3), 24),
+    ("slope at x=0", dydx(0), 0),
+    ("slope at x=-2", dydx(-2), -16),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The inner value is `u = 2 * x`. The outer slope is `2 * u`, the inner slope is `2`,
+and the chain rule multiplies them: `(2 * (2 * x)) * 2`. That is the same as `8 * x`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def dydx(x):
+    return (2 * (2 * x)) * 2
+```
+
+At `x = 3` the inner step gives `u = 6`, the outer slope is `2 * 6 = 12`, and the
+inner slope is `2`, so `dydx = 12 * 2 = 24`. The expression equals `8 * x`, so it is
+`0` at `x = 0` and `-16` at `x = -2`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Check your chain-rule `dydx`
+against the **central-difference** derivative from Ch6, applied to `(2x)²` at a point.
+Print the chain-rule slope, the numeric slope, and confirm they are close.
+
+**Rubric — a good answer:**
+
+- Defines the composition `y = (2 * x) ** 2` (or `inner` then `outer`) and reuses your
+  chain-rule `dydx`.
+- Estimates the slope at a chosen `x` with a central difference
+  `(f(x + h) - f(x - h)) / (2 * h)` for a tiny `h`.
+- Prints both numbers and notes they agree (the chain rule matches the numeric slope).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def composed(x):
+    return (2 * x) ** 2
+
+def dydx(x):
+    return (2 * (2 * x)) * 2          # chain rule: 8 * x
+
+def numeric_derivative(f, x, h=1e-5):
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+for x in (3.0, -2.0):
+    chain_slope = dydx(x)
+    numeric_slope = numeric_derivative(composed, x)
+    print(f"x={x}: chain {chain_slope} vs numeric {round(numeric_slope, 6)}")
+```
+
+At `x = 3` both land on `24`, and at `x = -2` both land on `-16`. The chain rule
+(multiply the local slopes) and the hand-cranked numeric derivative agree — the
+product really is the composition's sensitivity.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch08.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now differentiate a **composition** by multiplying local slopes — the chain
+rule, `(f ∘ g)'(x) = f'(g(x)) * g'(x)`. Stacked across many steps, that single
+multiply *is* backpropagation: a nudge ripples through composed functions, scaled by
+each step's slope, so a network can trace its error back to every weight. That closes
+the calculus thread of this module. Next we switch gears to the third pillar —
+**Ch9 — Probability basics** — where we start reasoning about uncertain data: chance,
+events, and how likely things are.

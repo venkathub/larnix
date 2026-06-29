@@ -1,0 +1,348 @@
+---
+title: "Distributions"
+module: "M2 — Math You Actually Need"
+chapter: 10
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch9 — Probability basics"
+learning_objectives:
+  - "Read a distribution as the shape of randomness: which values are common and which are rare"
+  - "Tell a uniform distribution (all outcomes equally likely) apart from a bell-shaped normal one (values cluster near the middle)"
+  - "See a distribution by drawing many samples with a fixed seed and plotting a histogram"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: what-is-a-distribution
+    q: "What is a distribution?"
+    a: "The shape that randomness takes — which values are common and which are rare across all the outcomes a random quantity can produce."
+  - id: uniform-vs-normal
+    q: "How does a uniform distribution differ from a normal (bell-shaped) one?"
+    a: "A uniform distribution makes every outcome equally likely, so its histogram is flat (like a fair die). A normal distribution clusters values near the middle and thins out at the edges, so its histogram is a bell."
+  - id: see-by-sampling
+    q: "How do you see a distribution in code?"
+    a: "Draw many samples from it with a fixed seed for reproducibility, then plot a histogram — the bars approximate the underlying shape."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Roll a fair die many times and write down the results. The 1s, 2s, 3s, 4s, 5s, and
+6s come up in roughly equal piles — no number is favoured. Now measure the height of
+many people instead. Most cluster near the average, a few are unusually short or
+tall, and the extremes are rare. Both are random, but the **shape** of the
+randomness is different: the die is *flat*, the heights are a *hump in the middle*.
+
+That shape is a **distribution** — a description of which values are common and
+which are rare. It is one of the most useful ideas in this whole course, because the
+numbers a model touches (pixel values, word counts, weights, errors) all have a
+distribution, and knowing the shape tells you what to expect. In this chapter you
+meet two shapes — the flat **uniform** and the bell-shaped **normal** — and you
+learn the one move that makes any distribution visible: draw a pile of samples and
+plot a **histogram**.
+
+> You'll need from before: probability as the long-run fraction of times an outcome
+> happens, between 0 and 1 (M2 Ch9). A distribution is that idea spread across
+> *every* possible value at once.
+
+---
+
+## A distribution is the shape of randomness
+
+A random quantity can land on many values. Its **distribution** answers, for the
+whole range at once: how likely is each value? Two shapes cover most of what you
+need early on.
+
+- **Uniform** — every outcome is equally likely. A fair six-sided die is uniform
+  over `1..6`: each face has probability `1/6`. Drawn as a picture, a uniform
+  distribution is **flat** — no value is preferred over another.
+- **Normal** (also called *Gaussian*, or informally a *bell curve*) — values
+  **cluster near a centre** and grow rarer as you move away in either direction.
+  Heights, measurement errors, and the average of many small effects tend to look
+  normal. Drawn as a picture, it is a symmetric **bell**: tall in the middle,
+  thin tails at the edges.
+
+The contrast is the whole lesson. *Uniform* says "anything in range, equally."
+*Normal* says "probably near the middle, occasionally far out." Most real-world
+measurements are closer to the bell than to the flat line.
+
+### Seeing a shape: draw samples, then a histogram
+
+You rarely get handed a distribution's formula. Instead you get **samples** — actual
+draws — and you reconstruct the shape from them. The tool for that is a
+**histogram**: chop the value range into equal **bins** (buckets), then count how
+many samples fall in each bin and draw a bar of that height. Common values build
+tall bars; rare values build short ones. With enough samples, the bars trace the
+underlying shape — flat for uniform, a bell for normal.
+
+Two practical notes carry through the rest of the module:
+
+- **More samples, clearer shape.** Ten draws look noisy; a thousand draws settle
+  into the true shape. A histogram is an *estimate*, and the estimate sharpens as
+  samples grow.
+- **Fix the seed for reproducibility.** Random draws differ every run, which makes
+  results hard to compare or debug. Seeding the random generator (here,
+  `np.random.default_rng(0)`) makes the "random" sequence the same every time, so
+  your plot and your numbers are repeatable.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Sampling with a seed is the pattern you know from `java.util.Random`. In Java you
+write `new Random(0)` and every run replays the same sequence; in NumPy you write
+`np.random.default_rng(0)` and get the same guarantee — a seeded generator object
+you ask for draws. The difference is that `default_rng` hands you a whole array in
+one call (`rng.normal(size=1000)`) instead of looping `nextGaussian()` a thousand
+times, and it uses a modern, higher-quality generator than the legacy linear
+congruential one behind `java.util.Random`.
+
+A **histogram** is a `Map<Bucket, Integer>` you have built by hand many times: walk
+the values, decide which bucket each falls in, increment that bucket's count. NumPy
+and Matplotlib do the bucketing and counting for you, but the mental model is the
+same — counts per bucket.
+
+One reason the **normal** distribution shows up everywhere is the *central limit
+idea*: add up (or average) many small independent random effects and the total
+tends toward a bell shape, almost regardless of what each individual effect looked
+like. Sensor noise, rounding errors, the sum of many tiny influences — they pile up
+into a normal. It is worth filing away now; it explains why the bell reappears
+across the rest of this course.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's make a bell appear from nothing but random draws. We seed a generator for
+reproducibility, pull 1000 samples from a normal distribution with `rng.normal`, and
+drop them into a histogram. Watch the middle bins tower over the edges.
+
+```{pyodide}
+#| caption: "1000 samples from a normal distribution fall into a bell-shaped histogram"
+#| fig-alt: "A histogram of 1000 normal samples: short bars at the far-left and far-right edges, growing taller toward the centre near zero where the tallest bars stand, forming a symmetric bell shape."
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)        # fixed seed → the same draws every run
+samples = rng.normal(size=1000)       # 1000 draws from the standard normal
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(samples, bins=30, color="tab:blue", edgecolor="white")
+ax.set_xlabel("value")
+ax.set_ylabel("count (samples per bin)")
+ax.set_title("1000 normal samples → a bell")
+plt.show()
+
+print("mean:", round(float(samples.mean()), 3))
+print("most extreme draws:", round(float(samples.min()), 2),
+      "to", round(float(samples.max()), 2))
+```
+
+The takeaway is the silhouette of the bars: the tallest bins sit near `0`, the
+middle of the distribution, and the bars shrink smoothly toward both edges, where
+values are rare. The printed mean lands close to `0` even though no single draw was
+asked to, and the most extreme draws sit a few units out on each side — the thin
+tails. That bell is the normal distribution made visible, built from samples alone.
+Re-run it and, because the seed is fixed, you get the very same bell.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **distribution** is the shape that randomness takes — which values are common
+   and which are rare across all possible outcomes.
+2. A **uniform** distribution makes every outcome equally likely (a flat shape, like
+   a fair die); a **normal** distribution clusters values near the middle and thins
+   at the edges (a bell).
+3. You **see** a distribution by drawing many samples and plotting a **histogram** —
+   counts per bin — and the shape sharpens as samples grow.
+4. **Fix the random seed** (`np.random.default_rng(0)`) so the draws, the plot, and
+   the numbers are reproducible.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+A histogram bar's height is a count, but to compare bins you often want a
+**fraction**: what share of all samples landed in this bin? Complete
+`relative_frequency(count, total)` so it divides the bin's count by the total number
+of samples. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_relfreq
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_relfreq
+def relative_frequency(count, total):
+    """The fraction of samples in a bin: its count divided by the total."""
+    return ____  # TODO: count divided by total
+
+run_tests([
+    ("quarter of the samples", relative_frequency(250, 1000), 0.25),
+    ("half", relative_frequency(1, 2), 0.5),
+    ("empty bin", relative_frequency(0, 5), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A fraction is one division: the part over the whole, `count / total`. With 250 of
+1000 samples in a bin, that is `250 / 1000 = 0.25`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def relative_frequency(count, total):
+    return count / total
+```
+
+`count / total` turns a raw bar height into a share of the whole. A bin holding 250
+of 1000 samples has relative frequency `0.25`; an empty bin (`0` count) has `0.0`.
+These fractions are what let you compare histograms with different sample sizes.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+To build a histogram bar by hand, you count how many values land inside a bin's
+range. Write `in_range(values, low, high)` that returns how many entries of
+`values` fall within `[low, high]` **inclusive** of both ends. Use a loop or a sum
+with a condition. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_inrange
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_inrange
+def in_range(values, low, high):
+    """Count how many values fall within [low, high], including both ends."""
+    count = 0
+    for v in values:
+        if ____:  # TODO: v is at least low AND at most high
+            count += 1
+    return count
+
+run_tests([
+    ("middle three", in_range([1, 2, 3, 4, 5], 2, 4), 3),
+    ("none in range", in_range([1, 2, 3], 5, 9), 0),
+    ("all on the edge", in_range([0, 0, 0], 0, 0), 3),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A value is inside the bin when it is **at least** `low` and **at most** `high`.
+Python lets you chain that into one comparison: `low <= v <= high`. The `<=` on both
+sides makes the ends inclusive.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def in_range(values, low, high):
+    count = 0
+    for v in values:
+        if low <= v <= high:
+            count += 1
+    return count
+```
+
+`low <= v <= high` is true exactly when `v` sits inside the bin, ends included. For
+`[1, 2, 3, 4, 5]` with `low=2, high=4` it counts `2, 3, 4` → `3`. When the range is
+a single point like `[0, 0]`, every `0` still counts because both `<=` are
+inclusive, so `[0, 0, 0]` gives `3`. (The same logic, vectorised, is what
+`np.histogram` runs for every bin at once.)
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Draw many samples from a
+**uniform** distribution with a fixed seed (`rng = np.random.default_rng(0)`, then
+`rng.uniform(size=...)` or `rng.integers(1, 7, size=...)` for a die), plot a
+histogram, and describe in words how its flat shape differs from the normal's bell
+you saw in the worked example.
+
+**Rubric — a good answer:**
+
+- Seeds a generator and draws a sizable sample (say 1000+) from a uniform
+  distribution, then plots a histogram with `plt.hist`.
+- Notes that the bars are **roughly level** across the range — every value about
+  equally likely — instead of peaking in the middle.
+- Contrasts this flat shape with the normal's bell, where the middle bins tower over
+  the thin tails.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)          # fixed seed → reproducible draws
+samples = rng.uniform(size=2000)        # 2000 draws, each equally likely in [0, 1)
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(samples, bins=20, color="tab:orange", edgecolor="white")
+ax.set_xlabel("value")
+ax.set_ylabel("count (samples per bin)")
+ax.set_title("2000 uniform samples → a flat shape")
+plt.show()
+
+print("min:", round(float(samples.min()), 3), "max:", round(float(samples.max()), 3))
+```
+
+The bars come out **roughly level** across `[0, 1)`: with every value equally
+likely, no bin is favoured, so the histogram is a flat plateau (jagged only from
+sampling noise, which smooths out as samples grow). That is the visual opposite of
+the normal's bell, where the central bins tower over the thin tails. Same plotting
+move, a different underlying shape — which is the point of a distribution.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch10.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now name the shape of randomness and reveal it by sampling. But a picture is
+hard to compare or compute with — you want a few **numbers** that summarise a
+distribution: where its centre sits and how spread out it is. Next we meet exactly
+those — **mean, variance & standard deviation** (Ch11) — the handful of statistics
+that turn a whole bell into three tidy numbers.

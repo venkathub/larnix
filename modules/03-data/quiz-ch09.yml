@@ -1,0 +1,35 @@
+title: "Chapter 9 — quick check"
+id: "m3-ch09-eda"
+questions:
+  - id: first-eda-steps
+    prompt: "You've loaded a new table. Which steps come first in the EDA recipe?"
+    options:
+      - "Train a model, then check whether the data made sense"
+      - "Check the shape, the column types, and the missing values"
+      - "Pick the prettiest chart and start plotting"
+    answer: 1
+    explanation: "The recipe starts by sizing up the data: df.shape (rows, columns), df.dtypes (what each column holds), and df.isna().sum() (where the gaps are) — before any modelling or plotting."
+  - id: why-summarise-first
+    prompt: "Why summarise and explore a dataset before modelling it?"
+    options:
+      - "A model trusts whatever you feed it, so you find the gaps, wrong types, and structure first"
+      - "Modelling libraries refuse to run on data you haven't described"
+      - "Summaries are required only when the dataset has more than a million rows"
+    answer: 0
+    explanation: "A model has no judgement — it learns from whatever you give it. EDA surfaces missing values, mistyped columns, outliers, and real structure first, so you know what the data can answer and what would mislead a model."
+  - id: what-groupby-answers
+    prompt: "In the EDA recipe, what question does a groupby answer?"
+    options:
+      - "How many rows are missing a value"
+      - "Whether a category splits the numbers into meaningful groups"
+      - "What data type each column has"
+    answer: 1
+    explanation: "groupby splits rows by a label and aggregates each group — so groupby('species')['body_mass_g'].mean() shows whether species explains body mass (it does: Gentoo ≈ 5076 g vs ≈ 3700 g for the others)."
+  - id: back-with-numbers
+    prompt: "Why should every claim from EDA be backed by a number or a plot?"
+    options:
+      - "Because charts always look more convincing than text"
+      - "So each statement is traceable to evidence you computed, not a guess"
+      - "Because pandas prints a warning if you don't"
+    answer: 1
+    explanation: "EDA trains the habit of evidence: a claim like 'Gentoo is heaviest' should point to a groupby mean, and 'sex has gaps' to isna().sum() — never a hunch."

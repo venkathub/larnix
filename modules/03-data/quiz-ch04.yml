@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m3-ch04-cleaning"
+questions:
+  - id: what-is-nan
+    prompt: "In a pandas column, what does a NaN value mean?"
+    options:
+      - "The value is zero"
+      - "The value is missing — no data was recorded for that cell"
+      - "The value is an empty piece of text"
+    answer: 1
+    explanation: "NaN ('not a number') marks a missing value — 'we don't know'. It is deliberately distinct from 0 and from an empty string, both of which are real values."
+  - id: isna-sum-returns
+    prompt: "What does df.isna().sum() give you?"
+    options:
+      - "The total of all the numbers in the table"
+      - "The number of missing values in each column"
+      - "The rows that have no missing values"
+    answer: 1
+    explanation: ".isna() marks each cell True where it is missing; .sum() counts those Trues down each column, so you get a per-column count of missing values."
+  - id: drop-vs-fill
+    prompt: "How do .dropna() and .fillna() differ?"
+    options:
+      - "They are two names for the same operation"
+      - ".dropna() removes rows that contain a NaN, while .fillna() keeps the rows and replaces each NaN with a chosen value"
+      - ".dropna() deletes columns, while .fillna() deletes rows"
+    answer: 1
+    explanation: ".dropna() throws away any row with a missing value (losing its good values too); .fillna(value) keeps every row and substitutes a value you pick for each gap."
+  - id: why-clean-first
+    prompt: "Why clean missing values before computing on a column?"
+    options:
+      - "Because NaN propagates through arithmetic, so gaps can silently distort or block results"
+      - "Because pandas refuses to load a table that has any NaN in it"
+      - "Because cleaning makes the file smaller on disk"
+    answer: 0
+    explanation: "Most arithmetic with NaN returns NaN, and default summaries quietly skip missing values, so untreated gaps can mislead you. Deciding what gaps mean first keeps your results honest."

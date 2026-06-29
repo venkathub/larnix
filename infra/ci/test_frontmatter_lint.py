@@ -180,5 +180,22 @@ class ExtractTests(unittest.TestCase):
         self.assertEqual(fl.lint_file(path), [])
 
 
+class ModuleLandingTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+
+    def test_index_is_module_landing(self):
+        self.assertTrue(fl.is_module_landing("modules/00-orientation/index.qmd"))
+        self.assertFalse(fl.is_module_landing("modules/00-orientation/ch01.qmd"))
+
+    def test_main_skips_index_qmd(self):
+        # A landing page with no chapter fields must not fail the gate.
+        landing = os.path.join(self.tmp.name, "index.qmd")
+        with open(landing, "w", encoding="utf-8") as fh:
+            fh.write('---\ntitle: "M0 — Orientation"\n---\n\n# Landing\n')
+        self.assertEqual(fl.main([landing]), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

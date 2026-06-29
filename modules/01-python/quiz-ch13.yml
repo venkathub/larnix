@@ -1,0 +1,35 @@
+title: "Chapter 13 — quick check"
+id: "m1-ch13-environments"
+questions:
+  - id: why-venv
+    prompt: "Why do projects use a virtual environment?"
+    options:
+      - "To make Python run faster"
+      - "To isolate each project's packages so different versions can't clash"
+      - "To avoid writing any code"
+    answer: 1
+    explanation: "A venv gives each project its own packages, so projects with different version needs don't interfere."
+  - id: pin-meaning
+    prompt: "What does the requirements line `pandas==2.3.0` do?"
+    options:
+      - "Installs the newest pandas available"
+      - "Pins an exact version so every machine installs the same one"
+      - "Deletes pandas"
+    answer: 1
+    explanation: "== pins an exact version, which keeps the project reproducible."
+  - id: pip-micropip
+    prompt: "What is the in-browser counterpart of pip?"
+    options:
+      - "venv"
+      - "micropip"
+      - "import"
+    answer: 1
+    explanation: "In Pyodide, micropip loads packages into the in-memory runtime, the way pip installs from PyPI on a normal machine."
+  - id: unpinned-risk
+    prompt: "What is the risk of an unpinned `pip install pandas`?"
+    options:
+      - "It always fails"
+      - "It grabs whatever version is newest that day, so behaviour can change later"
+      - "It pins the version automatically"
+    answer: 1
+    explanation: "Without a pinned version you may get a different package next time, which can change how the code behaves."

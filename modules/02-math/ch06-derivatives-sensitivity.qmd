@@ -1,0 +1,326 @@
+---
+title: "Derivatives = sensitivity"
+module: "M2 — Math You Actually Need"
+chapter: 6
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch1 — Why math for AI"
+  - "M2 Ch2 — Vectors & geometry"
+learning_objectives:
+  - "Read a derivative as sensitivity — how much the output moves when you nudge the input"
+  - "Compute the slope of a straight line as rise over run"
+  - "Estimate the slope of a curve at a point with a small numeric (central-difference) step"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: derivative-is-sensitivity
+    q: "What does a derivative measure?"
+    a: "Sensitivity — how much the output changes when you nudge the input a tiny bit. It is the slope of the curve at a point."
+  - id: slope-of-a-line
+    q: "How do you compute the slope of a straight line through two points?"
+    a: "Rise over run: (y2 - y1) / (x2 - x1). It is the same everywhere on a line."
+  - id: numeric-derivative
+    q: "How can you estimate a derivative numerically at a point x?"
+    a: "Take a tiny step h and use the central difference (f(x+h) - f(x-h)) / (2h). On a straight line this returns the exact slope."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Picture driving with the accelerator. Press it a little and your speed climbs a
+little; press it a little on a steep hill and your speed barely moves. The same
+nudge, two different responses. That responsiveness — **how much the output changes
+when you nudge the input a tiny bit** — is exactly what a *derivative* measures. A
+derivative is **sensitivity**.
+
+There is a second picture for the same idea: the **slope** of a curve at a point. On
+a straight line the steepness never changes, so its slope is one number. On a curve
+the steepness keeps shifting, so you zoom in on one point until the curve looks
+straight, and read the slope right there. That local slope is the derivative.
+
+> You'll need from before: a relationship you can draw as a line (M2 Ch1 — the
+> "predict the tip from the bill" line) and reading a pair of numbers as a point
+> `(x, y)` (M2 Ch2). That's all we carry in.
+
+---
+
+## A straight line: slope is rise over run
+
+Recall the tip line from Chapter 1: `tip = rate * bill`. Pick any two points on a
+straight line, `(x1, y1)` and `(x2, y2)`. The slope is how far you climb divided by
+how far you walk across:
+
+`slope = rise / run = (y2 - y1) / (x2 - x1)`
+
+If a 10% tip line passes through `(0, 0)` and `(100, 10)`, its slope is
+`(10 - 0) / (100 - 0) = 0.1`. That slope *is* the sensitivity: nudge the bill up by
+₹1 and the predicted tip rises by ₹0.10, anywhere on the line. On a straight line the
+derivative is the same value at every point — the line's single, constant slope.
+
+## A curve: zoom in until it looks straight
+
+A curve bends, so its steepness changes as you move along it. Take `f(x) = x²`. Near
+`x = 1` it climbs gently; near `x = 3` it climbs steeply. There is no single slope
+for the whole curve — there is a slope *at each point*.
+
+Here is the move that makes a derivative concrete. Zoom in on one point of a smooth
+curve. Zoom far enough and the little piece you see looks like a straight segment.
+Measure *that* segment's slope and you have the derivative at the point. The
+derivative answers: right here, if I nudge `x` a tiny bit, how fast does `f(x)`
+respond?
+
+We can turn "zoom in and measure" into arithmetic. Take a tiny step `h` to either
+side of `x` and measure the rise over the run between those two nearby points — a
+**central difference**:
+
+`numeric_derivative ≈ (f(x + h) - f(x - h)) / (2h)`
+
+The run from `x - h` to `x + h` is `2h`, and the rise is the change in `f` across it.
+With a small `h` (we use `h = 1e-5`), this estimate is close for a smooth curve and
+*exact* for a straight line, because a line has the same slope across any run. In
+prose: for `f(x) = x²` the true derivative is `2x` (slope `2` at `x = 1`, slope `6`
+at `x = 3`), and the numeric step lands right next to those values — but we will keep
+our auto-graded checks on straight lines, where the arithmetic is exact.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Think of the derivative as the limit of rise-over-run as the run shrinks toward zero
+— the formal `lim h→0 (f(x+h) - f(x)) / h` you may have met once. There are two ways
+to get it in code. **Numeric** differentiation is what we do here: pick a tiny `h`
+and divide, like a finite-difference approximation — a few floating-point operations,
+no calculus rules. **Symbolic** differentiation instead applies the rules of calculus
+to the formula itself, returning a new formula (the derivative of `x²` is `2*x`), the
+way a computer-algebra library would.
+
+Modern deep-learning frameworks use a third route, **automatic differentiation**
+(autograd): as your code computes a value it records each operation, then walks that
+record backward applying known per-operation derivatives, giving exact slopes without
+you writing any by hand. PyTorch's `autograd` and JAX's `grad` do this; the central
+difference below is the hand-cranked version that helps you *check* them.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* the derivative as a local slope. We plot `f(x) = x²` and, at `x = 1`,
+draw the straight **tangent** line whose slope is the derivative there (`2 × 1 = 2`).
+Where the curve and the line touch, they head in the same direction — the line is the
+curve's "looks straight when you zoom in" twin at that point.
+
+```{pyodide}
+#| caption: "The tangent at x = 1 has slope 2 — the derivative is that local slope"
+#| fig-alt: "A parabola f(x) = x squared as a smooth U-shaped curve, with a straight tangent line touching it at the point (1, 1). The line rises 2 units for every 1 unit across, matching the curve's direction at that point and pulling away from the curve on either side."
+import matplotlib.pyplot as plt
+
+def f(x):
+    return x * x
+
+# The curve, sampled densely so it looks smooth.
+xs = [i / 20 for i in range(-20, 61)]   # -1.0 … 3.0
+ys = [f(x) for x in xs]
+
+# The tangent at x = 1: slope 2, passing through (1, f(1)).
+x0 = 1.0
+slope_at_x0 = 2 * x0                    # the derivative of x^2 is 2x
+tangent = [f(x0) + slope_at_x0 * (x - x0) for x in xs]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(xs, ys, color="tab:blue", label="f(x) = x²")
+ax.plot(xs, tangent, "--", color="tab:orange", label="tangent at x=1 (slope 2)")
+ax.scatter([x0], [f(x0)], color="tab:red", zorder=5)
+ax.set_xlabel("x")
+ax.set_ylabel("f(x)")
+ax.set_title("A derivative is the local slope")
+ax.legend()
+plt.show()
+```
+
+Read the picture: the orange line rises 2 units for every 1 unit across, so the
+curve's slope *at that point* is 2 — that is the derivative of `x²` at `x = 1`. Slide
+the touch-point to the right and the tangent tilts up more steeply (slope `2x` grows),
+which is the curve telling you it is getting more sensitive to `x`. The derivative is
+not one number for the whole curve; it is a number you read off at each point.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **derivative** measures **sensitivity** — how much the output changes when you
+   nudge the input a tiny bit. It is the **slope** of the curve at a point.
+2. On a **straight line** the slope is constant: `rise / run = (y2 - y1) / (x2 - x1)`.
+3. On a **curve** the slope changes; zoom in until the point looks straight and read
+   the slope there.
+4. You can estimate a derivative numerically with a **central difference**,
+   `(f(x + h) - f(x - h)) / (2h)`, for a tiny `h` — exact on a line, close on a curve.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The slope of a line is rise over run. Complete `slope(p1, p2)` where each point is a
+pair `(x, y)`. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_slope
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_slope
+def slope(p1, p2):
+    """Slope of the line through p1=(x1, y1) and p2=(x2, y2): rise over run."""
+    rise = p2[1] - p1[1]
+    run = ____  # TODO: the run is the change in x, x2 - x1
+    return rise / run
+
+run_tests([
+    ("through (0,0) and (2,6)", slope((0, 0), (2, 6)), 3.0),
+    ("through (1,1) and (3,5)", slope((1, 1), (3, 5)), 2.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Rise is the change in `y` (`p2[1] - p1[1]`); the run is the matching change in `x`,
+`p2[0] - p1[0]`. Divide rise by run.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def slope(p1, p2):
+    rise = p2[1] - p1[1]
+    run = p2[0] - p1[0]
+    return rise / run
+```
+
+For `(0,0)` to `(2,6)` the rise is `6` and the run is `2`, so the slope is `6 / 2 =
+3.0` — climb 3 for every 1 across.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now estimate a derivative at a point with the central difference. Write the body of
+`numeric_derivative(f, x, h=1e-5)` so it returns `(f(x+h) - f(x-h)) / (2h)`. We test
+it on **straight lines and a constant**, where the slope is exact.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_numeric_derivative
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_numeric_derivative
+def numeric_derivative(f, x, h=1e-5):
+    """Estimate f'(x) with a central difference: rise over run across 2h."""
+    return ____  # TODO: (f(x+h) - f(x-h)) divided by (2 * h)
+
+run_tests([
+    ("slope of 2x+1 is 2", numeric_derivative(lambda x: 2 * x + 1, 5), 2.0),
+    ("slope of 3x is 3", numeric_derivative(lambda x: 3 * x, 0), 3.0),
+    ("slope of a constant is 0", numeric_derivative(lambda x: 7, 4), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The rise is `f(x + h) - f(x - h)` and the run between those two points is `2 * h`.
+Divide the rise by the run: `(f(x + h) - f(x - h)) / (2 * h)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def numeric_derivative(f, x, h=1e-5):
+    return (f(x + h) - f(x - h)) / (2 * h)
+```
+
+The two sample points are `x - h` and `x + h`, a run of `2h` apart. For the line
+`2x + 1` the rise across that run is `2 * (2h)`, so the division returns `2.0`
+regardless of `h`. A constant function never rises, so its slope is `0.0`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Use `numeric_derivative` on the
+curve `f(x) = x * x` at a couple of points and compare each estimate to the exact
+slope `2x`. Print the point, the estimate, and `2x` so you can see how close they
+are.
+
+**Rubric — a good answer:**
+
+- Defines `f(x) = x * x` and reuses your `numeric_derivative`.
+- Estimates the slope at **at least two** different `x` values (e.g. `x = 1` and
+  `x = 3`).
+- Compares each estimate to `2 * x` and notes that they are close (the estimate is
+  not exact on a curve, unlike on a line).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def numeric_derivative(f, x, h=1e-5):
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+def f(x):
+    return x * x
+
+for x in (1.0, 3.0):
+    estimate = numeric_derivative(f, x)
+    exact = 2 * x
+    print(f"x={x}: estimate {round(estimate, 6)} vs 2x = {exact}")
+```
+
+At `x = 1` the estimate sits next to `2`, and at `x = 3` next to `6`. On a curve the
+central difference is an approximation — very close for a tiny `h`, but not exact the
+way it is on a straight line.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now read a derivative two ways: as **sensitivity** (how hard the output reacts
+to a nudge) and as a **local slope** (rise over run, zoomed in). That single number
+tells a model how a change to one input would move its output. Next, in **Ch7 —
+Gradients**, we collect a derivative *for every input at once* into one vector, the
+**gradient**, that points in the direction of steepest change — the compass a model
+follows downhill when it learns.

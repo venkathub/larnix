@@ -1,0 +1,35 @@
+title: "Chapter 10 — quick check"
+id: "m3-ch10-scaling"
+questions:
+  - id: why-scale
+    prompt: "Why do we scale numeric features to a common range before modelling?"
+    options:
+      - "To delete outliers from the data automatically"
+      - "So a column with large raw numbers does not dominate one with small numbers because of its size alone"
+      - "To turn text columns into numbers"
+    answer: 1
+    explanation: "Many models read a column's raw size as importance, so a feature in the thousands can drown out one in the tenths. Scaling puts every feature on comparable footing."
+  - id: minmax-range
+    prompt: "Min-max scaling maps a column into which range?"
+    options:
+      - "[-1, 1]"
+      - "[0, 1]"
+      - "Any range with mean 0"
+    answer: 1
+    explanation: "Min-max uses (x - min) / (max - min): the smallest value becomes 0, the largest becomes 1, and everything else lands proportionally in between."
+  - id: standardize-result
+    prompt: "After standardization (z-score), the column has…"
+    options:
+      - "Mean 0 and standard deviation 1"
+      - "A minimum of 0 and a maximum of 1"
+      - "Only whole-number values"
+    answer: 0
+    explanation: "Standardization subtracts the mean and divides by the standard deviation, giving a column with mean 0 and std 1 and no fixed bounds."
+  - id: one-hot-does
+    prompt: "What does one-hot encoding do to a categorical column?"
+    options:
+      - "Replaces each category with a single number like 0, 1, 2 in one column"
+      - "Creates one 0/1 column per category, with a 1 marking each row's category"
+      - "Removes the column because models cannot use categories"
+    answer: 1
+    explanation: "One-hot makes one 0/1 column per category so a model reads it as numbers, without implying a false order between the categories."

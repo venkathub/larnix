@@ -1,0 +1,35 @@
+title: "Chapter 12 — quick check"
+id: "m1-ch12-numpy"
+questions:
+  - id: make-array
+    prompt: "How do you build a NumPy array from a Python list?"
+    options:
+      - "np.list([7000, 8200])"
+      - "np.array([7000, 8200])"
+      - "array.np([7000, 8200])"
+    answer: 1
+    explanation: "np.array([...]) turns a list into an array ready for whole-array maths."
+  - id: elementwise
+    prompt: "If `steps` is a NumPy array, what does `steps * 2` produce?"
+    options:
+      - "A new array with every element doubled"
+      - "The list repeated twice"
+      - "An error, because you can't multiply an array"
+    answer: 0
+    explanation: "Arithmetic on an array is element-wise, so every value is doubled at once — no loop."
+  - id: boolean-array
+    prompt: "What is the result of `steps >= 8000` for an array?"
+    options:
+      - "The first value that meets the goal"
+      - "A boolean array with True/False for every element"
+      - "The count of values that meet the goal"
+    answer: 1
+    explanation: "The comparison tests every element and returns a True/False array of the same length."
+  - id: count-active
+    prompt: "How do you count, as a plain int, how many elements are at least the goal?"
+    options:
+      - "int((steps >= goal).sum())"
+      - "steps.count(goal)"
+      - "len(steps >= goal)"
+    answer: 0
+    explanation: "The mask's .sum() counts the True values, and int(...) returns a plain Python integer."

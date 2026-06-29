@@ -5,6 +5,186 @@
 
 ---
 
+## D0016 — P1 technical decisions (env-chapter proxy, plotting, datasets, grader, twins, quizzes)
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** Grooming Phase **P1 — Foundations track (M0–M3)** (`docs/phases/P1_SPEC.md §3`). The
+  technical choices needed to author ~50 in-browser chapters at scale without regressing the P0
+  gates. Every load-bearing claim was web-validated 2026-06-28 (`P1_SPEC.md §9`).
+- **Decisions (P1-Dn → chosen option).**
+  1. **P1-D6 = A — environment/tooling chapters stay `browser`-conceptual.** Pyodide cannot run
+     `pip`/`venv`/a real IDE, yet the Varsity contract requires a runnable example. M1 Ch13–14
+     (venv/pip, IDE/Colab) and M3 Ch11–12 (notebooks, environments) ship a **runnable in-scope
+     proxy** (e.g. `micropip` as the Pyodide analogue of pip; inspect `sys.path`) plus a **recorded,
+     copy-paste shell transcript** for the real local commands. Keeps P1 **Colab-free** (a phase
+     non-goal). *Rejected:* tagging them `colab` (introduces Colab into P1); pure prose with a lint
+     exception (special-cases the "every chapter runs" gate).
+  2. **P1-D7 = A — Matplotlib-only for M3 plotting.** Matplotlib is **built into Pyodide**
+     (zero-install, offline, ₹0). Seaborn is shown as an optional `🔬` "install it yourself" note.
+     Web search (§9) **retired** the earlier "Seaborn may have no Pyodide wheel" risk — Seaborn is
+     pure-Python and `micropip`-installable; the recommendation now rests on **offline/zero-install**,
+     not capability. *Rejected:* Matplotlib+Seaborn by default (adds a first-use network download,
+     breaks the offline promise); Plotly (different mental model, not what M4+ assumes).
+  3. **P1-D8 = A — vendor small CSVs in-repo + a `lib/data.py` loader.** Each ≤~50 KB; Palmer
+     Penguins shipped as a vendored CSV (CC0 1.0, verified §9); sklearn `load_*` built-ins used where
+     they exist (Iris). Deterministic + offline-friendly + CI-twin-safe; licenses logged in
+     `docs/ASSETS.md` (R11). *Rejected:* runtime URL fetch (needs internet, flaky in CI, R13);
+     all-synthetic (M3 EDA must use real data to be honest).
+  4. **P1-D9 = A — single-source the grader via quarto-live `resources:`.** Load `lib/grader.py`
+     into the Pyodide VFS once (the `resources:` front-matter key, confirmed in §9) instead of
+     pasting the helper into ~50 chapters; CPython `lib/test_grader.py` stays the off-browser
+     evidence (D0009). *Rejected:* per-chapter paste (50× duplication; bug = 50 edits); pip/micropip
+     package (over-engineered for one file).
+  5. **P1-D10 = A — generate the CI twin notebooks.** `infra/ci/make_twin.py` extracts tagged
+     `{pyodide}` cells + exercise solutions from each `.qmd` into its CPython twin (R10), with a CI
+     check that the committed twin matches source (no silent drift). *Rejected:* hand-authoring 49
+     twins (drift risk — the exact future improvement D0010 flagged); headless-browser smoke test
+     (slow/flaky, rejected for P0 too).
+  6. **P1-D11 = A — per-chapter quick check + cumulative module quiz.** Each chapter gets a 2–3-MCQ
+     quick check (`quiz.yml`); each module gets a `module-quiz.yml` (~8–12 MCQ) on the README,
+     rendered/scored by the P0 JS engine. *Rejected:* single end-of-module quiz only (loses recall
+     checks, R12); per-chapter only (breaks the Varsity end-of-module-quiz → cert model + per-module
+     DoD).
+- **Rationale.** Each choice keeps P1 **₹0/offline/browser**, correct-in-CI, and maintainable across
+  ~50 chapters (R9), reusing the proven P0 platform rather than adding subsystems.
+- **Consequences.** New shared tooling lands before content scale (`P1_SPEC.md §6.A`): grader VFS
+  loading, `make_twin.py`, module-quiz support, an extended `browser_import_lint.py` Pyodide-safe
+  allow-list (with a `# micropip:` annotation for runtime-installed packages), `lib/data.py` +
+  vendored CSVs, and `docs/ASSETS.md` + `assets_check.py` (R11). Seaborn-by-default and runtime
+  dataset fetching are explicitly **not** adopted in P1.
+- **Implementation note — P1-D9 grader single-source (Task 1, 2026-06-28; verified in-browser).**
+  The mechanism is confirmed end-to-end on M0 Ch1 (Docker-rendered `live-html`, driven with
+  Playwright on a real Pyodide runtime):
+  - Add the helper to the page front-matter: `resources: [ ../../lib/grader.py ]` (path relative to
+    the chapter). Quarto copies it to `_site/lib/grader.py`; quarto-live fetches it and writes it to
+    the Pyodide VFS. `collapsePath` normalises `../../lib/grader.py` → it lands at
+    `/home/pyodide/lib/grader.py`. `''` (cwd) is on `sys.path`, so the import is
+    **`from lib.grader import run_tests`** (namespace package; no `__init__.py` needed).
+  - **Each `#| exercise:` widget runs in its own isolated environment** (`exercise-env-<id>`), which
+    a global/`autorun` cell does **not** reach. So the grader is injected per exercise with a
+    `#| setup: true` + `#| exercise: <id>` cell containing the one-line import. Logic stays
+    single-sourced in `lib/grader.py`; only the import line repeats (one per exercise).
+  - R3 (`browser_import_lint.py`) now allow-lists `lib` so `from lib.grader …` passes; the broader
+    fail-closed R3 hardening remains Task 4. CPython `lib/test_grader.py` (6 tests) stays the
+    off-browser evidence.
+- **Implementation note — P1-D10 twin generator (Task 2, 2026-06-28).** `infra/ci/make_twin.py`
+  derives each browser chapter's CI twin from its `.qmd`: worked-example `{pyodide}` cells verbatim,
+  a grader-bootstrap cell (locates `lib/grader.py`, imports `run_tests` — single-sourced off-browser
+  too), then, per auto-graded exercise, the hidden `<details>` solution + the `run_tests(...)` block
+  lifted from the exercise cell. `setup:` cells and rubric/stretch exercises (no `run_tests`) are
+  skipped. `--write` regenerates twins; `--check` (wired into CI before R10 execution) fails on drift.
+  Output is byte-deterministic so the check is stable. Authoring rule this imposes: a hidden solution
+  must be a runnable cell given the cells above it. The M0 Ch1 twin was migrated to the generated
+  form (its pasted grader removed) and executes clean under `run_notebooks.py`.
+- **Implementation note — P1-D11 module quizzes (Task 3, 2026-06-28; verified in-browser).** The P0
+  quiz engine needs no changes: the `{{< quiz FILE >}}` shortcode is path-agnostic, so a module quiz
+  mounts with `{{< quiz module-quiz.yml >}}`. Two artifacts share the schema — per-chapter `quiz.yml`
+  (2–3 MCQ) and a cumulative `modules/<NN>/module-quiz.yml` (~8–12 MCQ). `quiz_lint.py` now globs
+  `module-quiz.yml` and emits an advisory (non-fatal) NOTE when a module quiz is outside the band.
+  **Mount location = a rendered module landing `modules/<NN>/index.qmd`** (chosen over rendering the
+  GitHub-facing `README.md`); the page is added to render globs + nav in Task 64, and each module's
+  real `index.qmd` + `module-quiz.yml` ships with its assessment task. Proven on a staging M0 landing:
+  rendered 8 questions, scored 8/8, persisted `localStorage["larnix-quiz:m0-module-quiz"]`.
+- **Implementation note — R3 hardening (Task 4, 2026-06-28).** `browser_import_lint.py` is the
+  load-bearing P1 gate and was already fail-closed (strict allow-list incl. `lib`; unknown imports
+  fail; `KNOWN_UNSAFE` denylist for heavyweights). Added the P1-D7 guard: a pure-Python package
+  installed at runtime must be declared with a `# micropip: <name>` annotation, which exempts only
+  the named module and **never** rescues a `KNOWN_UNSAFE` package (e.g. an annotated `torch` still
+  fails — no pure-Python wheel exists). So a bare `import seaborn`/`import torch` fails, while a
+  deliberate `micropip.install("seaborn")` + `# micropip: seaborn` passes. +6 tests in `test_r_gates`.
+- **Implementation note — P1-D8 datasets + R11 ledger (Task 5, 2026-06-28; verified in-browser).**
+  `lib/data.py` loads `data/<name>.csv` **relative to cwd**, which resolves identically in the Pyodide
+  VFS (chapter declares the CSV in `resources:`) and the CPython twin (cwd = module dir). Vendored:
+  `modules/03-data/data/penguins.csv` (Palmer Penguins, **CC0-1.0 confirmed via GitHub API**, 344 rows)
+  and a synthetic `modules/01-python/data/habits.csv` (CC0-by-us, 35 rows, deliberately messy for M1).
+  `docs/ASSETS.md` is the license ledger; `infra/ci/assets_check.py` (R11) fails on any un-ledgered
+  `data/` file. Proven in-browser: `load_csv("penguins")` returned 344×8 offline. **Authoring rule:**
+  because quarto-live auto-loads only packages imported *in a cell* (not inside `lib/data.py`), a chapter
+  using `load_csv` must declare `pyodide: packages: [pandas]`. `requirements-notebooks.txt` now pins
+  `pandas==3.0.4` so data-chapter twins execute under R10.
+- **Implementation note — P1-D4 scaffolding + module scaffolding (Task 6, 2026-06-28).** The
+  beginner-scaffolding kit is finalized as `docs/AUTHORING_CHECKLIST.md` (a copy-paste per-chapter
+  PR checklist: "You'll need from before" recap, exercises guided→implement→stretch, "If you're
+  stuck" hints, `🧱 For Java developers` asides, plus the §5.5 correctness review). Its structural
+  pillars are CI-enforced by `infra/ci/chapter_structure_lint.py` (every `compute:` chapter `.qmd`
+  must have a Key Takeaways box, ≥1 runnable `{pyodide}` cell, and a `<details>` hidden solution) —
+  prose quality stays human review. Module skeletons (`README.md` + tailored `capstone.md` with brief
+  and rubric) shipped for `modules/01-python`, `02-math`, `03-data`; `module-quiz.yml` and `index.qmd`
+  land with each module's assessment task (per the P1-D11 mount decision). This closes §6.A; M0
+  content authoring begins next.
+- **Implementation note — P1 §6.F integration + completion (2026-06-29).** P1 content is complete:
+  **50 chapters across M0–M3** (M0 6, M1 14, M2 16, M3 14), each with a per-chapter quick check, plus
+  4 cumulative `module-quiz.yml` (10/11/12/12 MCQ, each scored in-browser and persisted to
+  `localStorage`) and 4 rubric-graded capstones. Verification at close: **all 50 CI twins execute
+  cleanly** (R10) under `nbclient`; all schema/R-gates green; **111 unit tests** pass; codespell clean
+  and zero banned/hype words; the **full site renders (61 docs)** and **builds from a fresh clone**.
+  Representative ₹0 in-browser sweep covered every distinct mechanism — Pyodide execution, the
+  single-source grader, the pandas+Penguins VFS load (344×8 offline), Matplotlib canvas rendering, and
+  quiz scoring+persistence — across all four modules. **§6.F Task 66 (exhaustive ₹0 sweep)
+  completed 2026-06-29:** every one of the **50 chapters** was loaded in a real browser and a
+  worked-example cell run on Pyodide — all 50 produced correct output (or a Matplotlib canvas) with
+  no errors. Offline dataset load confirmed live: `habits.csv` (M1 Ch6 → "Loaded 35 rows") and Palmer
+  Penguins (M3 Ch4 "19 missing cells", Ch5 groupby `Adelie 3700.66`, Ch9 `(344, 8)`, Ch13 species
+  counts). The four capstone code paths run client-side (Iris via M0 Ch1; habits cleaning via M1 Ch6;
+  one-neuron gradient check 3.27e-11 via M2 Ch16; EDA stack via M3 Ch9), and the four module-quiz
+  landings score and persist to `localStorage` in-browser. **New render-safety guard:** `chapter_structure_lint.py` now fails any `{pyodide}`
+  chapter missing `format: live-html` + `execute: enabled: false` (caught M2 Ch12, which a sub-agent
+  authored without that block — `quarto render` had tried to spawn a python3 kernel). The M0 root
+  `index.qmd` catalog and the `_quarto.yml` sidebar list M0–M3 as live; `WALKTHROUGH.md` and
+  `PORTFOLIO.md` carry the zero→EDA learner path and the quantified P1 bullet. **P1-D5 merge log: 0 of
+  3 optional merges used** (M1 Ch7/Ch8 and M3 Ch11/Ch12 kept separate).
+
+---
+
+## D0015 — P1 pedagogical decisions (M0 ordering, running examples, GenAI taste, scaffolding, granularity)
+
+- **Date:** 2026-06-28
+- **Status:** Accepted
+- **Context.** Grooming Phase **P1 — Foundations track (M0–M3)** (`docs/phases/P1_SPEC.md`). P1 is
+  the first content-at-scale phase (~50 chapters, all 🟢→🟡, all `browser`/₹0). These are the
+  pedagogical choices that shape the on-ramp; confirmed via the grooming Q&A (2026-06-28).
+- **Decisions (P1-Dn → chosen option).**
+  1. **P1-D1 = A — M0 is wow-first:** `1 Run a model → 2 What it costs → 3 What is AI → 4 Family tree
+     (+ GenAI taste) → 5 History → 6 How this school works`. Honours "taste before theory"
+     (`STYLE_GUIDE §2`), keeps the P0 sample chapter as Ch1, and still ships the ₹0 cost chapter up
+     front (Ch2). *Rejected:* concept-first (demotes the strongest hook); cost-chapter-first (opens
+     with logistics, not a win).
+  2. **P1-D2 = A — per-module running examples:** M0 = the Iris "tell species apart" demo + the
+     "Asha" persona; **M1 = a synthetic, license-free messy `habits.csv`** (we author it → full
+     control of the mess for teaching cleaning); **M2 = the "assemble one neuron" thread**
+     (movie-taste vectors + tip-vs-bill line); **M3 = Palmer Penguins (CC0)**, with the capstone on a
+     *different* public dataset. *Rejected:* one real dataset across all of M1–M3 (can't serve both
+     messy-CSV teaching and clean EDA); per-chapter ad-hoc examples (breaks `STYLE_GUIDE §4`; worse
+     retention, R12).
+  3. **P1-D3 = A — M0 GenAI taste via a client-side `transformers.js` widget** (sentiment/
+     image-caption) in M0 Ch4: runs in-browser, no Python, no key, no Colab, ₹0 (feasibility
+     confirmed §9). It is a *demo*, not a graded exercise (outside the Pyodide grader path).
+     *Rejected:* classical-only M0 (under-sells "what is AI today" for a 2026 beginner); an
+     Open-in-Colab HF demo (introduces Colab into P1, a non-goal).
+  4. **P1-D4 = A — a small fixed scaffolding kit across all ~50 chapters:** a one-line "You'll need
+     from before" recap; exercises always run guided → implement → stretch; `🧱 For Java developers`
+     collapsible asides in M1; an "If you're stuck" hint before each hidden solution. Consistency aids
+     retention (R12) and is partly lintable. *Rejected:* free-form scaffolding (inconsistent across
+     50 chapters); heavy per-exercise sub-steps (slows confident learners; more to maintain).
+  5. **P1-D5 = A — hold PLAN's chapter counts (6/14/16/14 ≈ 50) but allow ≤3 documented merges**
+     where two chapters are thin (candidate pairs: M1 errors+tracebacks; M2 distributions +
+     mean/variance; M3 notebooks + environments), each logged. Protects pace while keeping
+     single-idea chapters. *Rejected:* hold counts exactly (some chapters pad/split awkwardly);
+     aggressive consolidation to ~35 (breaks "one concept per chapter"; diverges from PLAN).
+     **Merge log (2026-06-29):** the M1 errors+tracebacks pair was considered and **kept separate**
+     (Ch7 "Errors & exceptions", Ch8 "Reading a traceback") — the builder chose dedicated
+     traceback-reading practice over a merge. Merge allowance still at 0 of 3 used.
+- **Rationale.** Beginner-first, analogy-before-symbol, a satisfying early win, and one running
+  example per module — the Varsity pedagogy ported to a code-heavy on-ramp, tuned against drop-off
+  (R12) and re-authoring cost (R9).
+- **Consequences.** Drives the M0–M3 chapter design in `P1_SPEC.md §2`; the `habits.csv` and Penguins
+  datasets feed P1-D8/D0016; the transformers.js widget is the only non-Pyodide runnable in P1 and is
+  browser-preview-verified (not in the notebook-execution path). Any chapter merge is recorded so the
+  count can drift from PLAN by a few with an audit trail.
+
+---
+
 ## D0014 — GUI: playful claymorphism design system (Fredoka + Nunito); sepia shipped
 
 - **Date:** 2026-06-28
@@ -296,7 +476,7 @@
   1. **Auto-grader (P0-D5) = `quarto-live` native exercise grading + a thin `/lib` assert helper.**
      Web-search validation (2026-06-28) confirmed `quarto-live` ships first-class exercises with
      `setup`/`hints`/`solution` and a `check: true` grading cell for Pyodide blocks; the `grade()`
-     helper just gives a consistent pass/fail UX (`All tests passed ✅`) and hidden solutions in
+     helper only gives a consistent pass/fail UX (`All tests passed ✅`) and hidden solutions in
      `<details>`. Open-ended work uses **published rubrics**, not auto-grading (`RISKS.md R4`).
      *Caveat (spike V-1):* most quarto-live grading examples are R/`webr`, so Python/`pyodide`
      grading parity is verified on a scratch exercise in P0 before authoring the chapter; the `/lib`

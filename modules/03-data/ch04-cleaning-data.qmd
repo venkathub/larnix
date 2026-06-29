@@ -1,0 +1,442 @@
+---
+title: "Cleaning data"
+module: "M3 — Data & Tooling"
+chapter: 4
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch3 — Indexing & selection"
+learning_objectives:
+  - "Find missing values in a DataFrame with .isna().sum()"
+  - "Drop or fill missing values with .dropna() and .fillna()"
+  - "Convert a column's type with .astype() and remove duplicate rows with .drop_duplicates()"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: what-is-nan
+    q: "What does NaN mean in a pandas column?"
+    a: "NaN ('not a number') is pandas' marker for a missing value — a cell where no data was recorded. It is not zero and not an empty string; it stands for 'we don't know'."
+  - id: count-missing
+    q: "How do you count missing values per column?"
+    a: "df.isna() returns a same-shaped table of True/False (True where a value is missing); .sum() then counts the Trues down each column, giving the missing count per column."
+  - id: drop-vs-fill
+    q: "What is the difference between .dropna() and .fillna()?"
+    a: ".dropna() removes any row that contains a NaN; .fillna(value) keeps every row but replaces each NaN with a value you choose. One loses rows, the other invents values."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Real data is messy. A sensor misfires, someone leaves a form field blank, two
+records get entered twice — and the clean table you imagined arrives full of
+holes and oddities instead. Before you can average a column, plot a relationship,
+or train a model on it, you have to **clean** the data: find the gaps, decide what
+to do about them, and fix the rough edges.
+
+You met the penguins table in Chapter 2 and learned to select from it in Chapter
+3. Look closely and you'll notice it isn't perfect: a handful of penguins are
+missing measurements, and 11 are missing a recorded sex. That is completely
+normal — almost every real dataset has gaps. This chapter teaches the small,
+repeatable toolkit pandas gives you for the most common cleaning jobs:
+
+- **find** missing values and count them, so you know the scale of the problem;
+- **drop** the incomplete rows, or **fill** the gaps with a chosen value;
+- **convert** a column to the right type, and **remove** duplicate rows.
+
+None of these are hard, but doing them in the right order — and knowing the
+trade-offs — is the difference between a trustworthy analysis and a misleading one.
+
+> You'll need from before: selecting columns and rows (M3 Ch3). We use that to
+> inspect and repair specific parts of the table.
+
+---
+
+## Missing data is a hole, not a zero
+
+When pandas reads a CSV and a cell has no value, it doesn't guess. It stores a
+special marker called **NaN** — short for "not a number" — that means *we don't
+know this value*. NaN is not the same as `0`, and it is not an empty string `""`.
+A body mass of `0` grams would be a (very wrong) measurement; a NaN says no
+measurement was recorded at all. Keeping that distinction is the whole point: if
+you silently treated missing masses as zero, every average you computed would be
+dragged toward zero and quietly lie to you.
+
+This is why missing data breaks math. Most arithmetic with NaN gives NaN back:
+add a number to "we don't know" and the answer is still "we don't know". Pandas is
+careful here — its column summaries like `.mean()` skip NaN by default, which is
+helpful but also easy to forget. The safe habit is to *see* your missing values
+first and decide what they mean, rather than letting a default quietly handle them
+for you.
+
+## Counting what's missing with `.isna().sum()`
+
+The first question on any new table is: *where are the holes, and how many?* Two
+methods answer it together. `df.isna()` returns a table the same shape as your
+data, filled with `True` wherever a value is missing and `False` everywhere else.
+On its own that is a wall of booleans — but `.sum()` collapses it. Because Python
+counts `True` as `1` and `False` as `0`, summing each column gives the **number of
+missing values per column**.
+
+```{pyodide}
+#| caption: "Count missing values in every column of the penguins table"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.isna().sum()
+```
+
+Read that result top to bottom. `species`, `island`, and `year` have **0** missing
+values — they are complete. The four body measurements (`bill_length_mm`,
+`bill_depth_mm`, `flipper_length_mm`, `body_mass_g`) are each missing **2** values,
+and `sex` is missing **11**. So the gaps are not spread evenly: most of the
+trouble is in the `sex` column, where 11 penguins were never sexed.
+
+To get a single grand total — handy as a quick "how dirty is this?" number — sum
+twice. The first `.sum()` counts per column; a second `.sum()` adds those column
+totals together.
+
+```{pyodide}
+#| caption: "A single grand total of missing cells across the whole table"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+total_missing = int(df.isna().sum().sum())
+print("total missing cells:", total_missing)
+```
+
+That double-sum (`2 + 2 + 2 + 2 + 11 = 19`) gives **19** missing cells in all. You
+now know both the shape of the problem (mostly `sex`) and its size (19 cells out of
+a 344-row table). Only now is it sensible to decide what to do.
+
+## Dropping rows with `.dropna()`
+
+The simplest response is to throw away every row that has *any* missing value.
+`df.dropna()` does exactly that and returns a **new** DataFrame — it does not change
+the original. The penguins table starts with 344 rows; after dropping every
+incomplete row we are left with fewer.
+
+```{pyodide}
+#| caption: "Drop every row that has at least one missing value"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+clean = df.dropna()
+print("rows before:", df.shape[0])
+print("rows after :", clean.shape[0])
+print("rows dropped:", df.shape[0] - clean.shape[0])
+```
+
+We go from **344 rows to 333** — 11 rows removed. Notice that the count of dropped
+rows matches the `sex` gap, because the rows missing a measurement are mostly the
+same rows that are also missing `sex`. Dropping is honest and easy, and when the
+gaps are few it is often the right call. But it has a cost: every dropped row takes
+its *good* values with it. Throw away a penguin because its sex is unknown and you
+also lose its perfectly fine body mass. When missing values are rare that loss is
+acceptable; when they are common, dropping can shrink a dataset dramatically.
+
+## Filling gaps with `.fillna()`
+
+The alternative is to **keep** every row and replace each NaN with a value you
+choose. `df.fillna(value)` does this. For a text column like `sex`, a sensible fill
+is a label that says "we don't know" out loud, so the missing-ness stays visible
+rather than masquerading as real data.
+
+```{pyodide}
+#| caption: "Fill missing sex labels with an explicit 'unknown' marker"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+filled = df.copy()
+filled["sex"] = filled["sex"].fillna("unknown")
+
+print("missing sex before:", int(df["sex"].isna().sum()))
+print("missing sex after :", int(filled["sex"].isna().sum()))
+print(filled["sex"].value_counts())
+```
+
+After filling, the `sex` column has **0** missing values, and `value_counts()`
+shows a new `unknown` group of 11 alongside `male` and `female`. For a numeric
+column you might instead fill with the column's mean or median, so the gap doesn't
+distort later sums — but always remember you are *inventing* values. A filled value
+is a reasonable guess, not a measurement, and any honest analysis should say which
+columns were filled and how.
+
+Choosing between dropping and filling is a judgement call, not a rule:
+
+- **Drop** when missing rows are few and you can spare them, or when a partial row
+  is useless for your task.
+- **Fill** when you can't afford to lose rows, and you have a defensible value to
+  put in (a marker like `"unknown"`, or a column average) — and you record what you
+  did.
+
+## Converting types with `.astype()`
+
+Once the holes are handled, the next common chore is fixing **types**. Each column
+has a data type (its `dtype`): numbers are usually `int64` or `float64`, text is
+`object`. Sometimes a column arrives as the wrong type — body mass, for instance,
+is stored as `float64` (with decimals) even though grams are whole numbers. After
+removing the missing values, you can convert it to a plain integer with
+`.astype(...)`.
+
+```{pyodide}
+#| caption: "Convert body mass from float to integer after dropping gaps"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+clean = df.dropna()
+print("before:", clean["body_mass_g"].dtype)
+
+clean = clean.copy()
+clean["body_mass_g"] = clean["body_mass_g"].astype(int)
+print("after :", clean["body_mass_g"].dtype)
+print(clean["body_mass_g"].head())
+```
+
+The dtype changes from `float64` to `int64`, and the masses now print without
+decimal points. One important catch: you must clear the NaNs *before* converting to
+`int`, because the integer type has no way to store a missing value — that's why we
+`dropna()` first. Converting types matters because the type controls what you can
+do: maths needs numbers, and some operations (like grouping or joining) behave
+differently for text than for numbers.
+
+## Removing duplicates with `.drop_duplicates()`
+
+The last common mess is **duplicate rows** — the same record entered more than
+once, which would double-count it in any total. `df.drop_duplicates()` keeps the
+first occurrence of each distinct row and drops the rest. You can also apply it to
+a subset of columns to find the unique *combinations* of those columns — for
+example, which island each species was actually seen on:
+
+```{pyodide}
+#| caption: "Unique species/island pairs via drop_duplicates on a column subset"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+pairs = df[["species", "island"]].drop_duplicates()
+print("unique species/island combinations:", pairs.shape[0])
+print(pairs.sort_values(["species", "island"]).to_string(index=False))
+```
+
+Here `drop_duplicates()` collapses 344 rows down to the handful of distinct
+species-and-island pairs, which is a quick way to see the structure of a dataset.
+On the full table, `df.drop_duplicates()` would remove any row that is an exact
+copy of an earlier one — the penguins table happens to have none, but in data you
+collect yourself, duplicate records are common and easy to miss.
+
+Put the moves together and you have a dependable cleaning routine: **count** the
+missing values, **drop or fill** them, **convert** any wrong types, and
+**de-duplicate**. Run in that order, it turns almost any raw table into something
+you can compute on with confidence.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **NaN** is pandas' marker for a missing value — "we don't know", not `0` or
+   `""`. Most arithmetic with NaN returns NaN, which is why gaps break math.
+2. `df.isna().sum()` counts missing values per column; a second `.sum()` gives a
+   grand total. For penguins: `sex` is missing 11, each measurement 2, for **19**
+   missing cells overall.
+3. `df.dropna()` removes every row with any NaN (penguins: **344 → 333**);
+   `df.fillna(value)` keeps the rows and replaces NaN with a value you choose.
+4. `.astype(...)` converts a column's type (clear NaNs first for `int`), and
+   `.drop_duplicates()` removes repeated rows.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made data — with `None` standing in for the missing
+values — so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Count *all* the missing values in a small table. Build a DataFrame from the dict,
+then count the NaNs across the whole thing. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count_missing
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count_missing
+import pandas as pd
+
+def count_missing(data):
+    """Return the total number of missing (NaN) cells across the whole table."""
+    return ____  # TODO: int(pd.DataFrame(data).isna().sum().sum())
+
+run_tests([
+    ("two missing", count_missing({"a": [1, None, 3], "b": [None, 2, 3]}), 2),
+    ("none missing", count_missing({"a": [1, 2], "b": [3, 4]}), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`pd.DataFrame(data)` builds the table; `.isna()` marks every cell `True`/`False`;
+the first `.sum()` counts per column and a second `.sum()` adds those into one
+grand total. Wrap it in `int(...)` for a plain integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def count_missing(data):
+    return int(pd.DataFrame(data).isna().sum().sum())
+```
+
+`.isna()` turns each cell into `True` (missing) or `False`; summing once counts the
+missing cells per column, and summing again totals those counts into a single
+number. The `None` values in the dict become NaN inside the DataFrame, so they are
+exactly what gets counted.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now decide how many rows *survive* a `dropna()`. Build a DataFrame from the dict,
+drop every row with any missing value, and return how many rows are left. Complete
+the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_drop_missing
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_drop_missing
+import pandas as pd
+
+def drop_missing(data):
+    """Return the row count after dropping every row that has any NaN."""
+    return ____  # TODO: int(pd.DataFrame(data).dropna().shape[0])
+
+run_tests([
+    ("one row survives", drop_missing({"a": [1, None, 3], "b": [4, 5, None]}), 1),
+    ("all survive", drop_missing({"a": [1, 2], "b": [3, 4]}), 2),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`pd.DataFrame(data).dropna()` returns a new table with the incomplete rows removed.
+Its `.shape` is `(rows, columns)`, so `.shape[0]` is the surviving row count — wrap
+it in `int(...)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def drop_missing(data):
+    return int(pd.DataFrame(data).dropna().shape[0])
+```
+
+In the first case the rows are `(1, 4)`, `(None, 5)`, and `(3, None)`: the first row
+is complete and survives, while the other two each have a NaN and are dropped — so
+one row remains. In the second case neither row has a gap, so both survive.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset, count
+the missing values **per column** with `df.isna().sum()`, then run `df.dropna()` and
+report how many rows remain (you should find **333**). Print both results.
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and prints the per-column missing counts from
+  `df.isna().sum()` (showing `sex` at 11).
+- Calls `df.dropna()` and reports the surviving row count read from the data, not
+  typed in by hand.
+- States the contrast in plain words: 344 rows in, 333 out, 11 dropped.
+
+<details><summary>If you're stuck</summary>
+
+`df.isna().sum()` gives the per-column counts. For the row count after cleaning,
+`df.dropna().shape[0]` reads it straight from the cleaned table; compare it to
+`df.shape[0]` for the rows you started with.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+
+print("missing per column:")
+print(df.isna().sum())
+
+before = df.shape[0]
+after = df.dropna().shape[0]
+print(f"rows before: {before}")
+print(f"rows after : {after}")
+print(f"rows dropped: {before - after}")
+```
+
+This prints `sex` as the worst column (11 missing), then reports the table shrinking
+from `344` rows to `333` — the 11 dropped rows read straight from the data rather
+than typed in.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Cleaning is the unglamorous step that makes everything after it trustworthy: a mean
+computed on data full of silent gaps is a mean you can't believe. You can now find
+missing values, drop or fill them on purpose, fix column types, and remove
+duplicates — the routine a data scientist runs on almost every fresh table. Next we
+move from repairing a table to *reshaping and summarising* it: grouping rows and
+aggregating them to answer questions like "what's the average body mass per
+species?"

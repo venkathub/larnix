@@ -1,0 +1,27 @@
+title: "Chapter 3 — quick check"
+id: "m0-ch3-what-is-ai"
+questions:
+  - id: rules-vs-learning
+    prompt: "What best describes the shift that powers modern AI?"
+    options:
+      - "Writing more detailed if-this-then-that rules by hand"
+      - "Showing the computer examples and letting it learn the rule"
+      - "Using faster computers to follow the same hand-written rules"
+    answer: 1
+    explanation: "Machine learning replaces hand-written rules with rules learned from labelled examples."
+  - id: learned-behaviour
+    prompt: "In the spam demo, where did the list of spam words come from?"
+    options:
+      - "A human typed the list of spam words in advance"
+      - "It was learned by counting words across labelled examples"
+      - "It was downloaded from a spam database"
+    answer: 1
+    explanation: "The program counted which words appeared in spam vs normal messages — it learned the words from the data."
+  - id: confidently-wrong
+    prompt: "Why can a trained model be 'confidently wrong'?"
+    options:
+      - "It always knows when it is unsure and warns you"
+      - "Its behaviour is learned from data, so gaps or bias in the examples carry into the model"
+      - "Because computers cannot do arithmetic reliably"
+    answer: 1
+    explanation: "A model reflects its training data; missing or biased examples produce wrong answers given with no sense of doubt."

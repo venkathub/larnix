@@ -183,6 +183,12 @@ def collect_targets(args: list[str]) -> list[str]:
     return sorted(set(out))
 
 
+def is_module_landing(path) -> bool:
+    """Module landing pages (`index.qmd`) are not chapters and are exempt from the
+    10-field chapter schema. They carry a module quiz, not a lesson."""
+    return Path(path).name == "index.qmd"
+
+
 def main(argv: list[str]) -> int:
     targets = collect_targets(argv)
     if not targets:
@@ -190,7 +196,12 @@ def main(argv: list[str]) -> int:
         return 0
 
     failed = 0
+    checked = 0
     for path in targets:
+        if is_module_landing(path):
+            print(f"SKIP {path} (module landing — not a chapter)")
+            continue
+        checked += 1
         errors = lint_file(path)
         if errors:
             failed += 1
@@ -203,7 +214,7 @@ def main(argv: list[str]) -> int:
     if failed:
         print(f"\n{failed} file(s) failed front-matter lint")
         return 1
-    print(f"\nAll {len(targets)} file(s) passed front-matter lint")
+    print(f"\nAll {checked} file(s) passed front-matter lint")
     return 0
 
 

@@ -81,5 +81,33 @@ class ValidateQuizTests(unittest.TestCase):
         self.assertEqual(ql.validate_quiz({"questions": [q()]}), [])
 
 
+class ModuleQuizTests(unittest.TestCase):
+    def test_default_globs_include_module_quiz(self):
+        self.assertIn("modules/**/module-quiz.yml", ql.DEFAULT_GLOBS)
+
+    def test_is_module_quiz(self):
+        self.assertTrue(ql.is_module_quiz("modules/00-orientation/module-quiz.yml"))
+        self.assertFalse(ql.is_module_quiz("modules/00-orientation/quiz.yml"))
+
+    def test_module_quiz_uses_same_schema(self):
+        # A module quiz is valid under the shared schema.
+        data = {"title": "M0 quiz", "questions": [q(id=f"x{i}") for i in range(10)]}
+        self.assertEqual(ql.validate_quiz(data), [])
+
+    def test_size_note_for_short_module_quiz(self):
+        data = {"questions": [q(id=f"x{i}") for i in range(3)]}
+        notes = ql.quiz_notes("modules/00/module-quiz.yml", data)
+        self.assertTrue(any("convention is" in n for n in notes))
+
+    def test_no_size_note_in_band(self):
+        data = {"questions": [q(id=f"x{i}") for i in range(10)]}
+        self.assertEqual(ql.quiz_notes("modules/00/module-quiz.yml", data), [])
+
+    def test_no_size_note_for_chapter_quiz(self):
+        # A 3-question per-chapter quick check is fine — the band only applies to module quizzes.
+        data = {"questions": [q(id=f"x{i}") for i in range(3)]}
+        self.assertEqual(ql.quiz_notes("modules/00/quiz.yml", data), [])
+
+
 if __name__ == "__main__":
     unittest.main()

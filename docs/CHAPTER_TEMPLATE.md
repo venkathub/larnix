@@ -53,13 +53,19 @@ est_minutes: 25                   # realistic time to read + run
 
     Each browser chapter also ships a CI "twin" `.ipynb` (same front-matter) that
     runs the worked example + exercise solutions under CPython (R10 gate, D0010).
+    Do NOT hand-write it: it is generated from the chapter by
+    `python infra/ci/make_twin.py --write <chapter.qmd>` and a CI drift check
+    (`--check`) fails if the committed twin falls out of sync (P1-D10). Hidden
+    `<details>` solutions must be runnable cells given the cells above them.
 
   • GPU/colab chapters: add an Open-in-Colab button with {{< colab path/to.ipynb >}}.
 
   • Key Takeaways box:  ::: {.key-takeaways}  ### Key Takeaways  1. … :::
 
-  • Auto-graded exercise: paste the grader helper (lib/grader.py) into a
-    `#| edit: false` setup cell, then call run_tests([(label, got, expected), …]).
+  • Auto-graded exercise: declare the grader once in front-matter
+    (`resources: [ ../../lib/grader.py ]`), then give EACH exercise a setup cell
+    (`#| setup: true` / `#| exercise: <id>`) with `from lib.grader import run_tests`,
+    and call run_tests([(label, got, expected), …]). See lib/README.md (P1-D9).
 
   • End-of-chapter quiz: author quiz.yml beside the chapter, mount with
     {{< quiz quiz.yml >}}.

@@ -1,0 +1,35 @@
+title: "Chapter 8 — quick check"
+id: "m1-ch8-traceback"
+questions:
+  - id: what-prints-it
+    prompt: "What produces a traceback?"
+    options:
+      - "Any try/except block, even when it recovers"
+      - "An exception that is not caught"
+      - "A print() call inside a loop"
+    answer: 1
+    explanation: "A traceback is what Python prints when an exception is not caught; a handled error shows none."
+  - id: read-order
+    prompt: "Where do you look first in a traceback?"
+    options:
+      - "The first line, at the top"
+      - "The last line, at the bottom"
+      - "The middle frame"
+    answer: 1
+    explanation: "Read bottom-up: the last line holds the ExceptionType and message."
+  - id: last-line
+    prompt: "What does the last line of a traceback contain?"
+    options:
+      - "The exception type and a message"
+      - "The name of the file that imported your module"
+      - "The total number of lines that ran"
+    answer: 0
+    explanation: "The bottom line is ExceptionType: message — the type before the colon, the hint after."
+  - id: which-type
+    prompt: "Which exception type does looking up a missing dict key (row['stpes']) raise?"
+    options:
+      - "ValueError"
+      - "IndexError"
+      - "KeyError"
+    answer: 2
+    explanation: "A dict key that doesn't exist raises KeyError; IndexError is for out-of-range list indices."

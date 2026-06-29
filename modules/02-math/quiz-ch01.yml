@@ -1,0 +1,35 @@
+title: "Chapter 1 — quick check"
+id: "m2-ch1-why-math"
+questions:
+  - id: which-math
+    prompt: "Which areas of math does AI mostly rely on?"
+    options:
+      - "Advanced number theory and topology"
+      - "A little linear algebra, calculus, and probability/statistics"
+      - "None — AI uses no math"
+    answer: 1
+    explanation: "A little linear algebra (vectors/matrices), calculus (derivatives/gradients), and probability/statistics cover most of it."
+  - id: intuition-first
+    prompt: "What is this module's approach to learning math?"
+    options:
+      - "Memorise formulas first, then apply them"
+      - "Build intuition with a picture first, then meet the symbols"
+      - "Skip the math entirely"
+    answer: 1
+    explanation: "Each idea starts as a picture; the notation comes after the intuition."
+  - id: line-relationship
+    prompt: "When tips rise with bills in a scatter plot, the relationship looks like…"
+    options:
+      - "A circle"
+      - "Roughly a line"
+      - "Random noise"
+    answer: 1
+    explanation: "The points rise together in a roughly straight line — a relationship you can draw and measure."
+  - id: building-toward
+    prompt: "What does this module build toward?"
+    options:
+      - "A full neural network library"
+      - "One artificial neuron, assembled piece by piece"
+      - "A web app"
+    answer: 1
+    explanation: "Each chapter adds a piece; the last assembles a single neuron's forward and backward pass."

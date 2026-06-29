@@ -1,0 +1,35 @@
+title: "Chapter 7 — quick check"
+id: "m2-ch7-gradients"
+questions:
+  - id: gradient-direction
+    prompt: "Which way does a gradient point, and how do you use it to go downhill?"
+    options:
+      - "It points downhill, so you step in the same direction as the gradient"
+      - "It points in the direction of steepest increase, so you step opposite it to go downhill"
+      - "It always points toward the minimum, so you copy it exactly"
+    answer: 1
+    explanation: "A gradient points in the direction of steepest increase (uphill); its negative points downhill, so descent steps move opposite the gradient."
+  - id: descent-rule
+    prompt: "What is one gradient-descent step?"
+    options:
+      - "new = old + learning_rate * gradient"
+      - "new = old - learning_rate * gradient"
+      - "new = old * learning_rate - gradient"
+    answer: 1
+    explanation: "You subtract: new = old - learning_rate * gradient, nudging the value a small step opposite the gradient to shrink the function."
+  - id: x-squared-step
+    prompt: "For f(x) = x^2 (gradient 2*x), one step from x = 5 with learning rate 0.1 gives…"
+    options:
+      - "4.0"
+      - "5.0"
+      - "4.9"
+    answer: 0
+    explanation: "The gradient at x = 5 is 2*5 = 10, so 5 - 0.1 * 10 = 4.0 — a step toward the minimum at 0."
+  - id: learning-rate-too-big
+    prompt: "What happens if the learning rate is far too large?"
+    options:
+      - "The steps are tiny and the value barely moves"
+      - "Each step overshoots the minimum and the value can bounce outward instead of settling"
+      - "Nothing changes — the learning rate only affects speed, never stability"
+    answer: 1
+    explanation: "Too large a rate makes each step jump past the minimum to a farther point, so the value bounces outward and can blow up instead of settling."

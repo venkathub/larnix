@@ -1,0 +1,314 @@
+---
+title: "What is AI, really?"
+module: "M0 — Orientation"
+chapter: 3
+difficulty: "beginner"
+prereqs:
+  - "M0 Ch1 — Train your first model"
+  - "M0 Ch2 — What you need & what it costs"
+learning_objectives:
+  - "Say in plain words what AI is"
+  - "Explain the shift from writing rules by hand to learning them from examples"
+  - "Recognise that a model is only as good as its data and can be confidently wrong"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: ai-plain-definition
+    q: "In plain words, what is AI?"
+    a: "Getting computers to do tasks that normally need human intelligence — recognising, deciding, predicting, generating."
+  - id: rules-vs-learning
+    q: "What is the key shift that powers modern AI?"
+    a: "Instead of writing every rule by hand, we let the computer learn the rule from labelled examples (machine learning)."
+  - id: only-as-good-as-data
+    q: "Why can a trained model be confidently wrong?"
+    a: "Its behaviour is learned from data, so gaps or biases in the examples become gaps or biases in the model."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Open your phone's photo app and search "dog." It finds every dog photo you've
+ever taken — including dogs it has never seen, in your friend's pictures. Nobody
+sat down and wrote instructions like *"if the image has fur and four legs and a
+wet nose, it's a dog."* That rule would be hopeless: it would flag cats, miss
+dogs in costumes, and break on a photo taken in the dark.
+
+Instead, the app was **shown** hundreds of thousands of labelled photos — *this is
+a dog, this is not* — and it worked out the pattern on its own. That is the whole
+idea behind modern AI, and it is exactly what you did in Chapter 1: you showed a
+program labelled flowers, and it learned to name the species.
+
+> You'll need from before: Chapter 1's loop (load → train → predict → measure) and
+> the word **model** — a function learned from examples.
+
+---
+
+## AI, in plain language
+
+**Artificial intelligence** is getting computers to do tasks that normally need
+human intelligence — recognising a face, understanding a sentence, deciding which
+move to play, predicting tomorrow's demand, writing a paragraph.
+
+For decades, the only way to make a computer do anything was to **write the rules
+by hand**: spell out every step, every *if-this-then-that*. That works for taxes
+and traffic lights. It falls apart for "is this a dog?", because nobody can write
+down, in code, every rule for what a dog looks like.
+
+The breakthrough was to stop writing the rules and start **learning** them:
+
+- **Traditional programming:** you write the rules; the computer follows them.
+- **Machine learning:** you show examples; the computer works out the rules.
+
+Machine learning (ML) is the engine under almost everything called "AI" today. A
+**model** is the learned rule. Training is the act of learning it from labelled
+examples. You met all three words in Chapter 1 — here they are again, named.
+
+### Learned behaviour, not a hand-written rule
+
+The important phrase is **learned behaviour**. The iris model's rule for telling
+species apart was never typed by a person; it was shaped by the data. Change the
+data and you change the behaviour. This is powerful — and it is the source of
+AI's biggest weakness.
+
+> ⚠️ Watch out: a model is **only as good as its examples**. If the training photos
+> were all of golden retrievers in daylight, the app will struggle with a black dog
+> at night. Worse, a model can be **confidently wrong** — it outputs an answer with
+> no sense of "I'm unsure." Treat its predictions as informed guesses, not facts.
+
+### Everyday AI you already use
+
+Each of these learned its behaviour from data, not from hand-written rules:
+
+- **Autocomplete** finishing your sentence — learned from mountains of text.
+- **Recommendations** ("you might also like…") — learned from what people watched.
+- **Spam filters** — learned from messages people marked as spam.
+- **Voice assistants** turning speech into text — learned from recorded speech.
+
+We'll sort out how these relate — AI vs ML vs deep learning vs generative AI — in
+the next chapter. First, let's *watch* a program learn a rule from data.
+
+---
+
+## Let's build it (worked example)
+
+Here is the whole idea in a few lines: a spam filter that **learns** which words
+signal spam, instead of us writing them down. Press **Run**.
+
+```{pyodide}
+#| caption: "A tiny labelled dataset — messages people marked spam (1) or not (0)"
+messages = [
+    "win a free prize now",
+    "lunch at noon?",
+    "free money click here",
+    "call me later",
+    "you won a free trip",
+]
+labels = [1, 0, 1, 0, 1]   # 1 = spam, 0 = not spam (ham)
+
+for text, is_spam in zip(messages, labels):
+    print(("SPAM" if is_spam else "ham "), "|", text)
+```
+
+```{pyodide}
+#| caption: "Learn the spam words straight from the examples — no rule written by hand"
+from collections import Counter
+
+spam_words, ham_words = Counter(), Counter()
+for text, is_spam in zip(messages, labels):
+    for word in set(text.split()):
+        (spam_words if is_spam else ham_words).update([word])
+
+# Words that show up in spam but never in the normal messages.
+learned = sorted(w for w in spam_words if w not in ham_words)
+print("Words the program learned to associate with spam:")
+print(learned)
+```
+
+The program was never told that "free" means spam. It **noticed** it, by counting
+across the labelled examples. Now we use what it learned on a message it has never
+seen:
+
+```{pyodide}
+#| caption: "Classify a brand-new message with the learned words"
+def looks_spammy(message, spam_words):
+    return any(word in spam_words for word in message.split())
+
+new_message = "claim your free prize"
+print(new_message, "->", "spam" if looks_spammy(new_message, learned) else "ham")
+```
+
+That is machine learning in miniature: behaviour (which messages are spam) learned
+from examples, then applied to new data. A real spam filter does the same thing
+with millions of messages and far cleverer counting — but the shape is identical.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **AI** is getting computers to do tasks that normally need human intelligence.
+2. Its modern engine is **machine learning**: learn the rule from labelled
+   examples instead of writing it by hand.
+3. A model's behaviour is **learned from data** — so it is only as good as that
+   data, and it can be **confidently wrong**.
+4. You have now seen it twice: the iris model and the spam demo both learned a
+   rule no one typed out.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `count_with_word` counts how many messages contain a
+given word. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count
+def count_with_word(messages, word):
+    """Count how many messages contain `word`."""
+    return sum(1 for m in messages if ____)  # TODO: is `word` inside message m?
+
+run_tests([
+    ("counts the matches", count_with_word(["win free money", "hello", "free lunch"], "free"), 2),
+    ("none match", count_with_word(["a", "b"], "free"), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You want the messages that *contain* the word. Python's `in` checks membership:
+`"free" in "free lunch"` is `True`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def count_with_word(messages, word):
+    return sum(1 for m in messages if word in m)
+```
+
+`word in m` is `True` when the message contains the word; summing those `True`s
+counts the matches.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `classify(message, spam_words)` — return `"spam"` if the message contains
+any spam word, otherwise `"ham"`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_classify
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_classify
+def classify(message, spam_words):
+    """Return 'spam' if any spam word appears in the message, else 'ham'."""
+    for word in spam_words:
+        if word in message:
+            return ____  # TODO: which label fits a message with a spam word?
+    return "ham"
+
+run_tests([
+    ("a spammy message", classify("win a free prize", ["free", "win"]), "spam"),
+    ("a clean message",  classify("see you at noon", ["free", "win"]), "ham"),
+    ("no spam words to check", classify("anything goes", []), "ham"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The loop only reaches its body when a spam word *is* in the message. So at that
+point, what label should the function hand back?
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def classify(message, spam_words):
+    for word in spam_words:
+        if word in message:
+            return "spam"
+    return "ham"
+```
+
+If any spam word is found, return `"spam"` immediately; if the loop finishes
+without a match, the message is `"ham"`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Find the weakness in our
+keyword approach: write a message that is clearly spam to a human but that
+`classify` would label `"ham"` (it uses none of the spam words). Then explain, in
+two sentences, how *learning from more labelled examples* would help catch it.
+
+**Rubric — a good answer:**
+
+- Gives a genuinely spammy message that the keyword list misses.
+- Explains that more (and more varied) labelled spam would teach the model new
+  signals — words, phrasing, patterns — beyond a short fixed list.
+- Notes that no fixed keyword list can keep up; learning from data is what scales.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+print(classify("urgent: verify your account to avoid suspension", ["free", "win"]))
+# -> 'ham', even though a human reads it as spam
+```
+
+"This message uses none of our two keywords, so the classifier misses it. If we
+showed the model thousands of labelled messages, it would learn that words like
+*urgent*, *verify*, and *suspension* also signal spam — far more than we could
+ever list by hand, which is exactly why learning from data beats fixed rules."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now say what AI is: computers doing intelligence-like tasks by **learning
+rules from examples**. But "AI" is a big word that hides several nested ideas —
+machine learning, deep learning, and the generative AI behind today's chatbots.
+Next we draw the family tree, with one concrete example for each branch.

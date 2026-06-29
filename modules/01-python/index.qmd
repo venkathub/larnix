@@ -1,0 +1,45 @@
+---
+title: "M1 — Python for AI"
+toc: false
+---
+
+Enough Python to *handle data*: read and clean a file, write a function, use the
+core data structures, debug from a traceback, and write code a beginner can
+re-read. Clarity over cleverness, from the first line.
+
+## Start here
+
+Work through the chapters in order, beginning with
+[**Chapter 1 — Variables & types**](ch01-variables-and-types.qmd). Each runs in
+your browser at ₹0; press **Run** on every code block. The whole module cleans one
+deliberately messy `habits.csv` a little more each chapter.
+
+| # | Chapter |
+|---|---------|
+| 1 | [Variables & types](ch01-variables-and-types.qmd) |
+| 2 | [Control flow](ch02-control-flow.qmd) |
+| 3 | [Functions](ch03-functions.qmd) |
+| 4 | [Data structures](ch04-data-structures.qmd) |
+| 5 | [Comprehensions](ch05-comprehensions.qmd) |
+| 6 | [Reading & writing files (CSV/JSON)](ch06-reading-writing-files.qmd) |
+| 7 | [Errors & exceptions](ch07-errors-exceptions.qmd) |
+| 8 | [Reading a traceback](ch08-reading-a-traceback.qmd) |
+| 9 | [A little OOP](ch09-a-little-oop.qmd) |
+| 10 | [Clean, readable code](ch10-clean-readable-code.qmd) |
+| 11 | [Pythonic data idioms](ch11-pythonic-idioms.qmd) |
+| 12 | [A NumPy preview](ch12-numpy-preview.qmd) |
+| 13 | [Environments & packages](ch13-environments-packages.qmd) |
+| 14 | [Notebooks, the IDE & Colab](ch14-notebooks-ide-colab.qmd) |
+
+## Module quiz
+
+When you've finished the chapters, test the whole module. Your score is saved in
+your browser.
+
+{{< quiz module-quiz.yml >}}
+
+## Capstone
+
+Finish with the module project: [**Data-cleaning notebook**](capstone.md) — turn
+the messy `habits.csv` into a clean, typed, de-duplicated table with your own
+functions, and report how many rows you removed.

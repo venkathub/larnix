@@ -1,0 +1,420 @@
+---
+title: "Pandas Series & DataFrame"
+module: "M3 — Data & Tooling"
+chapter: 2
+difficulty: "beginner"
+prereqs:
+  - "M3 Ch1 — NumPy & vectorization"
+learning_objectives:
+  - "Describe a Series as a labelled 1-D column of values"
+  - "Describe a DataFrame as a table built from named columns of Series"
+  - "Load a CSV and inspect it with .shape, .head, .columns, and .describe"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: series-vs-dataframe
+    q: "What is the difference between a pandas Series and a DataFrame?"
+    a: "A Series is a single labelled 1-D column of values; a DataFrame is a 2-D table made of several named columns, each of which is a Series."
+  - id: shape-returns
+    q: "What does df.shape return?"
+    a: "A tuple (rows, columns) — the number of rows first, then the number of columns. For the penguins table it is (344, 8)."
+  - id: select-a-column
+    q: "What do you get back from df['col']?"
+    a: "A Series — the single column named 'col', with its row labels (the index) attached."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Open a spreadsheet and you already understand the shape of pandas. A spreadsheet
+is a **table**: rows of records, columns with names, and a header strip along the
+top. Pandas gives you that same table in Python — except now you can sort,
+filter, average, and reshape millions of rows with a line of code instead of
+dragging a mouse.
+
+Pandas has exactly **two** objects you need to meet first, and everything else
+builds on them:
+
+- A **Series** — one column. A labelled list of values, like a single column of
+  the spreadsheet pulled out on its own.
+- A **DataFrame** — the whole table. A collection of named columns sitting side
+  by side, each column being a Series.
+
+That's the entire mental model. In this chapter we load a real dataset — 344
+penguins measured at Palmer Station, Antarctica — and learn the handful of
+commands that let you size up *any* table the moment it lands on your screen.
+
+> You'll need from before: NumPy arrays and vectorized thinking (M3 Ch1). A
+> pandas column is a NumPy array wearing a name tag, so that intuition carries
+> straight over.
+
+---
+
+## A Series is a labelled column
+
+A Python list holds values by *position* — `values[0]`, `values[1]`, and so on. A
+**Series** holds values too, but it pairs each value with a **label** (its
+*index*). By default the labels are `0, 1, 2, …`, but the point is that the
+label travels with the value wherever it goes.
+
+```{pyodide}
+#| caption: "A Series: values on the right, their index labels on the left"
+import pandas as pd
+
+masses = pd.Series([3750, 3800, 3250, 3450])
+masses
+```
+
+Notice the two columns of output: the **index** (`0, 1, 2, 3`) on the left and the
+**values** on the right, plus a `dtype` (here `int64`) telling you what kind of
+data this column holds. A Series is one-dimensional — a single line of data with
+labels.
+
+Because a Series is built on NumPy, whole-column arithmetic and summaries come for
+free. There is no loop to write:
+
+```{pyodide}
+#| caption: "Whole-Series operations: a summary and a vectorized transform"
+import pandas as pd
+
+masses = pd.Series([3750, 3800, 3250, 3450])
+print("mean mass:", masses.mean())
+print("in kilograms:")
+print(masses / 1000)
+```
+
+`masses.mean()` collapses the column to one number; `masses / 1000` returns a new
+Series, dividing every value at once while keeping the same labels. That is the
+NumPy "operate on the whole array" idea, now with an index attached.
+
+## A DataFrame is a table of Series
+
+Stack several labelled columns side by side, sharing one index, and you have a
+**DataFrame** — pandas' name for a table. Each column is a Series; the column
+*names* let you ask for the one you want.
+
+You can build a small DataFrame straight from a dictionary, where each key becomes
+a column name and each value becomes that column's data:
+
+```{pyodide}
+#| caption: "A DataFrame built from a dict: keys are column names, values are columns"
+import pandas as pd
+
+df = pd.DataFrame({
+    "species": ["Adelie", "Adelie", "Gentoo"],
+    "body_mass_g": [3750, 3800, 5000],
+})
+df
+```
+
+Two named columns, one shared index down the left. Real datasets, though, rarely
+arrive as hand-typed dictionaries — they arrive as files. So let's load one.
+
+## Loading a CSV and sizing it up
+
+We'll use the **Palmer Penguins** dataset: body measurements for 344 penguins of
+three species. The chapter ships the CSV alongside it, and the `load_csv` helper
+reads it for you — the same call works in your browser and in our test runner.
+
+```{pyodide}
+#| caption: "Load the penguins CSV into a DataFrame"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.shape
+```
+
+The first thing to check on any new table is its **shape**. `df.shape` returns a
+tuple `(rows, columns)` — here **`(344, 8)`**. That single line tells you the
+dataset has 344 records described by 8 columns, before you've looked at a single
+value.
+
+Next, peek at the actual rows with `.head()`, which returns the first five by
+default:
+
+```{pyodide}
+#| caption: "df.head() — the first few rows, to eyeball the data"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.head()
+```
+
+Now you can see what each row *is*: a penguin, with its species, the island it was
+seen on, four body measurements, its sex, and the study year. To get the column
+names on their own — handy when a table is too wide to read at a glance — ask for
+`.columns`:
+
+```{pyodide}
+#| caption: "df.columns — the names of every column"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+list(df.columns)
+```
+
+That returns the eight names:
+`species, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g,
+sex, year`. The `_mm` and `_g` suffixes are a gift from whoever prepared the data —
+the units are baked into the names.
+
+### Summarising every numeric column at once
+
+`.describe()` is the fastest way to understand the *numbers* in a table. For every
+numeric column it reports the count, mean, standard deviation, min, max, and the
+quartiles — a one-line statistical X-ray:
+
+```{pyodide}
+#| caption: "df.describe() — count, mean, spread, and quartiles per numeric column"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.describe()
+```
+
+Read down the `body_mass_g` column of that summary and you'll find a mean of about
+**4201.75** grams — these penguins average a little over four kilograms. The
+`flipper_length_mm` mean lands near **200.92** mm. Note the `count` row: it can be
+*lower* than 344 for some columns, because a few penguins have missing
+measurements — `.describe()` quietly skips them, which is a detail worth noticing
+early.
+
+### Pulling out one column
+
+To work with a single column, index the DataFrame with its name in square
+brackets. What comes back is a **Series** — that same labelled column from the
+start of the chapter, now sourced from real data:
+
+```{pyodide}
+#| caption: "Selecting one column returns a Series, which you can summarise"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+mass = df["body_mass_g"]
+print(type(mass).__name__)
+print("mean body mass:", round(mass.mean(), 2))
+```
+
+`df["body_mass_g"]` is a Series, so every Series tool applies: `.mean()` gives
+**4201.75**, matching what `.describe()` reported. Selecting a column and
+summarising it is the bread-and-butter move of exploratory data analysis, and
+you'll repeat it constantly.
+
+One more useful summary for a *text* column is `.value_counts()`, which tallies how
+often each value appears:
+
+```{pyodide}
+#| caption: "value_counts() — how many penguins of each species"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df["species"].value_counts()
+```
+
+That shows **Adelie 152, Gentoo 124, Chinstrap 68** — Adelie is the most common
+species in the dataset. With `.shape`, `.head`, `.columns`, `.describe`, column
+selection, and `.value_counts`, you can walk up to almost any table and know what
+it holds within a minute.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **Series** is a labelled 1-D column: values paired with an index, built on
+   NumPy so whole-column maths needs no loop.
+2. A **DataFrame** is a 2-D table — several named columns (each a Series) sharing
+   one index.
+3. `df.shape` returns `(rows, columns)`; for penguins it is **(344, 8)**.
+   `.head()`, `.columns`, and `.describe()` size up a table fast.
+4. Selecting a column with `df['col']` returns a **Series**, so every Series
+   summary like `.mean()` applies to it directly.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made data so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Build a Series from a list of numbers and return its total as an `int`. Complete
+`series_total` by replacing `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_series_total
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_series_total
+import pandas as pd
+
+def series_total(values):
+    """Build a Series from values and return its sum as an int."""
+    return ____  # TODO: int(pd.Series(values).sum())
+
+run_tests([
+    ("sums", series_total([10, 20, 30]), 60),
+    ("one value", series_total([7]), 7),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Wrap the list in `pd.Series(...)`, call `.sum()` on it, and pass the result to
+`int(...)` so the return type is a plain integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def series_total(values):
+    return int(pd.Series(values).sum())
+```
+
+`pd.Series(values)` turns the list into a labelled column; `.sum()` adds every
+value, and `int(...)` returns it as a plain Python integer.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build a DataFrame from a dictionary, select one column by name, and return the
+**rounded mean** of that column. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_column_mean
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_column_mean
+import pandas as pd
+
+def column_mean(data, col):
+    """Build a DataFrame from a dict and return the rounded mean of one column."""
+    return ____  # TODO: round(float(pd.DataFrame(data)[col].mean()), 2)
+
+run_tests([
+    ("mean of a", column_mean({"a": [1, 2, 3], "b": [4, 5, 6]}, "a"), 2.0),
+    ("mean of b", column_mean({"a": [1, 2, 3], "b": [4, 5, 6]}, "b"), 5.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`pd.DataFrame(data)` builds the table; `[col]` selects one column as a Series;
+`.mean()` averages it. Wrap that in `float(...)`, then `round(..., 2)` for two
+decimal places.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def column_mean(data, col):
+    return round(float(pd.DataFrame(data)[col].mean()), 2)
+```
+
+`pd.DataFrame(data)[col]` is the column as a Series; `.mean()` averages it,
+`float(...)` makes the type predictable, and `round(..., 2)` trims it to two
+decimal places.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset, run
+`df.describe()`, and report two facts in your own `print` statements: the **mean
+body mass** (about 4201.75 g) and which **species is most common** (Adelie, with
+152 birds).
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and calls `df.describe()` to inspect the numbers.
+- Prints the mean of `body_mass_g` (≈ 4201.75) read from the data, not typed in by
+  hand.
+- Reports the most common species using `value_counts()` (Adelie, 152).
+
+<details><summary>If you're stuck</summary>
+
+Select `df["body_mass_g"]` and call `.mean()` for the first fact. For the second,
+`df["species"].value_counts()` lists species by frequency; the first row is the
+most common one, and `.idxmax()` gives only its name.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+print(df.describe())
+
+mean_mass = round(df["body_mass_g"].mean(), 2)
+print("mean body mass (g):", mean_mass)
+
+counts = df["species"].value_counts()
+print("most common species:", counts.idxmax(), "with", int(counts.max()), "birds")
+```
+
+This prints a mean body mass of `4201.75` and reports `Adelie` as the most common
+species with `152` birds — both read straight from the data rather than typed in.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now load a table and size it up — shape, head, columns, a numeric summary,
+and a single column pulled out as a Series. That inspection ritual is the first
+thing a working data scientist does with any new dataset. Next we go from *looking*
+to *choosing*: selecting rows and columns by label and position, and filtering a
+DataFrame down to only the penguins you care about.

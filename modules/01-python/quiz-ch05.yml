@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m1-ch5-comprehensions"
+questions:
+  - id: what-it-replaces
+    prompt: "What does the list comprehension `[d['steps'] for d in days]` replace?"
+    options:
+      - "A function definition"
+      - "The pattern: make an empty list, loop, and append each value"
+      - "A dict lookup"
+    answer: 1
+    explanation: "It builds the list in one line instead of the empty-list / loop / append ritual."
+  - id: filter
+    prompt: "How do you keep only some items in a comprehension?"
+    options:
+      - "Put an if at the end: [expr for x in items if condition]"
+      - "There is no way to filter in a comprehension"
+      - "Use a while loop inside"
+    answer: 0
+    explanation: "A trailing if filters which items are included."
+  - id: dict-comp
+    prompt: "Which builds a date → steps mapping?"
+    options:
+      - "[d['date'] for d in days]"
+      - "{d['date']: d['steps'] for d in days}"
+      - "(d['date'] for d in days)"
+    answer: 1
+    explanation: "A dict comprehension uses key: value pairs to build a mapping."
+  - id: when-not
+    prompt: "When should you prefer a plain for loop over a comprehension?"
+    options:
+      - "Always — comprehensions are never useful"
+      - "When the logic is complex (several conditions or nested loops) and a loop reads more clearly"
+      - "Only on Tuesdays"
+    answer: 1
+    explanation: "Comprehensions shine for clear one-thought transforms; complex logic is clearer as a loop."

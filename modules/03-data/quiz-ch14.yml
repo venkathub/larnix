@@ -1,0 +1,35 @@
+title: "Chapter 14 — quick check"
+id: "m3-ch14-messy-data"
+questions:
+  - id: why-variants-are-a-problem
+    prompt: "Why are 'M', 'male', and 'Male' a problem in a category column?"
+    options:
+      - "Pandas automatically merges values that look similar, so they are already one group"
+      - "Pandas compares text exactly, so it counts them as three separate categories even though they mean one thing"
+      - "Text columns can never be counted or grouped at all"
+    answer: 1
+    explanation: "Pandas matches strings character for character. Differences in case and abbreviation make distinct values, so a count or group-by splits one real category into three."
+  - id: how-to-normalise-text
+    prompt: "Which one-line fix collapses '  Male', 'male', and 'MALE' into the same value?"
+    options:
+      - "col.str.strip().str.lower()"
+      - "col.astype(int)"
+      - "col.dropna()"
+    answer: 0
+    explanation: ".str.strip() removes the leading and trailing whitespace and .str.lower() forces one case, so all three become the single string 'male'."
+  - id: why-currency-needs-conversion
+    prompt: "Why must '₹1,200' be converted before you can total a price column?"
+    options:
+      - "It is text — the currency symbol and comma make it a string, so arithmetic fails or concatenates instead of adding"
+      - "The number is too large for pandas to store"
+      - "Pandas needs the rupee symbol removed for legal reasons"
+    answer: 0
+    explanation: "The symbol and thousands comma make the value a string. You strip them with .str.replace(...) and then .astype(float) so .sum() and .mean() work on real numbers."
+  - id: what-consolidating-achieves
+    prompt: "What does consolidating categories (mapping 'm' and 'male' to one label) achieve?"
+    options:
+      - "It deletes rows that contain abbreviations"
+      - "It makes the column take up less memory but changes nothing about the analysis"
+      - "It counts each real category once, so group-bys, charts, and models see the true number of groups"
+    answer: 2
+    explanation: "Folding synonyms into one label means a real category is represented by a single value, so counts, group-bys, and models reflect the true groups rather than spelling variants."

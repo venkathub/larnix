@@ -1,0 +1,313 @@
+---
+title: "Probability basics"
+module: "M2 — Math You Actually Need"
+chapter: 9
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch1 — Why math for AI"
+learning_objectives:
+  - "Read a probability as a number from 0 (impossible) to 1 (certain)"
+  - "Compute a probability as favourable outcomes divided by total outcomes"
+  - "Multiply probabilities for two independent events to get the chance of both"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: prob-scale
+    q: "What does a probability measure, and what range does it take?"
+    a: "How likely an event is, as a number from 0 (impossible) to 1 (certain). A fair coin landing heads is 0.5."
+  - id: prob-formula
+    q: "How do you compute a probability when every outcome is equally likely?"
+    a: "Favourable outcomes divided by total outcomes. Rolling a 6 on a fair die is 1/6; getting heads on a coin is 1/2 = 0.5."
+  - id: independent-and
+    q: "For two independent events A and B, what is the chance that both happen?"
+    a: "Multiply them: P(A and B) = P(A) * P(B). Two heads in a row is 0.5 * 0.5 = 0.25."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Flip a fair coin. Will it land heads? You can't know — but you can say *how likely*
+it is: half the time. That "half" is a **probability**, and probability is how AI
+reasons about anything it can't be certain of: which word comes next, which class a
+photo belongs to, how confident a prediction is.
+
+A probability is a single number on a fixed scale from **0** to **1**. Zero means
+the event can't happen; one means it's certain; **0.5** means it's as likely as not.
+Nothing is ever below 0 or above 1. Once you can put a number on "how likely", you
+can compare events, combine them, and let a model act on them.
+
+> You'll need from before: the idea that math here starts with a picture and a
+> little arithmetic (M2 Ch1). No new tools — counting and multiplying are enough.
+
+---
+
+## Probability = favourable ÷ total
+
+When every outcome is equally likely, the recipe is a count and a division:
+
+$$
+P(\text{event}) = \frac{\text{favourable outcomes}}{\text{total outcomes}}
+$$
+
+- A coin has **2** equally likely outcomes (heads, tails). One of them is heads, so
+  the chance of heads is `1 / 2 = 0.5`.
+- A six-sided die has **6** equally likely outcomes. One of them is a 6, so the
+  chance of rolling a 6 is `1 / 6 ≈ 0.167`.
+- An **event** can cover several outcomes. "Roll an even number" is favoured by
+  three outcomes (2, 4, 6) out of 6, so its probability is `3 / 6 = 0.5`.
+
+That last line is worth pausing on: an *outcome* is one single result, an *event* is
+the set of outcomes you care about. The probability is the share of total outcomes
+that count as favourable. Because the favourable count is never more than the total,
+the answer always lands between 0 and 1.
+
+## Independent events: the chance of both
+
+Two events are **independent** when one happening tells you nothing about the other.
+A coin flip and a die roll are independent; a second coin flip doesn't remember the
+first. For independent events, the chance that **both** happen is the **product** of
+their probabilities:
+
+$$
+P(A \text{ and } B) = P(A) \times P(B)
+$$
+
+So two heads in a row is `0.5 * 0.5 = 0.25` — it happens about a quarter of the time.
+Multiplying makes sense because each event narrows the field: half of all flips start
+with a head, and half of *those* follow with another head, leaving a quarter. Notice
+the product is never larger than either part, which matches intuition — asking for two
+things to both happen is harder than asking for one.
+
+A quick check on the formula's edges: if `P(A) = 1` (certain), then `P(A and B)` is
+`1 * P(B) = P(B)` — a certain event doesn't change the odds of the other. If either
+probability is 0, the product is 0: one impossible event makes the pair impossible.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Model a probability as a `double` constrained to `[0.0, 1.0]` — not a percentage
+`int` like `50`, which invites off-by-100 bugs when you multiply (`0.5 * 0.5 = 0.25`,
+but `50 * 50 = 2500` is nonsense). Independence is captured by plain multiplication:
+`double both = pA * pB;`, no special library needed.
+
+When you want to *check* a probability empirically, reach for a **seeded** RNG so runs
+are reproducible: `new Random(42)` in Java, or `random.Random(42)` in Python. Counting
+how often two flips both come up heads over many trials converges toward `0.25` — the
+simulation and the formula agree, which is a good way to sanity-check either one.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's picture the outcomes of a fair six-sided die. Each face is equally likely, so
+all six bars sit at the same height, `1/6 ≈ 0.167`. A fair process looks **flat** —
+no outcome is favoured over another.
+
+```{pyodide}
+#| caption: "Each face of a fair die is equally likely — a flat bar chart at 1/6"
+#| fig-alt: "Bar chart with six bars labelled 1 to 6 along the x-axis, all the same height at about 0.167 (one sixth), showing every die face is equally likely."
+import matplotlib.pyplot as plt
+
+faces = [1, 2, 3, 4, 5, 6]
+probs = [1 / 6 for _ in faces]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.bar([str(f) for f in faces], probs, color="tab:blue")
+ax.set_xlabel("die face")
+ax.set_ylabel("probability")
+ax.set_ylim(0, 0.3)
+ax.set_title("Fair die: every face has probability 1/6")
+plt.show()
+```
+
+The bars are level because the die is fair, and they add up to 1 — together the six
+outcomes cover every possibility. That "flat shape sums to 1" is the picture behind
+the favourable-÷-total recipe: split the whole (1) evenly across the equally likely
+outcomes, and read off the share you care about.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **probability** is a number from **0** (impossible) to **1** (certain)
+   describing how likely an event is; 0.5 is as likely as not.
+2. When outcomes are equally likely, `P(event) = favourable / total` — a head on a
+   coin is `1/2 = 0.5`, a 6 on a die is `1/6`.
+3. An **event** can cover several outcomes (e.g. "even" = 2, 4, 6), so its
+   probability is the share of total outcomes that count.
+4. Events are **independent** when one says nothing about the other; then
+   `P(A and B) = P(A) * P(B)` — two heads is `0.5 * 0.5 = 0.25`.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Complete `probability` so it returns the share of outcomes that are favourable —
+favourable divided by total. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_probability
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_probability
+def probability(favourable, total):
+    """Probability when every outcome is equally likely."""
+    return ____  # TODO: favourable outcomes divided by total outcomes
+
+run_tests([
+    ("one head in a coin flip", probability(1, 2), 0.5),
+    ("two heads out of four equally likely pairs", probability(1, 4), 0.25),
+    ("even number on a die", probability(3, 6), 0.5),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The recipe is one division: favourable outcomes over total outcomes,
+`favourable / total`. For a 6 on a die that's `1 / 6`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def probability(favourable, total):
+    return favourable / total
+
+run_tests([
+    ("one head in a coin flip", probability(1, 2), 0.5),
+    ("two heads out of four equally likely pairs", probability(1, 4), 0.25),
+    ("even number on a die", probability(3, 6), 0.5),
+])
+```
+
+`favourable / total` is the share of equally likely outcomes that count: `1 / 2`
+is `0.5`, and `3 / 6` is also `0.5` because three of the six faces are even.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `both_independent(p_a, p_b)` — the chance that two **independent** events both
+happen. For independent events you multiply their probabilities. Complete the marked
+line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_both
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_both
+def both_independent(p_a, p_b):
+    """Chance that two independent events both happen."""
+    return ____  # TODO: the product of the two probabilities
+
+run_tests([
+    ("two heads in a row", both_independent(0.5, 0.5), 0.25),
+    ("a head then a 1-in-5 event", both_independent(0.5, 0.2), 0.1),
+    ("a certain event then a 0.3 event", both_independent(1.0, 0.3), 0.3),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Independence means you multiply: `p_a * p_b`. Two halves give `0.5 * 0.5 = 0.25`,
+and a certain event (`1.0`) leaves the other probability unchanged.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def both_independent(p_a, p_b):
+    return p_a * p_b
+
+run_tests([
+    ("two heads in a row", both_independent(0.5, 0.5), 0.25),
+    ("a head then a 1-in-5 event", both_independent(0.5, 0.2), 0.1),
+    ("a certain event then a 0.3 event", both_independent(1.0, 0.3), 0.3),
+])
+```
+
+`p_a * p_b` combines independent events: each one narrows the field, so the chance
+of both is smaller than either alone — unless one is certain (`1.0`), which leaves
+the other untouched.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). A fair coin has a `0.5` chance of
+heads on each flip, and flips are independent. Compute the chance of getting
+**three heads in a row**, then print it. Explain in a comment why you multiply.
+
+**Rubric — a good answer:**
+
+- States the per-flip probability of heads (`0.5`) and that the flips are independent.
+- Combines three independent events by **multiplying** their probabilities.
+- Prints the result (`0.125`) and notes that more required flips makes the chance
+  smaller.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def both_independent(p_a, p_b):
+    return p_a * p_b
+
+p_head = 0.5  # fair coin, independent flips
+
+# Three heads: multiply the per-flip probabilities together.
+three_heads = both_independent(both_independent(p_head, p_head), p_head)
+print(f"P(three heads in a row) = {three_heads}")  # 0.125
+```
+
+Each flip is independent, so the chance of all three is `0.5 * 0.5 * 0.5 = 0.125` —
+about one run in eight. Every extra required head halves the chance, because you're
+asking for one more independent thing to also go your way.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch09.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now put a number on "how likely", and combine independent events by
+multiplying. Next we zoom out from single events to the whole **shape** of the
+possibilities — **distributions**: how probability spreads across all the outcomes
+at once, and what an "average" outcome means.

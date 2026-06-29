@@ -1,0 +1,349 @@
+---
+title: "Notebooks, the IDE & Colab"
+module: "M1 — Python for AI"
+chapter: 14
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+  - "M1 Ch13 — Environments & packages"
+learning_objectives:
+  - "Name the main places you can write and run Python: an in-browser notebook, a local IDE, Jupyter, and a cloud notebook"
+  - "Explain that each place runs the same Python and differs mainly in install, cost, and available compute"
+  - "Pick the right place for a task: quick learning, a real project, or work that needs a GPU"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 14
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: same-python
+    q: "How do an in-browser notebook, a local IDE, and Colab relate to each other?"
+    a: "They're all places to run the same Python. They differ in install effort, cost, and how much compute (e.g. a GPU) you can reach — not in the language itself."
+  - id: which-place
+    q: "Which place fits quick learning, which fits a real project, and which fits GPU work?"
+    a: "An in-browser notebook for quick learning (zero install, ₹0); a local code editor / IDE for a real multi-file project; a free cloud notebook (Colab or Kaggle) when you need a GPU."
+  - id: colab-gpu
+    q: "How do you get a free GPU on Google Colab?"
+    a: "Open the notebook in Colab, then Runtime → Change runtime type → choose a GPU. Kaggle offers a similar free GPU notebook."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You've written real Python over thirteen chapters — and every line of it ran right
+here, in a notebook inside your browser, with nothing to install. That's one place
+to write code. There are a few others, and choosing well saves you hours.
+
+Think of it like a kitchen. A microwave is fast and needs no setup — great for a
+quick snack. A full stove is more work to set up but right for a real meal. A
+restaurant kitchen has equipment you'd never buy for home. None is "better"; you
+pick by the job. Writing Python is the same: the same language runs in a browser
+notebook, a code editor on your laptop, or a cloud machine with a GPU. This chapter
+is the *what and when* of those places.
+
+> You'll need from before: that you `import` packages and run cells here (Ch1), and
+> that each project keeps its packages in an environment you install (Ch13).
+
+---
+
+## The same Python, in different places
+
+Here's the idea to hold onto: **a place to write code is not a different language.**
+`for`, `def`, and `import` mean the same thing everywhere. What changes between
+places is three practical things:
+
+- **Install** — how much you set up before the first line runs.
+- **Cost** — whether it's free (₹0) or costs money.
+- **Compute** — how much hardware you can reach, especially a **GPU** (a chip that
+  trains models far faster than a laptop's processor).
+
+With that lens, here are the four places you'll meet in this course.
+
+### 1. An in-browser notebook (where you are now)
+
+A **notebook** is a page of **cells** — small blocks you run one at a time — mixed
+with prose. The one you're reading runs Python *in the browser itself* through a
+runtime called **Pyodide**: zero install, ₹0, nothing to break. It's the best place
+to **learn** and to try a quick idea, which is why the whole of M1 lives here.
+
+### 2. A local code editor / IDE
+
+An **IDE** (Integrated Development Environment) is an app on your own machine for
+writing code — **VS Code** and **PyCharm** are common ones. Your code lives in
+files on your disk, runs against the virtual environment you set up in Ch13, and
+the editor adds tools: autocomplete, a debugger, and search across many files. This
+is the home of a **real project** — anything with more than one file that you'll
+keep and grow.
+
+### 3. Jupyter notebooks
+
+**Jupyter** is the notebook format the browser page imitates, run on your own
+machine. Same cells-plus-prose feel, but with your local environment and files
+behind it. It shines for **data exploration**: load a table, plot it, tweak a cell,
+re-run, repeat — keeping the story and the output side by side.
+
+### 4. A free cloud notebook with a GPU
+
+When a task needs more muscle than a laptop — training a neural network, say —
+you open a notebook on a **cloud** machine that has a free GPU. **Google Colab**
+and **Kaggle** both give you this at ₹0. You'll use them from Module 5 on; your
+laptop never has to do the heavy lifting.
+
+> 💡 **On a free cloud notebook (not here).** This page runs in your browser, so
+> there's no GPU to switch on right here — but the workflow elsewhere is short.
+> On **Google Colab** you open the notebook in Colab, then go to **Runtime →
+> Change runtime type** and choose a **GPU**; the same notebook now runs on a free
+> cloud GPU. **Kaggle** is a similar free option: create a notebook, then turn on a
+> GPU accelerator in its settings panel. You write the same Python either way — only
+> the machine under it changes.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A notebook runs **cell by cell**, each cell sharing one live session — closer to a
+JShell REPL than to a compiled program: there's no build step, and state from an
+earlier cell is still around. Your edit–compile–run loop in IntelliJ maps onto a
+**local IDE** here: VS Code or PyCharm is the "real project" home in both worlds,
+with a debugger and project-wide search. The rule of thumb carries over — explore
+and demo in a notebook, but build and ship anything multi-file in the IDE.
+:::
+
+> ⚠️ Watch out: because notebook cells share one session, running them out of order
+> can give confusing results (a variable from a cell you ran earlier lingers). When
+> in doubt, re-run from the top.
+
+---
+
+## Let's build it (worked example)
+
+You can't fabricate a GPU here, but you *can* ask the running Python where it lives.
+The cell below reports the current runtime — proof that "the same Python" is a real,
+inspectable thing. Press **Run**.
+
+```{pyodide}
+#| caption: "What runtime am I in right now?"
+import sys
+import platform
+
+print("Python version:", sys.version.split()[0])
+print("Platform:", platform.platform())
+print("You are running in a browser notebook right now (Pyodide), zero install.")
+```
+
+The exact strings depend on the build, but the point stands: this is ordinary
+Python, reporting on itself. Open the *same* notebook in Colab with a GPU and the
+identical code runs — the platform line would change, your Python would not.
+
+```{pyodide}
+#| caption: "A tiny helper that names the place for a task"
+def place_for(task):
+    """Name a sensible place to do `task`."""
+    homes = {
+        "learn": "in-browser notebook (₹0)",
+        "project": "local IDE",
+        "gpu": "cloud notebook (Colab/Kaggle)",
+    }
+    return homes.get(task, "in-browser notebook (₹0)")
+
+for task in ["learn", "project", "gpu"]:
+    print(task, "->", place_for(task))
+```
+
+Same language, three answers — the choice is about the job, not the syntax.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. An in-browser notebook, a local IDE, Jupyter, and a cloud notebook are all
+   **places to run the same Python** — the language doesn't change.
+2. They differ in **install, cost, and compute**: the browser is zero-install and
+   ₹0; a local IDE owns your files; a cloud notebook reaches a free GPU.
+3. **Pick by the job:** a browser notebook to learn or try a quick idea, a **local
+   IDE** for a real multi-file project, **Colab or Kaggle** when you need a GPU.
+4. Notebook cells share one session, so re-run from the top if results look off.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete `where_to_run` so it picks a place based on whether the task needs a GPU.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_where
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_where
+def where_to_run(needs_gpu):
+    """Return where to run: Colab for GPU work, else the in-browser notebook."""
+    if needs_gpu:
+        return "Colab (free GPU)"
+    return ____  # TODO: the zero-install, ₹0 place for quick work
+
+run_tests([
+    ("gpu work goes to Colab", where_to_run(True), "Colab (free GPU)"),
+    ("no gpu stays in browser", where_to_run(False), "in-browser (₹0)"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+When no GPU is needed, the answer is the place you're in now — the in-browser
+notebook, which is free. The expected text is exactly `"in-browser (₹0)"`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def where_to_run(needs_gpu):
+    if needs_gpu:
+        return "Colab (free GPU)"
+    return "in-browser (₹0)"
+
+run_tests([
+    ("gpu work goes to Colab", where_to_run(True), "Colab (free GPU)"),
+    ("no gpu stays in browser", where_to_run(False), "in-browser (₹0)"),
+])
+```
+
+When `needs_gpu` is `True` the function returns early with the Colab answer;
+otherwise it falls through to the in-browser, ₹0 option.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `recommend(needs_gpu, real_project)` using `if`/`elif`/`else`: GPU work wins
+first, then a real project, otherwise the in-browser notebook. Complete the marked
+lines.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_recommend
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_recommend
+def recommend(needs_gpu, real_project):
+    """Recommend a place: GPU work first, then a real project, else learning."""
+    if needs_gpu:
+        return "Colab or Kaggle"
+    elif real_project:
+        return ____   # TODO: the home of a real multi-file project
+    else:
+        return ____   # TODO: the place for quick learning
+
+run_tests([
+    ("gpu wins", recommend(True, True), "Colab or Kaggle"),
+    ("project -> IDE", recommend(False, True), "local IDE"),
+    ("otherwise notebook", recommend(False, False), "in-browser notebook"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The `elif` branch handles a real project — that's the `"local IDE"`. The final
+`else` is the everyday case, `"in-browser notebook"`. Note `needs_gpu` is checked
+first, so a GPU task never reaches the other branches.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def recommend(needs_gpu, real_project):
+    if needs_gpu:
+        return "Colab or Kaggle"
+    elif real_project:
+        return "local IDE"
+    else:
+        return "in-browser notebook"
+
+run_tests([
+    ("gpu wins", recommend(True, True), "Colab or Kaggle"),
+    ("project -> IDE", recommend(False, True), "local IDE"),
+    ("otherwise notebook", recommend(False, False), "in-browser notebook"),
+])
+```
+
+The branches are checked top to bottom: `needs_gpu` first, so GPU work always
+routes to Colab or Kaggle; then a real project goes to the local IDE; everything
+else stays in the in-browser notebook.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). In two or three sentences,
+describe where *you* will write code for the rest of this course and why. Name at
+least two of the four places and the kind of task each is for.
+
+**Rubric — a good answer:**
+
+- Names at least **two** of the four places (in-browser notebook, local IDE,
+  Jupyter, cloud notebook).
+- Ties each named place to a **task** (quick learning, a real project, or GPU work).
+- Mentions that the choice is about install/cost/compute, not a different language.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+plan = {
+    "learning M1–M4": "in-browser notebook (₹0, nothing to install)",
+    "my own project": "local IDE (VS Code, files on my machine)",
+    "training a model in M5+": "Colab or Kaggle (free GPU)",
+}
+for task, place in plan.items():
+    print(f"{task}: {place}")
+```
+
+"I'll keep learning here in the browser because it's ₹0 and there's nothing to set
+up. When I start my own multi-file project I'll move to VS Code so I get a debugger
+and my files on disk. Once I need to train a model in Module 5 I'll open a Colab or
+Kaggle notebook for the free GPU — same Python throughout, with different machines
+under it."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch14.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now know the four places you'll write Python — and that picking one is about the
+job (quick learning, a real project, or needing a GPU), never about a different
+language. That closes the M1 lesson chapters. Next come the **module quiz**, which
+checks the whole of your Python foundation, and the **data-cleaning capstone**, where
+you turn the messy `habits.csv` into a tidy table with the functions you've built.

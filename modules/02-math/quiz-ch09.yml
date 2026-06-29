@@ -1,0 +1,35 @@
+title: "Chapter 9 — quick check"
+id: "m2-ch9-probability"
+questions:
+  - id: prob-range
+    prompt: "A probability is always a number in which range?"
+    options:
+      - "From -1 to 1"
+      - "From 0 (impossible) to 1 (certain)"
+      - "Any number, as long as it's positive"
+    answer: 1
+    explanation: "Probability runs from 0 (the event can't happen) to 1 (it's certain); 0.5 is as likely as not."
+  - id: prob-die
+    prompt: "On a fair six-sided die, what is the probability of rolling a 6?"
+    options:
+      - "1/6 ≈ 0.167"
+      - "1/2 = 0.5"
+      - "6"
+    answer: 0
+    explanation: "One favourable outcome (the 6) out of six equally likely outcomes: 1/6 ≈ 0.167."
+  - id: prob-event
+    prompt: "Rolling an even number (2, 4, or 6) on a fair die has probability…"
+    options:
+      - "1/6, because there's one die"
+      - "3/6 = 0.5, because three of six outcomes are favourable"
+      - "0, because a single roll can't be 'even'"
+    answer: 1
+    explanation: "An event can cover several outcomes; three of the six faces are even, so 3/6 = 0.5."
+  - id: prob-two-heads
+    prompt: "Flips are independent and heads has probability 0.5. The chance of two heads in a row is…"
+    options:
+      - "0.5 + 0.5 = 1.0"
+      - "0.5 * 0.5 = 0.25"
+      - "0.5, because each flip is still a coin"
+    answer: 1
+    explanation: "For independent events, P(A and B) = P(A) * P(B), so 0.5 * 0.5 = 0.25."

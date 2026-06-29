@@ -1,0 +1,35 @@
+title: "Chapter 13 — quick check"
+id: "m2-ch13-correlation"
+questions:
+  - id: correlation-range
+    prompt: "What range can a correlation coefficient (r) take?"
+    options:
+      - "From 0 to 100, like a percentage"
+      - "From −1 to +1"
+      - "Any number, with no fixed limits"
+    answer: 1
+    explanation: "Correlation always lies between −1 and +1: +1 is a perfect rise-together line, −1 a perfect opposite line, and 0 means no linear relationship."
+  - id: r-near-zero
+    prompt: "An r close to 0 between two variables means…"
+    options:
+      - "There is no straight-line relationship between them"
+      - "One variable definitely causes the other"
+      - "The two variables are exactly equal"
+    answer: 0
+    explanation: "An r near 0 means little or no linear co-movement. (A strong curved relationship can also show r near 0, since r only measures straight-line trends.)"
+  - id: not-causation
+    prompt: "Why does a strong correlation not prove causation?"
+    options:
+      - "Because correlations are usually calculated incorrectly"
+      - "The same correlation can come from A causing B, B causing A, or a third variable driving both"
+      - "Because causation only applies to numbers above 0.5"
+    answer: 1
+    explanation: "A correlation only shows co-movement. It can arise from A→B, reverse causation (B→A), or a confounder driving both, so a number alone can't tell you which."
+  - id: what-is-confounder
+    prompt: "Ice-cream sales and drowning deaths both rise in summer. What is the confounder?"
+    options:
+      - "Ice cream, which makes swimming dangerous"
+      - "Drownings, which make people buy ice cream"
+      - "Summer heat, which drives both independently"
+    answer: 2
+    explanation: "Summer heat sells more ice cream and sends more people swimming, where more drownings occur. Heat drives both, so the two correlate without either causing the other."

@@ -1,0 +1,430 @@
+---
+title: "The EDA workflow"
+module: "M3 — Data & Tooling"
+chapter: 9
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch5 — Joins & groupby"
+  - "M3 Ch8 — Statistical plots"
+learning_objectives:
+  - "Run a repeatable EDA recipe: shape → types → missing → summaries → groupby → plot → questions"
+  - "Ask concrete questions a dataset can actually answer"
+  - "Back every claim with a number or a plot read straight from the data"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 20
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: eda-recipe
+    q: "What are the steps of the EDA recipe in order?"
+    a: "Shape, then types, then missing values, then per-column summaries, then a groupby, then a plot, and finally the questions those steps let you ask and answer — shape → types → missing → summaries → groupby → plot → questions."
+  - id: why-eda-first
+    q: "Why explore a dataset before modelling it?"
+    a: "Because a model trusts whatever you feed it. EDA finds the gaps, the wrong types, the outliers, and the structure first — so you know what the data can answer and what would mislead a model."
+  - id: back-with-a-number
+    q: "What does it mean to back a claim with a number or a plot?"
+    a: "Every statement about the data should be traceable to evidence you computed — a value from describe, a groupby result, a count of missing cells, or a chart — not a guess or an assumption."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A new dataset lands in your lap. Before you build anything with it — a chart for a
+report, a feature for a model, a claim in a meeting — you need to know what you are
+holding. How big is it? What is in each column? What is missing? What patterns are
+already there?
+
+The trap is to poke at it at random: a `.head()` here, a guess there, a chart that
+looks nice but answers nothing. **Exploratory Data Analysis (EDA)** is the cure. It
+is not a single trick — it is a short, **repeatable recipe** you run on *every* new
+table, in the same order, so you never forget a step and never start modelling on
+data you don't understand.
+
+Here is the whole recipe, and it is the spine of this chapter:
+
+> **shape → types → missing → summaries → groupby → plot → questions**
+
+Each step is one or two lines of pandas you already met in this module. What's new is
+the **discipline**: running them in order, and treating the output as evidence. By the
+end you'll run the full pass on the Palmer Penguins dataset and answer three concrete
+questions — each backed by a number or a plot, never a hunch.
+
+> You'll need from before: split-apply-combine with `groupby` (M3 Ch5) and reading a
+> histogram, boxplot, or scatter (M3 Ch8). EDA is where those skills come together.
+
+---
+
+## Step 1 — Shape: how big is it?
+
+The first question about any table is the cheapest to answer: how many rows and
+columns? `df.shape` returns a `(rows, columns)` tuple. It costs nothing and tells you
+whether you have 300 records or 30 million — which changes everything about how you'll
+work.
+
+```{pyodide}
+#| caption: "Step 1 — load the data and check its shape"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.shape
+```
+
+That returns **`(344, 8)`**: 344 penguins, described by 8 columns. Small enough to
+explore comfortably in the browser, and the first fact in our running notebook of
+evidence.
+
+## Step 2 — Types: what is each column?
+
+Next, ask what *kind* of value each column holds. `df.dtypes` lists the data type of
+every column. This catches a classic bug early: a column of numbers that pandas read
+as text (`object`) because one stray value had a comma or a stray space. You cannot
+average a column that is secretly a string.
+
+```{pyodide}
+#| caption: "Step 2 — the type of every column"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.dtypes
+```
+
+Reading the list: the four body measurements and `body_mass_g` are numeric (`float64`
+or `int64`), while `species`, `island`, and `sex` are `object` — text labels. That is
+exactly what we'd expect, so nothing to fix here. The point of the step is that you
+*looked*: numeric columns are numeric, categorical columns are text. If `body_mass_g`
+had shown up as `object`, that would be a red flag to chase down before going further.
+
+## Step 3 — Missing: where are the gaps?
+
+Real data has holes. `df.isna().sum()` counts, per column, how many cells are empty.
+This single line tells you which columns are complete and which you'll have to handle —
+by dropping rows, filling values, or noting the gap when you report a result.
+
+```{pyodide}
+#| caption: "Step 3 — count missing values in each column"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.isna().sum()
+```
+
+Most columns are complete. The four body measurements each miss **2** values, and
+**`sex` misses 11**. So if you analyse `sex`, you are working with 333 known penguins,
+not 344 — a fact you'd want to state out loud rather than quietly average over. Knowing
+this *before* you compute anything stops a missing-value surprise from skewing a result
+later.
+
+## Step 4 — Summaries: what do the numbers look like?
+
+Now describe the numbers. `df.describe()` reports the count, mean, standard deviation,
+min, max, and quartiles for every numeric column at once — a one-line statistical
+X-ray of the whole table.
+
+```{pyodide}
+#| caption: "Step 4 — per-column numeric summary"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.describe()
+```
+
+Read down the `body_mass_g` column and you'll find a mean near **4201.75 g** and a
+range from about 2700 g to 6300 g — penguins averaging a little over four kilograms,
+with the lightest under three and the heaviest over six. The `count` row is worth a
+glance too: it reads **342** for the measurement columns, not 344, because
+`describe()` quietly skips the two missing masses we found in Step 3. The summary and
+the missing-value count agree, which is reassuring.
+
+## Step 5 — Groupby: does a category explain the numbers?
+
+Summaries describe the table as a whole. The next question is whether a **category**
+splits those numbers into meaningful groups. That is exactly what `groupby` does:
+split the rows by a label, then aggregate each group. Here we ask whether average body
+mass differs by species.
+
+```{pyodide}
+#| caption: "Step 5 — mean body mass per species (split-apply-combine)"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.groupby("species")["body_mass_g"].mean()
+```
+
+The three group means tell a clear story: **Adelie ≈ 3700.66 g**, **Chinstrap ≈
+3733.09 g**, and **Gentoo ≈ 5076.02 g**. Adelie and Chinstrap sit within about 30 g of
+each other, while Gentoo penguins are roughly **1.36 kg heavier** — a big, real gap.
+Species is not merely a label here; it explains a large chunk of the variation in body
+mass that `describe()` reported for the table as a whole.
+
+## Step 6 — Plot: can you see it?
+
+A number convinces; a picture confirms and communicates. The last computational step
+turns the groupby result into a chart so the pattern is impossible to miss. A bar
+chart of the three group means is the natural choice.
+
+```{pyodide}
+#| caption: "Step 6 — mean body mass by species as a bar chart"
+#| fig-alt: "Bar chart with three bars, one per penguin species. The Adelie and Chinstrap bars are almost the same height at roughly 3700 grams, while the Gentoo bar is much taller at about 5076 grams, standing well apart from the other two."
+import pandas as pd
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+means = df.groupby("species")["body_mass_g"].mean()
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.bar(means.index, means.values)
+ax.set_xlabel("species")
+ax.set_ylabel("mean body mass (g)")
+ax.set_title("Mean body mass by species")
+plt.show()
+```
+
+The takeaway is one glance away: two short bars of nearly equal height (Adelie and
+Chinstrap) and one tall bar (Gentoo) standing well above them. The plot says the same
+thing as the three numbers from Step 5, but now anyone can read it in a second — which
+is the point of a chart in a report. The number is the proof; the plot is the
+explanation.
+
+## Step 7 — Questions: what can this data answer?
+
+The first six steps are mechanical. The seventh is the reason for the other six: now
+that you understand the table, you can pose **concrete questions** and answer each with
+the evidence you've gathered. A good EDA question is specific and checkable — not
+"what's interesting?" but "which species is heaviest, and by how much?" Here are three,
+each answered straight from the steps above.
+
+**Q1 — How complete is the data?** From Step 1 and Step 3: there are **344 rows**, and
+the only sizeable gap is `sex`, with **11 missing values**. Any analysis of sex covers
+333 birds, not all 344 — a caveat to carry forward.
+
+**Q2 — What does a typical penguin weigh?** From Step 4: the mean body mass is **≈
+4201.75 g**, with most birds falling between roughly 3000 g and 5500 g. "Typical" is
+about four kilograms.
+
+**Q3 — Does species explain body mass?** From Steps 5 and 6: yes, strongly. The
+**heaviest species is Gentoo at ≈ 5076.02 g**, about 1.36 kg above Adelie (≈ 3700.66 g)
+and Chinstrap (≈ 3733.09 g), which are nearly identical to each other. The bar chart
+makes the split visible at a glance.
+
+Notice that not one of those answers is a guess. Each points back to a specific line of
+output — a shape, a count, a mean, a chart. That is the whole habit EDA is training:
+**every claim is backed by a number or a plot.** When you later hand the data to a
+model, you'll know what it can learn and what would mislead it — because you looked
+first.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. EDA is a **repeatable recipe**, run in order on every new table:
+   **shape → types → missing → summaries → groupby → plot → questions**.
+2. The first four steps *size up* the data — `df.shape`, `df.dtypes`,
+   `df.isna().sum()`, and `df.describe()` — before you compute anything fancy.
+3. `groupby` asks whether a **category explains the numbers**; a **plot** turns that
+   answer into something anyone can read at a glance.
+4. Ask **concrete, checkable questions**, and **back every answer with a number or a
+   plot** read straight from the data — never a hunch.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`. The
+first two use tiny hand-made dictionaries so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Step 1 of the recipe is *shape*. Write `eda_shape(data)` that builds a DataFrame from a
+dict and returns its `(rows, columns)` as a plain tuple. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_shape
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_shape
+import pandas as pd
+
+def eda_shape(data):
+    """Return the (rows, columns) shape of a DataFrame built from data, as a tuple."""
+    return ____  # TODO: tuple(pd.DataFrame(data).shape)
+
+run_tests([
+    ("2x3", eda_shape({"a": [1, 2], "b": [3, 4], "c": [5, 6]}), (2, 3)),
+    ("1 col", eda_shape({"a": [1, 2, 3]}), (3, 1)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`pd.DataFrame(data)` builds the table; its `.shape` is already a `(rows, columns)`
+pair. Wrap that in `tuple(...)` so the return type is a plain tuple.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def eda_shape(data):
+    return tuple(pd.DataFrame(data).shape)
+```
+
+`pd.DataFrame(data)` turns the dict into a table — keys become columns, so a dict with
+three keys of two values each is `(2, 3)`. `.shape` reports `(rows, columns)`, and
+`tuple(...)` returns it as a plain tuple.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Step 4 is *summaries*. Write `summary(data, col)` that returns a small dict
+`{"mean": .., "min": .., "max": ..}` for one column — the mean rounded to 2 decimals,
+the min and max as plain ints. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_summary
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_summary
+import pandas as pd
+
+def summary(data, col):
+    """Return {'mean', 'min', 'max'} for one column; mean rounded to 2 decimals."""
+    df = pd.DataFrame(data)
+    s = df[col]
+    return ____  # TODO: {"mean": round(float(s.mean()), 2), "min": int(s.min()), "max": int(s.max())}
+
+run_tests([
+    ("col a", summary({"a": [1, 2, 3, 4]}, "a"), {"mean": 2.5, "min": 1, "max": 4}),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`s = df[col]` is the column as a Series. Build the dict with `s.mean()` wrapped in
+`round(float(...), 2)`, and `s.min()` / `s.max()` each wrapped in `int(...)` so the
+types are plain Python numbers.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def summary(data, col):
+    df = pd.DataFrame(data)
+    s = df[col]
+    return {"mean": round(float(s.mean()), 2), "min": int(s.min()), "max": int(s.max())}
+```
+
+`df[col]` selects the column as a Series; `.mean()`, `.min()`, and `.max()` are the
+summary statistics. Wrapping the mean in `round(float(...), 2)` and the extremes in
+`int(...)` returns plain, predictable Python types — so `[1, 2, 3, 4]` gives
+`{"mean": 2.5, "min": 1, "max": 4}`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset and run the
+full EDA recipe — shape, types, missing, summary, groupby — then answer **two**
+concrete questions with numbers in your own `print` statements. For example: which
+species is heaviest, and by how much? How many rows are missing `sex`?
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and runs at least three recipe steps (e.g. `shape`,
+  `isna().sum()`, and a `groupby`).
+- Answers the heaviest-species question with a number (Gentoo at ≈ 5076 g), read from a
+  `groupby`, not typed in by hand.
+- Answers a completeness question with a number (sex has 11 missing values), read from
+  `isna().sum()`.
+
+<details><summary>If you're stuck</summary>
+
+Run `df.shape`, `df.isna().sum()`, and `df.groupby("species")["body_mass_g"].mean()`.
+For the heaviest species, `.idxmax()` gives its name and `.max()` its mean. For the
+missing count, index the `isna().sum()` result with `["sex"]`.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+
+# Recipe steps
+print("shape:", df.shape)
+missing = df.isna().sum()
+print("missing sex:", int(missing["sex"]))
+means = df.groupby("species")["body_mass_g"].mean()
+print(means.round(2))
+
+# Answers, each backed by a number
+print("heaviest species:", means.idxmax(), "at", round(float(means.max()), 2), "g")
+print("rows missing sex:", int(missing["sex"]))
+```
+
+This reports `(344, 8)`, the heaviest species as `Gentoo` at `5076.02` g (about 1.36 kg
+above the other two), and `11` rows missing `sex` — every answer read straight from the
+data rather than typed in by hand.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch09.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now have a recipe you can run on any new table: size it up
+(shape, types, missing), summarise it, split it by a category, draw the pattern, and
+ask questions you can actually answer with evidence. That pass is the first thing a
+working data scientist does with a fresh dataset — and the habit of backing every claim
+with a number or a plot is what separates analysis from guesswork. This closes the data
+module; next you'll carry these tools into the modelling work, where understanding the
+data first is what keeps a model honest.

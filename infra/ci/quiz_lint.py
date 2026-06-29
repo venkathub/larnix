@@ -19,6 +19,14 @@ Usage:
     python3 quiz_lint.py [PATH ...]
 
 With no PATH, scans default globs. Exit 0 = pass (or nothing to check); 1 = fail.
+
+Two kinds of quiz file share this schema (P1-D11 / DECISIONS D0016):
+  • per-chapter quick check  — `quiz.yml` beside a chapter (2–3 MCQ), mounted by
+    `{{< quiz quiz.yml >}}` in the chapter;
+  • cumulative module quiz   — `module-quiz.yml` in a module dir (~8–12 MCQ),
+    mounted on the module landing page (`modules/<NN>/index.qmd`).
+A `module-quiz.yml` outside the ~8–12-question band gets an advisory NOTE (not a
+failure) so the cumulative-quiz convention stays visible without being rigid.
 """
 from __future__ import annotations
 
@@ -28,7 +36,10 @@ from pathlib import Path
 
 import yaml
 
-DEFAULT_GLOBS = ["modules/**/quiz*.yml", "quiz*.yml"]
+DEFAULT_GLOBS = ["modules/**/quiz*.yml", "modules/**/module-quiz.yml", "quiz*.yml"]
+
+# Advisory size band for cumulative module quizzes (P1-D11). Non-fatal.
+MODULE_QUIZ_MIN, MODULE_QUIZ_MAX = 8, 12
 
 
 def _nonempty_str(v) -> bool:
@@ -104,6 +115,33 @@ def lint_file(path) -> list[str]:
     return validate_quiz(data)
 
 
+def is_module_quiz(path) -> bool:
+    return Path(path).name == "module-quiz.yml"
+
+
+def quiz_notes(path, data) -> list[str]:
+    """Advisory (non-fatal) notes — currently the module-quiz size band (P1-D11)."""
+    notes: list[str] = []
+    if is_module_quiz(path) and isinstance(data, dict):
+        questions = data.get("questions")
+        if isinstance(questions, list):
+            n = len(questions)
+            if n < MODULE_QUIZ_MIN or n > MODULE_QUIZ_MAX:
+                notes.append(
+                    f"module quiz has {n} question(s); the cumulative-quiz convention is "
+                    f"~{MODULE_QUIZ_MIN}–{MODULE_QUIZ_MAX} (advisory, not a failure)"
+                )
+    return notes
+
+
+def notes_for(path) -> list[str]:
+    try:
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return []
+    return quiz_notes(path, data)
+
+
 def collect_targets(args: list[str]) -> list[str]:
     if args:
         out: list[str] = []
@@ -133,6 +171,8 @@ def main(argv: list[str]) -> int:
                 print(f"  - {e}")
         else:
             print(f"OK   {path}")
+            for note in notes_for(path):
+                print(f"  · NOTE: {note}")
 
     if failed:
         print(f"\n{failed} file(s) failed quiz lint")

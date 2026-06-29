@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m2-ch5-dot"
+questions:
+  - id: dot-definition
+    prompt: "What is dot([1, 2, 3], [4, 5, 6])?"
+    options:
+      - "15"
+      - "32"
+      - "[4, 10, 18]"
+    answer: 1
+    explanation: "Multiply matching pairs and add: 1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32 — a single number, not a vector."
+  - id: dot-sign-meaning
+    prompt: "Two taste vectors give a dot product near zero. What does that suggest?"
+    options:
+      - "They point broadly the same way and share taste"
+      - "They are unrelated — little overlap in what they care about"
+      - "They are identical"
+    answer: 1
+    explanation: "A near-zero dot product means the vectors are roughly at right angles: where one is large the other is small, so the tastes barely overlap."
+  - id: dot-orthogonal
+    prompt: "What is dot([1, 0], [0, 1])?"
+    options:
+      - "0"
+      - "1"
+      - "2"
+    answer: 0
+    explanation: "1*0 + 0*1 = 0. The two vectors never share a non-zero entry, so the products contribute nothing."
+  - id: dot-as-similarity
+    prompt: "To measure how alike two people's movie tastes are, how do we use the dot product?"
+    options:
+      - "A larger dot product between their taste vectors means more shared taste"
+      - "A smaller dot product means more shared taste"
+      - "The dot product only works for numbers, not tastes"
+    answer: 0
+    explanation: "Each person is a vector of genre ratings; a bigger dot product means their high ratings line up on the same genres — more shared taste."

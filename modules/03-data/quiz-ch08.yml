@@ -1,0 +1,35 @@
+title: "Chapter 8 — quick check"
+id: "m3-ch08-stat-plots"
+questions:
+  - id: histogram-shows
+    prompt: "What does a histogram show?"
+    options:
+      - "The distribution of one variable — how its values are spread across bins"
+      - "The relationship between two variables, one per axis"
+      - "The exact value of every record, in a sorted list"
+    answer: 0
+    explanation: "A histogram bins one column's values and draws a bar for each bin's count, so you read the centre, spread, and shape of that variable's distribution."
+  - id: boxplot-box-whiskers
+    prompt: "On a boxplot, what do the box and the whiskers represent?"
+    options:
+      - "The box is the largest value and the whiskers are the smallest"
+      - "The box is the middle 50% (Q1 to Q3) with the median line; the whiskers reach the rest of the typical range"
+      - "The box is the mean and the whiskers are the standard deviation"
+    answer: 1
+    explanation: "The box spans the first to third quartile (the middle 50%) with a line at the median, and the whiskers extend to the rest of the typical data; points beyond them are flagged as outliers."
+  - id: scatter-reveals
+    prompt: "What does a scatter plot reveal?"
+    options:
+      - "The count of values in each bin of one column"
+      - "The relationship between two variables — whether they move together"
+      - "The median and quartiles of a single column"
+    answer: 1
+    explanation: "A scatter plot puts one variable on each axis and a dot per record; an upward band is a positive relationship, a downward band negative, and a shapeless cloud means little relationship."
+  - id: reading-spread
+    prompt: "Which chart feature tells you how spread out a variable is?"
+    options:
+      - "The width of a boxplot's box (the interquartile range) or how wide a histogram's bars stretch"
+      - "The colour of the bars"
+      - "The title of the plot"
+    answer: 0
+    explanation: "Spread is the width of the data: the boxplot's box (Q1 to Q3, the IQR) and the horizontal extent of a histogram both show how far the values range around the centre."

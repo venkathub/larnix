@@ -1,0 +1,35 @@
+title: "Chapter 11 — quick check"
+id: "m2-ch11-mean-variance"
+questions:
+  - id: what-is-mean
+    prompt: "How do you compute the mean of a list of numbers?"
+    options:
+      - "Take the middle value after sorting"
+      - "Add the values and divide by how many there are"
+      - "Multiply all the values together"
+    answer: 1
+    explanation: "The mean is sum(values) / len(values) — the average, the centre of the data."
+  - id: what-is-variance
+    prompt: "Variance measures…"
+    options:
+      - "The largest value minus the smallest value"
+      - "The average squared distance of the values from their mean"
+      - "How many values are above the mean"
+    answer: 1
+    explanation: "Variance is the average of the squared deviations from the mean: sum((v - mean)**2) / n."
+  - id: why-square
+    prompt: "Why are the deviations squared before averaging?"
+    options:
+      - "So positive and negative deviations don't cancel to zero"
+      - "To make the calculation run faster"
+      - "Because square roots are not allowed"
+    answer: 0
+    explanation: "Raw deviations cancel out (they sum to zero); squaring makes every term non-negative and weights big misses more."
+  - id: what-is-std
+    prompt: "What is the standard deviation, and why use it?"
+    options:
+      - "The variance times two, to exaggerate the spread"
+      - "The square root of the variance, putting spread back in the data's own units"
+      - "The mean of the absolute values"
+    answer: 1
+    explanation: "Squaring inflated the units; the square root of the variance returns spread to the original units, so it is easy to read."

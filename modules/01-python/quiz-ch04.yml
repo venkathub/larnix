@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m1-ch4-data-structures"
+questions:
+  - id: dict-for-row
+    prompt: "Which structure best models one row of data with named fields?"
+    options:
+      - "A list, read by position"
+      - "A dict, read by key like day['steps']"
+      - "A set, which has no order"
+    answer: 1
+    explanation: "A dict maps field names to values, so you read day['steps'] instead of a position."
+  - id: set-uniqueness
+    prompt: "What happens to duplicates when you build a set?"
+    options:
+      - "They are kept, in order"
+      - "They collapse — a set holds only unique items"
+      - "They raise an error"
+    answer: 1
+    explanation: "A set stores each value once; adding a duplicate has no effect."
+  - id: tuple-immutable
+    prompt: "What is true of a tuple but not a list?"
+    options:
+      - "It can hold numbers"
+      - "It is immutable — you cannot change its items after creation"
+      - "It is read by key"
+    answer: 1
+    explanation: "Tuples are fixed once created; lists can be changed (append, reassign)."
+  - id: list-growable
+    prompt: "Which structure do you use for an ordered collection you'll add to over time?"
+    options:
+      - "A tuple"
+      - "A list, using append"
+      - "A set"
+    answer: 1
+    explanation: "A list is ordered and changeable; list.append adds to the end."

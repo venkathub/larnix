@@ -46,9 +46,117 @@ website:
     search: true
     contents:
       - section: "M0 — Orientation"
+        href: modules/00-orientation/index.qmd
         contents:
           - text: "Ch1 — Train your first model"
             href: modules/00-orientation/ch01-train-your-first-model.qmd
+          - text: "Ch2 — What you need & what it costs"
+            href: modules/00-orientation/ch02-what-you-need-and-what-it-costs.qmd
+          - text: "Ch3 — What is AI, really?"
+            href: modules/00-orientation/ch03-what-is-ai-really.qmd
+          - text: "Ch4 — AI vs ML vs DL vs GenAI"
+            href: modules/00-orientation/ch04-ai-ml-dl-genai.qmd
+          - text: "Ch5 — A 10-minute history of AI"
+            href: modules/00-orientation/ch05-history-of-ai.qmd
+          - text: "Ch6 — How this school works"
+            href: modules/00-orientation/ch06-how-this-school-works.qmd
+      - section: "M1 — Python for AI"
+        href: modules/01-python/index.qmd
+        contents:
+          - text: "Ch1 — Variables & types"
+            href: modules/01-python/ch01-variables-and-types.qmd
+          - text: "Ch2 — Control flow"
+            href: modules/01-python/ch02-control-flow.qmd
+          - text: "Ch3 — Functions"
+            href: modules/01-python/ch03-functions.qmd
+          - text: "Ch4 — Data structures"
+            href: modules/01-python/ch04-data-structures.qmd
+          - text: "Ch5 — Comprehensions"
+            href: modules/01-python/ch05-comprehensions.qmd
+          - text: "Ch6 — Reading & writing files"
+            href: modules/01-python/ch06-reading-writing-files.qmd
+          - text: "Ch7 — Errors & exceptions"
+            href: modules/01-python/ch07-errors-exceptions.qmd
+          - text: "Ch8 — Reading a traceback"
+            href: modules/01-python/ch08-reading-a-traceback.qmd
+          - text: "Ch9 — A little OOP"
+            href: modules/01-python/ch09-a-little-oop.qmd
+          - text: "Ch10 — Clean, readable code"
+            href: modules/01-python/ch10-clean-readable-code.qmd
+          - text: "Ch11 — Pythonic data idioms"
+            href: modules/01-python/ch11-pythonic-idioms.qmd
+          - text: "Ch12 — A NumPy preview"
+            href: modules/01-python/ch12-numpy-preview.qmd
+          - text: "Ch13 — Environments & packages"
+            href: modules/01-python/ch13-environments-packages.qmd
+          - text: "Ch14 — Notebooks, the IDE & Colab"
+            href: modules/01-python/ch14-notebooks-ide-colab.qmd
+      - section: "M2 — Math You Actually Need"
+        href: modules/02-math/index.qmd
+        contents:
+          - text: "Ch1 — Why math for AI"
+            href: modules/02-math/ch01-why-math-for-ai.qmd
+          - text: "Ch2 — Vectors & geometry"
+            href: modules/02-math/ch02-vectors-geometry.qmd
+          - text: "Ch3 — Matrices as transformations"
+            href: modules/02-math/ch03-matrices-as-transformations.qmd
+          - text: "Ch4 — Matrix multiplication"
+            href: modules/02-math/ch04-matrix-multiplication.qmd
+          - text: "Ch5 — Dot products & similarity"
+            href: modules/02-math/ch05-dot-products-similarity.qmd
+          - text: "Ch6 — Derivatives = sensitivity"
+            href: modules/02-math/ch06-derivatives-sensitivity.qmd
+          - text: "Ch7 — Gradients"
+            href: modules/02-math/ch07-gradients.qmd
+          - text: "Ch8 — The chain rule"
+            href: modules/02-math/ch08-chain-rule.qmd
+          - text: "Ch9 — Probability basics"
+            href: modules/02-math/ch09-probability-basics.qmd
+          - text: "Ch10 — Distributions"
+            href: modules/02-math/ch10-distributions.qmd
+          - text: "Ch11 — Mean, variance & standard deviation"
+            href: modules/02-math/ch11-mean-variance-std.qmd
+          - text: "Ch12 — Bayes, intuitively"
+            href: modules/02-math/ch12-bayes-intuitively.qmd
+          - text: "Ch13 — Correlation vs causation"
+            href: modules/02-math/ch13-correlation-vs-causation.qmd
+          - text: "Ch14 — Sampling & uncertainty"
+            href: modules/02-math/ch14-sampling-uncertainty.qmd
+          - text: "Ch15 — Linear algebra in NumPy"
+            href: modules/02-math/ch15-linear-algebra-in-numpy.qmd
+          - text: "Ch16 — The math of one neuron"
+            href: modules/02-math/ch16-the-math-of-one-neuron.qmd
+      - section: "M3 — Data & Tooling"
+        href: modules/03-data/index.qmd
+        contents:
+          - text: "Ch1 — NumPy & vectorization"
+            href: modules/03-data/ch01-numpy-vectorization.qmd
+          - text: "Ch2 — Pandas Series & DataFrame"
+            href: modules/03-data/ch02-pandas-series-dataframe.qmd
+          - text: "Ch3 — Indexing & selection"
+            href: modules/03-data/ch03-indexing-selection.qmd
+          - text: "Ch4 — Cleaning data"
+            href: modules/03-data/ch04-cleaning-data.qmd
+          - text: "Ch5 — Joins & groupby"
+            href: modules/03-data/ch05-joins-groupby.qmd
+          - text: "Ch6 — Reshaping"
+            href: modules/03-data/ch06-reshaping.qmd
+          - text: "Ch7 — Plotting with Matplotlib"
+            href: modules/03-data/ch07-plotting-matplotlib.qmd
+          - text: "Ch8 — Statistical plots"
+            href: modules/03-data/ch08-statistical-plots.qmd
+          - text: "Ch9 — The EDA workflow"
+            href: modules/03-data/ch09-eda-workflow.qmd
+          - text: "Ch10 — Scaling & encoding"
+            href: modules/03-data/ch10-scaling-encoding.qmd
+          - text: "Ch11 — Notebooks vs scripts"
+            href: modules/03-data/ch11-notebooks-vs-scripts.qmd
+          - text: "Ch12 — Environments & reproducibility"
+            href: modules/03-data/ch12-environments-reproducibility.qmd
+          - text: "Ch13 — Data ethics (a preview)"
+            href: modules/03-data/ch13-data-ethics.qmd
+          - text: "Ch14 — Messy real-world data"
+            href: modules/03-data/ch14-messy-real-world-data.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

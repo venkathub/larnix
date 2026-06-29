@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m3-ch06-reshaping"
+questions:
+  - id: wide-vs-long
+    prompt: "What best describes the difference between wide and long (tidy) data?"
+    options:
+      - "Wide data has more rows; long data has more columns"
+      - "Wide data spreads a variable across many columns (one row per subject); long data stacks those measurements into rows, one observation per row"
+      - "They are different file formats, like CSV versus JSON"
+    answer: 1
+    explanation: "Same numbers, two shapes: wide puts a variable in the column names (one row per subject), while long (tidy) makes each row a single observation with the variable and value as their own columns."
+  - id: what-melt-does
+    prompt: "What does df.melt() do?"
+    options:
+      - "Reshapes wide to long, gathering measurement columns into a variable/value pair"
+      - "Deletes columns that contain missing values"
+      - "Sorts the rows from smallest to largest"
+    answer: 0
+    explanation: "melt unpivots the measurement columns into two columns — 'variable' (the old column names) and 'value' (the cell contents) — keeping any id_vars as identifiers, so the table goes from wide to long."
+  - id: what-pivot-does
+    prompt: "How do pivot and pivot_table differ?"
+    options:
+      - "pivot works on numbers and pivot_table works on text"
+      - "pivot reshapes long to wide and needs one value per cell; pivot_table adds an aggregate so it can summarise repeated values into each cell"
+      - "There is no difference; they are two names for the same function"
+    answer: 1
+    explanation: "Both spread long data into a wide grid, but pivot requires exactly one value per index/column cell, while pivot_table applies an aggfunc (mean, sum, count, …) to combine many values that share a cell."
+  - id: why-tidy-helps
+    prompt: "Why is long (tidy) data often easier to work with?"
+    options:
+      - "It always uses less memory than wide data"
+      - "Each variable is its own column, so groupby, filtering, and plotting work directly on it"
+      - "It removes the need to ever reshape data again"
+    answer: 1
+    explanation: "In tidy data each variable is a real column and each row is one observation, so tools like groupby, filters, and charting libraries can act on the variable directly instead of you naming columns by hand."

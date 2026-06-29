@@ -16,7 +16,7 @@ questions:
       - "Because a model can score well on examples it has already seen yet fail on new ones"
       - "Because scikit-learn refuses to predict on training data"
     answer: 1
-    explanation: "Testing on unseen data checks whether the model generalises, not just memorises."
+    explanation: "Testing on unseen data checks whether the model generalises, rather than only memorises."
   - id: what-accuracy-means
     prompt: "The model reports 95% accuracy on the test set. That means…"
     options:

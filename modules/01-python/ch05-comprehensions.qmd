@@ -1,0 +1,290 @@
+---
+title: "Comprehensions"
+module: "M1 — Python for AI"
+chapter: 5
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch2 — Control flow"
+  - "M1 Ch4 — Data structures"
+learning_objectives:
+  - "Write a list comprehension to transform a collection"
+  - "Add an if filter to keep only some items"
+  - "Build a dict comprehension to map keys to values"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: list-comprehension
+    q: "What does a list comprehension replace?"
+    a: "The 'make an empty list, loop, append' pattern — [expr for x in items] builds the list in one line."
+  - id: filtered-comprehension
+    q: "How do you keep only some items in a comprehension?"
+    a: "Add an if at the end: [expr for x in items if condition]."
+  - id: dict-comprehension
+    q: "How do you build a mapping with a comprehension?"
+    a: "A dict comprehension: {key: value for x in items}, e.g. {d['date']: d['steps'] for d in days}."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+In Chapter 4 you kept writing the same three-step ritual: make an empty list, loop
+over the data, append something each time. It's so common that Python has a one-line
+shorthand for it — the **comprehension**:
+
+```python
+step_counts = [d["steps"] for d in days]
+```
+
+Read aloud, that's "the steps, for each day in days." Same result as a loop, but it
+fits on one line and says what it produces.
+
+> You'll need from before: loops (Ch2) and the data structures — lists and dicts
+> (Ch4).
+
+---
+
+## The list comprehension
+
+Here is the loop you'd write, and the comprehension that replaces it:
+
+```python
+# the loop
+counts = []
+for d in days:
+    counts.append(d["steps"])
+
+# the comprehension — same result, one line
+counts = [d["steps"] for d in days]
+```
+
+The shape is `[`*expression*` for `*item*` in `*collection*`]`. The expression
+(`d["steps"]`) is evaluated for each item and collected into a new list.
+
+### Add a filter with `if`
+
+Put an `if` at the end to keep only some items:
+
+```python
+active_dates = [d["date"] for d in days if d["steps"] >= 8000]
+```
+
+"The date, for each day, **if** that day reached 8,000 steps." Filtering and
+transforming, in one readable line.
+
+### The dict comprehension
+
+The same idea builds a dictionary — supply a `key: value` pair:
+
+```python
+by_date = {d["date"]: d["steps"] for d in days}
+```
+
+That maps each date to its step count — handy for looking a day up later.
+
+> ⚠️ Watch out: comprehensions are for *clear* transforms. If yours needs several
+> conditions or nested loops, a plain `for` loop is easier to read — and easier to
+> debug. Reach for the one-liner only when it stays a one-thought line.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A comprehension is Python's built-in version of `stream().map(...).filter(...)
+.collect(...)`. Because it's syntax rather than a chain of method calls, the map
+and filter read in one expression — but the same advice applies: keep each one
+small and single-purpose.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Three transforms of the habits days — a map, a filter, and a dict — each in one
+line. Press **Run**.
+
+```{pyodide}
+#| caption: "Map, filter, and build a dict — all with comprehensions"
+days = [
+    {"date": "2026-01-01", "steps": 7500, "mood": "good"},
+    {"date": "2026-01-02", "steps": 8200, "mood": "ok"},
+    {"date": "2026-01-03", "steps": 9100, "mood": "good"},
+]
+
+# map: pull out the step counts
+step_counts = [d["steps"] for d in days]
+print("Step counts:", step_counts)
+
+# filter + map: dates of the active days
+active_dates = [d["date"] for d in days if d["steps"] >= 8000]
+print("Active dates:", active_dates)
+
+# dict comprehension: date -> steps
+by_date = {d["date"]: d["steps"] for d in days}
+print("By date:", by_date)
+```
+
+Each line states its intent: *the steps*, *the active dates*, *each date mapped to
+its steps*. That readability is the whole reason comprehensions exist.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **list comprehension** `[expr for x in items]` replaces the empty-list /
+   loop / append ritual with one line.
+2. Add an **`if`** filter: `[expr for x in items if condition]` keeps only some
+   items.
+3. A **dict comprehension** `{key: value for x in items}` builds a mapping.
+4. Use them for **clear** transforms; fall back to a `for` loop when the logic gets
+   complicated.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the comprehension so `all_steps` returns a list of each day's steps.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_allsteps
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_allsteps
+def all_steps(days):
+    """Return a list of the steps from each day dict."""
+    return [____ for d in days]  # TODO: each day's steps
+
+run_tests([
+    ("extracts steps", all_steps([{"steps": 7500}, {"steps": 8200}]), [7500, 8200]),
+    ("empty stays empty", all_steps([]), []),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The expression to collect is each day's steps, read by key: `d["steps"]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def all_steps(days):
+    return [d["steps"] for d in days]
+```
+
+`d["steps"]` is evaluated for each day and collected into the new list, in order.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `active_dates(days, goal)` — return a list of the **dates** of days whose
+steps reach `goal`, using a filtered comprehension. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_activedates
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_activedates
+def active_dates(days, goal):
+    """Return the dates of days whose steps are >= goal."""
+    return [____ for d in days if d["steps"] >= goal]  # TODO: each active day's date
+
+run_tests([
+    ("keeps active dates", active_dates([{"date": "a", "steps": 7000}, {"date": "b", "steps": 8200}, {"date": "c", "steps": 9000}], 8000), ["b", "c"]),
+    ("none reach the goal", active_dates([{"date": "a", "steps": 100}], 8000), []),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The filter (`if d["steps"] >= goal`) is already written; you only need the value to
+collect, which is the day's date: `d["date"]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def active_dates(days, goal):
+    return [d["date"] for d in days if d["steps"] >= goal]
+```
+
+The `if` keeps only days that reach the goal; for each of those, the expression
+`d["date"]` collects the date.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Build `mood_by_date(days)` that
+returns a **dict** mapping each day's date to its mood, using a dict comprehension.
+Print it for a list you make up.
+
+**Rubric — a good answer:**
+
+- Uses a dict comprehension `{...: ... for d in days}`.
+- Maps `d["date"]` to `d["mood"]`.
+- Returns the dict and runs on a list of at least two days.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def mood_by_date(days):
+    return {d["date"]: d["mood"] for d in days}
+
+print(mood_by_date([
+    {"date": "2026-01-01", "mood": "good"},
+    {"date": "2026-01-02", "mood": "ok"},
+]))
+# {'2026-01-01': 'good', '2026-01-02': 'ok'}
+```
+
+The dict comprehension reads each day once and pairs its date with its mood — a
+lookup table built in a single line.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Comprehensions let you transform data in one clear line — you'll reach for them
+constantly with NumPy and Pandas later. Next we get data **in and out** of files,
+reading and writing the CSV and JSON your habits data actually lives in.

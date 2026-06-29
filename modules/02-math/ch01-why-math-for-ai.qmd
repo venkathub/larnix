@@ -1,0 +1,273 @@
+---
+title: "Why math for AI (and how little you need to start)"
+module: "M2 — Math You Actually Need"
+chapter: 1
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch12 — A NumPy preview"
+learning_objectives:
+  - "Name the few areas of math that AI actually uses, and why"
+  - "See a relationship in data as a line you can draw and measure"
+  - "Set fear aside: you'll build intuition with pictures before symbols"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 12
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: which-math
+    q: "Which areas of math does AI mostly rely on?"
+    a: "A little linear algebra (vectors and matrices), a little calculus (derivatives and gradients), and a little probability and statistics."
+  - id: intuition-first
+    q: "What is this module's approach to math?"
+    a: "Intuition first — a picture before the symbols. You build a feel for each idea, then meet the notation."
+  - id: one-neuron-goal
+    q: "What is the module building toward?"
+    a: "One artificial neuron, assembled piece by piece — its forward pass and the gradient that lets it learn."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+"You need to be great at math to do AI." You don't. You need a *little* math, and
+mostly you need an **intuition** for it — a feel for what's going on — which is far
+easier and far more useful than memorising formulas.
+
+Here is the whole secret of this module: every idea starts as a **picture**. You'll
+*see* a vector, *see* a slope, *see* a curve flatten out — and only then meet the
+symbols, which become labels for things you already understand. By the end you'll
+assemble a single artificial **neuron**, the tiny unit that deep learning stacks by
+the million.
+
+> You'll need from before: NumPy arrays and vectorized thinking (M1 Ch12). That's
+> the only tool we carry in.
+
+---
+
+## The little math AI actually uses
+
+Three small areas cover almost everything in this course:
+
+- **Linear algebra** — *vectors* and *matrices*: how to represent data (a row of
+  numbers) and transform it. This is how a model holds and moves information.
+- **Calculus** — *derivatives* and *gradients*: how an output changes when you
+  nudge an input. This is how a model **learns** — by nudging itself downhill.
+- **Probability & statistics** — *chance, distributions, averages*: how to reason
+  about uncertain data and summarise it.
+
+That's it. No proofs, no exam tricks — the parts that show up when you build things.
+
+## A relationship is a line you can draw
+
+Most of the math here is about **relationships between numbers**. Take a simple
+one we'll reuse: *the tip tends to grow with the bill.* Plot a few restaurant bills
+against their tips and the relationship jumps out — it's roughly a line.
+
+```{pyodide}
+#| caption: "Tips tend to rise with the bill — a relationship you can see"
+#| fig-alt: "Scatter plot of six points, bill amount on the x-axis and tip on the y-axis, rising from lower-left to upper-right in a roughly straight line."
+import matplotlib.pyplot as plt
+
+bills = [10, 20, 30, 40, 50, 60]
+tips = [2, 3, 5, 6, 8, 9]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.scatter(bills, tips)
+ax.set_xlabel("bill (₹100s)")
+ax.set_ylabel("tip (₹100s)")
+ax.set_title("Tip vs bill")
+plt.show()
+```
+
+Your eye already drew the line through those points. Finding that line — and
+measuring how well it fits — is a surprising amount of what machine learning does.
+Later chapters give you the tools: vectors to hold the numbers, a slope (a
+derivative) to describe the line, and a gradient to improve it.
+
+> 🔬 Going deeper (optional): the model in M0 Chapter 1 did exactly this in higher
+> dimensions — it found a boundary between flower species instead of a line through
+> tips. Same idea, more numbers.
+
+---
+
+## The road to one neuron
+
+Each chapter adds one small piece, and the final chapter snaps them together into a
+neuron:
+
+- **Vectors & matrices** (Ch2–5) — hold data and measure similarity.
+- **Derivatives & gradients** (Ch6–8) — the slope that tells a model which way to
+  improve, and the chain rule that powers learning.
+- **Probability & statistics** (Ch9–14) — reason about uncertain data.
+- **NumPy linear algebra → one neuron** (Ch15–16) — do it in code, then build the
+  forward and backward pass of a single neuron by hand.
+
+You don't need to hold all of that now. You need to start — with a picture.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. AI needs a **little** math: some linear algebra, some calculus, some
+   probability — and mostly **intuition** for it.
+2. Every idea here starts as a **picture**, then meets the symbols.
+3. Much of machine learning is finding and measuring a **relationship** — often a
+   line through data.
+4. The module builds, piece by piece, toward **one artificial neuron**.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+A line is `tip = rate * bill`. Complete `predict_tip` so it applies a tip rate to a
+bill. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_predict
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_predict
+def predict_tip(bill, rate):
+    """Predict a tip as the bill times a tip rate."""
+    return ____  # TODO: bill times rate
+
+run_tests([
+    ("15% of 200", predict_tip(200, 0.15), 30.0),
+    ("zero bill", predict_tip(0, 0.15), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A line through the origin is one multiplication: the bill times the rate,
+`bill * rate`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def predict_tip(bill, rate):
+    return bill * rate
+```
+
+`bill * rate` is the straight-line relationship: double the bill and the predicted
+tip doubles too.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+To measure how well a line fits, you compare predictions to reality. Write
+`abs_error(predicted, actual)` — the size of the gap, always positive. Complete the
+marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_error
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_error
+def abs_error(predicted, actual):
+    """The absolute gap between a prediction and the real value."""
+    return ____  # TODO: the size of (predicted - actual), never negative
+
+run_tests([
+    ("over by 2", abs_error(10, 8), 2),
+    ("under by 3", abs_error(5, 8), 3),
+    ("spot on", abs_error(8, 8), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The gap is `predicted - actual`, but you want its *size* regardless of sign. The
+built-in `abs(...)` makes any number non-negative.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def abs_error(predicted, actual):
+    return abs(predicted - actual)
+```
+
+`predicted - actual` can be positive or negative; `abs(...)` returns its size, so an
+over-estimate and an under-estimate of the same gap count the same.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Pick a tip `rate` and use
+`predict_tip` to predict tips for a few bills, then compare to these real tips with
+`abs_error`. Which rate makes the gaps smallest? Print your numbers.
+
+**Rubric — a good answer:**
+
+- Tries at least two different rates and predicts tips for several bills.
+- Uses `abs_error` to measure the gap for each, and reports the totals.
+- States which rate fit best — the smallest total gap.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def predict_tip(bill, rate):
+    return bill * rate
+
+def abs_error(predicted, actual):
+    return abs(predicted - actual)
+
+bills = [10, 20, 30, 40]
+real_tips = [2, 3, 5, 6]
+
+for rate in (0.12, 0.15):
+    total = sum(abs_error(predict_tip(b, rate), t) for b, t in zip(bills, real_tips))
+    print(f"rate {rate}: total gap {round(total, 2)}")
+```
+
+The rate with the smaller total gap fits these tips better — a hand-cranked version
+of what "training a model" automates with calculus in the chapters ahead.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch01.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've seen the plan and the spirit: a little math, lots of pictures, building to
+one neuron. Next we meet the first piece — **vectors**: how a row of numbers
+becomes a point and an arrow you can reason about.

@@ -1,0 +1,347 @@
+---
+title: "Mean, variance & standard deviation"
+module: "M2 — Math You Actually Need"
+chapter: 11
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch9 — Probability basics"
+learning_objectives:
+  - "Compute the mean of a list as its centre — the average value"
+  - "Read variance as the average squared distance from the mean — how spread out the numbers are"
+  - "Take the standard deviation as the square root of variance, putting spread back in the data's own units"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: mean-is-centre
+    q: "What is the mean of a list of numbers?"
+    a: "The average — add the values and divide by how many there are. It is the balance point, the centre of the data."
+  - id: variance-is-spread
+    q: "What does variance measure, and how do you compute it?"
+    a: "How spread out the numbers are: the average of the squared distances from the mean, sum((v - mean)**2 for v in values) / len(values)."
+  - id: std-is-variance-rooted
+    q: "What is the standard deviation and why use it?"
+    a: "The square root of the variance. Squaring inflated the units; the square root returns spread to the data's own units, so it is easier to read."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Two cricket batters both average 40 runs an innings. One scores 38, 41, 39, 42 — clockwork.
+The other scores 5, 90, 8, 77 — thrilling and terrifying. Same average, completely different
+players. The average alone hides the story; you also need to know **how much the numbers
+bounce around** it.
+
+That is the whole idea of this chapter. You will summarise any set of numbers with three
+values that work as a team: the **mean** (the centre), the **variance** (how spread out the
+numbers are), and the **standard deviation** (that same spread, back in the data's own units
+so you can read it). Three numbers, and a list of any length has a story you can tell.
+
+> You'll need from before: the idea of an average and reasoning about a set of outcomes
+> (M2 Ch9 — Probability basics). That's the only tool we carry in.
+
+---
+
+## The mean: the centre of the data
+
+The **mean** (the everyday "average") is the balance point of a list. Add up the values and
+divide by how many there are:
+
+`mean = sum(values) / len(values)`
+
+For `[2, 4, 6]` that is `(2 + 4 + 6) / 3 = 12 / 3 = 4.0`. The mean answers "if I had to pick
+one number to stand in for the whole list, what would it be?" It is the centre our other two
+measures are taken *relative to*.
+
+## Variance: the average squared distance from the mean
+
+Knowing the centre is not enough — our two batters share a centre. We want to measure how far
+the values sit *from* that centre, on average. Here is the recipe:
+
+1. Find the mean `m`.
+2. For each value `v`, take its **distance from the mean**, `v - m` (this is called the
+   *deviation*).
+3. **Square** each deviation, `(v - m)**2`.
+4. **Average** those squared deviations.
+
+That average is the **variance**:
+
+`variance = sum((v - m)**2 for v in values) / len(values)`
+
+Why square the deviations? Two reasons. First, deviations come in both signs — values below
+the mean give negative deviations, values above give positive ones — and if you averaged them
+raw they would cancel to zero every time. Squaring makes every term non-negative, so they
+add up instead of cancelling. Second, squaring punishes big misses more than small ones, so a
+wild outlier moves the variance a lot.
+
+Work it through for `[2, 4, 6]`, whose mean is `4.0`:
+
+`variance = ((2-4)**2 + (4-4)**2 + (6-4)**2) / 3 = (4 + 0 + 4) / 3 = 8 / 3 ≈ 2.6667`
+
+And for `[5, 5, 5]` every value *is* the mean, so every deviation is zero and the variance is
+`0.0` — no spread at all. A variance of zero means the numbers are all identical.
+
+## Standard deviation: spread in the original units
+
+Variance has one awkward feature: because we squared the deviations, its units are squared
+too. If the data is in runs, the variance is in "runs squared," which is hard to picture. The
+fix is to undo the squaring at the end — take the **square root**:
+
+`std = sqrt(variance)`
+
+The **standard deviation** is the variance brought back into the data's own units. For
+`[2, 4, 6]` it is `sqrt(8/3) ≈ 1.633`, a spread you can read directly: the values sit roughly
+1.6 away from the centre of `4.0`, give or take. For `[5, 5, 5]` it is `sqrt(0) = 0.0`. The
+standard deviation is the number you would actually report to someone, because it lives in the
+same units as the mean.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+No special library needed — mean and variance are two short loops over a `double[]`:
+
+```java
+double sum = 0.0;
+for (double v : values) sum += v;
+double mean = sum / values.length;
+
+double sq = 0.0;
+for (double v : values) sq += (v - mean) * (v - mean);
+double variance = sq / values.length;        // population variance: divide by n
+double std = Math.sqrt(variance);
+```
+
+One thing to know: there are **two** common variance formulas. We divide the squared
+deviations by `n` (the count) — that is the **population variance**, used when your list *is*
+the whole group you care about. Statistics libraries often default to the **sample variance**,
+which divides by `n - 1` instead, to correct a bias when your list is only a *sample* drawn
+from a larger population. (In Python, `statistics.pvariance` uses `n` and `statistics.variance`
+uses `n - 1`; NumPy's `np.var` defaults to `n` but takes a `ddof` argument.) Throughout this
+chapter we use the population version — divide by `n` — to keep the arithmetic clean. The
+`n - 1` variant exists; you reach for it when you are sampling.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* what these three numbers describe. We plot a small list of values as points, draw
+a vertical line at the **mean**, and shade the band one **standard deviation** to each side of
+it. The mean marks the centre; the band shows the typical spread.
+
+```{pyodide}
+#| caption: "The mean is the centre; the shaded band is one standard deviation of spread to each side"
+#| fig-alt: "A horizontal number line with five orange dots for the values 2, 4, 6, 8 and 10. A dashed vertical line marks the mean at 6. A shaded band stretches from about 3.2 to 8.8 — one standard deviation either side of the mean — covering the middle values while the dots at 2 and 10 sit outside it."
+import matplotlib.pyplot as plt
+
+values = [2, 4, 6, 8, 10]
+
+mean = sum(values) / len(values)
+variance = sum((v - mean) ** 2 for v in values) / len(values)
+std = variance ** 0.5
+
+fig, ax = plt.subplots(figsize=(5, 3))
+# The values as dots on a number line (all at the same height).
+ax.scatter(values, [0] * len(values), color="tab:orange", zorder=5, label="values")
+# The mean as a vertical line.
+ax.axvline(mean, color="tab:blue", linestyle="--", label=f"mean = {mean}")
+# The spread: one standard deviation either side of the mean.
+ax.axvspan(mean - std, mean + std, alpha=0.15, color="tab:blue",
+           label=f"±1 std ≈ {round(std, 2)}")
+ax.set_yticks([])
+ax.set_xlabel("value")
+ax.set_title("Mean and standard deviation")
+ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.35), ncol=3, fontsize=8)
+plt.show()
+```
+
+Read the picture: the dashed line sits at the mean, `6.0`, the balance point of the dots. The
+shaded band reaches one standard deviation (about `2.83`) to each side, so it covers the
+values close to the centre while the far dots at `2` and `10` poke out past it. A wider band
+would mean more spread; if every dot landed on the line, the band would shrink to nothing and
+the standard deviation would be `0`.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The **mean** is the centre of a list: `sum(values) / len(values)`.
+2. The **variance** is how spread out the numbers are — the **average of the squared
+   distances from the mean**: `sum((v - mean)**2 for v in values) / len(values)`.
+3. Squaring stops positive and negative deviations from cancelling and weights big misses
+   more heavily; a variance of **0** means every value equals the mean.
+4. The **standard deviation** is `sqrt(variance)` — the same spread brought back into the
+   data's own units, so it is the number you actually report.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The mean is the sum of the values divided by how many there are. Complete `mean(values)` by
+replacing `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mean
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mean
+def mean(values):
+    """The average: the sum of the values divided by how many there are."""
+    return ____  # TODO: sum(values) divided by len(values)
+
+run_tests([
+    ("mean of [2, 4, 6]", mean([2, 4, 6]), 4.0),
+    ("all the same", mean([5, 5, 5]), 5.0),
+    ("two values", mean([0, 10]), 5.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Add the values with `sum(values)`, count them with `len(values)`, and divide the first by the
+second: `sum(values) / len(values)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def mean(values):
+    return sum(values) / len(values)
+```
+
+For `[2, 4, 6]` the sum is `12` and the count is `3`, so the mean is `12 / 3 = 4.0`. When
+every value is the same, the mean is that value.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now measure the spread. Write `variance(values)` — the average of the squared deviations from
+the mean. Compute the mean inside the function, then complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_variance
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_variance
+def variance(values):
+    """The average squared distance of the values from their mean."""
+    m = sum(values) / len(values)              # the mean
+    squared_deviations = [____ for v in values]  # TODO: square each (v - m)
+    return sum(squared_deviations) / len(values)
+
+run_tests([
+    ("variance of [2, 4, 6]", variance([2, 4, 6]), 8 / 3),
+    ("all the same", variance([5, 5, 5]), 0.0),
+    ("two values", variance([0, 10]), 25.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Each value's deviation from the mean is `v - m`. Square it with `(v - m) ** 2`, so the list
+comprehension reads `[(v - m) ** 2 for v in values]`. The function then averages those squares.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def variance(values):
+    m = sum(values) / len(values)
+    squared_deviations = [(v - m) ** 2 for v in values]
+    return sum(squared_deviations) / len(values)
+```
+
+For `[2, 4, 6]` the mean is `4.0`, the squared deviations are `4, 0, 4`, and their average is
+`8 / 3 ≈ 2.667`. For `[5, 5, 5]` every deviation is `0`, so the variance is `0.0`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Take a small list of your own and compute its
+**standard deviation** — the square root of the variance — then explain in a sentence what that
+number tells you *in the data's own units*.
+
+**Rubric — a good answer:**
+
+- Computes the mean and variance of a small list, then takes the square root of the variance
+  (`variance ** 0.5` or `math.sqrt(variance)`).
+- Prints the standard deviation.
+- Explains it in plain words and in the data's units — e.g. "the values sit about X away from
+  the mean of Y, on average."
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import math
+
+def mean(values):
+    return sum(values) / len(values)
+
+def variance(values):
+    m = mean(values)
+    return sum((v - m) ** 2 for v in values) / len(values)
+
+scores = [2, 4, 6]
+m = mean(scores)
+v = variance(scores)
+std = math.sqrt(v)
+
+print(f"mean = {m}, variance = {round(v, 4)}, std = {round(std, 4)}")
+print(f"The scores sit about {round(std, 2)} away from the mean of {m}, on average.")
+```
+
+For `[2, 4, 6]` the standard deviation is `sqrt(8/3) ≈ 1.63`. Because it is in the same units
+as the scores themselves, you can read it directly: a typical score is about 1.6 away from the
+centre of `4.0`. A larger standard deviation would mean the scores are more scattered.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch11.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now boil any list of numbers down to three: the **mean** for its centre, the
+**variance** for how spread out it is, and the **standard deviation** for that spread in
+readable units. These show up everywhere in machine learning — for scaling features, spotting
+outliers, and describing how confident a model is. Next, in **Ch12 — Bayes, intuitively**, we
+turn from summarising data to *updating beliefs*: how a new piece of evidence should change
+what you already thought was likely.

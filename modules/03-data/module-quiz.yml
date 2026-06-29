@@ -1,0 +1,99 @@
+title: "M3 — module quiz"
+id: "m3-module-quiz"
+questions:
+  - id: vectorization
+    prompt: "Why prefer a NumPy vectorized operation over a Python loop for numeric work?"
+    options:
+      - "It is shorter and runs as one fast whole-array operation"
+      - "Loops cannot do arithmetic"
+      - "NumPy is the only way to add numbers"
+    answer: 0
+    explanation: "Vectorized operations apply to the whole array at once — clearer and much faster than a per-element loop (Ch1)."
+  - id: series-vs-frame
+    prompt: "What is the difference between a Series and a DataFrame?"
+    options:
+      - "A Series is a table; a DataFrame is one column"
+      - "A Series is one labelled column; a DataFrame is a table of columns"
+      - "They are the same thing"
+    answer: 1
+    explanation: "A Series is a single labelled 1-D column; a DataFrame is a table made of aligned Series (Ch2)."
+  - id: loc-iloc
+    prompt: "How do `.loc` and `.iloc` differ?"
+    options:
+      - "`.loc` selects by label; `.iloc` selects by integer position"
+      - "`.loc` is for columns only; `.iloc` is for rows only"
+      - "They are interchangeable"
+    answer: 0
+    explanation: "`.loc` indexes by label, `.iloc` by integer position (Ch3)."
+  - id: missing-data
+    prompt: "`df.isna().sum()` tells you…"
+    options:
+      - "The total of all numbers in the table"
+      - "How many missing (NaN) values are in each column"
+      - "How many rows there are"
+    answer: 1
+    explanation: "`.isna()` flags missing cells; `.sum()` counts them per column — the first step before dropna/fillna (Ch4)."
+  - id: groupby
+    prompt: "What does `df.groupby('species')['body_mass_g'].mean()` compute?"
+    options:
+      - "One overall mean body mass"
+      - "The mean body mass within each species (split-apply-combine)"
+      - "The number of species"
+    answer: 1
+    explanation: "groupby splits rows by the key, applies the aggregate per group, and combines the results (Ch5)."
+  - id: reshaping
+    prompt: "`df.melt()` turns a table from…"
+    options:
+      - "Long to wide"
+      - "Wide to long (tidy) form"
+      - "Numbers to text"
+    answer: 1
+    explanation: "melt stacks columns into rows (wide→long); pivot does the reverse (Ch6)."
+  - id: chart-choice
+    prompt: "Which chart best shows the relationship between two numeric variables?"
+    options:
+      - "A scatter plot"
+      - "A pie chart"
+      - "A single bar"
+    answer: 0
+    explanation: "A scatter plots one variable against another to reveal a relationship; histograms show distributions, bars compare categories (Ch7, Ch8)."
+  - id: histogram
+    prompt: "A histogram shows…"
+    options:
+      - "The relationship between two columns"
+      - "The distribution (shape) of one variable's values"
+      - "The exact value of every row"
+    answer: 1
+    explanation: "A histogram bins one variable to show its distribution — centre, spread, and skew (Ch8)."
+  - id: eda-first-steps
+    prompt: "Early in an EDA, what do you check first?"
+    options:
+      - "The colour of the plots"
+      - "Shape, data types, and missing values"
+      - "Nothing — go straight to modelling"
+    answer: 1
+    explanation: "A repeatable EDA starts with shape → types → missing → summaries before any deeper analysis (Ch9)."
+  - id: scaling
+    prompt: "Min-max scaling transforms a column to…"
+    options:
+      - "Mean 0 and standard deviation 1"
+      - "The range 0 to 1"
+      - "All zeros"
+    answer: 1
+    explanation: "Min-max scales to [0, 1]; standardization (z-score) gives mean 0 / std 1 (Ch10)."
+  - id: reproducibility
+    prompt: "What makes a data analysis reproducible?"
+    options:
+      - "Using the newest packages available"
+      - "Pinning package versions, the exact data, and a fixed random seed"
+      - "Running it on a faster computer"
+    answer: 1
+    explanation: "Pin versions (requirements.txt), the data (vendored), and the seed, so the same inputs give the same result anywhere (Ch12)."
+  - id: ethics-bias
+    prompt: "A group is badly under-represented in your dataset. What does that mean for conclusions about it?"
+    options:
+      - "Nothing — sample size never matters"
+      - "Conclusions about that group are weak or biased"
+      - "The data is automatically wrong for everyone"
+    answer: 1
+    explanation: "Under-representation makes claims about that group unreliable — a core data-ethics caveat to record in a data note (Ch13)."

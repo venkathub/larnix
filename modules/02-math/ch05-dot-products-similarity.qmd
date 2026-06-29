@@ -1,0 +1,359 @@
+---
+title: "Dot products & similarity"
+module: "M2 — Math You Actually Need"
+chapter: 5
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch2 — Vectors & geometry"
+learning_objectives:
+  - "Compute a dot product as the sum of paired products of two vectors"
+  - "Read the sign and size of a dot product as how aligned two vectors are"
+  - "Use a dot product to measure similarity, like matching two people's movie tastes"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: dot-definition
+    q: "How do you compute the dot product of two vectors?"
+    a: "Multiply matching entries and add the products: dot([a, b, c], [d, e, f]) = a*d + b*e + c*f. For example dot([1, 2, 3], [4, 5, 6]) = 32."
+  - id: dot-sign-meaning
+    q: "What do the sign and size of a dot product tell you?"
+    a: "A big positive dot means the vectors point the same way (similar); near zero means unrelated; negative means they point in opposite directions."
+  - id: dot-as-similarity
+    q: "How is a dot product used to measure similarity?"
+    a: "Treat each thing as a vector of features (e.g. how much someone likes each movie genre). A larger dot product between two such vectors means more shared taste."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Two friends rate how much they like each movie genre on a scale of 0 to 5: action,
+comedy, romance. Ana is `[5, 1, 0]` — loves action, mild on comedy, cold on
+romance. Bo is `[4, 2, 0]` — close to Ana. Cleo is `[0, 1, 5]` — the near-opposite,
+all-in on romance. Who shares taste with whom?
+
+You can feel the answer, but a recommender system needs a *number*. The **dot
+product** is that number. It takes two vectors, multiplies their matching entries,
+and adds everything up into a single score. When two taste vectors point the same
+way, that score is big and positive — they are **similar**. When they point in
+unrelated directions, the score sits near zero. This one operation is how a model
+measures "how alike are these two things?"
+
+> You'll need from before: a vector as a row of numbers that is also a point and an
+> arrow with a direction (M2 Ch2). That is the one tool we carry in.
+
+---
+
+## Multiply the pairs, add them up
+
+The dot product of two vectors is the sum of their paired products:
+
+$$a \cdot b = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n$$
+
+Walk through the matching entries, multiply each pair, and add. A concrete one:
+
+$$[1, 2, 3] \cdot [4, 5, 6] = 1 \times 4 + 2 \times 5 + 3 \times 6 = 4 + 10 + 18 = 32$$
+
+The result is always a single number, never another vector. Two more to fix the
+pattern: $[2, 2] \cdot [3, 3] = 6 + 6 = 12$, and $[1, 0] \cdot [0, 1] = 0 + 0 = 0$.
+
+### What the number means
+
+The size and sign of that number carry the meaning:
+
+- **Big positive** dot — the vectors point the **same way**. Each pair pulls in the
+  same direction, so the products pile up. These two are **similar**.
+- **Near zero** — the vectors are **unrelated** (at right angles). Where one is
+  large the other is small, so the products cancel or never grow. The genres they
+  care about barely overlap.
+- **Negative** — the vectors point in **opposite** directions. One liking what the
+  other dislikes drags the sum below zero.
+
+Back to the friends. $\text{Ana} \cdot \text{Bo} = 5\times4 + 1\times2 + 0\times0 =
+22$ — a big positive score, shared taste. $\text{Ana} \cdot \text{Cleo} =
+5\times0 + 1\times1 + 0\times5 = 1$ — near zero, almost nothing in common. The dot
+product ranked the friendships for us, with one multiply-and-add.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+The dot product is a loop of multiply-and-add — an accumulator over two arrays:
+
+```java
+double dot = 0.0;
+for (int i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];   // multiply the pair, add to the running total
+}
+```
+
+Two related notes. First, a raw dot product grows with the *length* of the vectors,
+so longer vectors score higher even when their direction matches no better. To
+compare directions fairly, divide by both lengths — that is **cosine similarity**,
+the dot normalised to the range −1 to 1. We mention it so the name is not a
+surprise later; this chapter stays with the plain dot product.
+
+Second, you rarely write that loop in production. Libraries like **NumPy** (and the
+**BLAS** kernels beneath them) vectorize it into native, cache-aware code, so you
+call `a @ b` or `np.dot(a, b)` and get speed a hand-rolled loop will not match. You
+learn the loop to understand the idea; you call the library to run it fast.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* taste as vectors. We plot Ana, Bo, and Cleo as bars across the three
+genres, then compute each pair's dot product. The picture and the numbers should
+agree on who is alike.
+
+```{pyodide}
+#| caption: "Three people's genre ratings as bars — similar tastes share a shape"
+#| fig-alt: "Grouped bar chart with three genres on the x-axis (action, comedy, romance) and ratings from 0 to 5 on the y-axis. Ana and Bo both peak on action and sit low elsewhere, so their bars share a shape. Cleo instead peaks on romance, the opposite shape."
+import matplotlib.pyplot as plt
+
+genres = ["action", "comedy", "romance"]
+ana = [5, 1, 0]
+bo = [4, 2, 0]
+cleo = [0, 1, 5]
+
+x = range(len(genres))
+width = 0.25
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.bar([i - width for i in x], ana, width, label="Ana")
+ax.bar(list(x), bo, width, label="Bo")
+ax.bar([i + width for i in x], cleo, width, label="Cleo")
+ax.set_xticks(list(x))
+ax.set_xticklabels(genres)
+ax.set_ylabel("rating (0–5)")
+ax.set_title("Movie taste as vectors")
+ax.legend()
+plt.show()
+```
+
+Ana and Bo share a shape — both lean hard into action — while Cleo leans the other
+way into romance. The dot product turns that visual match into a score:
+
+```{pyodide}
+#| caption: "Dot products rank the pairings: a bigger number means more shared taste"
+#| fig-alt: "Printed output showing Ana·Bo equals 22, a large positive score, while Ana·Cleo equals 1, near zero — confirming Ana and Bo share taste and Ana and Cleo do not."
+def dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+ana = [5, 1, 0]
+bo = [4, 2, 0]
+cleo = [0, 1, 5]
+
+print("Ana · Bo   =", dot(ana, bo), "(big positive -> similar)")
+print("Ana · Cleo =", dot(ana, cleo), "(near zero -> unrelated)")
+```
+
+The numbers match the picture: `Ana · Bo = 22` is far larger than `Ana · Cleo = 1`,
+so a recommender would call Ana and Bo the close pair. One multiply-and-add per
+genre, summed, became a similarity score.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The **dot product** multiplies matching entries and adds them:
+   $a \cdot b = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n$, always a single number.
+   Example: $[1, 2, 3] \cdot [4, 5, 6] = 32$.
+2. A **big positive** dot means the vectors point the same way — **similar**;
+   **near zero** means unrelated; **negative** means opposite.
+3. Treat each thing as a vector of features and the dot product becomes a
+   **similarity score** — that is how we compare two people's movie tastes.
+4. The same multiply-and-add powers recommenders and the inside of every matrix
+   product; **cosine similarity** is this dot product normalised by length.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Build the dot product for two 3-element vectors: multiply each matching pair and add
+the three products. The first two pairs are written for you. Replace `____`, then
+press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_dot
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_dot
+def dot(a, b):
+    """Dot product of two 3-element vectors: a[0]*b[0] + a[1]*b[1] + a[2]*b[2]."""
+    return a[0] * b[0] + a[1] * b[1] + ____  # TODO: add the third pair, a[2]*b[2]
+
+run_tests([
+    ("dot([1,2,3],[4,5,6])", dot([1, 2, 3], [4, 5, 6]), 32),
+    ("dot([1,0,0],[0,1,0])", dot([1, 0, 0], [0, 1, 0]), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The first two pairs follow the pattern `a[index] * b[index]`. The third pair uses
+index `2`: `a[2] * b[2]`. Add it to the two terms already there.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def dot(a, b):
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+
+run_tests([
+    ("dot([1,2,3],[4,5,6])", dot([1, 2, 3], [4, 5, 6]), 32),
+    ("dot([1,0,0],[0,1,0])", dot([1, 0, 0], [0, 1, 0]), 0),
+])
+```
+
+Each matching pair is multiplied and the three products are added:
+`1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32`. The second test gives `0` because the two
+vectors never have a non-zero entry in the same slot.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now use the sign to answer a yes/no question: *do these two people share taste?*
+Write `aligned(a, b)` that returns `True` when the dot product is **positive** (the
+vectors point broadly the same way) and `False` otherwise. The dot is computed for
+you; complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_aligned
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_aligned
+def aligned(a, b):
+    """True when the dot product of a and b is positive, else False."""
+    dot = sum(x * y for x, y in zip(a, b))
+    return ____  # TODO: True only when dot is greater than 0
+
+run_tests([
+    ("shared taste", aligned([1, 2], [3, 4]), True),     # dot = 11
+    ("opposite", aligned([1, 0], [-1, 0]), False),       # dot = -1
+    ("unrelated", aligned([1, 0], [0, 1]), False),       # dot = 0, not > 0
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You want `True` only when `dot` is strictly greater than zero. A comparison like
+`dot > 0` is itself a `True`/`False` value you can return directly. Note that a dot
+of exactly `0` is **not** greater than `0`, so it returns `False`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def aligned(a, b):
+    dot = sum(x * y for x, y in zip(a, b))
+    return dot > 0
+
+run_tests([
+    ("shared taste", aligned([1, 2], [3, 4]), True),
+    ("opposite", aligned([1, 0], [-1, 0]), False),
+    ("unrelated", aligned([1, 0], [0, 1]), False),
+])
+```
+
+`dot > 0` evaluates to a boolean, so we return it straight. `[1, 2]·[3, 4] = 11`
+is positive (`True`); `[1, 0]·[-1, 0] = -1` is negative (`False`); and
+`[1, 0]·[0, 1] = 0` is not greater than zero, so unrelated tastes return `False`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Here are three taste vectors:
+
+```python
+amir = [4, 0, 1]
+bina = [3, 1, 0]
+chen = [0, 2, 5]
+```
+
+Find which **two** of the three are most similar by dot product. Compute the dot
+product of all three pairs, print them, and name the closest pair.
+
+**Rubric — a good answer:**
+
+- Computes the dot product for all three pairs (amir·bina, amir·chen, bina·chen).
+- Prints each pair's score so the comparison is visible.
+- States which pair has the largest dot product and is therefore most similar.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+amir = [4, 0, 1]
+bina = [3, 1, 0]
+chen = [0, 2, 5]
+
+scores = {
+    "amir·bina": dot(amir, bina),
+    "amir·chen": dot(amir, chen),
+    "bina·chen": dot(bina, chen),
+}
+for pair, score in scores.items():
+    print(f"{pair} = {score}")
+
+best = max(scores, key=scores.get)
+print(f"Most similar pair: {best}")
+```
+
+`amir·bina = 12` is the largest (against `amir·chen = 5` and `bina·chen = 2`), so
+amir and bina share the most taste — both lean into the first genre, which is where
+the products pile up.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now turn two vectors into a single similarity score: multiply the pairs, add
+them up, and read the sign. That score sits at the heart of recommenders, search,
+and every entry of a matrix product. Next we switch from linear algebra to calculus
+and meet **derivatives = sensitivity** (Ch6) — how much an output changes when you
+nudge an input, the idea that lets a model learn.

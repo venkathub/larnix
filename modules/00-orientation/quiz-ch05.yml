@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m0-ch5-history"
+questions:
+  - id: how-old
+    prompt: "Roughly how old is the idea of an artificial neuron?"
+    options:
+      - "About 10 years — it began with ChatGPT in 2022"
+      - "About 80 years — McCulloch and Pitts proposed one in 1943"
+      - "About 200 years — it predates electricity"
+    answer: 1
+    explanation: "The McCulloch–Pitts mathematical neuron dates to 1943, roughly eighty years ago."
+  - id: ai-winter
+    prompt: "What is an 'AI winter'?"
+    options:
+      - "A period when AI only worked in cold climates"
+      - "A stretch when progress stalled and funding dried up after early promises went unmet"
+      - "The season transformers were invented"
+    answer: 1
+    explanation: "AI winters followed over-promising — notably after 1969 and again in the late 1980s."
+  - id: two-sparks
+    prompt: "Which two milestones most directly led to today's generative AI?"
+    options:
+      - "Deep Blue (1997) and AlphaGo (2016)"
+      - "The 2012 deep-learning boom (AlexNet) and the 2017 transformer"
+      - "The Perceptron (1958) and the Turing test (1950)"
+    answer: 1
+    explanation: "AlexNet (2012) made deep learning mainstream and the transformer (2017) is the architecture behind modern language models."
+  - id: ai-vs-ml
+    prompt: "Why is Deep Blue (1997) a reminder that 'AI' is broader than 'machine learning'?"
+    options:
+      - "It learned chess from millions of games"
+      - "It searched moves using rules, without learning from data"
+      - "It was not actually an AI system"
+    answer: 1
+    explanation: "Deep Blue won by rule-based search, not by learning — it was AI, but not machine learning."

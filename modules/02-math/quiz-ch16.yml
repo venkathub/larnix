@@ -1,0 +1,35 @@
+title: "Chapter 16 — quick check"
+id: "m2-ch16-one-neuron"
+questions:
+  - id: forward-pass
+    prompt: "What does a neuron's forward pass compute?"
+    options:
+      - "A weighted sum of the inputs plus a bias, then an activation that squashes it into 0..1"
+      - "The average of the inputs"
+      - "The largest input value"
+    answer: 0
+    explanation: "z = w·x + b is the weighted sum (a dot product plus a bias); a = sigmoid(z) squashes it into the range 0..1."
+  - id: sigmoid-derivative
+    prompt: "The derivative of the sigmoid, da/dz, is…"
+    options:
+      - "Always 1"
+      - "a · (1 - a) — the output times one minus itself"
+      - "2 · (a - y)"
+    answer: 1
+    explanation: "A tidy result worth remembering: the sigmoid's slope equals its own output times one minus its output, a(1 - a)."
+  - id: chain-rule-weight
+    prompt: "By the chain rule, the gradient of the loss with respect to a weight w_i is…"
+    options:
+      - "dL/da only"
+      - "dL/da · da/dz · dz/dw_i, which works out to 2(a - y) · a(1 - a) · x_i"
+      - "x_i divided by the loss"
+    answer: 1
+    explanation: "Multiply the links: the loss derivative 2(a - y), the sigmoid slope a(1 - a), and dz/dw_i = x_i."
+  - id: gradient-check
+    prompt: "Why compute a numeric gradient with finite differences?"
+    options:
+      - "Because calculus cannot find this gradient"
+      - "To check the hand-derived (analytic) gradient — if they match to many decimals, it is correct"
+      - "Because it is faster than the analytic gradient"
+    answer: 1
+    explanation: "Finite differences, (L(p+eps) - L(p-eps)) / (2·eps), estimate the slope without calculus, so they verify the analytic gradient. Here they matched to about 3e-11."

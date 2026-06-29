@@ -1,0 +1,338 @@
+---
+title: "Vectors & geometry"
+module: "M2 — Math You Actually Need"
+chapter: 2
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch1 — Why math for AI"
+learning_objectives:
+  - "Read a 2D vector [x, y] as both a point and an arrow from the origin"
+  - "Add and scale vectors, and explain each move as a picture"
+  - "Compute the length (magnitude) of a vector with sqrt(x*x + y*y)"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: vector-is
+    q: "What is a 2D vector?"
+    a: "A list of two numbers [x, y] that names a point — and an arrow from the origin (0, 0) to that point."
+  - id: vector-add
+    q: "How do you add two vectors?"
+    a: "Componentwise: [a, b] + [c, d] = [a + c, b + d]. Geometrically, lay the second arrow tip-to-tail after the first."
+  - id: vector-magnitude
+    q: "How long is the vector [x, y]?"
+    a: "Its magnitude is sqrt(x*x + y*y) — the straight-line distance from the origin to the point, by the Pythagorean theorem."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You already use vectors without the name. A location on a map is "3 right, 4 up"
+from some corner. That pair of numbers is a **vector**: a short list that names a
+**point**. Draw an **arrow** from the origin `(0, 0)` to that point and you have the
+same vector as a picture — a direction and a distance.
+
+This is the recurring idea of the module: **data becomes vectors**. A movie rated
+on "funny" and "scary" is the vector `[funny, scary]`. A pixel's red, green, blue
+values are the vector `[r, g, b]`. Once data is a list of numbers, geometry — points,
+arrows, distances — becomes a way to reason about it.
+
+> You'll need from before: the spirit of Ch1 — picture first, symbols second. No new
+> tools; we draw arrows and count squares.
+
+---
+
+## A vector is a point and an arrow
+
+Write a 2D vector as `[x, y]`. Two readings of the same thing:
+
+- **As a point:** go `x` along the horizontal axis and `y` up the vertical axis. The
+  vector `[2, 1]` lands at the spot two right and one up.
+- **As an arrow:** draw a straight line from the origin `(0, 0)` out to that point.
+  The arrow has a **direction** (where it points) and a **length** (how far).
+
+Both readings carry the same information. We pick whichever is handier for the job.
+
+### Adding vectors — tip to tail
+
+To add `[1, 2]` and `[3, 4]`, add matching slots: the x's together, the y's together.
+
+`[1, 2] + [3, 4] = [1 + 3, 2 + 4] = [4, 6]`
+
+That is the **componentwise** rule. The picture: place the second arrow so its tail
+starts at the **tip** of the first. Walk along the first arrow, then along the
+second, and you arrive at `[4, 6]` — the same place the rule predicts.
+
+### Scaling a vector — stretch or shrink
+
+Multiply a vector by a single number (a **scalar**) and every component scales by it:
+
+`2 * [3, 1] = [6, 2]`
+
+The arrow keeps its direction but changes length — `2` stretches it to twice as long,
+`0.5` shrinks it by half, and a negative number flips it to point the other way.
+
+### How long is a vector?
+
+The **length** (or **magnitude**) of `[x, y]` is the straight-line distance from the
+origin to the point. The arrow is the hypotenuse of a right triangle with legs `x`
+and `y`, so the Pythagorean theorem gives:
+
+`magnitude([x, y]) = sqrt(x*x + y*y)`
+
+For `[3, 4]` that is `sqrt(9 + 16) = sqrt(25) = 5.0`. The "3 across, 4 up" arrow is
+exactly 5 units long.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+In Java you would reach for a fixed-size `double[]` or a `record Vec2(double x,
+double y)` — the size is known and the type is rigid. Here a vector is a plain Python
+`list` like `[3.0, 4.0]`; you index it with `v[0]` and `v[1]`, and you don't need a
+separate `Point` class — the same list *is* the point and the arrow.
+
+One difference to expect: there is no operator overloading doing the math for you, so
+element-wise addition is written out by hand (`[a[0] + b[0], a[1] + b[1]]`) in this
+chapter. Later, NumPy automates exactly this — `a + b` on arrays adds componentwise
+for you — but writing it by hand first makes the rule concrete.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's draw two vectors as arrows from the origin and see their directions and lengths.
+
+```{pyodide}
+#| caption: "Two vectors as arrows from the origin"
+#| fig-alt: "Two arrows drawn from the origin on an x-y grid: one to the point (2, 1) and one to the point (1, 3), each labelled with its coordinates."
+import matplotlib.pyplot as plt
+
+a = [2, 1]
+b = [1, 3]
+
+fig, ax = plt.subplots(figsize=(4, 4))
+for v, color in [(a, "tab:blue"), (b, "tab:orange")]:
+    ax.annotate(
+        "",
+        xy=(v[0], v[1]),
+        xytext=(0, 0),
+        arrowprops=dict(arrowstyle="->", color=color, lw=2),
+    )
+    ax.text(v[0] + 0.1, v[1] + 0.1, f"({v[0]}, {v[1]})")
+
+ax.set_xlim(-0.5, 4)
+ax.set_ylim(-0.5, 4)
+ax.axhline(0, color="gray", lw=0.5)
+ax.axvline(0, color="gray", lw=0.5)
+ax.set_aspect("equal")
+ax.grid(True, alpha=0.3)
+ax.set_title("Two vectors from the origin")
+plt.show()
+```
+
+The takeaway from the picture: each vector is an arrow leaving the origin. `[2, 1]`
+points mostly to the right and a little up; `[1, 3]` points mostly up and a little
+right. The arrow for `[1, 3]` reaches farther from the origin — its length is
+`sqrt(1 + 9) ≈ 3.16`, against `sqrt(4 + 1) ≈ 2.24` for `[2, 1]`. The numbers in the
+list and the arrow on the grid are two views of one object.
+
+We can confirm those lengths in code:
+
+```{pyodide}
+#| caption: "The magnitude of each arrow, from sqrt(x*x + y*y)"
+a = [2, 1]
+b = [1, 3]
+
+len_a = (a[0] * a[0] + a[1] * a[1]) ** 0.5
+len_b = (b[0] * b[0] + b[1] * b[1]) ** 0.5
+print(f"length of {a} = {round(len_a, 2)}")
+print(f"length of {b} = {round(len_b, 2)}")
+```
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A 2D vector `[x, y]` is a **list of numbers** that names a **point** — and an
+   **arrow** from the origin to that point.
+2. **Add** vectors componentwise (`[1, 2] + [3, 4] = [4, 6]`); the picture is
+   tip-to-tail.
+3. **Scaling** by a number stretches or shrinks the arrow (and a negative flips it),
+   keeping its line.
+4. The **length** of `[x, y]` is `sqrt(x*x + y*y)` — so `magnitude([3, 4]) = 5.0`.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Complete `vector_add` so it returns the **componentwise** sum of two 2-element
+vectors. The first slot is filled in; replace `____` with the second, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_add
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_add
+def vector_add(a, b):
+    """Return the componentwise sum of two 2-element vectors."""
+    return [a[0] + b[0], ____]  # TODO: the second component, a[1] + b[1]
+
+run_tests([
+    ("[1,2] + [3,4]", vector_add([1, 2], [3, 4]), [4, 6]),
+    ("[0,0] + [5,-2]", vector_add([0, 0], [5, -2]), [5, -2]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The second slot mirrors the first: where the first is `a[0] + b[0]`, the second adds
+the `y` components, `a[1] + b[1]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def vector_add(a, b):
+    return [a[0] + b[0], a[1] + b[1]]
+
+run_tests([
+    ("[1,2] + [3,4]", vector_add([1, 2], [3, 4]), [4, 6]),
+    ("[0,0] + [5,-2]", vector_add([0, 0], [5, -2]), [5, -2]),
+])
+```
+
+Each output slot is the sum of the matching input slots — the componentwise rule, and
+the tip-to-tail picture in numbers.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `magnitude(v)` — the length of a 2D vector as a **float**, using
+`sqrt(v[0]^2 + v[1]^2)`. In Python, raising to the `0.5` power takes a square root, so
+write the expression with `** 0.5`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_magnitude
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_magnitude
+def magnitude(v):
+    """Return the length of [x, y] as sqrt(x*x + y*y)."""
+    return ____  # TODO: (v[0]*v[0] + v[1]*v[1]) ** 0.5
+
+run_tests([
+    ("length of [3,4]", magnitude([3, 4]), 5.0),
+    ("length of [0,0]", magnitude([0, 0]), 0.0),
+    ("length of [6,8]", magnitude([6, 8]), 10.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Square each component, add them, then take the square root by raising the sum to the
+`0.5` power: `(v[0] * v[0] + v[1] * v[1]) ** 0.5`. Mind the parentheses — `** 0.5`
+binds tightly, so the whole sum must be wrapped.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def magnitude(v):
+    return (v[0] * v[0] + v[1] * v[1]) ** 0.5
+
+run_tests([
+    ("length of [3,4]", magnitude([3, 4]), 5.0),
+    ("length of [0,0]", magnitude([0, 0]), 0.0),
+    ("length of [6,8]", magnitude([6, 8]), 10.0),
+])
+```
+
+`[3, 4]` gives `sqrt(9 + 16) = sqrt(25) = 5.0`. The grader compares floats with a
+small tolerance, so the result reads as exactly `5.0`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Scale a vector by a number, then
+describe what happens to its **length**. Pick a vector like `[3, 4]`, multiply it by a
+scalar such as `2`, compute the magnitude before and after, and print both.
+
+**Rubric — a good answer:**
+
+- Scales a vector by a number componentwise (each slot times the scalar).
+- Computes the magnitude before and after, and prints both numbers.
+- States the pattern in words: scaling by `k` multiplies the length by `k` (for a
+  positive `k`).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def magnitude(v):
+    return (v[0] * v[0] + v[1] * v[1]) ** 0.5
+
+def scale(v, k):
+    return [v[0] * k, v[1] * k]
+
+v = [3, 4]
+k = 2
+scaled = scale(v, k)
+print(f"{v} has length {magnitude(v)}")
+print(f"{scaled} has length {magnitude(scaled)}")
+print(f"length scaled by {k}: {magnitude(scaled) / magnitude(v)}")
+```
+
+`[3, 4]` has length `5.0`; `[6, 8]` has length `10.0`. Scaling the arrow by `2`
+doubled its length while keeping its direction — multiplying a vector by `k` multiplies
+its length by `k`.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+A vector holds one piece of data as a point and an arrow, and you can add, scale, and
+measure it. Next we step up from a single arrow to whole **grids of numbers** —
+**matrices as transformations**: how a table of numbers can move, rotate, and reshape
+the vectors from this chapter.

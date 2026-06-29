@@ -1,0 +1,36 @@
+---
+title: "M0 — Orientation"
+toc: false
+---
+
+The on-ramp. You run a real model in your browser first, then learn — in plain
+language — what AI is, what it costs (₹0 to start), and how this school works. No
+prior machine learning, no install, no account.
+
+## Start here
+
+Work through the six chapters in order, beginning with
+[**Chapter 1 — Train your first model**](ch01-train-your-first-model.qmd). Each
+runs in your browser at ₹0; press **Run** on every code block.
+
+| # | Chapter |
+|---|---------|
+| 1 | [Train your first model — in your browser](ch01-train-your-first-model.qmd) |
+| 2 | [What you need & what it costs](ch02-what-you-need-and-what-it-costs.qmd) |
+| 3 | [What is AI, really?](ch03-what-is-ai-really.qmd) |
+| 4 | [AI vs ML vs DL vs GenAI — a family tree](ch04-ai-ml-dl-genai.qmd) |
+| 5 | [A 10-minute history of AI](ch05-history-of-ai.qmd) |
+| 6 | [How this school works](ch06-how-this-school-works.qmd) |
+
+## Module quiz
+
+When you've finished the chapters, test the whole module. Your score is saved in
+your browser.
+
+{{< quiz module-quiz.yml >}}
+
+## Capstone
+
+Finish with the module project: [**Set up & run**](capstone.md) — confirm the ₹0
+toolchain, run the Chapter 1 model, change one thing, and report whether your
+accuracy moved.

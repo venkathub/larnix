@@ -1,0 +1,336 @@
+---
+title: "Errors & exceptions"
+module: "M1 — Python for AI"
+chapter: 7
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+  - "M1 Ch6 — Reading & writing files (CSV/JSON)"
+learning_objectives:
+  - "Explain what an exception is and what happens when one is not caught"
+  - "Use try/except to recover from an error and keep going"
+  - "Catch specific exceptions so you don't hide unrelated bugs"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: what-is-exception
+    q: "What is an exception, and what happens if it is not caught?"
+    a: "An error raised while code runs. Uncaught, it stops the program and prints a traceback."
+  - id: try-except
+    q: "What does try/except do?"
+    a: "It runs risky code in the try block and, if that code raises an error, runs the except block to recover instead of crashing."
+  - id: catch-specific
+    q: "Why catch a specific exception like ValueError rather than everything?"
+    a: "So you only handle the error you expect; a bare except would also swallow unrelated bugs like typos, hiding real problems."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+One bad value can sink an entire script. In the habits file, `sleep_hours` has a
+stray `"8h"` and `steps` has `"7,500"`. The moment your code hits `int("8h")`, it
+raises an error — and if nothing catches it, the loop stops dead, even though the
+other 34 rows were perfectly fine.
+
+Real data always has bad values. Robust code **expects** them and keeps going.
+`try`/`except` is how you do that.
+
+> You'll need from before: converting strings to numbers (Ch1) and reading rows
+> from a file (Ch6) — the exact place bad values show up.
+
+---
+
+## What is an exception?
+
+An **exception** is an error raised while your program runs — dividing by zero,
+converting `"8h"` to an `int`, looking up a key that isn't there. If nothing
+**catches** it, the exception stops the program and prints a **traceback** (the
+report we'll learn to read in the next chapter).
+
+A few you'll meet constantly:
+
+- **`ValueError`** — a value is the wrong *kind*, like `int("8h")`.
+- **`KeyError`** — a dict key doesn't exist, like `row["stpes"]` (a typo).
+- **`ZeroDivisionError`** — dividing by zero.
+
+## try / except
+
+Put the risky code in a **`try`** block and the recovery in an **`except`** block:
+
+```python
+try:
+    n = int(value)     # might raise ValueError
+except ValueError:
+    n = 0              # recover: use a safe default instead
+```
+
+If `int(value)` succeeds, the `except` is skipped. If it raises a `ValueError`,
+Python jumps to the `except` and your program carries on.
+
+### Catch the *specific* exception
+
+Always name the exception you expect. A bare `except:` catches **everything** —
+including bugs you'd want to know about, like a misspelled variable:
+
+```python
+try:
+    n = int(value)
+except ValueError:    # good: only bad-number errors
+    n = 0
+```
+
+> ⚠️ Watch out: `except:` or `except Exception:` with no thought hides real bugs.
+> Catch the narrowest exception that makes sense (`ValueError` here), so a typo
+> still surfaces loudly instead of silently becoming `0`.
+
+### Reading the error message
+
+Add `as e` to get the exception object, whose text explains what went wrong:
+
+```python
+try:
+    int("8h")
+except ValueError as e:
+    print("Could not convert:", e)
+```
+
+You can also **raise** your own when input is invalid: `raise ValueError("steps
+cannot be negative")`.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+`try`/`except` is Python's `try`/`catch`; `except ValueError as e:` is
+`catch (NumberFormatException e)`. The big difference: Python has **no checked
+exceptions** — you're never forced to declare or catch anything, so catching is a
+choice you make where recovery makes sense. `finally` works exactly as in Java.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Clean a column of messy step values without letting one bad entry stop the loop.
+Press **Run**.
+
+```{pyodide}
+#| caption: "Convert each value, recovering from the ones that fail"
+messy_steps = ["7500", "7,500", "8h", "", "8200"]
+
+cleaned = []
+errors = 0
+for value in messy_steps:
+    try:
+        cleaned.append(int(value))
+    except ValueError:
+        cleaned.append(None)   # couldn't parse this one — mark it
+        errors += 1
+
+print("Cleaned:", cleaned)
+print("Could not parse", errors, "value(s)")
+```
+
+`int("7,500")`, `int("8h")`, and `int("")` each raise a `ValueError`, so they land
+in the `except` and become `None` — while `"7500"` and `"8200"` convert cleanly.
+The loop survives all five rows.
+
+```{pyodide}
+#| caption: "Reading the message with `as e`"
+def parse_steps(value):
+    try:
+        return int(value)
+    except ValueError as e:
+        print("  skipping", repr(value), "->", e)
+        return None
+
+for v in ["8200", "8h"]:
+    print(v, "becomes", parse_steps(v))
+```
+
+The message — *invalid literal for int() with base 10: '8h'* — is the same text
+you'll see at the bottom of a traceback next chapter.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. An **exception** is a runtime error; if uncaught it **stops** the program.
+2. **`try`/`except`** runs risky code and recovers if it fails — so one bad row
+   doesn't crash the whole job.
+3. Catch the **specific** exception (`except ValueError`) so you don't hide
+   unrelated bugs.
+4. **`except … as e`** gives you the error message; **`raise`** lets you signal
+   bad input from your own code.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the `except` so `safe_int` returns `None` when a value can't be converted.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_safeint
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_safeint
+def safe_int(text):
+    """Convert text to an int; return None if it can't be parsed."""
+    try:
+        return int(text)
+    except ____:  # TODO: the error int() raises on bad input
+        return None
+
+run_tests([
+    ("parses a number", safe_int("7500"), 7500),
+    ("bad input becomes None", safe_int("8h"), None),
+    ("empty becomes None", safe_int(""), None),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`int("8h")` raises a `ValueError` — the wrong *kind* of value. That's the exception
+to catch.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def safe_int(text):
+    try:
+        return int(text)
+    except ValueError:
+        return None
+```
+
+`int()` raises `ValueError` for unparsable text; the `except ValueError` catches
+exactly that and returns `None` instead of crashing.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `clean_steps(text)` — strip a comma, convert to an `int`, and fall back to
+`0` if it still can't be parsed. This is the robust version of the habits cleaner.
+Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_clean
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_clean
+def clean_steps(text):
+    """Steps as an int: strip a comma, and use 0 if it can't be parsed."""
+    try:
+        return int(text.replace(",", ""))
+    except ValueError:
+        return ____  # TODO: a safe fallback for unparsable input
+
+run_tests([
+    ("plain number", clean_steps("8200"), 8200),
+    ("comma is removed", clean_steps("7,500"), 7500),
+    ("unparsable becomes 0", clean_steps("8h"), 0),
+    ("blank becomes 0", clean_steps(""), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The task says "fall back to `0`" — so when conversion fails, the `except` should
+return `0`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def clean_steps(text):
+    try:
+        return int(text.replace(",", ""))
+    except ValueError:
+        return 0
+```
+
+Removing the comma fixes `"7,500"`; anything still unconvertible (`"8h"`, `""`)
+raises `ValueError`, caught to return `0` — so the cleaner never crashes.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Write `count_bad(values)` that
+goes through a list of step strings and returns **how many** could not be converted
+to an `int`. Use `try`/`except` and test it on a mixed list.
+
+**Rubric — a good answer:**
+
+- Loops over the values with a `try`/`except ValueError`.
+- Increments a counter only in the `except` branch.
+- Returns the count and runs on a list with both good and bad values.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def count_bad(values):
+    bad = 0
+    for v in values:
+        try:
+            int(v)
+        except ValueError:
+            bad += 1
+    return bad
+
+print(count_bad(["7500", "8h", "8200", ""]))   # 2
+```
+
+Each value is attempted in the `try`; only the failures reach the `except`, where
+`bad` grows. Here `"8h"` and `""` fail, so the count is 2.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch07.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now keep a job running over messy data, recovering from bad values instead
+of crashing on them. But when an error *isn't* something you expected, Python hands
+you a **traceback** — and that report is your best debugging tool. Next chapter, we
+learn to read one and find the bug fast.

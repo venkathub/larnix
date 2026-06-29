@@ -1,0 +1,446 @@
+---
+title: "The math of one neuron"
+module: "M2 — Math You Actually Need"
+chapter: 16
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch5 — Dot products & similarity"
+  - "M2 Ch8 — The chain rule"
+  - "M2 Ch15 — Linear algebra in NumPy"
+learning_objectives:
+  - "Run the forward pass of one neuron: a weighted sum, a bias, and an activation"
+  - "Run the backward pass by hand: use the chain rule to get the gradient of the loss with respect to every weight and the bias"
+  - "Confirm those gradients are right by checking them against a numeric finite-difference estimate"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: forward-pass
+    q: "What does the forward pass of one neuron compute?"
+    a: "A weighted sum of the inputs plus a bias, z = w·x + b (a dot product), then an activation a = sigmoid(z) that squashes z into 0..1."
+  - id: backward-pass
+    q: "How does the backward pass find the gradient of the loss with respect to a weight?"
+    a: "By the chain rule: dL/dw_i = dL/da · da/dz · dz/dw_i. With squared-error loss and a sigmoid, that is 2(a - y) · a(1 - a) · x_i."
+  - id: gradient-check
+    q: "How do you confirm a hand-derived gradient is correct?"
+    a: "Compare it to a numeric estimate from finite differences, (L(p + eps) - L(p - eps)) / (2·eps). If the two agree to many decimal places, the analytic gradient is right."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+This is the chapter the whole module has been building toward. Every piece you've
+met — a dot product, a derivative, a gradient, the chain rule — clicks together
+here into the smallest learning machine there is: **one neuron**. Deep learning
+stacks this exact unit by the million. Understand one, and the rest is repetition.
+
+A neuron does two small things. It takes a row of numbers and mixes them into a
+single score (a **weighted sum**). Then it bends that score into a prediction
+between 0 and 1 (an **activation**). That's the forward pass. Learning is the
+backward pass: measuring how wrong the prediction was, then using the chain rule to
+work out how to nudge each weight to be a little less wrong next time.
+
+We'll do both passes **by hand**, in code you can read line by line, and then prove
+our hand-derived gradient is correct by checking it against a numeric estimate.
+
+> You'll need from before: the dot product (Ch5), the derivative as sensitivity
+> (Ch6), the gradient (Ch7), the chain rule (Ch8), and NumPy arrays (Ch15).
+
+---
+
+## The forward pass: from inputs to a prediction
+
+A neuron holds two things it can adjust: a **weight** for each input (`w`) and a
+single **bias** (`b`). Given an input vector `x`, it computes:
+
+1. **The weighted sum** `z = w · x + b`. This is the dot product from Chapter 5 — a
+   similarity score between the weights and the input — shifted by the bias.
+2. **The activation** `a = σ(z)`, where σ (sigmoid) is `1 / (1 + e^(−z))`. It
+   squashes any real number into the range 0 to 1, so the output reads like a
+   probability.
+
+Let's use one concrete example all the way through. Input `x = [2, 3]`, weights
+`w = [0.5, −1.0]`, bias `b = 0.5`, and the true answer we wanted is `y = 1.0`.
+
+```{pyodide}
+#| caption: "The forward pass of one neuron, step by step"
+import numpy as np
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
+x = np.array([2.0, 3.0])
+w = np.array([0.5, -1.0])
+b = 0.5
+y = 1.0
+
+z = float(w @ x + b)          # weighted sum (dot product + bias)
+a = float(sigmoid(z))         # activation, squashed into 0..1
+loss = float((a - y) ** 2)    # squared error: how wrong we were
+
+print("z (weighted sum) =", round(z, 4))
+print("a (prediction)   =", round(a, 6))
+print("loss             =", round(loss, 6))
+```
+
+Running it: `z = 0.5·2 + (−1.0)·3 + 0.5 = −1.5`, the sigmoid squashes that to
+`a ≈ 0.182426`, and since we wanted `y = 1.0` the **squared-error loss** is
+`(0.182426 − 1.0)² ≈ 0.668428`. The prediction is far too low — so the neuron has
+something to learn.
+
+## The loss: a number that says how wrong we are
+
+To learn, the neuron needs a single number measuring its mistake. We use **squared
+error**: `L = (a − y)²`. It's zero when the prediction is perfect and grows as the
+prediction drifts from the truth. Squaring (like in Ch11's variance) keeps it
+positive and punishes big misses more. Learning means changing `w` and `b` to make
+`L` smaller — and to know which way to change them, we need the **gradient of `L`**.
+
+## The backward pass: the chain rule does the work
+
+The loss depends on `a`, which depends on `z`, which depends on each weight. That's
+a chain — exactly Chapter 8. To get how the loss responds to weight `w_i`, multiply
+the links:
+
+$$\frac{\partial L}{\partial w_i} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial w_i}$$
+
+Each link is something you already know how to differentiate:
+
+- `dL/da = 2(a − y)` — the derivative of the squared error.
+- `da/dz = a(1 − a)` — the derivative of the sigmoid (a tidy result worth
+  remembering: the sigmoid's slope is its own output times one minus itself).
+- `dz/dw_i = x_i` and `dz/db = 1` — the weighted sum is linear in each weight, so
+  its slope is the matching input itself (and 1 for the bias).
+
+Multiply the first two once to get `dL/dz`, then fan it out to every weight by its
+input. Here's the whole backward pass:
+
+```{pyodide}
+#| caption: "The backward pass by hand: gradient of the loss for every weight and the bias"
+import numpy as np
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
+x = np.array([2.0, 3.0])
+w = np.array([0.5, -1.0])
+b = 0.5
+y = 1.0
+
+# forward again, so this cell stands alone
+z = w @ x + b
+a = sigmoid(z)
+
+# backward: chain rule, link by link
+dL_da = 2 * (a - y)        # derivative of (a - y)^2
+da_dz = a * (1 - a)        # derivative of the sigmoid
+dL_dz = dL_da * da_dz      # combine the first two links
+
+grad_w = dL_dz * x         # dz/dw_i = x_i  (fan out to each weight)
+grad_b = dL_dz * 1.0       # dz/db   = 1
+
+print("dL_dz   =", round(float(dL_dz), 6))
+print("grad_w  =", [round(float(g), 6) for g in grad_w])
+print("grad_b  =", round(float(grad_b), 6))
+```
+
+That gives `dL/dz ≈ −0.243877`, so `grad_w ≈ [−0.487753, −0.731630]` (each is
+`dL/dz` times its input, 2 and 3) and `grad_b ≈ −0.243877`. The negative signs say:
+to reduce the loss, *increase* these weights and the bias — which would push the
+prediction up toward the target `y = 1.0`, exactly what we want.
+
+## Gradient checking: proving the hand-derivation is right
+
+How do we know that calculus is correct and not a slip of algebra? We check it
+**numerically**. A derivative is a slope, and we can estimate any slope without
+calculus by nudging the input a tiny amount `eps` each way and measuring the rise
+over run: `(L(p + eps) − L(p − eps)) / (2·eps)`. If our analytic gradient matches
+this numeric estimate to many decimals, it's right.
+
+```{pyodide}
+#| caption: "Numeric gradient check: analytic gradient vs finite differences"
+import numpy as np
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
+x = np.array([2.0, 3.0])
+w = np.array([0.5, -1.0])
+b = 0.5
+y = 1.0
+
+def loss_at(w, b):
+    return float((sigmoid(w @ x + b) - y) ** 2)
+
+# analytic gradient (from the backward pass above)
+a = sigmoid(w @ x + b)
+dL_dz = 2 * (a - y) * a * (1 - a)
+analytic = np.array([dL_dz * x[0], dL_dz * x[1], dL_dz])
+
+# numeric gradient by finite differences
+eps = 1e-5
+numeric = []
+for i in range(2):                       # the two weights
+    wp = w.copy(); wp[i] += eps
+    wm = w.copy(); wm[i] -= eps
+    numeric.append((loss_at(wp, b) - loss_at(wm, b)) / (2 * eps))
+numeric.append((loss_at(w, b + eps) - loss_at(w, b - eps)) / (2 * eps))  # the bias
+numeric = np.array(numeric)
+
+max_error = float(np.max(np.abs(analytic - numeric)))
+print("analytic =", [round(float(g), 6) for g in analytic])
+print("numeric  =", [round(float(g), 6) for g in numeric])
+print("max error = {:.2e}".format(max_error))
+```
+
+The two gradients agree to a **maximum error of about 3.27e-11** — eleven decimal
+places. The hand-derived chain rule is correct. That tiny leftover is rounding in
+the finite-difference estimate, not a mistake in the calculus.
+
+This is not a toy check: gradient checking is exactly how practitioners catch bugs
+when they implement backpropagation in a real network. One neuron or one billion,
+the recipe is the same — forward pass, loss, chain rule backward, verify.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A neuron's **forward pass** is a dot product plus a bias (`z = w·x + b`) followed
+   by an activation (`a = σ(z)`) that squashes the score into 0..1.
+2. The **loss** `(a − y)²` is one number measuring how wrong the prediction is;
+   learning means making it smaller.
+3. The **backward pass** uses the chain rule to get the gradient of the loss for
+   every weight: `dL/dw_i = 2(a − y) · a(1 − a) · x_i`.
+4. A **numeric gradient check** (finite differences) confirms the hand-derived
+   gradient — here they matched to about 3e-11.
+5. This single unit, stacked and trained, is all of deep learning. You've now done
+   its math by hand.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The activation is the sigmoid. Complete `sigmoid(z)` so it returns
+`1 / (1 + e^(−z))`. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_sigmoid
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_sigmoid
+import numpy as np
+
+def sigmoid(z):
+    """Squash any real number into the range 0..1."""
+    return ____  # TODO: 1 over (1 plus e to the minus z)
+
+run_tests([
+    ("zero maps to a half", float(sigmoid(0)), 0.5),
+    ("sigmoid(2)", round(float(sigmoid(2)), 4), 0.8808),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`e^(−z)` is `np.exp(-z)`. The formula is one divided by `(1 + np.exp(-z))`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+```
+
+At `z = 0`, `e^0 = 1`, so the value is `1 / (1 + 1) = 0.5` — the sigmoid's midpoint.
+Large positive `z` drives it toward 1; large negative `z` toward 0.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now the whole forward pass. Write `neuron_forward(x, w, b)` that returns the
+activation `σ(w · x + b)`. Use NumPy for the dot product. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_forward
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_forward
+import numpy as np
+
+def neuron_forward(x, w, b):
+    """Forward pass: weighted sum plus bias, then a sigmoid."""
+    z = ____  # TODO: dot product of w and x, plus the bias b
+    return 1.0 / (1.0 + np.exp(-z))
+
+run_tests([
+    ("our worked example", round(float(neuron_forward([2, 3], [0.5, -1.0], 0.5)), 4), 0.1824),
+    ("inputs of one", round(float(neuron_forward([1, 1], [1, 1], 0.0)), 4), 0.8808),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The weighted sum is the dot product of `w` and `x` plus the bias. With NumPy arrays
+that's `np.array(w) @ np.array(x) + b`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def neuron_forward(x, w, b):
+    z = np.array(w) @ np.array(x) + b
+    return 1.0 / (1.0 + np.exp(-z))
+```
+
+`np.array(w) @ np.array(x)` is the weighted sum; adding `b` shifts it; the sigmoid
+squashes the result. For our example `z = −1.5`, so the output is `≈ 0.1824`.
+</details>
+
+### Exercise 3 — Implement (≈8 min) 🟡
+
+The key step of the backward pass. Write `dL_dz(a, y)` — the gradient of the
+squared-error loss with respect to the weighted sum `z`. By the chain rule this is
+`2(a − y) · a(1 − a)`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_grad
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_grad
+def dL_dz(a, y):
+    """Gradient of (a - y)^2 with respect to z, through the sigmoid."""
+    return ____  # TODO: 2*(a - y) times a*(1 - a)
+
+run_tests([
+    ("under-predicting", round(dL_dz(0.5, 1.0), 4), -0.25),
+    ("over-predicting", round(dL_dz(0.5, 0.0), 4), 0.25),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Two links of the chain multiplied: `dL/da = 2*(a - y)` and `da/dz = a*(1 - a)`. The
+answer is their product, `2 * (a - y) * a * (1 - a)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def dL_dz(a, y):
+    return 2 * (a - y) * a * (1 - a)
+```
+
+At `a = 0.5`, the sigmoid slope `a(1 − a)` is `0.25`. If the truth is `y = 1.0` we
+under-predicted, so the gradient is negative (`−0.25`) — pushing the prediction up.
+If `y = 0.0` we over-predicted, so it's positive (`+0.25`) — pushing it down.
+</details>
+
+### Exercise 4 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Put it all together: write a
+forward pass, derive `grad_w` and `grad_b` analytically, then **gradient-check**
+them against finite differences for an input of your choice. Print the max error.
+
+**Rubric — a good answer:**
+
+- Computes the forward pass and the analytic gradient for `w` and `b`.
+- Estimates the same gradient numerically with `(L(p+eps) − L(p−eps)) / (2·eps)`.
+- Reports the max absolute difference and confirms it is tiny (well under `1e-6`).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
+x = np.array([1.0, -2.0, 0.5])
+w = np.array([0.3, 0.8, -0.5])
+b = -0.1
+y = 0.0
+
+def loss_at(w, b):
+    return float((sigmoid(w @ x + b) - y) ** 2)
+
+a = sigmoid(w @ x + b)
+dL_dz = 2 * (a - y) * a * (1 - a)
+analytic = np.append(dL_dz * x, dL_dz)   # grad_w then grad_b
+
+eps = 1e-5
+numeric = []
+for i in range(len(w)):
+    wp = w.copy(); wp[i] += eps
+    wm = w.copy(); wm[i] -= eps
+    numeric.append((loss_at(wp, b) - loss_at(wm, b)) / (2 * eps))
+numeric.append((loss_at(w, b + eps) - loss_at(w, b - eps)) / (2 * eps))
+
+max_error = float(np.max(np.abs(analytic - np.array(numeric))))
+print("max error = {:.2e}".format(max_error))
+```
+
+Any reasonable input gives a max error around `1e-10` or smaller — confirmation that
+the hand-derived gradient is correct, on data different from the chapter's example.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch16.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You have now done, by hand, the exact computation that runs billions of times inside a
+trained network: forward pass, loss, chain-rule backward, gradient check. Stacking
+these neurons into layers and repeating the nudge is **gradient descent** — the
+engine of every model in this course.
+
+That closes Module 2. You came in worried about math; you leave having built a
+neuron's brain from a dot product and a derivative. Next, in **Module 3 — Data &
+Tooling**, you turn from the math to the craft: loading real datasets, exploring
+them, and preparing the numbers that a neuron like this one learns from.

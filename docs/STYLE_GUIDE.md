@@ -73,6 +73,30 @@ Rules:
 - Match exercise difficulty to the chapter's tier. A 🟢 chapter must not hide a 🔴 exercise without labelling it a stretch goal.
 - State the expected time to complete.
 
+### Quizzes & module assessment (P1-D11)
+
+Two quiz artifacts share one schema (`infra/ci/quiz_lint.py`), both rendered and
+scored client-side by the P0 quiz engine (score saved to `localStorage`, ₹0):
+
+- **Per-chapter quick check** — a `quiz.yml` (2–3 MCQ) beside each chapter, mounted
+  in the chapter with `{{< quiz quiz.yml >}}`. Immediate recall after the lesson.
+  When several chapters share a module directory, name the file
+  `quiz-<chNN>.yml` (e.g. `quiz-ch02.yml`) and mount it with
+  `{{< quiz quiz-ch02.yml >}}` — these still match the `quiz*.yml` lint glob.
+- **Cumulative module quiz** — one `module-quiz.yml` (~8–12 MCQ) per module,
+  mounted on the **module landing page** (`modules/<NN>/index.qmd`) with
+  `{{< quiz module-quiz.yml >}}`. End-of-module consolidation (the Varsity model).
+
+Each MCQ needs an `answer` (0-based) and a one-line `explanation`. The linter flags
+a module quiz outside the ~8–12 band with an advisory note (not a failure).
+
+> The full per-chapter PR checklist — Varsity contract + the P1-D4 scaffolding kit
+> ("You'll need from before" recap, guided→implement→stretch, "If you're stuck"
+> hints, `🧱 For Java developers` asides) + correctness review — lives in
+> [`docs/AUTHORING_CHECKLIST.md`](AUTHORING_CHECKLIST.md). Its structural pillars
+> (Key Takeaways box, a runnable cell, hidden-solution exercises) are CI-enforced by
+> `infra/ci/chapter_structure_lint.py`.
+
 ---
 
 ## 7. Required components & formatting

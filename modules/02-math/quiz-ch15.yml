@@ -1,0 +1,35 @@
+title: "Chapter 15 — quick check"
+id: "m2-ch15-numpy-linalg"
+questions:
+  - id: what-at-computes
+    prompt: "What does the `@` operator compute for two NumPy arrays?"
+    options:
+      - "Element-wise multiplication, position by position"
+      - "The dot product for vectors, and matrix multiplication for 2-D arrays"
+      - "The larger of the two arrays"
+    answer: 1
+    explanation: "`@` is the matrix-multiply operator: for two vectors it gives the dot product (sum of products), and for 2-D arrays it does matrix multiplication. Element-wise multiplication is `*`."
+  - id: shape-of-2x3
+    prompt: "An array built from two rows of three numbers each has what `.shape`?"
+    options:
+      - "(3, 2)"
+      - "(2, 3)"
+      - "(6,)"
+    answer: 1
+    explanation: "`.shape` reads as (rows, columns). Two rows of three columns is `(2, 3)`."
+  - id: what-T-does
+    prompt: "What does `.T` do to a matrix?"
+    options:
+      - "Flips rows and columns, so element (i, j) moves to (j, i)"
+      - "Adds up every element into a single number"
+      - "Sorts each row from smallest to largest"
+    answer: 0
+    explanation: "`.T` is the transpose: rows become columns and columns become rows, so a `(2, 3)` matrix becomes `(3, 2)`."
+  - id: matvec-shape
+    prompt: "Multiplying a (2, 3) matrix by a length-3 vector gives a result of what shape?"
+    options:
+      - "(3,)"
+      - "(2, 3)"
+      - "(2,)"
+    answer: 2
+    explanation: "A (rows, k) matrix times a length-k vector gives a length-rows vector. The inner 3s match and cancel, leaving shape `(2,)` — one dot product per row."

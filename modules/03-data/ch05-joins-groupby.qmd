@@ -1,0 +1,423 @@
+---
+title: "Joins & groupby"
+module: "M3 — Data & Tooling"
+chapter: 5
+difficulty: "intermediate"
+prereqs:
+  - "M3 Ch4 — Cleaning data"
+learning_objectives:
+  - "Split a table into groups and apply an aggregation with groupby (split-apply-combine)"
+  - "Aggregate each group with mean, sum, and size"
+  - "Combine two tables on a shared key column with merge"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: groupby-split-apply-combine
+    q: "What three steps does df.groupby('col') carry out?"
+    a: "Split-apply-combine: split the rows into groups by the column's value, apply a summary to each group, then combine the per-group results into one labelled output."
+  - id: agg-mean-per-group
+    q: "How do you get a separate mean for each group, or several summaries at once?"
+    a: "Group, pick a column, and call an aggregation: df.groupby('species')['body_mass_g'].mean(). Use .agg(['mean', 'sum', 'size']) to compute several summaries per group in one call."
+  - id: merge-on-a-key
+    q: "What does pd.merge(left, right, on='key') do?"
+    a: "It joins two tables into one by matching rows that share the same value in the key column, lining up each left row with the right row that has the same key."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You have a table of 344 penguins, and someone asks a question every analyst hears
+on day one: *"What's the average body mass for each species?"* You could filter to
+Adelie, take the mean, write it down; filter to Chinstrap, take the mean, write it
+down; then Gentoo. Three passes, three numbers, copied by hand. With thirty species
+it would be a miserable afternoon.
+
+Pandas has one tool that does the whole sweep in a single line: **`groupby`**. It
+splits the table into one mini-table per species, summarises each one, and stacks
+the answers back together — three numbers, no copying. And when the answer to a
+question lives in *two* tables instead of one, **`merge`** stitches them together on
+a shared column so you can read across both at once.
+
+This chapter covers both: grouping a table to summarise it, and joining two tables
+into one.
+
+> You'll need from before: a clean DataFrame you can select columns from (M3 Ch4).
+> A pandas column is still a Series, so every per-column summary you already know
+> applies inside each group.
+
+---
+
+## Split-apply-combine: the shape of every group operation
+
+`groupby` is one idea wearing three steps, and naming them makes every later example
+read the same way:
+
+1. **Split** — divide the rows into groups by the value in some column. Group by
+   `species` and you get three piles: every Adelie row, every Chinstrap row, every
+   Gentoo row.
+2. **Apply** — run a summary on each pile on its own. Take the mean body mass of the
+   Adelie pile, then of the Chinstrap pile, then of the Gentoo pile.
+3. **Combine** — collect those per-group answers into one result, labelled by the
+   group they came from.
+
+That pattern — **split-apply-combine** — is the whole mental model. Once you see a
+question as "for each ___, compute ___", you know a `groupby` is coming, and you
+know the result will have one row per group.
+
+Let's run it on the penguins. We group by `species`, pick the `body_mass_g` column,
+and apply `.mean()`:
+
+```{pyodide}
+#| caption: "Split by species, apply mean to body mass, combine into one result per species"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.groupby("species")["body_mass_g"].mean().round(2)
+```
+
+Read that one line left to right and you can hear the three steps: `groupby("species")`
+splits, `["body_mass_g"]` chooses the column to summarise, `.mean()` applies the
+summary, and pandas combines the answers into a Series indexed by species. The
+result:
+
+- **Adelie — 3700.66 g**
+- **Chinstrap — 3733.09 g**
+- **Gentoo — 5076.02 g**
+
+Three lines of fieldwork in one expression. The index of that Series is the species
+name, so the label travels with each number — exactly the labelled-column behaviour
+from earlier chapters, now produced one value per group.
+
+> 🔬 Going deeper (optional): the same call works for any summary that collapses a
+> column to one number — `.median()`, `.max()`, `.std()`. Swap the verb and the
+> split-apply-combine skeleton stays identical.
+
+## Counting rows per group with `.size()`
+
+Before you trust a per-group average, ask how many rows went into it — a mean of two
+penguins is far shakier than a mean of two hundred. `.size()` counts the rows in
+each group, no column needed, because you're counting rows rather than summarising a
+value:
+
+```{pyodide}
+#| caption: ".size() counts how many rows fall in each group"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.groupby("species").size()
+```
+
+That returns the group sizes:
+
+- **Adelie — 152**
+- **Chinstrap — 68**
+- **Gentoo — 124**
+
+Now the means above have context. Gentoo's heavier average rests on 124 birds, and
+Chinstrap's on 68 — enough in both cases to take the numbers seriously. Reading the
+group means and the group sizes together is a habit worth building: a per-group
+summary is only as solid as the count behind it.
+
+## Several summaries at once with `.agg`
+
+Often you want more than one number per group — the mean *and* the count, or the
+mean of two different columns. Calling `groupby` repeatedly would re-split the table
+each time. Instead, hand a list of summary names to **`.agg`** and pandas computes
+them together in a single pass:
+
+```{pyodide}
+#| caption: ".agg computes several summaries per group in one pass"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.groupby("species")["body_mass_g"].agg(["mean", "size"]).round(2)
+```
+
+The result is a small table: one row per species, a `mean` column, and a `size`
+column side by side. You get the same **3700.66 / 3733.09 / 5076.02** means as
+before, now paired with their **152 / 68 / 124** counts — the average and its
+backing in one glance.
+
+`.agg` also extends across columns. Group once, then summarise body mass and flipper
+length together:
+
+```{pyodide}
+#| caption: ".agg across two columns: a mean of each, per species"
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+df.groupby("species")[["body_mass_g", "flipper_length_mm"]].mean().round(2)
+```
+
+This reports, per species, the mean body mass alongside the mean flipper length —
+the flipper means landing at **Adelie 189.95 mm, Chinstrap 195.82 mm, and
+Gentoo 217.19 mm**. The longer-flippered Gentoo is also the heaviest, a pattern the
+grouped view makes easy to spot. The point stands: group once, summarise as widely
+as the question needs.
+
+---
+
+## Joining two tables with `merge`
+
+Grouping answers questions that live inside one table. But data is usually scattered
+across several. One table holds each penguin's measurements; another might hold a
+fact *about each species* — say, the island where it is mostly found. To answer
+"how heavy is the average penguin on each species' main island?" you first need both
+facts in the same table. That stitching-together is a **join**, and in pandas it is
+`pd.merge`.
+
+A merge lines up rows from two tables by matching a **key** — a column they share.
+Picture two small tables that both have a `species` column:
+
+```{pyodide}
+#| caption: "Two tables sharing a 'species' key, ready to be joined"
+import pandas as pd
+
+counts = pd.DataFrame({
+    "species": ["Adelie", "Chinstrap", "Gentoo"],
+    "count": [152, 68, 124],
+})
+
+islands = pd.DataFrame({
+    "species": ["Adelie", "Chinstrap", "Gentoo"],
+    "main_island": ["Dream", "Dream", "Biscoe"],
+})
+
+print(counts)
+print(islands)
+```
+
+Each table knows something the other doesn't: `counts` has the group sizes,
+`islands` has the main island per species. They overlap on `species`. Hand both to
+`pd.merge` and name the key with `on="species"`:
+
+```{pyodide}
+#| caption: "pd.merge joins the two tables on the shared 'species' key"
+import pandas as pd
+
+counts = pd.DataFrame({
+    "species": ["Adelie", "Chinstrap", "Gentoo"],
+    "count": [152, 68, 124],
+})
+
+islands = pd.DataFrame({
+    "species": ["Adelie", "Chinstrap", "Gentoo"],
+    "main_island": ["Dream", "Dream", "Biscoe"],
+})
+
+pd.merge(counts, islands, on="species")
+```
+
+The result is one wider table: `species`, `count`, and `main_island` together, with
+each row matched up by species. `pd.merge` walked the key column, found the row in
+the right table whose `species` equals the left row's `species`, and pasted its
+extra columns alongside. Adelie's count now sits next to Adelie's island, and so on.
+
+The mental model is the one your eye uses with two printouts and a shared ID column:
+find the matching row in the other sheet, copy its columns across. `on="species"`
+tells pandas which column is that shared ID. Get the key right and the rest lines up;
+name the wrong column and rows match by accident or not at all — so the key choice is
+the decision that matters in a join.
+
+Grouping and joining are the two everyday reshaping moves. Grouping collapses many
+rows into one summary per group; joining widens a table by bringing a second table's
+columns alongside on a shared key. Most real analysis is a handful of these, chained.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **`groupby` is split-apply-combine**: split rows into groups by a column, apply a
+   summary to each, combine into one result with a row per group.
+2. `df.groupby('species')['body_mass_g'].mean()` gives a mean per group
+   (**Adelie 3700.66, Chinstrap 3733.09, Gentoo 5076.02**); `.size()` counts the
+   rows per group (**152 / 68 / 124**).
+3. `.agg(['mean', 'size'])` computes several summaries per group in one pass, so you
+   read each average next to its backing count.
+4. `pd.merge(left, right, on='key')` joins two tables into one by matching rows that
+   share the same value in the **key** column.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made data so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Write `group_totals(data, key, val)`: build a DataFrame from `data`, group by the
+`key` column, and return a dict of the per-group **sums** of the `val` column.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_group_totals
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_group_totals
+import pandas as pd
+
+def group_totals(data, key, val):
+    """Return a dict of per-group sums of the val column."""
+    return ____  # TODO: pd.DataFrame(data).groupby(key)[val].sum().to_dict()
+
+run_tests([("sum by group", group_totals({"g": ["a", "a", "b"], "v": [1, 2, 10]}, "g", "v"), {"a": 3, "b": 10})])
+```
+
+<details><summary>If you're stuck</summary>
+
+Build the table with `pd.DataFrame(data)`, then group with `.groupby(key)`, pick the
+value column with `[val]`, and apply `.sum()`. Finish with `.to_dict()` so the
+per-group result comes back as a plain dictionary keyed by group.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def group_totals(data, key, val):
+    return pd.DataFrame(data).groupby(key)[val].sum().to_dict()
+```
+
+`groupby(key)` splits the rows by group, `[val].sum()` adds the value column within
+each group (the `a` rows total `1 + 2 = 3`, the `b` row totals `10`), and
+`.to_dict()` combines the answers into `{"a": 3, "b": 10}`.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now the same shape, but report **means rounded to two decimals**. Write
+`group_means(data, key, val)`: group by `key` and return a dict of the per-group
+mean of `val`, each value rounded to 2 places. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_group_means
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_group_means
+import pandas as pd
+
+def group_means(data, key, val):
+    """Return a dict of per-group means of val, rounded to 2 decimals."""
+    return ____  # TODO: pd.DataFrame(data).groupby(key)[val].mean().round(2).to_dict()
+
+run_tests([("mean by group", group_means({"g": ["a", "a", "b"], "v": [2, 4, 10]}, "g", "v"), {"a": 3.0, "b": 10.0})])
+```
+
+<details><summary>If you're stuck</summary>
+
+It is the Exercise 1 pattern with `.mean()` in place of `.sum()`, plus a `.round(2)`
+before `.to_dict()`. The `a` rows average `(2 + 4) / 2 = 3.0`; the lone `b` row
+averages `10.0`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def group_means(data, key, val):
+    return pd.DataFrame(data).groupby(key)[val].mean().round(2).to_dict()
+```
+
+`groupby(key)[val].mean()` is split-apply-combine with the mean as the summary:
+group `a` averages to `3.0`, group `b` to `10.0`. `.round(2)` trims each to two
+decimals and `.to_dict()` returns `{"a": 3.0, "b": 10.0}`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset, group
+by `species`, and report the **mean body mass per species** (Adelie ≈ 3700.66,
+Chinstrap ≈ 3733.09, Gentoo ≈ 5076.02 g). Then print which species is **heaviest**
+on average (Gentoo) — read from the data, not typed in by hand.
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and groups by `species` to compute the mean
+  `body_mass_g` per species.
+- Prints the three per-species means read from the grouped result.
+- Reports the heaviest species (Gentoo) using `.idxmax()` on the grouped means, not
+  a hand-typed name.
+
+<details><summary>If you're stuck</summary>
+
+Group with `df.groupby("species")["body_mass_g"].mean()` and keep that Series. Print
+it to see all three means. The heaviest species is the index label of its largest
+value, which `.idxmax()` returns for you.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import pandas as pd
+from lib.data import load_csv
+
+df = load_csv("penguins")
+means = df.groupby("species")["body_mass_g"].mean().round(2)
+print(means)
+print("heaviest on average:", means.idxmax())
+```
+
+This prints the per-species means (Adelie `3700.66`, Chinstrap `3733.09`,
+Gentoo `5076.02`) and reports `Gentoo` as the heaviest — both read straight from the
+grouped result rather than typed in by hand.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now collapse a table into one summary per group with `groupby`, read each
+group's average next to its count with `.agg`, and widen a table by joining a second
+one on a shared key with `merge`. Those two moves — group to summarise, join to
+combine — are the backbone of everyday analysis. Next we turn from reshaping data to
+*picturing* it, plotting these grouped summaries so a difference like Gentoo's
+heavier mass jumps off the page.

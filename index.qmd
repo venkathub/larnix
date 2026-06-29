@@ -45,18 +45,40 @@ the rest unlock as the curriculum grows.
 :::
 Train a real model in twenty minutes: load data, fit a classifier, and watch it
 sort flowers it has never seen. Your first taste of the whole loop.
-[🟢 Beginner]{.lx-pill} [▸ Available]{.lx-pill}
+[🟢 Beginner]{.lx-pill} [▸ Available](modules/00-orientation/index.qmd){.lx-pill}
 :::
 
-::: {.lx-course .lx-tile .clay--amber .lx-course--soon}
+::: {.lx-course .lx-tile .clay--amber}
 ::: {.lx-course-top}
 [M1]{.lx-coursenum}
 
-### Foundations
+### Python for AI
 :::
-The maths and Python you actually need — vectors, probability, clean code — built
-from zero, with intuition first and symbols second.
-[🟢 Beginner]{.lx-pill} [Soon]{.lx-pill}
+Enough Python to handle data — variables, functions, files, clean code — built
+from zero, then a data-cleaning capstone on a deliberately messy dataset.
+[🟢 Beginner]{.lx-pill} [▸ Available](modules/01-python/index.qmd){.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--mint}
+::: {.lx-course-top}
+[M2]{.lx-coursenum}
+
+### Math You Actually Need
+:::
+The little math AI uses — vectors, derivatives, probability — pictures before
+symbols, building to the math of one neuron, gradient-checked by hand.
+[🟡 Intermediate]{.lx-pill} [▸ Available](modules/02-math/index.qmd){.lx-pill}
+:::
+
+::: {.lx-course .lx-tile .clay--sky}
+::: {.lx-course-top}
+[M3]{.lx-coursenum}
+
+### Data & Tooling
+:::
+Load, clean, explore, and plot real data with NumPy, Pandas, and Matplotlib —
+then run a full exploratory analysis on a dataset you have never seen.
+[🟡 Intermediate]{.lx-pill} [▸ Available](modules/03-data/index.qmd){.lx-pill}
 :::
 
 ::: {.lx-course .lx-tile .clay--coral .lx-course--soon}

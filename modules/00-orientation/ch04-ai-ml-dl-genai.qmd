@@ -1,0 +1,366 @@
+---
+title: "AI vs ML vs DL vs GenAI — a family tree"
+module: "M0 — Orientation"
+chapter: 4
+difficulty: "beginner"
+prereqs:
+  - "M0 Ch1 — Train your first model"
+  - "M0 Ch3 — What is AI, really?"
+learning_objectives:
+  - "Explain how AI, ML, deep learning, and generative AI nest inside each other"
+  - "Give one concrete example for each of the four terms"
+  - "Tell apart a model that classifies from one that generates"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 20
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: nesting
+    q: "How do AI, ML, DL, and GenAI relate?"
+    a: "They nest: GenAI is a kind of deep learning, which is a kind of machine learning, which is a kind of AI."
+  - id: classify-vs-generate
+    q: "What is the difference between a model that classifies and one that generates?"
+    a: "A classifier picks a label from fixed options; a generator produces new content (text, images, audio)."
+  - id: dl-feature
+    q: "What makes deep learning different from other machine learning?"
+    a: "Deep learning uses neural networks with many layers that learn their own features from raw data (images, audio, text)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+People say "AI," "machine learning," "deep learning," and "generative AI" as if
+they were the same thing. They are not — but they are not rivals either. They
+**nest**, like a set of Russian dolls. The chatbot you may have used is a piece of
+generative AI, which is a kind of deep learning, which is a kind of machine
+learning, which is a kind of AI:
+
+```text
+┌─────────────────────────────────────────────┐
+│ AI — machines doing intelligence-like tasks  │
+│  ┌────────────────────────────────────────┐  │
+│  │ ML — learning the rules from examples   │  │
+│  │  ┌──────────────────────────────────┐  │  │
+│  │  │ DL — many-layered neural networks │  │  │
+│  │  │  ┌────────────────────────────┐  │  │  │
+│  │  │  │ GenAI — creates new content │  │  │  │
+│  │  │  └────────────────────────────┘  │  │  │
+│  │  └──────────────────────────────────┘  │  │
+│  └────────────────────────────────────────┘  │
+└─────────────────────────────────────────────┘
+```
+
+> You'll need from before: the idea of a **model** (Ch1) and **learned behaviour**
+> — rules learned from examples instead of written by hand (Ch3).
+
+---
+
+## The four rings, with one example each
+
+**AI** is the outermost ring: any technique that makes a computer do something we'd
+call intelligent. That includes machine learning — but also older, rule-based
+systems. *Example:* a chess program that searches moves using rules a person wrote.
+It is AI, but nothing about it is *learned*.
+
+**Machine learning (ML)** sits inside AI: instead of writing the rules, you learn
+them from examples. *Example:* the iris classifier (Ch1) and the spam filter
+(Ch3). Both found their rules in data. Most are not neural networks at all.
+
+**Deep learning (DL)** sits inside ML: machine learning that uses **neural
+networks with many layers**. Its trick is learning its own features straight from
+raw data — pixels, audio samples, characters — so you don't hand-engineer them.
+*Example:* the photo app that recognises a dog, or speech turned into text.
+
+**Generative AI (GenAI)** sits inside DL: deep-learning models built to **create
+new content** rather than label existing content. *Example:* a chatbot writing a
+paragraph, or a model painting an image from a description.
+
+### Classify vs generate — the key split
+
+The deepest two rings differ in what they *produce*:
+
+- A **classifier** (discriminative) picks a label from a fixed set: spam/ham,
+  dog/cat, which of three iris species.
+- A **generator** produces something new that wasn't in the options: a fresh
+  sentence, an unseen image, a snippet of audio.
+
+Let's make "generate" concrete with a toy you can read in full.
+
+---
+
+## Let's build it (worked example): a baby generator
+
+A real text generator uses an enormous neural network. The *idea*, though, fits in
+a few lines: learn which word tends to follow which, then walk that chain to
+produce a new sentence. Press **Run**.
+
+```{pyodide}
+#| caption: "Learn which words follow which, from a tiny corpus"
+from collections import defaultdict
+
+corpus = [
+    "the cat sat on the mat",
+    "the dog sat on the rug",
+    "the cat ran on the grass",
+]
+
+following = defaultdict(list)
+for sentence in corpus:
+    words = sentence.split()
+    for current, nxt in zip(words, words[1:]):
+        following[current].append(nxt)
+
+print("After 'the', these words have appeared:", following["the"])
+print("After 'sat', these words have appeared:", following["sat"])
+```
+
+```{pyodide}
+#| caption: "Generate a new sentence by walking the chain"
+import random
+random.seed(7)   # so your sentence matches this page
+
+word = "the"
+out = [word]
+for _ in range(5):
+    options = following.get(word)
+    if not options:
+        break
+    word = random.choice(options)   # pick one word that has followed `word`
+    out.append(word)
+
+print("Generated:", " ".join(out))
+```
+
+That sentence was **created**, not chosen from a list — it may even be one that was
+never in the corpus. That is the essence of "generative." Swap the toy chain for a
+deep neural network trained on much of the internet, and you have a modern language
+model. Same shape, vastly more scale.
+
+---
+
+## Feel it: real generative-adjacent AI, in your browser
+
+The toy above is readable but tiny. Here is a **real neural network** — the kind
+behind deep learning — running entirely in your browser, no Python and no server.
+Type a sentence and it judges the sentiment. The first click downloads a small
+model (it needs the internet once); after that it runs offline.
+
+```{=html}
+<div class="larnix-genai-demo" style="border:1px solid var(--bs-border-color,#bbb);border-radius:8px;padding:1rem;margin:1rem 0;">
+  <p style="margin-top:0;"><strong>Sentiment demo</strong> — a deep-learning model judging your text. This is a taste, not a graded exercise.</p>
+  <label for="genai-input" style="display:block;font-weight:600;margin-bottom:.25rem;">Your sentence</label>
+  <textarea id="genai-input" rows="2" style="width:100%;box-sizing:border-box;">This course is free and I learned a lot.</textarea>
+  <button id="genai-run" type="button" class="btn btn-primary" style="margin-top:.5rem;">Analyse sentiment</button>
+  <p id="genai-out" aria-live="polite" style="margin-bottom:0;margin-top:.75rem;font-weight:600;"></p>
+  <p style="margin-bottom:0;margin-top:.5rem;font-size:.9em;">Try to fool it — a tricky sentence can make it <em>confidently wrong</em>, exactly as Chapter 3 warned.</p>
+</div>
+
+<script type="module">
+  const btn = document.getElementById('genai-run');
+  const out = document.getElementById('genai-out');
+  const input = document.getElementById('genai-input');
+  let classifier = null;
+  if (btn) btn.addEventListener('click', async () => {
+    const text = (input.value || '').trim();
+    if (!text) { out.textContent = 'Type a sentence first.'; return; }
+    btn.disabled = true;
+    try {
+      if (!classifier) {
+        out.textContent = 'Loading the model (first time only)…';
+        const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0');
+        classifier = await pipeline('sentiment-analysis');
+      }
+      out.textContent = 'Thinking…';
+      const result = await classifier(text);
+      const top = result[0];
+      out.textContent = `${top.label} — confidence ${(top.score * 100).toFixed(1)}%`;
+    } catch (err) {
+      out.textContent = 'Could not load the model (the first run needs internet). ' + err;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+```
+
+> 🔬 Going deeper (optional): the model ran *on your device*. Nothing you typed was
+> sent to a server — a real example of the ₹0, privacy-friendly path this course
+> prefers.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **AI ⊃ ML ⊃ DL ⊃ GenAI** — each is a special case of the one outside it.
+2. **ML** learns rules from examples; **DL** is ML with many-layered neural
+   networks that learn their own features from raw data.
+3. **GenAI** is deep learning that **creates new content**, rather than labelling
+   existing content.
+4. A **classifier** picks from fixed options; a **generator** makes something new.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+We'll model the family tree as a dictionary that maps each ring to the one outside
+it.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `parent` returns the ring directly outside a given one
+(or `None` for the top). Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_parent
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_parent
+parent_of = {"ML": "AI", "DL": "ML", "GenAI": "DL"}
+
+def parent(node):
+    """Return the ring directly outside `node`, or None if it's the outermost."""
+    return ____  # TODO: look node up in parent_of; return None if it isn't there
+
+run_tests([
+    ("ML sits inside AI", parent("ML"), "AI"),
+    ("GenAI sits inside DL", parent("GenAI"), "DL"),
+    ("AI is the outermost", parent("AI"), None),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A dictionary's `.get(key)` returns the value, or `None` when the key is missing —
+exactly the behaviour you need for the outermost ring.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+parent_of = {"ML": "AI", "DL": "ML", "GenAI": "DL"}
+
+def parent(node):
+    return parent_of.get(node)
+```
+
+`.get` returns the parent if it exists and `None` otherwise, so `parent("AI")`
+is `None` without a special case.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `is_kind_of(node, ancestor)` — `True` if `ancestor` is `node` itself or any
+ring outside it. This is the "is GenAI a kind of AI?" question. Complete the line
+that steps outward.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_iskind
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_iskind
+parent_of = {"ML": "AI", "DL": "ML", "GenAI": "DL"}
+
+def is_kind_of(node, ancestor):
+    """True if `ancestor` is `node` or any ring outside it."""
+    while node is not None:
+        if node == ancestor:
+            return True
+        node = ____  # TODO: step out to the parent ring
+    return False
+
+run_tests([
+    ("GenAI is a kind of AI", is_kind_of("GenAI", "AI"), True),
+    ("DL is a kind of ML", is_kind_of("DL", "ML"), True),
+    ("a ring is a kind of itself", is_kind_of("ML", "ML"), True),
+    ("AI is not a kind of GenAI", is_kind_of("AI", "GenAI"), False),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Each turn of the loop should move one ring outward. You already wrote the function
+that finds the ring outside a node in Exercise 1 — use the same `parent_of.get`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+parent_of = {"ML": "AI", "DL": "ML", "GenAI": "DL"}
+
+def is_kind_of(node, ancestor):
+    while node is not None:
+        if node == ancestor:
+            return True
+        node = parent_of.get(node)
+    return False
+```
+
+The loop walks outward — GenAI → DL → ML → AI — returning `True` if it ever lands
+on `ancestor`, and stopping at `None` (past the outermost ring) otherwise.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Pick a real AI system you've used
+— a chatbot, a photo search, a recommendation feed, a voice assistant — and place
+it **precisely** in the tree. Name the innermost ring it belongs to, and justify
+each level outward.
+
+**Rubric — a good answer:**
+
+- Names the most specific ring correctly (e.g. a chatbot → GenAI).
+- Justifies each outer ring (it's GenAI, so it's DL, so it's ML, so it's AI).
+- Distinguishes whether the system mainly **classifies** or **generates**.
+
+<details><summary>Show one possible answer</summary>
+
+"A chatbot is **GenAI**: it generates new sentences. That makes it **deep learning**
+(a large neural network), which makes it **machine learning** (it learned from huge
+amounts of text, not hand-written rules), which makes it **AI** (it does a task we'd
+call intelligent). It mainly *generates* rather than *classifies*."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now place any "AI" you meet in its ring, and tell a classifier from a
+generator. These ideas didn't arrive all at once — they piled up over seventy
+years of false starts and breakthroughs. Next, a ten-minute history: how we got
+from a single artificial neuron to today's generative models.
