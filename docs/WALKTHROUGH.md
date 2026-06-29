@@ -81,4 +81,3 @@ Each module landing mounts a cumulative **module quiz** (M0: 10 Q, M1: 11 Q, M2:
   merge. Backed by **111 unit tests**.
 - The whole site (61 documents) renders cleanly with `quarto render`, and the
   project builds from a fresh clone.
-

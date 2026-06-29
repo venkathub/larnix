@@ -110,7 +110,7 @@
   pillars are CI-enforced by `infra/ci/chapter_structure_lint.py` (every `compute:` chapter `.qmd`
   must have a Key Takeaways box, ≥1 runnable `{pyodide}` cell, and a `<details>` hidden solution) —
   prose quality stays human review. Module skeletons (`README.md` + tailored `capstone.md` with brief
-  + rubric) shipped for `modules/01-python`, `02-math`, `03-data`; `module-quiz.yml` and `index.qmd`
+  and rubric) shipped for `modules/01-python`, `02-math`, `03-data`; `module-quiz.yml` and `index.qmd`
   land with each module's assessment task (per the P1-D11 mount decision). This closes §6.A; M0
   content authoring begins next.
 - **Implementation note — P1 §6.F integration + completion (2026-06-29).** P1 content is complete:

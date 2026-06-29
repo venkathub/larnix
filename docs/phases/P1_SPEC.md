@@ -328,7 +328,7 @@ The real trade-off is therefore **zero-install built-in vs a runtime network ins
 `.ipynb` twin running the worked example + exercise solutions under CPython (R10).
 
 - **(A, rec.) A small generator** (`infra/ci/make_twin.py`) that extracts tagged `{pyodide}` cells
-  + exercise solutions from the `.qmd` into the twin, so the twin can't silently drift from the
+  and exercise solutions from the `.qmd` into the twin, so the twin can't silently drift from the
   chapter. Run in CI as a check (twin matches source) + committed. *Con:* a tool to build/maintain.
 - (B) Hand-author every twin (the P0 approach). *Con:* 49 hand-maintained duplicates; drift risk;
   the exact thing D0010 flagged as a future improvement.
