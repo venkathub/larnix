@@ -39,10 +39,10 @@ gradients). All visuals via Matplotlib in the browser.
 | 5 | [Dot products & similarity](ch05-dot-products-similarity.qmd) | 🟢 |
 | 6 | [Derivatives = sensitivity](ch06-derivatives-sensitivity.qmd) | 🟡 |
 | 7 | [Gradients](ch07-gradients.qmd) | 🟡 |
-| 8 | The chain rule | 🟡 |
-| 9 | Probability basics | 🟢 |
-| 10 | Distributions | 🟡 |
-| 11 | Mean, variance & standard deviation | 🟢 |
+| 8 | [The chain rule](ch08-chain-rule.qmd) | 🟡 |
+| 9 | [Probability basics](ch09-probability-basics.qmd) | 🟢 |
+| 10 | [Distributions](ch10-distributions.qmd) | 🟡 |
+| 11 | [Mean, variance & standard deviation](ch11-mean-variance-std.qmd) | 🟢 |
 | 12 | Bayes, intuitively | 🟡 |
 | 13 | Correlation vs causation | 🟢 |
 | 14 | Sampling & uncertainty | 🟡 |

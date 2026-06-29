@@ -107,6 +107,14 @@ website:
             href: modules/02-math/ch06-derivatives-sensitivity.qmd
           - text: "Ch7 — Gradients"
             href: modules/02-math/ch07-gradients.qmd
+          - text: "Ch8 — The chain rule"
+            href: modules/02-math/ch08-chain-rule.qmd
+          - text: "Ch9 — Probability basics"
+            href: modules/02-math/ch09-probability-basics.qmd
+          - text: "Ch10 — Distributions"
+            href: modules/02-math/ch10-distributions.qmd
+          - text: "Ch11 — Mean, variance & standard deviation"
+            href: modules/02-math/ch11-mean-variance-std.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

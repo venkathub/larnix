@@ -1,0 +1,35 @@
+title: "Chapter 8 — quick check"
+id: "m2-ch8-chain-rule"
+questions:
+  - id: what-chain-rule-does
+    prompt: "What does the chain rule compute?"
+    options:
+      - "The derivative of a composition f(g(x)), by multiplying the outer derivative by the inner derivative"
+      - "The sum of the outer and inner derivatives"
+      - "The area under the composed curve"
+    answer: 0
+    explanation: "The chain rule is (f∘g)'(x) = f'(g(x)) * g'(x): the outer slope times the inner slope."
+  - id: chain-of-2-and-3
+    prompt: "If the inner step has slope 3 and the outer step has slope 2, how sensitive is the output to the input?"
+    options:
+      - "5 times as sensitive (2 + 3)"
+      - "6 times as sensitive (2 × 3)"
+      - "1.5 times as sensitive (3 ÷ 2)"
+    answer: 1
+    explanation: "Two scalings in a row multiply: 2 × 3 = 6. A nudge is scaled by the inner slope, then by the outer slope."
+  - id: dydx-of-2x-squared
+    prompt: "For y = (2x)², where u = 2x (slope 2) and y = u² (slope 2u), what is dy/dx at x = 3?"
+    options:
+      - "12"
+      - "18"
+      - "24"
+    answer: 2
+    explanation: "At x = 3, u = 6, so the outer slope is 2u = 12 and the inner slope is 2; their product is 12 × 2 = 24 (which is 8x)."
+  - id: chain-rule-and-backprop
+    prompt: "Why is the chain rule called the engine of backpropagation?"
+    options:
+      - "Because it adds up all the layers of a network at once"
+      - "Because backprop multiplies each step's local slope to ripple a nudge through composed functions to every weight"
+      - "Because it removes the need for any derivatives during training"
+    answer: 1
+    explanation: "Backprop applies the chain rule through a deep stack of functions, multiplying local slopes back to front to get the gradient of the error with respect to each weight."
