@@ -46,6 +46,7 @@ website:
     search: true
     contents:
       - section: "M0 — Orientation"
+        href: modules/00-orientation/index.qmd
         contents:
           - text: "Ch1 — Train your first model"
             href: modules/00-orientation/ch01-train-your-first-model.qmd

@@ -1,0 +1,83 @@
+title: "M0 — module quiz"
+id: "m0-module-quiz"
+questions:
+  - id: what-is-a-model
+    prompt: "In machine learning, a model is best described as…"
+    options:
+      - "A spreadsheet that stores the training data"
+      - "A function learned from labelled examples that maps an input to a prediction"
+      - "The chart that displays an accuracy score"
+    answer: 1
+    explanation: "A model is the learned function; you fit it on examples, then call it to predict (Ch1)."
+  - id: test-set
+    prompt: "Why is accuracy measured on a separate test set rather than the training data?"
+    options:
+      - "The test set is always larger than the training set"
+      - "A model can score well on examples it has seen yet fail on new ones"
+      - "scikit-learn refuses to predict on training data"
+    answer: 1
+    explanation: "Held-out data checks whether the model generalises rather than memorises (Ch1)."
+  - id: cost-of-m0-m10
+    prompt: "What does it cost to work through Modules 0–10?"
+    options:
+      - "A monthly subscription"
+      - "₹0 — a browser, with free GPU tiers when needed"
+      - "One rented GPU per module"
+    answer: 1
+    explanation: "Modules 0–10 run in the browser or on free Colab/Kaggle tiers (Ch2)."
+  - id: paid-fallback
+    prompt: "When a later lesson shows a paid API, what is guaranteed?"
+    options:
+      - "You must add a card to continue"
+      - "It is optional and paired with a free fallback (Ollama or a free tier)"
+      - "The lesson cannot be finished without paying"
+    answer: 1
+    explanation: "Paid steps are always optional with a free fallback; keys are never required to learn (Ch2)."
+  - id: rules-vs-learning
+    prompt: "What is the shift that powers modern AI?"
+    options:
+      - "Writing ever more detailed rules by hand"
+      - "Showing the computer examples and letting it learn the rule"
+      - "Running the same rules on faster hardware"
+    answer: 1
+    explanation: "Machine learning replaces hand-written rules with rules learned from examples (Ch3)."
+  - id: confidently-wrong
+    prompt: "Why can a trained model be 'confidently wrong'?"
+    options:
+      - "It always warns you when unsure"
+      - "Its behaviour is learned from data, so gaps or bias in the examples carry into the model"
+      - "Computers cannot do arithmetic reliably"
+    answer: 1
+    explanation: "A model reflects its training data and outputs answers with no sense of doubt (Ch3)."
+  - id: nesting
+    prompt: "How do AI, ML, deep learning, and generative AI relate?"
+    options:
+      - "They are four separate, unrelated fields"
+      - "GenAI ⊂ deep learning ⊂ machine learning ⊂ AI"
+      - "AI is a kind of generative AI"
+    answer: 1
+    explanation: "They nest: generative AI is a special case of deep learning, of ML, of AI (Ch4)."
+  - id: classify-vs-generate
+    prompt: "A model that writes a brand-new sentence is doing what?"
+    options:
+      - "Classifying — picking a label from a fixed set"
+      - "Generating — producing new content not chosen from a list"
+      - "Nothing — models cannot produce sentences"
+    answer: 1
+    explanation: "Producing new content is generation; picking from fixed labels is classification (Ch4)."
+  - id: two-sparks
+    prompt: "Which two milestones most directly led to today's generative AI?"
+    options:
+      - "Deep Blue (1997) and AlphaGo (2016)"
+      - "The 2012 deep-learning boom (AlexNet) and the 2017 transformer"
+      - "The Perceptron (1958) and the Turing test (1950)"
+    answer: 1
+    explanation: "AlexNet (2012) made deep learning mainstream and the transformer (2017) underlies modern language models (Ch5)."
+  - id: capstone-number
+    prompt: "What must every Larnix capstone include?"
+    options:
+      - "At least 1000 words of writing"
+      - "A measured number — 'did you measure it?'"
+      - "A paid API call"
+    answer: 1
+    explanation: "Every capstone reports a number; an unmeasured result cannot score well (Ch6)."

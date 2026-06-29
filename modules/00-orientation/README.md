@@ -40,7 +40,7 @@ All 🟢 Beginner · `browser` · `stable`.
 ## Assessment
 
 - Per-chapter **quick check** (`quiz.yml`, 2–3 MCQ).
-- Cumulative **module quiz** (`module-quiz.yml`, ~8–12 MCQ) on the module landing.
+- Cumulative **module quiz** (~10 MCQ) on the [module landing](index.qmd).
 - **Capstone:** set up the ₹0 toolchain and run your first model, change one thing,
   and report whether accuracy moved — see [`capstone.md`](capstone.md).
 
