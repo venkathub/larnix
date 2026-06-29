@@ -31,7 +31,7 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 
 | # | Chapter |
 |---|---------|
-| 1 | Variables & types |
+| 1 | [Variables & types](ch01-variables-and-types.qmd) |
 | 2 | Control flow |
 | 3 | Functions |
 | 4 | Data structures |

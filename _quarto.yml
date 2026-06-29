@@ -60,6 +60,10 @@ website:
             href: modules/00-orientation/ch05-history-of-ai.qmd
           - text: "Ch6 — How this school works"
             href: modules/00-orientation/ch06-how-this-school-works.qmd
+      - section: "M1 — Python for AI"
+        contents:
+          - text: "Ch1 — Variables & types"
+            href: modules/01-python/ch01-variables-and-types.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

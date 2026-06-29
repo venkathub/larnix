@@ -1,0 +1,35 @@
+title: "Chapter 1 — quick check"
+id: "m1-ch1-variables-types"
+questions:
+  - id: dynamic-typing
+    prompt: "In Python, why don't you write a type when creating a variable like `steps = 7500`?"
+    options:
+      - "Python has no types at all"
+      - "The type is inferred from the value — this is dynamic typing"
+      - "You must declare the type on the line above"
+    answer: 1
+    explanation: "Python infers a value's type from what you assign; the same name can later hold a different type."
+  - id: division-type
+    prompt: "What is the type of the result of `7500 / 2`?"
+    options:
+      - "int"
+      - "float"
+      - "str"
+    answer: 1
+    explanation: "Dividing with / always produces a float (here, 3750.0)."
+  - id: file-values-are-strings
+    prompt: "You read `7500` from a CSV. What must you do before adding 100 to it?"
+    options:
+      - "Nothing — it is already a number"
+      - "Convert it with int() first, because file values arrive as strings"
+      - "Wrap it in quotes"
+    answer: 1
+    explanation: "CSV values arrive as strings; int('7500') + 100 gives 7600, while '7500' + '100' would glue text."
+  - id: comparison-bool
+    prompt: "What does the expression `7500 >= 8000` evaluate to?"
+    options:
+      - "The string '7500 >= 8000'"
+      - "The boolean False"
+      - "An error"
+    answer: 1
+    explanation: "A comparison yields a bool; 7500 is not at least 8000, so it is False."
