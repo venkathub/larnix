@@ -38,9 +38,9 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 | 5 | [Comprehensions](ch05-comprehensions.qmd) |
 | 6 | [Reading & writing files (CSV/JSON)](ch06-reading-writing-files.qmd) |
 | 7 | [Errors & exceptions](ch07-errors-exceptions.qmd) |
-| 8 | Reading a traceback |
-| 9 | Just-enough OOP |
-| 10 | Clean, readable code |
+| 8 | [Reading a traceback](ch08-reading-a-traceback.qmd) |
+| 9 | [A little OOP](ch09-a-little-oop.qmd) |
+| 10 | [Clean, readable code](ch10-clean-readable-code.qmd) |
 | 11 | Pythonic data idioms |
 | 12 | A NumPy preview |
 | 13 | Environments & packages (venv/pip) — conceptual |

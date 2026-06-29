@@ -1,0 +1,329 @@
+---
+title: "A little OOP"
+module: "M1 — Python for AI"
+chapter: 9
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch3 — Functions"
+  - "M1 Ch4 — Data structures"
+learning_objectives:
+  - "Explain that an object bundles data (attributes) with behaviour (methods)"
+  - "Define a class with __init__ and methods, and say what self is"
+  - "Create an instance, read its attributes, and call its methods, including a method with a default argument"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: object-bundles-data-behaviour
+    q: "What does an object bundle together?"
+    a: "Data (attributes) and the behaviour that acts on it (methods) in one value — like a string holding text plus .strip()."
+  - id: what-is-self
+    q: "Inside a method, what is self?"
+    a: "The particular instance the method was called on; self.steps reads that instance's own attribute."
+  - id: init-runs-when
+    q: "When does __init__ run and what is it for?"
+    a: "Once, when you create an instance; it stores the object's starting attributes on self."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You've been using objects since Chapter 1. When you write `name.strip()` or
+`rows.append(row)`, that `name` and that `rows` are objects — each carries some
+**data** (the text, the list of items) and a set of **behaviours** that act on it
+(`.strip()`, `.append()`). The dot means "ask this object to do something with its
+own data".
+
+A **class** lets you make your own such bundles. As you reach for libraries later
+(NumPy arrays, pandas DataFrames, model objects), you'll meet classes constantly —
+this chapter is enough to read them with confidence. We'll wrap one row of the
+habits data in a small `Day` object.
+
+> You'll need from before: defining functions with parameters and defaults (Ch3)
+> and the dict/list way of holding a row of data (Ch4) — a class is a tidier home
+> for that same data plus the functions that use it.
+
+---
+
+## An object bundles data + behaviour
+
+So far a day of habits data has lived as a dict: `{"date": "2026-01-02", "steps":
+8200}`. That holds the data, but the logic that works on it (is this an active
+day?) floats around in separate functions. An **object** keeps both in one place:
+the values *and* the behaviour that belongs with them.
+
+A **class** is the blueprint; an **instance** is one object built from it. Calling
+the class — `Day(...)` — builds an instance, the same way `list()` builds a new
+list.
+
+## Defining a class with `__init__` and methods
+
+```python
+class Day:
+    """One day of habits data."""
+    def __init__(self, date, steps):
+        self.date = date
+        self.steps = steps
+
+    def is_active(self, goal=8000):
+        return self.steps >= goal
+```
+
+- **`class Day:`** starts the blueprint. The triple-quoted line is its docstring.
+- **`__init__`** is the *constructor*: Python runs it once, automatically, when you
+  create an instance. Its job is to store the starting **attributes** on the object.
+- **`is_active`** is a **method** — a function that belongs to the class.
+
+An **attribute** is data stored on the object (`self.date`, `self.steps`). A
+**method** is behaviour you call on it (`d.is_active()`).
+
+### What `self` is
+
+Every method's first parameter is **`self`**: the particular instance the method was
+called on. When you write `d.is_active()`, Python passes `d` in as `self`, so
+`self.steps` reads *that* day's steps. You never pass `self` yourself — the dot does
+it for you.
+
+### A default method argument
+
+`is_active(self, goal=8000)` gives `goal` a **default** (Ch3, same idea). Call
+`d.is_active()` and it compares against 8000; call `d.is_active(5000)` to use your
+own goal for that one call.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+`class` is your `class`; `__init__` is the constructor; `self` is `this` — except
+Python makes it the explicit first parameter of every method instead of an implicit
+keyword. Differences worth noting: there are **no access modifiers** (`public` /
+`private`) and **no type declarations** on attributes — you set `self.steps` and
+it exists. You also rarely write **getters/setters**; reading `d.steps` directly is
+normal and idiomatic, and a property can be added later without changing callers.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Build one `Day` from a habits row, then read its attribute and call its method.
+Press **Run**.
+
+```{pyodide}
+#| caption: "A small class: construct, read an attribute, call a method"
+class Day:
+    """One day of habits data."""
+    def __init__(self, date, steps):
+        self.date = date
+        self.steps = steps
+
+    def is_active(self, goal=8000):
+        return self.steps >= goal
+
+d = Day("2026-01-02", 8200)
+print(d.date, "had", d.steps, "steps; active?", d.is_active())
+```
+
+`Day("2026-01-02", 8200)` runs `__init__`, which stores the two attributes. Then
+`d.date` and `d.steps` read them back, and `d.is_active()` runs the method against
+the default goal of 8000 — `8200 >= 8000` is `True`.
+
+```{pyodide}
+#| caption: "The same method with a custom goal, across a few days"
+days = [Day("2026-01-02", 8200), Day("2026-01-03", 5000), Day("2026-01-04", 9100)]
+
+for day in days:
+    print(day.date, "active vs 6000?", day.is_active(6000))
+```
+
+Passing `6000` overrides the default for that call. Each `day` is its own instance
+with its own `self.steps`, so the same method gives a different answer per object.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. An **object** bundles **data** (attributes) with **behaviour** (methods) — you've
+   used this all along with strings and lists.
+2. A **class** is the blueprint; calling it (`Day(...)`) builds an **instance**, and
+   **`__init__`** runs once to set that instance's starting attributes.
+3. **`self`** is the instance a method is acting on; `self.steps` reads that object's
+   own attribute. You read attributes and call methods with the dot: `d.steps`,
+   `d.is_active()`.
+4. A method can take a **default argument** (`goal=8000`), used when the caller leaves
+   it out.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete `__init__` so a `StepCounter` stores its step count as an attribute.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_stepcounter
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_stepcounter
+class StepCounter:
+    """Holds a single day's step count."""
+    def __init__(self, steps):
+        self.steps = ____  # TODO: store the steps argument on the instance
+
+run_tests([
+    ("stores the count", StepCounter(7500).steps, 7500),
+    ("stores zero", StepCounter(0).steps, 0),
+    ("stores another", StepCounter(12000).steps, 12000),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`__init__` receives the value as the parameter `steps`. Assign that parameter to the
+attribute — the right-hand side is the parameter name itself.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class StepCounter:
+    """Holds a single day's step count."""
+    def __init__(self, steps):
+        self.steps = steps
+```
+
+`__init__` runs when you write `StepCounter(7500)`; assigning `self.steps = steps`
+copies the argument onto the instance, so `StepCounter(7500).steps` reads back `7500`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Complete the `is_active` method so it returns `True` when the day's steps reach the
+`goal`. Fill in the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_isactive
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_isactive
+class Day:
+    """One day of habits data, with an activity check."""
+    def __init__(self, date, steps):
+        self.date = date
+        self.steps = steps
+
+    def is_active(self, goal=8000):
+        return ____  # TODO: True when this day's steps reach the goal
+
+run_tests([
+    ("8200 reaches default goal", Day("2026-01-02", 8200).is_active(), True),
+    ("5000 misses default goal", Day("2026-01-03", 5000).is_active(), False),
+    ("custom goal is met", Day("2026-01-04", 6000).is_active(5000), True),
+    ("custom goal is missed", Day("2026-01-05", 4000).is_active(5000), False),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Read this day's steps with `self.steps`, then compare to `goal` with `>=`. The method
+should return that comparison directly.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class Day:
+    """One day of habits data, with an activity check."""
+    def __init__(self, date, steps):
+        self.date = date
+        self.steps = steps
+
+    def is_active(self, goal=8000):
+        return self.steps >= goal
+```
+
+`self.steps` is this instance's own count; `self.steps >= goal` is a boolean, so the
+method returns `True` or `False`. Leaving `goal` out uses the default `8000`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Design a small `Tally` class that
+adds up steps across several days: an `__init__` that starts the running total at
+`0`, an `add(self, steps)` method that adds to it, and a `total` attribute you can
+read. Build one and add a few values.
+
+**Rubric — a good answer:**
+
+- `__init__` sets a starting attribute (e.g. `self.total = 0`).
+- `add` updates `self.total` using the argument passed in.
+- You create an instance, call `add` a couple of times, and read the `total` back.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+class Tally:
+    """A running total of steps across days."""
+    def __init__(self):
+        self.total = 0
+
+    def add(self, steps):
+        self.total += steps
+
+t = Tally()
+t.add(8200)
+t.add(5000)
+print(t.total)   # 13200
+```
+
+`__init__` starts `self.total` at `0`; each `add` call updates that one instance's
+attribute, so after adding `8200` and `5000` the `total` reads `13200`.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch09.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now read the classes that libraries hand you — construct one, read its
+attributes, call its methods — and write a small class of your own to keep data and
+behaviour together. Next chapter steps back to a skill that makes all of this
+readable to the next person (including future you): **Clean, readable code**.

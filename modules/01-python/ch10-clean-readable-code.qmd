@@ -1,0 +1,363 @@
+---
+title: "Clean, readable code"
+module: "M1 — Python for AI"
+chapter: 10
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch3 — Functions"
+learning_objectives:
+  - "Choose descriptive names so code reads like its intent"
+  - "Replace hard-coded numbers with named constants and split work into small, single-purpose functions"
+  - "Write WHY-comments and reuse a function instead of repeating logic (DRY)"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: descriptive-names
+    q: "Why prefer `steps` and `active_days` over `s` and `x`?"
+    a: "A descriptive name says what the value is, so the reader understands the code without decoding it or scrolling back."
+  - id: named-constant
+    q: "What do you gain by writing `GOAL = 8000` instead of repeating `8000`?"
+    a: "One named place explains what the number means and lets you change the target once, instead of hunting every copy of a hard-coded value."
+  - id: why-comments-dry
+    q: "What should a comment explain, and what is the DRY idea?"
+    a: "A comment explains WHY, not WHAT the code already says. DRY (don't repeat yourself) means put repeated logic in one function and call it."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+You write code once, but you (and others) re-read it many times. The reader you
+should write for is a tired beginner — maybe yourself, three weeks from now —
+opening the habits cleaner and trying to understand it fast.
+
+Compare two lines that do the same thing on the habits data:
+
+```python
+c = sum(1 for x in d if x >= 8000)      # what is c? what is d? why 8000?
+active_days = sum(1 for steps in day_steps if steps >= GOAL)
+```
+
+The second line reads like a sentence. Clarity beats cleverness every time, and
+this chapter is the handful of habits that get you there.
+
+> You'll need from before: writing and calling your own functions (Ch3) — the
+> main tool for keeping code small and avoiding repetition.
+
+---
+
+## Descriptive names
+
+A name is a tiny piece of documentation. `s` and `x` make the reader decode the
+code; `steps` and `active_days` let them read it.
+
+- Name a value for **what it holds**: `steps`, not `s`; `active_days`, not `x`.
+- A function name is **what it does**: `average_steps`, not `calc`.
+- Short names are fine for short lives — a loop index `i`, or `n` for a count in
+  a two-line function. The longer a value lives, the more its name should say.
+
+You don't need comments to explain a good name — the name already did it.
+
+## Small, single-purpose functions
+
+A function should do **one** thing you can name. If you can't name it without
+saying "and", it's probably two functions. Small functions are easier to read,
+to test, and to reuse.
+
+```python
+def is_active(steps):
+    """A day is active when it reaches the step goal."""
+    return steps >= GOAL
+```
+
+That one idea — "is this day active?" — now has a name you can use anywhere.
+
+## Name your constants
+
+A bare number sitting in the middle of code is a hard-coded number: the reader has
+to guess what it means, and if it appears five times you have to change all five.
+Give it a name in `UPPER_CASE`, once, at the top:
+
+```python
+GOAL = 8000          # daily step target
+
+def is_active(steps):
+    return steps >= GOAL
+```
+
+Now `GOAL` explains itself, and moving the target to `10000` is a one-line change.
+
+## Comments explain WHY, not WHAT
+
+Good code already says *what* it does. A comment earns its place by saying *why* —
+the reason a reader can't see from the code alone.
+
+```python
+steps = int(raw.replace(",", ""))   # bad: restates the code
+steps = int(raw.replace(",", ""))   # good: some rows store steps as "8,200"
+```
+
+If a comment only repeats the line, delete it and improve the names instead.
+
+## Don't repeat yourself (DRY)
+
+If you copy a piece of logic, every future fix has to be made in every copy — and
+one will get missed. Put the logic in a function (Ch3) and call it. That single
+function becomes the one place the rule lives.
+
+```python
+active_days = sum(1 for steps in day_steps if is_active(steps))
+best_streak = max(steps for steps in day_steps if is_active(steps))
+```
+
+Both lines lean on the same `is_active` rule, so "what counts as active" is
+defined exactly once.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Python's style conventions differ from Java's, and the linters enforce them:
+
+- Names and functions use **`snake_case`** (`active_days`, `average_steps`), not
+  `camelCase`.
+- You don't write **getters/setters**; read and assign attributes directly, and
+  reach for `@property` only if you later need computed access.
+- A **docstring** (the `"""..."""` under a `def`) is Python's Javadoc — it documents
+  the function and shows up in `help()`.
+- Constants are **`UPPER_CASE` by convention** — Python has no `final` keyword, so
+  the capitals are the signal "treat this as fixed".
+:::
+
+---
+
+## Let's build it (worked example)
+
+Here is a "before" that counts active days and the percentage active — with cryptic
+names, a hard-coded `8000` in two places, and the same test copied twice. Press
+**Run**.
+
+```{pyodide}
+#| caption: "Before: cryptic names, a hard-coded number, repeated logic"
+d = [8200, 5100, 9300, 6000, 8000]
+
+c = 0
+for x in d:
+    if x >= 8000:        # what does 8000 mean? repeated below, too
+        c = c + 1
+
+p = 0
+for x in d:
+    if x >= 8000:        # the same rule, copied
+        p = p + 1
+
+print((c, round(p / len(d) * 100)))
+```
+
+Now the "after": descriptive names, one named constant, and a small `is_active`
+helper used in both places. It computes the identical result.
+
+```{pyodide}
+#| caption: "After: clear names, a named constant, one reusable helper"
+GOAL = 8000   # daily step target
+
+def is_active(steps):
+    """A day is active when it reaches the step goal."""
+    return steps >= GOAL
+
+day_steps = [8200, 5100, 9300, 6000, 8000]
+active_days = sum(1 for steps in day_steps if is_active(steps))
+percent_active = round(active_days / len(day_steps) * 100)
+
+print((active_days, percent_active))
+```
+
+Both cells print `(3, 60)` — same answer, but the second one you can read once and
+trust. The rule "≥ 8000" now lives in exactly one place (`GOAL` + `is_active`), so
+changing the target is a single edit instead of a hunt.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Descriptive names** (`steps`, `active_days`) turn code into something you read,
+   not decode.
+2. Keep functions **small and single-purpose**, and replace hard-coded numbers with
+   a **named constant** like `GOAL = 8000`.
+3. Comments explain **WHY**, not what the code already says.
+4. **DRY:** put repeated logic in one function and call it, so a rule is defined once.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Replace the hard-coded `8000` with a named constant so the goal has a name. Fill in
+`STEP_GOAL`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_const
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_const
+STEP_GOAL = ____  # TODO: the daily step target, 8000
+
+def is_active(steps):
+    """A day is active when it reaches the step goal."""
+    return steps >= STEP_GOAL
+
+run_tests([
+    ("8200 reaches the goal", is_active(8200), True),
+    ("5000 does not", is_active(5000), False),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The target is `8000`. Put that value after `STEP_GOAL =`, so the comparison
+`steps >= STEP_GOAL` checks against the named goal.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+STEP_GOAL = 8000
+
+def is_active(steps):
+    return steps >= STEP_GOAL
+```
+
+`STEP_GOAL` names the target once; `is_active` reads against that name, so the
+number `8000` no longer floats unexplained inside the comparison.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write one small, well-named function: `average_steps(day_steps)` returns the mean of
+a list of step counts. Guard the empty case so it returns `0` instead of dividing by
+zero. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_avg
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_avg
+def average_steps(day_steps):
+    """Mean of a list of step counts; 0 when the list is empty."""
+    if ____:            # TODO: handle the empty list before dividing
+        return 0
+    return sum(day_steps) / len(day_steps)
+
+run_tests([
+    ("mean of two days", average_steps([8000, 9000]), 8500),
+    ("empty list is 0", average_steps([]), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+An empty list has length `0`, and `sum([]) / len([])` would divide by zero. Test
+for the empty list first — `not day_steps` is `True` when the list is empty.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def average_steps(day_steps):
+    if not day_steps:
+        return 0
+    return sum(day_steps) / len(day_steps)
+```
+
+The guard `if not day_steps` returns `0` for the empty list; otherwise `sum() /
+len()` is the mean. The name and docstring say exactly what the function does.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Rewrite this cryptic snippet for
+readability — **without changing what it computes**. It counts how many days hit the
+step target and is hard to follow:
+
+```python
+def f(l):
+    n = 0
+    for v in l:
+        if v >= 8000:
+            n = n + 1
+    return n
+```
+
+**Rubric — a good answer:**
+
+- Uses **descriptive names** for the function, parameter, and loop value.
+- Replaces the hard-coded `8000` with a **named constant**.
+- Pulls the "is this day active?" test into a **small helper** and reuses it (DRY).
+- Returns the **same count** as the original for the same input.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+STEP_GOAL = 8000   # daily step target
+
+def is_active(steps):
+    """A day is active when it reaches the step goal."""
+    return steps >= STEP_GOAL
+
+def count_active_days(day_steps):
+    """How many days reached the step goal."""
+    return sum(1 for steps in day_steps if is_active(steps))
+
+print(count_active_days([8200, 5100, 9300, 6000, 8000]))   # 3
+```
+
+Same count as `f`, but the names tell the story, `STEP_GOAL` explains the number,
+and the active-day rule lives once in `is_active`.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch10.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now write code a beginner can re-read: clear names, small functions, named
+constants, WHY-comments, and no copied logic. Next chapter — **Pythonic data
+idioms** — builds on this with the idiomatic patterns that make Python code both
+shorter *and* clearer, so readable and concise stop being a trade-off.

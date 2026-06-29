@@ -1,0 +1,35 @@
+title: "Chapter 9 — quick check"
+id: "m1-ch9-oop"
+questions:
+  - id: object-bundles
+    prompt: "What does an object bundle together?"
+    options:
+      - "Only data, never behaviour"
+      - "Data (attributes) and behaviour (methods) in one value"
+      - "Two unrelated functions"
+    answer: 1
+    explanation: "An object keeps related data and the functions that act on it together — like a string holding text plus methods such as .strip()."
+  - id: what-is-self
+    prompt: "Inside a method, what does `self` refer to?"
+    options:
+      - "The class itself, shared by every instance"
+      - "The particular instance the method was called on"
+      - "A required keyword that names the class"
+    answer: 1
+    explanation: "self is the specific object the method runs on, so self.steps reads that instance's own data."
+  - id: init-role
+    prompt: "When does `__init__` run, and what is it for?"
+    options:
+      - "Every time any method is called, to reset the object"
+      - "Once when you create an instance, to set up its starting attributes"
+      - "Only when you print the object"
+    answer: 1
+    explanation: "__init__ runs at construction time and stores the starting attributes on self."
+  - id: default-arg
+    prompt: "Given `def is_active(self, goal=8000):`, what does `d.is_active()` use for `goal`?"
+    options:
+      - "It raises an error because goal is missing"
+      - "It uses the default value 8000"
+      - "It uses 0"
+    answer: 1
+    explanation: "A default argument is used when the caller leaves it out, so is_active() compares against 8000."

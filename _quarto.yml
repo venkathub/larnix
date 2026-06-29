@@ -76,6 +76,12 @@ website:
             href: modules/01-python/ch06-reading-writing-files.qmd
           - text: "Ch7 — Errors & exceptions"
             href: modules/01-python/ch07-errors-exceptions.qmd
+          - text: "Ch8 — Reading a traceback"
+            href: modules/01-python/ch08-reading-a-traceback.qmd
+          - text: "Ch9 — A little OOP"
+            href: modules/01-python/ch09-a-little-oop.qmd
+          - text: "Ch10 — Clean, readable code"
+            href: modules/01-python/ch10-clean-readable-code.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
