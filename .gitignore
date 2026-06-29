@@ -76,3 +76,7 @@ desktop.ini
 *.log
 tmp/
 .cache/
+
+# Scratch files written by chapters that demonstrate file output, created in the
+# module dir when the CI twin executes (e.g. M1 Ch6 writes subset.csv). Ephemeral.
+modules/**/subset.csv

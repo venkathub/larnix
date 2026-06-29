@@ -1,0 +1,328 @@
+---
+title: "Reading & writing files (CSV/JSON)"
+module: "M1 — Python for AI"
+chapter: 6
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+  - "M1 Ch4 — Data structures"
+learning_objectives:
+  - "Read a CSV into dict rows with csv.DictReader"
+  - "Convert between Python objects and JSON text"
+  - "Write a file in Pyodide's in-memory filesystem and read it back"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - data/habits.csv
+review_cards:
+  - id: dictreader
+    q: "What does csv.DictReader give you for each row?"
+    a: "A dict keyed by the column headers — e.g. row['steps'] — with every value as a string."
+  - id: json-roundtrip
+    q: "What do json.dumps and json.loads do?"
+    a: "json.dumps turns a Python object into JSON text; json.loads turns JSON text back into a Python object."
+  - id: pyodide-vfs
+    q: "Where do files live when you run Python in the browser?"
+    a: "In an in-memory filesystem (the VFS). It works like a real disk, but anything you write is gone when you close the tab."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Enough hand-typing rows. The real `habits.csv` — all 35 days — is sitting right
+next to this page, and now you'll load it. When you do, you'll see something
+important: real data is **messy**. Some step counts have commas (`7,500`), some
+sleep values carry a stray `h` (`8h`), some moods are padded (` ok `), and a few
+fields are blank. Loading the file is step one; the rest of the module
+makes it clean.
+
+> You'll need from before: types and string-to-number conversion (Ch1), and dicts
+> (Ch4) — because each CSV row will arrive as a dict.
+
+---
+
+## Reading a CSV
+
+Open a file with `open(...)`, ideally inside a `with` block so it closes itself:
+
+```python
+with open("data/habits.csv") as f:
+    text = f.read()
+```
+
+But you rarely want the raw text — you want **rows**. The `csv` module's
+**`DictReader`** reads each row into a **dict keyed by the column headers**:
+
+```python
+import csv
+
+with open("data/habits.csv") as f:
+    rows = list(csv.DictReader(f))
+
+rows[0]   # {'date': '2026-01-01', 'steps': '7500', 'sleep_hours': '7.5', 'mood': 'good'}
+```
+
+Two things to notice: each row is exactly the dict shape from Chapter 4
+(`row["steps"]`), and **every value is a string** — `'7500'`, not `7500` — so
+you'll convert with `int()`/`float()` before any maths (Chapter 1).
+
+## Working with JSON
+
+JSON is a text format for structured data, used everywhere data is sent between
+programs. The `json` module converts both ways:
+
+```python
+import json
+
+text = json.dumps({"steps": 7500, "mood": "good"})   # object -> JSON text
+obj = json.loads(text)                                # JSON text -> object
+```
+
+`dumps` ("dump string") serialises; `loads` ("load string") parses it back.
+
+## Writing a file
+
+`csv.DictWriter` writes dict rows back out — useful for saving a cleaned table:
+
+```python
+with open("clean.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["date", "steps"])
+    writer.writeheader()
+    writer.writerows(some_rows)
+```
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+`with open(...) as f:` is Python's try-with-resources — the file closes
+automatically at the end of the block. `DictReader` and the `json` module replace
+the `BufferedReader`/parsing and Jackson/Gson boilerplate you'd reach for in Java,
+in a couple of lines.
+:::
+
+> ⚠️ Watch out: in the browser, files live in an **in-memory filesystem**. The
+> habits file was loaded into it for this page, and anything you *write* lives
+> there too — but it vanishes when you close the tab. That's perfect for learning,
+> and exactly how the in-browser runner stays ₹0.
+
+---
+
+## Let's build it (worked example)
+
+Load the real file, look at it, round-trip a row through JSON, and write a small
+subset back. Press **Run**.
+
+```{pyodide}
+#| caption: "Load the real habits.csv into dict rows"
+import csv
+
+with open("data/habits.csv") as f:
+    rows = list(csv.DictReader(f))
+
+print("Loaded", len(rows), "rows. The first four:")
+for row in rows[:4]:
+    print(row)
+```
+
+Look closely at those rows — `steps` of `'7,500'`, a blank field, a `sleep_hours`
+of `'8h'`. That mess is real, and cleaning it is the next few chapters.
+
+```{pyodide}
+#| caption: "Round-trip one row through JSON"
+import json
+
+text = json.dumps(rows[0])
+print("As JSON text:", text)
+print("Parsed back:", json.loads(text))
+```
+
+```{pyodide}
+#| caption: "Write a small subset to a file, then read it back"
+import csv
+
+subset = [{"date": r["date"], "steps": r["steps"]} for r in rows[:3]]
+with open("subset.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["date", "steps"])
+    writer.writeheader()
+    writer.writerows(subset)
+
+with open("subset.csv") as f:
+    print(f.read())
+```
+
+You read a real file, transformed it, and wrote a new one — entirely in the
+browser's in-memory filesystem.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **`csv.DictReader`** reads each row into a **dict keyed by the header**; every
+   value is a **string**, so convert before doing maths.
+2. **`json.dumps`** turns a Python object into JSON text; **`json.loads`** turns it
+   back.
+3. **`csv.DictWriter`** writes dict rows back out to a file.
+4. In Pyodide, files live in an **in-memory filesystem** — great for learning, but
+   writes disappear when the tab closes.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+A CSV row arrives as a dict of strings. Complete the marked line so `steps_as_int`
+reads the steps field and converts it to a whole number. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_stepsint
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_stepsint
+def steps_as_int(row):
+    """Return the row's steps as an int (CSV fields arrive as strings)."""
+    return int(row[____])  # TODO: the field name holding the steps
+
+run_tests([
+    ("converts steps", steps_as_int({"date": "x", "steps": "7500"}), 7500),
+    ("another row", steps_as_int({"steps": "8200"}), 8200),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You read a dict field by its key. The steps live under the key `"steps"`, and
+`int(...)` turns that string into a number.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def steps_as_int(row):
+    return int(row["steps"])
+```
+
+`row["steps"]` is the string `"7500"`; wrapping it in `int(...)` gives the number
+`7500`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `total_steps(rows)` — sum the steps across a list of dict rows, converting
+each from text to an `int`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_total
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_total
+def total_steps(rows):
+    """Sum the steps across dict rows, converting each from text to int."""
+    total = 0
+    for row in rows:
+        total += ____  # TODO: this row's steps as an int
+    return total
+
+run_tests([
+    ("sums the steps", total_steps([{"steps": "7500"}, {"steps": "8200"}]), 15700),
+    ("a single row", total_steps([{"steps": "100"}]), 100),
+    ("no rows is zero", total_steps([]), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Inside the loop you want this row's steps as a number — `int(row["steps"])` —
+added to the running `total`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def total_steps(rows):
+    total = 0
+    for row in rows:
+        total += int(row["steps"])
+    return total
+```
+
+Each row's `"steps"` string is converted to an `int` and added to `total`, which
+the function returns at the end.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Read the real `data/habits.csv`
+with `csv.DictReader`, and report two numbers: how many rows it has, and how many
+of those have a **missing** (blank) `steps` value. Print both.
+
+**Rubric — a good answer:**
+
+- Opens `data/habits.csv` with `csv.DictReader` and counts the rows.
+- Counts rows whose `steps` field is the empty string `""`.
+- Prints both numbers and runs without error.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import csv
+
+with open("data/habits.csv") as f:
+    rows = list(csv.DictReader(f))
+
+missing = sum(1 for r in rows if r["steps"] == "")
+print("Rows:", len(rows))
+print("Rows with missing steps:", missing)
+```
+
+`DictReader` gives the rows; the count of those whose `steps` is `""` tells you how
+much patching the cleaning step will need — a real first look at data quality.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now load the messy `habits.csv`, move data through JSON, and write files —
+the start and end of every data task. You also got your first honest look at the
+mess. Next we make code **fail safely** on bad rows with `try`/`except`, so one bad
+value doesn't crash the whole job.

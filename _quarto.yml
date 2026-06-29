@@ -72,6 +72,8 @@ website:
             href: modules/01-python/ch04-data-structures.qmd
           - text: "Ch5 — Comprehensions"
             href: modules/01-python/ch05-comprehensions.qmd
+          - text: "Ch6 — Reading & writing files"
+            href: modules/01-python/ch06-reading-writing-files.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

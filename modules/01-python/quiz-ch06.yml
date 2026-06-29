@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m1-ch6-files"
+questions:
+  - id: dictreader-shape
+    prompt: "What does each row from csv.DictReader look like?"
+    options:
+      - "A list of values, read by position"
+      - "A dict keyed by the column headers, with string values"
+      - "A single string for the whole row"
+    answer: 1
+    explanation: "DictReader maps each header to its value, e.g. row['steps'] — and every value is a string."
+  - id: values-are-strings
+    prompt: "After reading a CSV, what must you do before adding up the steps?"
+    options:
+      - "Nothing — they are already numbers"
+      - "Convert each steps value with int(), because CSV values are strings"
+      - "Re-open the file in binary mode"
+    answer: 1
+    explanation: "CSV fields arrive as strings; convert with int()/float() before arithmetic."
+  - id: json-functions
+    prompt: "Which function turns a Python object into JSON text?"
+    options:
+      - "json.loads"
+      - "json.dumps"
+      - "json.read"
+    answer: 1
+    explanation: "json.dumps serialises an object to text; json.loads parses text back into an object."
+  - id: pyodide-files
+    prompt: "When you write a file while running Python in the browser, where does it go?"
+    options:
+      - "Onto your computer's hard drive permanently"
+      - "Into an in-memory filesystem that is cleared when the tab closes"
+      - "It is uploaded to a server"
+    answer: 1
+    explanation: "Pyodide uses an in-memory filesystem; writes are temporary and never leave your browser."
