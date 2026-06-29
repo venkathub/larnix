@@ -1,0 +1,307 @@
+---
+title: "Data structures"
+module: "M1 — Python for AI"
+chapter: 4
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch2 — Control flow"
+  - "M1 Ch3 — Functions"
+learning_objectives:
+  - "Know what lists, dicts, sets, and tuples are each best for"
+  - "Model a data row as a dict and read fields by name"
+  - "Use a set to collect distinct values"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: dict-record
+    q: "Which structure best models one row of data, and how do you read a field?"
+    a: "A dict — a record of named fields. Read a field by key, e.g. day['steps']."
+  - id: set-unique
+    q: "What is a set good for?"
+    a: "Holding unordered, unique items — ideal for distinct values and fast membership tests."
+  - id: tuple-immutable
+    q: "How does a tuple differ from a list?"
+    a: "A tuple is a fixed, immutable ordered group; a list is ordered but changeable (you can append or reassign items)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Until now a "day" has been a tuple like `("2026-01-01", 7500)`. That works, but
+`day[1]` is a riddle — *was that steps or sleep?* A real day has four fields, and
+you'd much rather write `day["steps"]`. Python gives you four built-in containers,
+each suited to a different job. Choosing the right one makes your code read almost
+like a sentence.
+
+> You'll need from before: loops (Ch2) and functions (Ch3).
+
+---
+
+## Four containers, four jobs
+
+**`list`** — an **ordered, changeable** sequence. Your go-to for a collection of
+things, like every day's steps:
+
+```python
+steps = [7500, 8200, 5400]
+steps.append(9100)   # add to the end
+steps[0]             # 7500  (index from 0)
+len(steps)           # 4
+```
+
+**`dict`** — a **mapping of keys to values**: a record of *named* fields. The
+natural shape for one row of data:
+
+```python
+day = {"date": "2026-01-01", "steps": 7500, "mood": "good"}
+day["steps"]         # 7500  (read by name, not position)
+day["mood"] = "ok"   # update a field
+```
+
+**`tuple`** — like a list, but **fixed** (immutable): you can't change it after you
+make it. Good for a small, fixed group, or for returning several values at once:
+
+```python
+location = (12.97, 77.59)   # (latitude, longitude)
+location[0]                 # 12.97
+# location[0] = 0           # would raise an error — tuples can't change
+```
+
+**`set`** — an **unordered collection of unique items**. Perfect for "what are the
+distinct values?" and fast "is this in here?" checks:
+
+```python
+moods = {"good", "ok", "good"}   # duplicates collapse
+moods                            # {"good", "ok"}
+"bad" in moods                   # False
+```
+
+### Which one when?
+
+| You want… | Use a… |
+|-----------|--------|
+| an ordered list of things you'll add to | `list` |
+| a record with named fields (a data row) | `dict` |
+| a fixed group, or to return several values | `tuple` |
+| the unique values, or fast membership tests | `set` |
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+The rough equivalents: `list` ≈ `ArrayList`, `dict` ≈ `HashMap`, `set` ≈ `HashSet`,
+`tuple` ≈ an immutable record or fixed array. Two freedoms feel new: you don't
+declare element types (a list can hold mixed types), and dict/set literals are
+built right into the language with `{}` and `[]` rather than constructors.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's remodel the habits data the readable way: each day a **dict**, all days a
+**list**, and the distinct moods a **set**. Press **Run**.
+
+```{pyodide}
+#| caption: "A day as a named record, and a list of them"
+day = {"date": "2026-01-01", "steps": 7500, "sleep_hours": 7.5, "mood": "good"}
+print("Steps:", day["steps"], "| Mood:", day["mood"])
+
+days = [
+    {"date": "2026-01-01", "steps": 7500, "mood": "good"},
+    {"date": "2026-01-02", "steps": 8200, "mood": "ok"},
+    {"date": "2026-01-03", "steps": 9100, "mood": "good"},
+]
+
+moods = set()
+total = 0
+for d in days:
+    moods.add(d["mood"])     # the set keeps only distinct moods
+    total += d["steps"]
+
+print("Distinct moods:", moods)
+print("Total steps:", total)
+```
+
+`day["steps"]` says what it means, the `set` removes the duplicate `"good"` for
+free, and the loop reads each record by name. Compare that to juggling `day[1]`.
+
+```{pyodide}
+#| caption: "A tuple is fixed once made"
+location = (12.97, 77.59)
+print("Latitude:", location[0], "| Longitude:", location[1])
+print("A tuple has", len(location), "fixed values that can't be reassigned.")
+```
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **`list`** — an ordered, changeable sequence; index with `[i]`, grow with
+   `append`.
+2. **`dict`** — a record of **named** fields; read by key (`day["steps"]`) — the
+   natural shape for a data row.
+3. **`tuple`** — a fixed, **immutable** ordered group; handy for returning several
+   values.
+4. **`set`** — unordered **unique** items; ideal for distinct values and membership
+   tests.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `get_steps` reads the `"steps"` field from a day dict.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_getsteps
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_getsteps
+def get_steps(day):
+    """Return the steps value from a day dict."""
+    return ____  # TODO: read the "steps" field by key
+
+run_tests([
+    ("reads steps", get_steps({"date": "x", "steps": 7500, "mood": "good"}), 7500),
+    ("reads another row", get_steps({"steps": 8200}), 8200),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You read a dict field by its key in square brackets: `day["steps"]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def get_steps(day):
+    return day["steps"]
+```
+
+`day["steps"]` looks up the value stored under the key `"steps"` — the readable
+alternative to remembering a position.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `distinct_moods(days)` — return the **set** of distinct mood values across a
+list of day dicts. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_moods
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_moods
+def distinct_moods(days):
+    """Return the set of distinct mood values across the day dicts."""
+    moods = set()
+    for d in days:
+        ____  # TODO: add this day's mood to the set
+    return moods
+
+run_tests([
+    ("collects unique moods", distinct_moods([{"mood": "good"}, {"mood": "ok"}, {"mood": "good"}]), {"good", "ok"}),
+    ("a single mood", distinct_moods([{"mood": "bad"}]), {"bad"}),
+    ("no days, empty set", distinct_moods([]), set()),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A set grows with `.add(...)`. Each day's mood is `d["mood"]`, so add that to
+`moods`. Duplicates are dropped automatically.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def distinct_moods(days):
+    moods = set()
+    for d in days:
+        moods.add(d["mood"])
+    return moods
+```
+
+`moods.add(d["mood"])` puts each mood into the set; because a set keeps only unique
+items, the repeated `"good"` appears once.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Build `count_moods(days)` that
+returns a **dict** mapping each mood to how many days had it — a tally. Print it for
+a list you make up.
+
+**Rubric — a good answer:**
+
+- Uses a dict as the tally and a loop over the days.
+- Handles a mood seen for the first time (start its count at 0 or use `dict.get`).
+- Returns the dict and runs on a list with at least one repeated mood.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def count_moods(days):
+    tally = {}
+    for d in days:
+        mood = d["mood"]
+        tally[mood] = tally.get(mood, 0) + 1
+    return tally
+
+print(count_moods([{"mood": "good"}, {"mood": "ok"}, {"mood": "good"}]))
+# {'good': 2, 'ok': 1}
+```
+
+`tally.get(mood, 0)` returns the current count (or `0` the first time a mood is
+seen), and adding one updates it — a dict used as a running tally.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now hold data in the right shape — records as dicts, collections as lists,
+unique values as sets. Next we transform these collections concisely with
+**comprehensions**, turning multi-line loops into a single readable expression.
