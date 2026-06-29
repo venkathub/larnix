@@ -113,6 +113,21 @@
   + rubric) shipped for `modules/01-python`, `02-math`, `03-data`; `module-quiz.yml` and `index.qmd`
   land with each module's assessment task (per the P1-D11 mount decision). This closes §6.A; M0
   content authoring begins next.
+- **Implementation note — P1 §6.F integration + completion (2026-06-29).** P1 content is complete:
+  **50 chapters across M0–M3** (M0 6, M1 14, M2 16, M3 14), each with a per-chapter quick check, plus
+  4 cumulative `module-quiz.yml` (10/11/12/12 MCQ, each scored in-browser and persisted to
+  `localStorage`) and 4 rubric-graded capstones. Verification at close: **all 50 CI twins execute
+  cleanly** (R10) under `nbclient`; all schema/R-gates green; **111 unit tests** pass; codespell clean
+  and zero banned/hype words; the **full site renders (61 docs)** and **builds from a fresh clone**.
+  Representative ₹0 in-browser sweep covered every distinct mechanism — Pyodide execution, the
+  single-source grader, the pandas+Penguins VFS load (344×8 offline), Matplotlib canvas rendering, and
+  quiz scoring+persistence — across all four modules (the exhaustive per-chapter browser pass remains
+  §6.F Task 66). **New render-safety guard:** `chapter_structure_lint.py` now fails any `{pyodide}`
+  chapter missing `format: live-html` + `execute: enabled: false` (caught M2 Ch12, which a sub-agent
+  authored without that block — `quarto render` had tried to spawn a python3 kernel). The M0 root
+  `index.qmd` catalog and the `_quarto.yml` sidebar list M0–M3 as live; `WALKTHROUGH.md` and
+  `PORTFOLIO.md` carry the zero→EDA learner path and the quantified P1 bullet. **P1-D5 merge log: 0 of
+  3 optional merges used** (M1 Ch7/Ch8 and M3 Ch11/Ch12 kept separate).
 
 ---
 
@@ -455,7 +470,7 @@
   1. **Auto-grader (P0-D5) = `quarto-live` native exercise grading + a thin `/lib` assert helper.**
      Web-search validation (2026-06-28) confirmed `quarto-live` ships first-class exercises with
      `setup`/`hints`/`solution` and a `check: true` grading cell for Pyodide blocks; the `grade()`
-     helper just gives a consistent pass/fail UX (`All tests passed ✅`) and hidden solutions in
+     helper only gives a consistent pass/fail UX (`All tests passed ✅`) and hidden solutions in
      `<details>`. Open-ended work uses **published rubrics**, not auto-grading (`RISKS.md R4`).
      *Caveat (spike V-1):* most quarto-live grading examples are R/`webr`, so Python/`pyodide`
      grading parity is verified on a scratch exercise in P0 before authoring the chapter; the `/lib`

@@ -135,3 +135,24 @@ For every `colab`/`gpu` notebook changed in a PR, paste into the PR description:
    or pasted text) and the run date.
 
 A reviewer treats a missing record as a failing check for that notebook.
+
+## Authoring at scale (P1 lesson, 2026-06-29)
+
+P1 authored 50 chapters across 4 modules. The workflow that kept quality green:
+
+- **Parallel sub-agents, one chapter each.** Independent chapters are authored by
+  sub-agents that touch only their own 3 files (`.qmd` + `quiz-chNN.yml` + the
+  generated `.ipynb`) — never `_quarto.yml`, READMEs, DECISIONS, or git. The main
+  session then serially batch-verifies, wires nav, commits in small batches, and
+  spot-checks one chapter per batch in-browser.
+- **Lock correctness with exact-value asserts.** Sub-agent prompts carry the exact
+  expected values (and, for data chapters, the verified dataset stats), so the
+  graded exercises are checked by exact `run_tests` asserts and the CPython twin run
+  re-confirms them.
+- **Gates are the contract.** Every chapter must pass the full gate suite + twin
+  execution + codespell + the banned/hype scan *before* commit. A sub-agent that
+  reports "all green" is still re-verified by the main session.
+- **Render-safety.** A `{pyodide}` chapter must declare `format: live-html` +
+  `execute: enabled: false`, or `quarto render` tries to spawn a python3 kernel and
+  fails. This is now enforced by `chapter_structure_lint.py` (added after a
+  sub-agent omitted the block in M2 Ch12).

@@ -29,3 +29,31 @@
 *Why it matters: this is "evals before features" applied to content — the gates were
 built and proven on one chapter before authoring at scale, so every later chapter
 inherits a green, automated quality bar.*
+
+## Larnix — open-access AI/ML learning platform · Phase P1 (foundations: M0–M3)
+
+*Solo build. Stack: Quarto, quarto-live/Pyodide, Python (NumPy/Pandas/Matplotlib), GitHub Actions.*
+
+- **Authored and auto-graded 50 runnable chapters across 4 modules** (Orientation,
+  Python for AI, Math You Actually Need, Data & Tooling) — every chapter follows a
+  hook → explanation → runnable worked example → Key Takeaways → 2–4 graded
+  exercises contract, with **100% running in-browser at ₹0** (no install, no GPU,
+  no account). Capped each module with a cumulative quiz (45 MCQ total) and a
+  build-something capstone.
+- **Guaranteed every example runs** by generating a CPython "twin" notebook for all
+  50 chapters from their source — worked cells plus hidden-solution asserts — and
+  executing all 50 cleanly in CI under `nbclient`; the math capstone derives one
+  neuron's backprop by hand and **gradient-checks it to a 3.27e-11 max error**.
+- **Built reusable in-browser infrastructure**: a single-source assert grader loaded
+  into the Pyodide VFS, an offline dataset loader for vendored CC0 data (Palmer
+  Penguins, 344×8), and client-side Matplotlib plots — so chapters stay DRY and
+  every dataset/grader resolves identically in the browser and in CI.
+- **Scaled authoring with parallel sub-agents under a fail-closed CI bar**: ~12 gate
+  scripts and **111 unit tests** (front-matter/quiz/review-card schemas, Pyodide-safe
+  imports, twin-drift, render-safety, WCAG-AA, prose/spell/banned-word) caught real
+  defects (e.g. a missing render block) before merge; the full site (61 docs) renders
+  cleanly and builds from a fresh clone.
+
+*Why it matters: a complete beginner on a low-spec laptop can go from "what is AI" to
+deriving a neuron's gradient by hand and running an EDA on real data — entirely free,
+entirely in a browser — and every line is mechanically verified to run.*
