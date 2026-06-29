@@ -33,7 +33,7 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 |---|---------|
 | 1 | [Variables & types](ch01-variables-and-types.qmd) |
 | 2 | [Control flow](ch02-control-flow.qmd) |
-| 3 | Functions |
+| 3 | [Functions](ch03-functions.qmd) |
 | 4 | Data structures |
 | 5 | Comprehensions |
 | 6 | Reading & writing files (CSV/JSON) |

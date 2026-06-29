@@ -1,0 +1,312 @@
+---
+title: "Functions"
+module: "M1 — Python for AI"
+chapter: 3
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch2 — Control flow"
+learning_objectives:
+  - "Define a function with def, parameters, and return"
+  - "Give a parameter a default value"
+  - "Reuse logic by calling functions instead of copying code"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: def-return
+    q: "What do def and return do?"
+    a: "def names a reusable block with parameters; return hands a value back to the caller. A function with no return gives back None."
+  - id: default-args
+    q: "What is a default argument value?"
+    a: "A value a parameter takes when the caller doesn't supply one, e.g. def met_goal(steps, goal=8000)."
+  - id: why-functions
+    q: "Why package logic into functions?"
+    a: "To write it once and reuse it by name — avoiding the copy-paste that spreads bugs (the DRY principle)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+In Chapter 2 you wrote the "is this day active?" check right inside the loop. But
+you'll want that exact check again — for another month of data, in a chart, in your
+capstone. Copying the same lines around is how a small bug ends up in five places.
+
+A **function** fixes this: write the logic once, give it a name, and call it
+wherever you need it. You've already *used* functions — `int()`, `len()`,
+`run_tests()` — so the idea is familiar. This chapter you write your own.
+
+> You'll need from before: loops and `if`/`elif`/`else` (Ch2), and comparisons
+> returning `True`/`False` (Ch1).
+
+---
+
+## Defining a function
+
+A function is a named block with **inputs** (parameters) and an **output**
+(whatever you `return`):
+
+```python
+def label_day(steps):
+    """Label a day by its step count."""
+    if steps >= 8000:
+        return "active"
+    elif steps >= 6000:
+        return "ok"
+    return "low"
+```
+
+- `def` starts the definition; `label_day` is the name; `steps` is a **parameter**.
+- The line in quotes is a **docstring** — a one-sentence description of what the
+  function does.
+- `return` hands a value back to whoever called the function. The moment a `return`
+  runs, the function stops.
+
+You **call** it by name, passing an **argument**:
+
+```python
+label_day(8200)   # -> "active"
+```
+
+> ⚠️ Watch out: a function with no `return` gives back the special value `None`. If
+> a function "does nothing," check that you actually returned the result.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+`def label_day(steps):` replaces `String labelDay(int steps) { … }` — no return
+type, no parameter types, no braces (indentation again). A bare `return` or no
+`return` yields `None`, Python's `null`-like value. Functions are first-class:
+you can store one in a variable or pass it to another function, which you'll use
+later with tools like `map` and `sort`.
+:::
+
+## Default argument values
+
+A parameter can have a **default** — a value used when the caller doesn't give one:
+
+```python
+def met_goal(steps, goal=8000):
+    """Did the day reach the goal? Goal defaults to 8000."""
+    return steps >= goal
+
+met_goal(8200)        # uses the default goal of 8000 -> True
+met_goal(5000, 4000)  # overrides the goal -> True
+```
+
+Defaults keep the common case short while still allowing flexibility.
+
+---
+
+## Let's build it (worked example)
+
+Let's turn Chapter 2's inline logic into reusable functions, then have one function
+*call another*. Press **Run**.
+
+```{pyodide}
+#| caption: "One labelling function, reused by a summarising function"
+def label_day(steps):
+    """Label a day by its step count."""
+    if steps >= 8000:
+        return "active"
+    elif steps >= 6000:
+        return "ok"
+    return "low"
+
+def summarise(days):
+    """Print each day's label and return how many were active."""
+    active = 0
+    for date, steps in days:
+        lbl = label_day(steps)        # reuse the function above
+        if lbl == "active":
+            active += 1
+        print(date, "->", lbl)
+    return active
+
+days = [("2026-01-01", 7500), ("2026-01-02", 8200), ("2026-01-03", 9100)]
+print("Active days:", summarise(days))
+```
+
+`summarise` doesn't repeat the labelling rules — it **calls** `label_day`. Change
+the rule in one place and every caller gets the fix. That is the whole point.
+
+```{pyodide}
+#| caption: "A default argument keeps the common call short"
+def met_goal(steps, goal=8000):
+    """Did the day reach the goal? Goal defaults to 8000."""
+    return steps >= goal
+
+print("8200 vs default goal:", met_goal(8200))
+print("5000 vs a 4000 goal:", met_goal(5000, 4000))
+```
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **`def`** names a reusable block with **parameters**; you **call** it by name
+   with **arguments**.
+2. **`return`** hands a value back; a function with no `return` gives back `None`.
+3. A parameter can have a **default value** (`goal=8000`) for the common case.
+4. Functions let you write logic **once and reuse it** — the cure for copy-paste
+   bugs (DRY: *don't repeat yourself*).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `is_missing` returns `True` only for an **empty
+string** — the way a blank entry shows up in data. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_missing
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_missing
+def is_missing(value):
+    """Return True if value is an empty string (a missing entry)."""
+    return ____  # TODO: True when value is the empty string ""
+
+run_tests([
+    ("empty string is missing", is_missing(""), True),
+    ("a real value is not missing", is_missing("good"), False),
+    ("a space is not empty", is_missing(" "), False),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+"Empty string" is the value `""` — two quotes with nothing between. Compare
+`value` to it with `==`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def is_missing(value):
+    return value == ""
+```
+
+`value == ""` is `True` only for the empty string; a space `" "` is one character,
+so it's `False` — a distinction that matters when you clean real data.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `clean_mood(text)` — tidy a mood label by removing surrounding spaces and
+lowercasing it, so `"  Good "`, `"good"`, and `"GOOD"` all become `"good"`. This is
+a real cleaning step for the habits data. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mood
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mood
+def clean_mood(text):
+    """Remove surrounding spaces from text and lowercase it."""
+    return ____  # TODO: strip the spaces, then lowercase
+
+run_tests([
+    ("trims and lowercases", clean_mood("  Good "), "good"),
+    ("already tidy", clean_mood("ok"), "ok"),
+    ("all caps", clean_mood("GREAT"), "great"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Two string methods, chained: `.strip()` removes the spaces, and `.lower()`
+lowercases. You can write them one after another: `text.strip().lower()`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def clean_mood(text):
+    return text.strip().lower()
+```
+
+`.strip()` removes the surrounding spaces and `.lower()` makes it lowercase;
+chaining them tidies the label in one expression.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Write a function `clean_steps`
+that takes a steps value as text — which might contain a comma like `"7,500"` or be
+blank `""` — and returns it as an `int`, using `0` for a blank. Test it on a few
+values.
+
+**Rubric — a good answer:**
+
+- Removes a comma before converting (`.replace(",", "")`).
+- Handles the blank case without crashing (returns `0`).
+- Uses `return` and runs on at least three different inputs.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def clean_steps(text, default=0):
+    """Convert a steps string to an int, tolerating commas and blanks."""
+    text = text.strip()
+    if text == "":
+        return default
+    return int(text.replace(",", ""))
+
+for value in ["7,500", "8200", ""]:
+    print(repr(value), "->", clean_steps(value))
+```
+
+The function tidies the text, returns the default for a blank, and strips a comma
+before converting — three of the messes you'll meet in the habits file, handled in
+one reusable place.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Functions are the unit of reuse — you now write logic once and call it anywhere,
+and you've built your first real cleaning helpers (`clean_mood`, `clean_steps`).
+Next we look at the containers that hold your data — lists, dicts, sets, and tuples
+— so those functions have something rich to work on.

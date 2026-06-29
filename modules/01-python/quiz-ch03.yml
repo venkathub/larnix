@@ -1,0 +1,35 @@
+title: "Chapter 3 — quick check"
+id: "m1-ch3-functions"
+questions:
+  - id: what-return-does
+    prompt: "What does `return` do in a function?"
+    options:
+      - "Prints a value to the screen"
+      - "Hands a value back to whoever called the function and stops the function"
+      - "Declares a new variable type"
+    answer: 1
+    explanation: "return passes a value back to the caller; execution of the function stops at that point."
+  - id: no-return
+    prompt: "What does a function return if it has no `return` statement?"
+    options:
+      - "0"
+      - "None"
+      - "An error"
+    answer: 1
+    explanation: "A function with no return gives back None, Python's 'nothing' value."
+  - id: default-arg
+    prompt: "Given `def met_goal(steps, goal=8000):`, what does `met_goal(8200)` use for goal?"
+    options:
+      - "Nothing — it raises an error for the missing argument"
+      - "8000, the default value"
+      - "8200"
+    answer: 1
+    explanation: "When the caller omits goal, the default value 8000 is used."
+  - id: why-functions
+    prompt: "Why is calling a function better than copying its code into many places?"
+    options:
+      - "It makes the program run on a GPU"
+      - "You fix or change the logic in one place and every caller benefits"
+      - "Functions are required by Pyodide"
+    answer: 1
+    explanation: "Reuse via functions avoids copy-paste, so a fix in one place updates everywhere (DRY)."
