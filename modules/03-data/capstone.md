@@ -1,8 +1,9 @@
 # M3 Capstone — End-to-end EDA
 
-> Skeleton authored in P1 §6.A.6: the brief + rubric are final; the hidden
-> walkthrough is finalized with the M3 build (P1 §6.E). Open-ended and
-> **rubric-graded**. Runs in the browser, ₹0.
+> Finalized with the M3 build (P1 §6.E). Open-ended and **rubric-graded** — you
+> bring your own dataset, so there is no single "right" answer to auto-check. Runs
+> in the browser, ₹0. The EDA recipe to follow is [Chapter 9 — The EDA
+> workflow](ch09-eda-workflow.qmd).
 
 ## The brief
 
@@ -43,3 +44,12 @@ evidence cannot score above *Developing* on **Insight** or **Measurement**.
 Runs in the browser via Pyodide — zero install, **₹0**. Use a small, license-clean
 public dataset; vendor it at `data/<name>.csv`, load it via `lib/data.py`, and add
 it to `docs/ASSETS.md` with its license (R11).
+
+**Suggested starting datasets** (small, license-clean, different from penguins):
+
+- **Seaborn's `tips`** (restaurant bills & tips) — public domain, ~244 rows.
+- **The Iris flowers** dataset — public domain, 150 rows (you met it in M0).
+- **UCI Wine** or any CC0/public-domain CSV under ~10,000 rows.
+
+Pick one you find interesting — the point is to run the Chapter 9 recipe on data you
+have never explored before.

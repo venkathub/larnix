@@ -1,0 +1,47 @@
+---
+title: "M3 — Data & Tooling"
+toc: false
+---
+
+Load, clean, explore, and visualize real data with NumPy, Pandas, and Matplotlib;
+run a repeatable EDA; and pick up reproducibility and data ethics *as habits*. The
+running dataset is **Palmer Penguins** (CC0), loaded offline — no install, ₹0.
+
+## Start here
+
+Work through the chapters in order, beginning with
+[**Chapter 1 — NumPy & vectorization**](ch01-numpy-vectorization.qmd). Each runs in
+your browser; press **Run** on every code block. Data loads offline from a vendored
+CSV via `lib/data.py`, and plots render with Matplotlib in Pyodide.
+
+| # | Chapter |
+|---|---------|
+| 1 | [NumPy & vectorization](ch01-numpy-vectorization.qmd) |
+| 2 | [Pandas Series & DataFrame](ch02-pandas-series-dataframe.qmd) |
+| 3 | [Indexing & selection](ch03-indexing-selection.qmd) |
+| 4 | [Cleaning data](ch04-cleaning-data.qmd) |
+| 5 | [Joins & groupby](ch05-joins-groupby.qmd) |
+| 6 | [Reshaping](ch06-reshaping.qmd) |
+| 7 | [Plotting with Matplotlib](ch07-plotting-matplotlib.qmd) |
+| 8 | [Statistical plots](ch08-statistical-plots.qmd) |
+| 9 | [The EDA workflow](ch09-eda-workflow.qmd) |
+| 10 | [Scaling & encoding (a preview)](ch10-scaling-encoding.qmd) |
+| 11 | [Notebooks vs scripts](ch11-notebooks-vs-scripts.qmd) |
+| 12 | [Environments & reproducibility](ch12-environments-reproducibility.qmd) |
+| 13 | [Data ethics (a preview)](ch13-data-ethics.qmd) |
+| 14 | [Messy real-world data](ch14-messy-real-world-data.qmd) |
+
+## Module quiz
+
+When you've finished the chapters, test the whole module. Your score is saved in
+your browser.
+
+{{< quiz module-quiz.yml >}}
+
+## Capstone
+
+Finish with the module project:
+[**End-to-end EDA**](capstone.md) — run a full exploratory data analysis on a *new*
+public dataset (a different one from the penguins you used here, to test transfer):
+load → clean → answer at least three questions with plots **and** numbers → write up
+findings, with an ethics note on the data's source and license.

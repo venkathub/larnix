@@ -127,6 +127,7 @@ website:
           - text: "Ch16 — The math of one neuron"
             href: modules/02-math/ch16-the-math-of-one-neuron.qmd
       - section: "M3 — Data & Tooling"
+        href: modules/03-data/index.qmd
         contents:
           - text: "Ch1 — NumPy & vectorization"
             href: modules/03-data/ch01-numpy-vectorization.qmd
