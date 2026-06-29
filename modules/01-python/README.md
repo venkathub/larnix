@@ -37,7 +37,7 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 | 4 | [Data structures](ch04-data-structures.qmd) |
 | 5 | [Comprehensions](ch05-comprehensions.qmd) |
 | 6 | [Reading & writing files (CSV/JSON)](ch06-reading-writing-files.qmd) |
-| 7 | Errors & exceptions |
+| 7 | [Errors & exceptions](ch07-errors-exceptions.qmd) |
 | 8 | Reading a traceback |
 | 9 | Just-enough OOP |
 | 10 | Clean, readable code |

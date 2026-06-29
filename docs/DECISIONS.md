@@ -151,6 +151,9 @@
      mean/variance; M3 notebooks + environments), each logged. Protects pace while keeping
      single-idea chapters. *Rejected:* hold counts exactly (some chapters pad/split awkwardly);
      aggressive consolidation to ~35 (breaks "one concept per chapter"; diverges from PLAN).
+     **Merge log (2026-06-29):** the M1 errors+tracebacks pair was considered and **kept separate**
+     (Ch7 "Errors & exceptions", Ch8 "Reading a traceback") — the builder chose dedicated
+     traceback-reading practice over a merge. Merge allowance still at 0 of 3 used.
 - **Rationale.** Beginner-first, analogy-before-symbol, a satisfying early win, and one running
   example per module — the Varsity pedagogy ported to a code-heavy on-ramp, tuned against drop-off
   (R12) and re-authoring cost (R9).
