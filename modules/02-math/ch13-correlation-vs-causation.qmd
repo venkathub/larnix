@@ -1,0 +1,356 @@
+---
+title: "Correlation vs causation"
+module: "M2 — Math You Actually Need"
+chapter: 13
+difficulty: "beginner"
+prereqs:
+  - "M2 Ch11 — Mean, variance & standard deviation"
+learning_objectives:
+  - "Read a correlation coefficient (−1 to +1) as the strength and direction of a linear relationship"
+  - "Explain why correlation does not prove causation"
+  - "Spot a confounding variable behind a misleading correlation"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 14
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: correlation-range
+    q: "What range does a correlation coefficient take, and what do its extremes mean?"
+    a: "From −1 to +1. +1 is a perfect rise-together line, −1 is a perfect opposite line, and 0 means no linear relationship. It measures linear co-movement, not cause."
+  - id: correlation-not-causation
+    q: "Why does a strong correlation not prove that one thing causes the other?"
+    a: "A correlation only shows that two variables move together. The link could run the other way (reverse causation) or be driven by a third variable. Causation needs an experiment or careful control of other factors."
+  - id: what-is-a-confounder
+    q: "What is a confounding variable? Give the ice-cream example."
+    a: "A confounder is a hidden third variable that drives two others, making them look linked. Ice-cream sales and drowning deaths rise together because summer heat drives both — heat is the confounder, not a cause running between them."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Every summer, two numbers climb together: **ice-cream sales** and **drowning
+deaths**. Track them month by month and the pattern is unmistakable — when one
+goes up, so does the other. So should we ban ice cream to save lives?
+
+Of course not. Ice cream doesn't drown anyone. **Summer heat** drives both: hot
+weather sells more ice cream *and* sends more people swimming, where more
+drownings happen. The heat is hiding behind the scenes, pulling both strings. It
+is a **confounder** — a third variable that makes two unrelated things look
+linked.
+
+This chapter is about telling those two situations apart: when numbers *move
+together* (correlation) versus when one number *makes the other happen*
+(causation). Mixing them up is one of the most common — and most expensive —
+mistakes in data work.
+
+> You'll need from before: the mean and how spread is measured (M2 Ch11). We
+> reuse the idea of "distance from the mean" to build correlation.
+
+---
+
+## Correlation: a number from −1 to +1
+
+**Correlation** turns "these two things move together" into a single number, the
+correlation coefficient, usually written **r**. It always lands between −1 and
++1:
+
+- **r = +1** — a *perfect positive* relationship. The points sit exactly on a
+  line that rises to the right: when one variable goes up, the other goes up by a
+  proportional amount, every time.
+- **r = −1** — a *perfect negative* relationship. The points sit on a line that
+  falls to the right: when one goes up, the other goes down.
+- **r = 0** — *no linear* relationship. Knowing one variable tells you nothing
+  about whether the other is high or low.
+
+Values in between measure how *tight* and which *direction* the trend is. An
+r of 0.9 is a strong rise-together pattern with a little scatter; an r of 0.2 is a
+weak, noisy one; an r of −0.6 is a moderately strong downward trend.
+
+Two cautions worth keeping in mind:
+
+- Correlation measures **linear** co-movement only. A relationship can be strong
+  but curved (think of a U-shape) and still give an r near 0, because it isn't a
+  straight line.
+- Correlation has **no units** and says nothing about steepness. An r of 1.0 does
+  not mean "one-for-one"; it means the points fall perfectly on *some* straight
+  line, however steep or shallow.
+
+### Seeing it: hours studied vs exam score
+
+Here is a small, made-up class: hours each student studied and the score they got.
+The points drift up to the right — more study, higher score — so we expect a
+positive r close to 1. The plot draws the scatter and prints the r that goes with
+it, connecting the picture to the number.
+
+```{pyodide}
+#| caption: "More study hours line up with higher scores — a positive correlation"
+#| fig-alt: "Scatter plot with study hours on the x-axis and exam score on the y-axis. Eight points rise from the lower-left to the upper-right in a roughly straight upward band, showing a strong positive trend."
+import numpy as np
+import matplotlib.pyplot as plt
+
+hours = [1, 2, 3, 4, 5, 6, 7, 8]
+score = [52, 55, 60, 64, 69, 72, 79, 84]
+
+r = np.corrcoef(hours, score)[0, 1]
+print("correlation r =", round(r, 4))
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.scatter(hours, score)
+ax.set_xlabel("hours studied")
+ax.set_ylabel("exam score")
+ax.set_title(f"Study hours vs score (r = {round(r, 2)})")
+plt.show()
+```
+
+The printed r is about **0.99** — a strong positive correlation, which matches the
+tidy upward band your eye sees. (The canvas above has no alt text for a screen
+reader, so the takeaway in words: the points climb steadily from lower-left to
+upper-right, and the number confirms a near-perfect upward line.)
+
+But notice what the number *can't* tell you. A strong r here is consistent with
+"studying raises scores" — and that's plausible — but the number alone doesn't
+prove it. That's the whole point of the next section.
+
+---
+
+## Causation: a higher bar
+
+To say A **causes** B is to claim that *changing* A would *change* B. Correlation
+never establishes that on its own, because at least three different stories can
+produce the same rise-together pattern:
+
+1. **A really does cause B.** Studying more does raise scores.
+2. **Reverse causation — B causes A.** Maybe the relationship runs the other way
+   from what you assumed. (Do people exercise because they're healthy, or are they
+   healthy because they exercise? The correlation looks the same either way.)
+3. **A confounder causes both.** A hidden third variable drives A and B together,
+   so they correlate without either causing the other — the ice-cream-and-drowning
+   case, with summer heat behind both.
+
+Because all three produce the same correlation, a number alone can't pick the
+winner. To earn the word *causation*, you need more:
+
+- A **controlled experiment** — change A on purpose for a randomly chosen group,
+  hold everything else as steady as you can, and see if B changes. Randomising
+  breaks the link to confounders, which is why randomised trials are the gold
+  standard.
+- Failing that, **statistically controlling** for the variables you suspect — for
+  example, comparing ice-cream sales and drownings *within* days of the same
+  temperature, so heat can't be doing the work.
+
+The headline to carry away: a correlation is a *clue*, not a *verdict*. It tells
+you where to look, not what's true.
+
+---
+
+## Spotting the confounder
+
+The practical skill is asking, whenever two things correlate: **"What else could
+be driving both?"** A confounder is a variable that sits upstream of both
+measurements and creates the link.
+
+- Ice-cream sales ↔ drownings — confounder: **summer heat**.
+- Shoe size ↔ reading ability in children — confounder: **age** (older kids have
+  bigger feet *and* read better).
+- Number of firefighters at a blaze ↔ amount of damage — confounder: **the size
+  of the fire** (bigger fires draw more crews *and* cause more damage).
+
+In every case, acting on the raw correlation — banning ice cream, handing out big
+shoes, sending fewer firefighters — would fail, because you'd be tugging on
+something that was never the cause. Naming the confounder is what turns a
+misleading number into an understood one.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Correlation** is a single number, r, from **−1 to +1**: +1 perfect
+   rise-together, −1 perfect opposite, 0 no linear link.
+2. Correlation measures **linear co-movement** only — a strong curved
+   relationship can still show r near 0.
+3. **Correlation is not causation.** The same correlation can come from A→B, B→A
+   (reverse causation), or a confounder driving both.
+4. To claim causation you need an **experiment** or careful **control** of other
+   variables — a high r on its own is not enough.
+5. When two things correlate, ask **"what else could drive both?"** — that hidden
+   third variable is the **confounder**.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+NumPy already knows how to compute a correlation coefficient. Complete
+`correlation(x, y)` so it returns the r between two lists, using
+`np.corrcoef(x, y)`, which gives a 2×2 matrix whose off-diagonal entry `[0, 1]` is
+the r you want. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_corr
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_corr
+import numpy as np
+
+def correlation(x, y):
+    """Return the correlation coefficient r between two lists of numbers."""
+    return ____  # TODO: the [0, 1] entry of np.corrcoef(x, y)
+
+run_tests([
+    ("perfect positive", round(correlation([1, 2, 3, 4], [2, 4, 6, 8]), 4), 1.0),
+    ("perfect negative", round(correlation([1, 2, 3, 4], [8, 6, 4, 2]), 4), -1.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`np.corrcoef(x, y)` returns a 2×2 matrix. The diagonal is each variable's
+correlation with itself (always 1). The number you want — x with y — is the
+off-diagonal entry, `np.corrcoef(x, y)[0, 1]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def correlation(x, y):
+    return np.corrcoef(x, y)[0, 1]
+```
+
+`[2, 4, 6, 8]` is exactly `2 *` the x values, so the points sit on a perfect rising
+line and r is +1. `[8, 6, 4, 2]` falls as x rises, a perfect line the other way, so
+r is −1.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Correlation is built on a simpler quantity: **covariance**, the average of "how far
+x is from its mean" times "how far y is from its mean". When x and y tend to be
+above (or below) their means together, the products are positive and covariance is
+positive; when one is high while the other is low, the products are negative.
+
+Write `covariance(x, y)` for the **population** covariance:
+`mean of (x − mean(x)) * (y − mean(y))`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_cov
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_cov
+import numpy as np
+
+def covariance(x, y):
+    """Population covariance: the mean of the product of the two deviations."""
+    x = np.array(x)
+    y = np.array(y)
+    return ____  # TODO: mean of (x - mean(x)) * (y - mean(y))
+
+run_tests([
+    ("rises together", round(covariance([1, 2, 3, 4], [1, 2, 3, 4]), 4), 1.25),
+    ("moves opposite", round(covariance([1, 2, 3, 4], [4, 3, 2, 1]), 4), -1.25),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Build it in pieces: `np.mean(x)` is the mean of x. The deviations are
+`x - np.mean(x)` and `y - np.mean(y)`. Multiply the two deviation arrays
+element-wise, then take `np.mean(...)` of the result.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def covariance(x, y):
+    x = np.array(x)
+    y = np.array(y)
+    return np.mean((x - np.mean(x)) * (y - np.mean(y)))
+```
+
+For `[1, 2, 3, 4]` the mean is 2.5, so the deviations are −1.5, −0.5, 0.5, 1.5.
+Multiplied by themselves they give 2.25, 0.25, 0.25, 2.25, which sum to 5; divided
+by 4 values that's 1.25. When the second list runs the other way, every product
+flips sign, giving −1.25.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Name a pair of things from
+everyday life that you'd expect to correlate, state the **confounder** you think is
+really behind both, and explain why acting on the correlation as if it were causal
+would backfire.
+
+**Rubric — a good answer:**
+
+- Names a believable correlated pair (two things that really do move together).
+- Identifies a plausible **confounding variable** that drives both.
+- Explains the failure: what action someone might take on the raw correlation, and
+  why it wouldn't get the result they want because the real cause is the confounder.
+
+<details><summary>Show one possible answer</summary>
+
+A classic pair: **cities with more parks** tend to have **healthier residents**,
+so a city council might think "build parks → healthier people" and pour the budget
+into parkland alone.
+
+The likely confounder is **household wealth**. Wealthier neighbourhoods tend to
+have both more green space *and* residents who can afford good food, healthcare,
+and leisure time to exercise. Wealth drives both the parks and the health.
+
+Acting on the raw correlation could backfire: dropping parks into a struggling
+neighbourhood without addressing income, food access, or healthcare may produce
+little health gain, because the parks were a *marker* of wealth, not the *cause* of
+the health. The fix is to compare neighbourhoods of similar wealth, or run a trial,
+before concluding parks themselves do the work.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch13.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now read an r as strength-and-direction, and you know its limit: a
+correlation is a clue about a relationship, never proof that one thing causes
+another. That caution is the backbone of honest data analysis — and it sets up the
+modelling work ahead, where we *fit* lines to data and have to keep asking what the
+numbers really mean. Next we turn correlation into a line you can draw and use.

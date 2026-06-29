@@ -1,0 +1,397 @@
+---
+title: "Linear algebra in NumPy"
+module: "M2 — Math You Actually Need"
+chapter: 15
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch5 — Dot products & similarity"
+  - "M1 Ch12 — A NumPy preview"
+learning_objectives:
+  - "Represent vectors and matrices as NumPy arrays and read their `.shape`"
+  - "Compute dot products and matrix multiplication with `@`"
+  - "Transpose with `.T` and apply a matrix to a vector"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: at-operator
+    q: "What does the `@` operator do in NumPy?"
+    a: "It computes the dot product of two vectors, or matrix multiplication for 2-D arrays — the sum-of-products operation, not element-by-element multiplication."
+  - id: shape-attr
+    q: "What does an array's `.shape` tell you?"
+    a: "The size along each dimension as a tuple: a length-3 vector is `(3,)` and a 2-row, 3-column matrix is `(2, 3)`."
+  - id: transpose-T
+    q: "What does `.T` (transpose) do to a matrix?"
+    a: "It flips rows and columns, so an element at row i, column j moves to row j, column i; a `(2, 3)` matrix becomes `(3, 2)`."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapters 2 through 5 were pictures and arrows: a vector as a point, a matrix as a
+grid that moves points around, a dot product as a way to measure similarity. Those
+pictures built the intuition. But a model never draws an arrow — when it needs a
+dot product or a matrix multiply, it calls **NumPy**, millions of times a second.
+
+This chapter does the same operations you already understand, but in real code, in
+one tool. Nothing new conceptually — you are translating the pictures into the lines
+a model actually runs.
+
+> You'll need from before: dot products and similarity (M2 Ch5), and the NumPy
+> array basics (M1 Ch12). That's the toolkit we build on here.
+
+---
+
+## Vectors and matrices are arrays
+
+In NumPy, a **vector** is a 1-D array and a **matrix** is a 2-D array (a list of
+rows). You build both with `np.array`:
+
+```{pyodide}
+import numpy as np
+
+v = np.array([1, 2, 3])           # a vector: 3 numbers in a row
+M = np.array([[1, 2, 3],          # a matrix: 2 rows, 3 columns
+              [4, 5, 6]])
+
+print("v =", v)
+print("M =")
+print(M)
+print("v.shape =", v.shape)       # (3,)   -> a length-3 vector
+print("M.shape =", M.shape)       # (2, 3) -> 2 rows, 3 columns
+```
+
+The `.shape` attribute is the single most useful thing to read off an array. It is
+a tuple giving the size along each dimension:
+
+- `v.shape` is `(3,)` — one dimension, length 3. (The trailing comma is Python's
+  way of writing a one-element tuple; it is not a typo.)
+- `M.shape` is `(2, 3)` — two dimensions: 2 rows then 3 columns. The convention is
+  always `(rows, columns)`.
+
+When code breaks in real machine learning, it is almost always a shape that doesn't
+line up. Reading `.shape` is your first debugging move, every time.
+
+## Element-wise is not the dot product
+
+Multiply two arrays with `*` and NumPy multiplies them **position by position** —
+this is *element-wise*, and it gives back an array the same shape as the inputs.
+That is not the dot product. The dot product multiplies position by position *and
+then adds the results into a single number*.
+
+```{pyodide}
+import numpy as np
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+print("a * b   =", a * b)        # [ 4 10 18 ]  -> element-wise, still a vector
+print("sum     =", np.sum(a * b))# 32           -> add them up by hand
+print("np.dot  =", np.dot(a, b)) # 32           -> the dot product directly
+print("a @ b   =", a @ b)        # 32           -> the same, with the @ operator
+```
+
+All three middle lines agree: `1·4 + 2·5 + 3·6 = 4 + 10 + 18 = 32`. The
+`@` operator is the one you'll see most in real code — it is Python's dedicated
+"matrix multiply" operator, and for two vectors it computes exactly the dot product
+from Ch5. `np.dot(a, b)` does the same job; `@` reads more cleanly when
+expressions get longer.
+
+## A matrix times a vector: apply a transformation
+
+Back in Ch3, a matrix was a machine that takes a point and moves it. In NumPy that
+machine is one `@`. Multiplying a matrix `M` by a vector `v` applies the
+transformation `M` describes to the point `v`:
+
+```{pyodide}
+import numpy as np
+
+# A matrix that scales x by 2 and y by 3.
+M = np.array([[2, 0],
+              [0, 3]])
+v = np.array([4, 5])
+
+result = M @ v
+print("M @ v   =", result)       # [8 15] -> x doubled, y tripled
+print("shape   =", result.shape) # (2,)   -> still a 2-D point
+```
+
+Read it row by row: the first output number is the first row of `M` dotted with
+`v` (`2·4 + 0·5 = 8`), and the second is the second row dotted with `v`
+(`0·4 + 3·5 = 15`). A matrix–vector product is **one dot product per row**.
+That is the whole idea: a layer of a neural network takes its input vector and does
+exactly this — a matrix times a vector — to produce the next vector.
+
+The shape rule is worth saying out loud: a `(2, 2)` matrix times a `(2,)` vector
+gives a `(2,)` vector. In general, multiplying a `(rows, k)` matrix by a length-`k`
+vector gives a length-`rows` vector. The inner sizes must match.
+
+## A matrix times a matrix
+
+Stacking transformations means multiplying matrices together, again with `@`. Each
+entry of the result is one row of the left matrix dotted with one column of the
+right matrix:
+
+```{pyodide}
+import numpy as np
+
+A = np.array([[1, 2],
+              [3, 4]])
+B = np.array([[5, 6],
+              [7, 8]])
+
+print("A @ B =")
+print(A @ B)                     # [[19 22] [43 50]]
+print("shape =", (A @ B).shape)  # (2, 2)
+```
+
+The top-left entry is row 0 of `A` dotted with column 0 of `B`:
+`1·5 + 2·7 = 19`. Work the other three the same way and you get the full grid. For
+matrix–matrix multiplication the rule is `(m, k) @ (k, n)` gives `(m, n)`: the two
+inner numbers must match and they cancel, leaving the outer two as the result shape.
+
+## Transpose: flipping rows and columns
+
+The transpose, written `.T`, flips a matrix over its diagonal: rows become columns
+and columns become rows. The element at row `i`, column `j` ends up at row `j`,
+column `i`.
+
+```{pyodide}
+import numpy as np
+
+M = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+print("M.shape   =", M.shape)    # (2, 3)
+print("M.T =")
+print(M.T)                       # [[1 4] [2 5] [3 6]]
+print("M.T.shape =", M.T.shape)  # (3, 2)
+```
+
+Transpose shows up constantly: to make shapes line up for an `@`, or to read the
+same data the other way around. One handy fact you'll meet again:
+`(A @ B).T` equals `B.T @ A.T` — transposing a product reverses the order. You'll
+verify that yourself in the stretch exercise.
+
+## The identity matrix
+
+One special matrix does nothing: the **identity**, ones on the diagonal and zeros
+elsewhere. Build it with `np.eye(n)`. Multiplying any vector or matrix by the
+identity returns it unchanged — it is the matrix equivalent of multiplying a number
+by 1.
+
+```{pyodide}
+import numpy as np
+
+I = np.eye(2)
+v = np.array([5, 7])
+
+print("I =")
+print(I)                         # [[1. 0.] [0. 1.]]
+print("I @ v =", I @ v)          # [5. 7.] -> v, unchanged
+```
+
+The identity is the reference point for talking about inverses and "undoing" a
+transformation later. For now, it is a clean check that your `@` is doing what you
+expect: an identity should always hand back exactly what it received.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **vector** is a 1-D NumPy array and a **matrix** is a 2-D array; read
+   `.shape` (as `(rows, columns)`) to know what you're holding.
+2. `*` multiplies **element-wise**; `@` (and `np.dot`) computes the **dot product**
+   for vectors and **matrix multiplication** for 2-D arrays.
+3. A **matrix times a vector** applies a transformation — one dot product per row;
+   the inner sizes must match.
+4. `.T` **transposes** (flips rows and columns), and `np.eye(n)` is the
+   **identity** matrix that leaves things unchanged.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Complete `dot(a, b)` so it returns the dot product of two vectors as a plain `int`.
+Use `@` on NumPy arrays, then wrap the result in `int(...)`. Replace `____`, then
+press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_dot
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_dot
+import numpy as np
+
+def dot(a, b):
+    """Return the dot product of vectors a and b as a plain int."""
+    return ____  # TODO: int(np.array(a) @ np.array(b))
+
+run_tests([
+    ("3-vectors", dot([1, 2, 3], [4, 5, 6]), 32),
+    ("orthogonal", dot([1, 0], [0, 1]), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Turn each list into an array with `np.array(...)`, combine them with `@` to get the
+sum of products, then wrap the whole thing in `int(...)` so the result is a plain
+Python integer rather than a NumPy number.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def dot(a, b):
+    return int(np.array(a) @ np.array(b))
+```
+
+`np.array(a) @ np.array(b)` multiplies the vectors position by position and adds
+the results: `1·4 + 2·5 + 3·6 = 32`. The orthogonal pair `[1, 0]` and `[0, 1]`
+share no direction, so their dot product is `0`. `int(...)` returns a plain
+Python integer.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `matvec(M, v)` that applies matrix `M` to vector `v` and returns the result as
+a plain Python **list**. Convert both inputs with `np.array`, multiply with `@`, and
+turn the array back into a list with `.tolist()`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_matvec
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_matvec
+import numpy as np
+
+def matvec(M, v):
+    """Apply matrix M to vector v; return a plain Python list."""
+    return ____  # TODO: (np.array(M) @ np.array(v)).tolist()
+
+run_tests([
+    ("identity keeps v", matvec([[1, 0], [0, 1]], [5, 7]), [5, 7]),
+    ("scales axes", matvec([[2, 0], [0, 3]], [4, 5]), [8, 15]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The pattern mirrors Exercise 1: `np.array(M) @ np.array(v)` does the matrix–vector
+multiply (one dot product per row of `M`). The result is a NumPy array, so call
+`.tolist()` on it to hand back an ordinary Python list.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def matvec(M, v):
+    return (np.array(M) @ np.array(v)).tolist()
+```
+
+Each output entry is one row of `M` dotted with `v`. With the identity matrix every
+row picks out one element of `v` unchanged, so `[5, 7]` comes straight back. The
+scaling matrix `[[2, 0], [0, 3]]` doubles the first entry and triples the second:
+`[8, 15]`. `.tolist()` converts the NumPy array to a plain list.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Build two 2×2 matrices `A` and
+`B` as NumPy arrays, compute `A @ B`, and verify the identity
+`(A @ B).T == B.T @ A.T` — transposing a product reverses the order. Print both
+sides and compare them.
+
+**Rubric — a good answer:**
+
+- Builds two 2×2 arrays with `np.array` and computes `A @ B` with `@`.
+- Prints `(A @ B).T` and `B.T @ A.T` so the two sides can be read side by side.
+- Confirms they are equal with `np.array_equal(...)` and prints the `True` result.
+
+<details><summary>If you're stuck</summary>
+
+Pick any numbers for `A` and `B`. Compute the left side as `(A @ B).T` and the
+right side as `B.T @ A.T`. To compare two whole arrays for equality, use
+`np.array_equal(left, right)` — comparing with plain `==` gives an array of
+True/False rather than a single answer.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+
+A = np.array([[1, 2],
+              [3, 4]])
+B = np.array([[5, 6],
+              [7, 8]])
+
+left = (A @ B).T
+right = B.T @ A.T
+
+print("(A @ B).T =")
+print(left)
+print("B.T @ A.T =")
+print(right)
+print("equal?", np.array_equal(left, right))
+```
+
+Both sides print the same grid, and `np.array_equal` returns `True`: transposing a
+product flips the order of the factors. This identity is why you'll often see
+`.T` rearranged across an `@` when lining up shapes in later chapters.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch15.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've moved from pictures to running code: arrays for vectors and matrices,
+`.shape` to read them, `@` for dot products and matrix multiplies, and `.T` to flip
+rows and columns. These are the exact operations a model runs at every layer. Next
+you'll assemble them into a single artificial **neuron** — its forward pass written
+written in the NumPy you practiced here.

@@ -1,0 +1,364 @@
+---
+title: "Sampling & uncertainty"
+module: "M2 — Math You Actually Need"
+chapter: 14
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch11 — Mean, variance & standard deviation"
+learning_objectives:
+  - "Estimate a population's average from a sample you can actually collect"
+  - "Understand that different samples give different answers — sampling variability"
+  - "Use the standard error to express uncertainty, and know it shrinks as the sample grows"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: sample-vs-population
+    q: "What is the difference between a sample and a population, and what do we do with a sample?"
+    a: "The population is everyone or everything you care about; a sample is the small subset you actually measure. You use the sample mean as an estimate of the population mean you cannot measure directly."
+  - id: sampling-variability
+    q: "What is sampling variability?"
+    a: "Every sample is a different random subset, so each one gives a slightly different estimate. That wobble between samples is sampling variability — and it is the uncertainty in your estimate."
+  - id: standard-error
+    q: "What is the standard error and how does sample size affect it?"
+    a: "The standard error is the standard deviation divided by the square root of the sample size (std / sqrt(n)). Because n is under a square root, a bigger sample means a smaller standard error — less wobble in the estimate."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Suppose you want the average height of every adult in a country — all 1.4 billion of
+them. You cannot line them up and measure each one. So you do what every pollster,
+scientist, and data team does instead: you measure a few thousand people and **use
+their average as your best guess** for everyone.
+
+Now here is the catch that this whole chapter is about. Ask a friend to go measure a
+*different* few thousand people. Their average will not match yours exactly — it will
+be close, but a little off. Measure a third group and you get a third answer. None of
+them is "wrong"; each is an honest estimate from a different handful of people. That
+**wobble between samples is the uncertainty** in your number, and the good news is
+that you can measure it — and shrink it — without ever counting the whole population.
+
+> You'll need from before: the mean (the average) and the standard deviation (how
+> spread out the values are) from M2 Ch11. We build directly on those two numbers.
+
+---
+
+## Population vs sample
+
+Two words do a lot of work here, so let's pin them down.
+
+- **Population** — everyone or everything you actually care about: all adults in the
+  country, every email a spam filter will ever see, all the customers a shop could
+  have. The population mean (the true average) is the number you *wish* you knew.
+- **Sample** — the subset you can realistically collect: the 2,000 people you
+  measured, the 500 emails you labelled. It is a stand-in for the population.
+
+You almost never get to measure the whole population — it is too big, too expensive,
+or does not even exist yet (future customers). So you measure a sample and compute
+its mean. That **sample mean is your estimate of the population mean**. The entire
+craft of statistics grows out of one honest question: *how good is that estimate?*
+
+## Different samples give different answers
+
+Imagine the true population average height is exactly 165 cm (a number nature knows
+but you don't). You draw a sample of 50 people and their average comes out to
+164.2 cm. A colleague draws another 50 and gets 166.1 cm. A third sample gives
+165.4 cm.
+
+Each sample is a different random handful, so each mean lands in a slightly different
+spot. This is **sampling variability**: the sample mean is itself a random quantity
+that changes from sample to sample. It is not a mistake or sloppy measurement — it is
+unavoidable, and it is exactly what "uncertainty" means here. Your single estimate is
+one draw from a cloud of estimates you *could* have gotten.
+
+The encouraging part: that cloud has a shape. The sample means cluster *around the
+true population mean*, most of them near it and few far away — the bell from Ch10
+showing up again. So while any one sample can miss, the estimates are centred on the
+right answer, and we can describe how tightly they cluster.
+
+## The standard error: measuring the wobble
+
+How wide is that cloud of sample means? The number that answers this is the
+**standard error** — the standard deviation *of the estimate itself*. (We call it
+the standard *error* to distinguish it from the standard deviation of the raw data;
+it is the typical size of the gap between your sample mean and the truth.)
+
+There is a clean formula for it. If your data has standard deviation `std` and your
+sample has `n` values, then:
+
+$$
+\text{standard error} = \frac{\text{std}}{\sqrt{n}}
+$$
+
+Two pieces drive it, and both make intuitive sense:
+
+- **More spread → more wobble.** If the underlying values vary wildly (large `std`),
+  any sample of them bounces around more, so estimates from different samples are
+  further apart. The `std` is on top.
+- **Bigger sample → less wobble.** A larger `n` averages out the lucky-high and
+  lucky-low values within each sample, so estimates settle down. The `n` is on the
+  bottom — under a square root.
+
+That square root is the key detail. To **halve** your uncertainty you do not need
+twice the data — you need **four times** as much, because `sqrt(4) = 2`. Go from 100
+samples to 400 and the standard error halves; go to 900 and it shrinks to a third.
+This diminishing return is why polls of a few thousand people are "good enough": past
+a point, more data buys you only a little more certainty.
+
+This tightening-up as the sample grows has a name: the **law of large numbers**. It
+says the sample mean converges to the population mean as `n` grows. The standard error
+is the quantitative version of that promise — it tells you *how fast* the estimate
+settles.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+If you have ever load-tested a service, you already know sampling variability. Run a
+benchmark for 10 requests and the average latency jumps around between runs; run it
+for 10,000 and the average barely moves from run to run. You were watching
+`std / sqrt(n)` shrink the whole time — more requests, a tighter estimate of the
+"true" mean latency. Reporting a p50 with a confidence band instead of a single
+number is the same instinct this chapter formalises: never quote an estimate without
+some sense of how much it could have wobbled.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's *see* sampling variability. We invent a population with a known mean, then draw
+many samples from it, compute each sample's mean, and plot a histogram of those means.
+We seed the generator (`np.random.default_rng(0)`) so the draws are reproducible. This
+cell is a demonstration, not a graded check, so randomness is fine here — but it is
+seeded, so you get the same picture every run.
+
+```{pyodide}
+#| caption: "500 sample means cluster tightly around the true population mean"
+#| fig-alt: "A histogram of 500 sample means: short bars at the far-left and far-right edges, growing taller toward the centre near the true population mean of 50, forming a narrow symmetric bell centred on the truth."
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)            # fixed seed → the same draws every run
+true_mean = 50.0
+
+# Draw 500 separate samples, each of 40 values, from the same population,
+# and record the mean of each sample.
+sample_means = [rng.normal(loc=true_mean, scale=10, size=40).mean()
+                for _ in range(500)]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.hist(sample_means, bins=30, color="tab:blue", edgecolor="white")
+ax.axvline(true_mean, color="tab:red", linewidth=2, label="true mean = 50")
+ax.set_xlabel("sample mean")
+ax.set_ylabel("count (samples per bin)")
+ax.set_title("500 sample means → a narrow bell around the truth")
+ax.legend()
+plt.show()
+
+print("average of the sample means:", round(float(np.mean(sample_means)), 2))
+print("spread of the sample means :", round(float(np.std(sample_means)), 2))
+print("formula standard error std/sqrt(n):", round(10 / np.sqrt(40), 2))
+```
+
+The takeaway is in the shape of the bars: every sample produced a *different* mean
+(that is sampling variability), yet the means pile up in a **narrow bell centred on
+the true mean of 50** (the red line). Most samples land close to the truth and few
+stray far — the cloud has a centre and a width. And notice the two printed spreads
+agree: the measured spread of the 500 sample means matches the formula
+`std / sqrt(n) = 10 / sqrt(40) ≈ 1.58`. That is the standard error — the width of the
+cloud — predicted from a single sample's spread and size.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. You estimate an unmeasurable **population** mean from a **sample** you can collect:
+   the sample mean is your best guess for the population mean.
+2. Different samples give different answers — **sampling variability** — and that
+   wobble *is* the uncertainty in your estimate.
+3. The **standard error** measures the wobble: `standard error = std / sqrt(n)` — the
+   spread of the data divided by the square root of the sample size.
+4. Because `n` sits under a square root, a **bigger sample shrinks the standard
+   error**: to halve the uncertainty you need four times the data (the law of large
+   numbers in action).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The sample mean is your estimate of the population mean, so start there. Complete
+`sample_mean(sample)` so it returns the average of the values. Replace `____`, then
+press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mean
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mean
+def sample_mean(sample):
+    """Estimate the population mean as the average of the sample's values."""
+    return ____  # TODO: the sum of the values divided by how many there are
+
+run_tests([
+    ("three values", sample_mean([2, 4, 6]), 4.0),
+    ("four values", sample_mean([10, 20, 30, 40]), 25.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The average is one division: the total over the count. In Python that is
+`sum(sample) / len(sample)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def sample_mean(sample):
+    return sum(sample) / len(sample)
+```
+
+`sum(sample)` adds the values and `len(sample)` counts them, so their ratio is the
+average. For `[2, 4, 6]` that is `12 / 3 = 4.0` — your single-number estimate of the
+population mean.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now measure the uncertainty. Write `standard_error(sample)` that returns the
+population standard deviation of the sample divided by the square root of its size —
+the formula `std / sqrt(n)`. Use `np.std` (its default `ddof=0` gives the population
+standard deviation) and `np.sqrt`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_se
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_se
+import numpy as np
+
+def standard_error(sample):
+    """The standard error of the mean: std / sqrt(n)."""
+    return ____  # TODO: np.std(sample) divided by the square root of len(sample)
+
+run_tests([
+    ("spread sample", round(standard_error([2, 4, 6, 8]), 4), 1.118),
+    ("no spread", round(standard_error([5, 5, 5, 5]), 4), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You need two NumPy calls. `np.std(sample)` gives the standard deviation (the spread),
+and `np.sqrt(len(sample))` gives the square root of the count. Divide the first by the
+second: `np.std(sample) / np.sqrt(len(sample))`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def standard_error(sample):
+    return np.std(sample) / np.sqrt(len(sample))
+```
+
+For `[2, 4, 6, 8]` the mean is `5`; the deviations `-3, -1, 1, 3` square to
+`9, 1, 1, 9`, summing to `20`, so the variance is `20 / 4 = 5` and the standard
+deviation is `sqrt(5) ≈ 2.236`. Dividing by `sqrt(4) = 2` gives `≈ 1.118`. When every
+value is identical (`[5, 5, 5, 5]`) there is no spread, so the standard deviation — and
+the standard error — is `0.0`: a perfectly certain estimate.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Use a seeded generator
+(`rng = np.random.default_rng(...)`) to draw one sample of size 10 and one sample of
+size 100 from the *same* population. Print each sample's standard error and confirm
+that the larger sample has the smaller one — the wobble shrinks as `n` grows.
+
+**Rubric — a good answer:**
+
+- Seeds a generator and draws a size-10 sample and a size-100 sample from the same
+  population (same `loc`/`scale`).
+- Computes and prints the standard error (`np.std(sample) / np.sqrt(len(sample))`) for
+  each sample.
+- States that the size-100 sample has the smaller standard error, connecting it to the
+  `sqrt(n)` in the denominator.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)            # fixed seed → reproducible draws
+
+def standard_error(sample):
+    return np.std(sample) / np.sqrt(len(sample))
+
+small = rng.normal(loc=50, scale=10, size=10)
+large = rng.normal(loc=50, scale=10, size=100)
+
+print("n=10  standard error:", round(float(standard_error(small)), 3))
+print("n=100 standard error:", round(float(standard_error(large)), 3))
+print("smaller sample is more uncertain:",
+      standard_error(small) > standard_error(large))
+```
+
+The size-100 sample reports a noticeably smaller standard error than the size-10 one.
+Both samples come from the same population, so the difference is purely the `sqrt(n)`
+in the denominator: ten times the data divides the spread by `sqrt(10) ≈ 3.16`,
+tightening the estimate. More data, less wobble — the law of large numbers made
+concrete.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch14.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now turn a sample into an estimate *and* state how uncertain that estimate is —
+the standard error, shrinking as the square root of the sample size. That is the last
+statistics idea this module needs. Next, M2 closes by putting the pieces together: we
+leave probability behind and head into the **NumPy linear algebra** that assembles
+everything you've built into a single working **neuron**.
