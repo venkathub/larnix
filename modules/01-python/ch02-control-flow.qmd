@@ -1,0 +1,335 @@
+---
+title: "Control flow"
+module: "M1 — Python for AI"
+chapter: 2
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch1 — Variables & types"
+learning_objectives:
+  - "Choose a branch with if / elif / else"
+  - "Walk a collection with a for loop and repeat on a condition with while"
+  - "Combine a loop and a condition to count or filter rows of data"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: indentation-blocks
+    q: "How does Python know which lines belong to a loop or an if?"
+    a: "By indentation — the indented lines under a statement form its block. Python uses no braces; indentation is the syntax (be consistent, 4 spaces)."
+  - id: for-vs-while
+    q: "When do you use a for loop versus a while loop?"
+    a: "Use for to walk every item in a collection (like rows of data); use while to repeat as long as a condition stays true."
+  - id: loop-plus-if
+    q: "What is the core pattern for working with rows of data?"
+    a: "A for loop over the rows with an if inside to count, filter, or label each one."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+In Chapter 1 you looked at a single day of habits data. But a real question — *"how
+many days did I reach 8,000 steps?"* — can't be answered from one row. You have to
+**go through every day** and **decide** for each whether it counts.
+
+That pairing is the whole of this chapter:
+
+- **loops** go through the data (`for`, `while`), and
+- **conditions** decide what to do for each item (`if`, `elif`, `else`).
+
+> You'll need from before: types and comparisons (Ch1) — especially that a check
+> like `steps >= 8000` gives back a `True`/`False`.
+
+---
+
+## Indentation is the syntax
+
+Before the keywords, one rule that catches every newcomer: in Python, **indentation
+decides what belongs to what**. The indented lines under an `if` or a `for` are its
+*block*; when the indentation stops, the block ends.
+
+```python
+if steps >= 8000:
+    print("active")     # indented -> inside the if
+print("done")           # not indented -> always runs
+```
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Where Java uses `{ }` to group statements, Python uses indentation — there are no
+braces, and the indentation isn't optional style, it's the grammar. A few more
+shifts:
+
+- Conditions need no parentheses: `if steps >= 8000:` (note the colon), not
+  `if (steps >= 8000) {`.
+- "else if" is spelled **`elif`**.
+- The data loop is a for-each — `for day in days:` — not a C-style
+  `for (int i = 0; i < n; i++)`. Stick to 4 spaces per level and never mix tabs
+  and spaces.
+:::
+
+## Deciding: if / elif / else
+
+`if` runs a block when its condition is true. `elif` ("else if") offers another
+condition, and `else` catches everything left:
+
+```python
+if steps >= 8000:
+    label = "active"
+elif steps >= 6000:
+    label = "ok"
+else:
+    label = "low"
+```
+
+Python checks the branches top to bottom and takes the **first** one that's true.
+
+## Repeating: for and while
+
+A **`for`** loop walks every item in a collection — exactly what you want for rows
+of data:
+
+```python
+for day in days:
+    print(day)
+```
+
+A **`while`** loop repeats as long as its condition stays true — useful when you
+don't know the count in advance:
+
+```python
+while not done:
+    ...      # keep going until something sets done = True
+```
+
+The real power comes from putting an `if` **inside** a `for`: walk the rows, and
+decide something for each.
+
+---
+
+## Let's build it (worked example)
+
+A handful of days from the habits data (steps already converted to `int`, as in
+Chapter 1). We'll label each day and count the active ones. Press **Run**.
+
+```{pyodide}
+#| caption: "Loop over the days, decide a label, and count the active ones"
+days = [
+    ("2026-01-01", 7500),
+    ("2026-01-02", 8200),
+    ("2026-01-03", 5400),
+    ("2026-01-04", 9100),
+    ("2026-01-05", 8000),
+]
+
+active_days = 0
+for date, steps in days:
+    if steps >= 8000:
+        label = "active"
+        active_days += 1
+    elif steps >= 6000:
+        label = "ok"
+    else:
+        label = "low"
+    print(date, steps, "->", label)
+
+print("Active days (>= 8000):", active_days)
+```
+
+The accumulator pattern — start a counter at `0`, add `1` inside the loop when a
+condition holds — is one you'll reach for constantly.
+
+```{pyodide}
+#| caption: "A while loop: how long was the opening streak of >= 7000 steps?"
+streak = 0
+i = 0
+while i < len(days) and days[i][1] >= 7000:
+    streak += 1
+    i += 1
+
+print("Opening streak of days with >= 7000 steps:", streak)
+```
+
+The `while` keeps stepping forward until either the data runs out or a day falls
+below 7,000 — here it stops at the third day (5,400 steps), giving a streak of 2.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Indentation** defines blocks in Python — no braces; be consistent (4 spaces).
+2. **`if` / `elif` / `else`** take the first branch whose condition is true.
+3. **`for`** walks every item in a collection; **`while`** repeats while a
+   condition holds.
+4. A **`for` with an `if` inside** — plus a counter — is the core pattern for
+   counting or filtering rows of data.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the condition so `label_day` returns `"active"` for days that reach 8,000
+steps and `"low"` otherwise. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_label
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_label
+def label_day(steps):
+    """Return 'active' if steps reaches 8000, otherwise 'low'."""
+    if ____:  # TODO: the "active" condition
+        return "active"
+    return "low"
+
+run_tests([
+    ("9000 is active", label_day(9000), "active"),
+    ("exactly 8000 is active", label_day(8000), "active"),
+    ("5000 is low", label_day(5000), "low"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+"Reaches 8,000" means *at least* 8,000: the comparison `steps >= 8000` gives the
+`True`/`False` the `if` needs.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def label_day(steps):
+    if steps >= 8000:
+        return "active"
+    return "low"
+```
+
+When `steps >= 8000` is true the function returns `"active"` straight away;
+otherwise it falls through to `"low"`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `count_active(days, goal)` — loop over the `(date, steps)` days and count how
+many reach `goal`. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count
+def count_active(days, goal):
+    """Count how many (date, steps) days have steps >= goal."""
+    count = 0
+    for date, steps in days:
+        if steps >= goal:
+            ____  # TODO: count this active day
+    return count
+
+run_tests([
+    ("two active", count_active([("a", 7000), ("b", 8200), ("c", 9000)], 8000), 2),
+    ("none active", count_active([("a", 100)], 8000), 0),
+    ("all active", count_active([("a", 8000), ("b", 9000)], 8000), 2),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+You're using the accumulator pattern from the worked example: when a day is active,
+increase the counter by one with `count += 1`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def count_active(days, goal):
+    count = 0
+    for date, steps in days:
+        if steps >= goal:
+            count += 1
+    return count
+```
+
+The loop visits every day; the `if` lets only the active ones increase `count`,
+which the function returns at the end.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Compute the **longest run of
+consecutive active days** (≥ 8,000 steps) in a list of `(date, steps)` days. Print
+your answer for a list you make up.
+
+**Rubric — a good answer:**
+
+- Loops once through the days, tracking a current run and the best run seen.
+- Resets the current run to 0 on a non-active day.
+- Reports the longest run as a number, and the code runs.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+days = [("a", 9000), ("b", 8200), ("c", 5000), ("d", 8100), ("e", 8800), ("f", 8800)]
+
+best = run = 0
+for date, steps in days:
+    if steps >= 8000:
+        run += 1
+        best = max(best, run)
+    else:
+        run = 0
+print("Longest active streak:", best)   # 3
+```
+
+Each active day extends the current `run` and may beat `best`; a low day resets
+`run` to 0. The longest streak here is the final three days.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now walk through data and make decisions row by row — the engine of almost
+every data task. So far we've repeated that logic inline; next we package it into
+**functions** you can name, reuse, and test, so the same step works on any day's
+data.

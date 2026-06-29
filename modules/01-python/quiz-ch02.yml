@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m1-ch2-control-flow"
+questions:
+  - id: indentation
+    prompt: "How does Python know which lines are inside a loop or an if?"
+    options:
+      - "By curly braces { }"
+      - "By indentation — the indented lines form the block"
+      - "By a semicolon at the end of each block"
+    answer: 1
+    explanation: "Python uses indentation, not braces, to group statements into a block."
+  - id: elif-order
+    prompt: "With if / elif / else, which branch runs?"
+    options:
+      - "Every branch whose condition is true"
+      - "The first branch whose condition is true, checking top to bottom"
+      - "Only the else branch"
+    answer: 1
+    explanation: "Python takes the first true branch and skips the rest."
+  - id: for-vs-while
+    prompt: "Which loop is the natural choice for walking every row in a list of data?"
+    options:
+      - "A while loop with a manual counter"
+      - "A for loop (for-each over the collection)"
+      - "Neither — you must index by hand"
+    answer: 1
+    explanation: "A for loop walks each item directly: for row in rows."
+  - id: accumulator
+    prompt: "To count how many days are active inside a loop, you would…"
+    options:
+      - "Set count = 0 before the loop and do count += 1 when a day is active"
+      - "Print each active day and hope"
+      - "Use a while loop that never ends"
+    answer: 0
+    explanation: "The accumulator pattern: start a counter at 0 and add 1 each time the condition holds."
