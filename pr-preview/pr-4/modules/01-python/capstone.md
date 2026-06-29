@@ -8,7 +8,7 @@
 Take the messy `habits.csv` (`date, steps, sleep_hours, mood`) and produce a
 **clean, correctly typed, de-duplicated** table using your own functions. Handle
 the messes you met across the module: missing values, stray units/formats
-(`8h`, `7,500`), inconsistent mood labels (`Good`/`good`/` ok `), duplicate rows,
+(`8h`, `7,500`), inconsistent mood labels (`Good`/`good`/`ok`), duplicate rows,
 mixed date formats, and impossible values.
 
 ## Deliverables
@@ -99,11 +99,10 @@ Removed: 5 (2 duplicates + 3 blank-steps rows)
 
 **The write-up:** "I started with **35** rows. I dropped **2** exact duplicate days
 and **3** rows whose `steps` were blank, leaving **30** clean rows. Along the way I
-fixed the comma values (`7,500` → `7500`) and tidied mood labels (`  Good ` →
+fixed the comma values (`7,500` → `7500`) and tidied mood labels (an untrimmed `Good` →
 `good`) instead of dropping them — those rows are still good data once cleaned."
 
 That is a Proficient answer: it runs, uses small named functions, handles missing
 values / types / duplicates / labels, and reports a measured before/after (35 → 30,
 5 removed). Other valid choices — keeping blank-steps rows with a `0`, or also
 cleaning `sleep_hours` (`8h` → `8`) — are fine too, as long as you measure the result.
-
