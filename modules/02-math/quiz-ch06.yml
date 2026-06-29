@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m2-ch6-derivatives"
+questions:
+  - id: what-derivative-measures
+    prompt: "What does a derivative measure?"
+    options:
+      - "The total area under a curve"
+      - "How much the output changes when you nudge the input a tiny bit — the slope at a point"
+      - "The number of points on a line"
+    answer: 1
+    explanation: "A derivative is sensitivity: the slope of the curve at a point, telling you how fast the output responds to a small change in the input."
+  - id: slope-of-line
+    prompt: "What is the slope of the line through (0, 0) and (2, 6)?"
+    options:
+      - "2.0"
+      - "3.0"
+      - "0.5"
+    answer: 1
+    explanation: "Slope is rise over run: (6 - 0) / (2 - 0) = 3.0."
+  - id: central-difference
+    prompt: "Which expression is the central-difference estimate of a derivative at x?"
+    options:
+      - "(f(x+h) - f(x-h)) / (2h)"
+      - "f(x) * h"
+      - "(f(x) + f(x+h)) / 2"
+    answer: 0
+    explanation: "The central difference measures rise (f(x+h) - f(x-h)) over the run 2h between the two nearby points."
+  - id: line-vs-curve
+    prompt: "How does the slope behave along a straight line versus a curve?"
+    options:
+      - "It is constant on a line, but changes from point to point on a curve"
+      - "It changes on a line, but is constant on a curve"
+      - "It is always zero on both"
+    answer: 0
+    explanation: "A line has one constant slope everywhere; a curve's slope changes, so you read the derivative at each point."

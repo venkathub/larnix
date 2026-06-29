@@ -36,9 +36,9 @@ gradients). All visuals via Matplotlib in the browser.
 | 2 | [Vectors & geometry](ch02-vectors-geometry.qmd) | 🟢 |
 | 3 | [Matrices as transformations](ch03-matrices-as-transformations.qmd) | 🟢 |
 | 4 | [Matrix multiplication, intuitively](ch04-matrix-multiplication.qmd) | 🟡 |
-| 5 | Dot products & similarity | 🟢 |
-| 6 | Derivatives = sensitivity | 🟡 |
-| 7 | Gradients | 🟡 |
+| 5 | [Dot products & similarity](ch05-dot-products-similarity.qmd) | 🟢 |
+| 6 | [Derivatives = sensitivity](ch06-derivatives-sensitivity.qmd) | 🟡 |
+| 7 | [Gradients](ch07-gradients.qmd) | 🟡 |
 | 8 | The chain rule | 🟡 |
 | 9 | Probability basics | 🟢 |
 | 10 | Distributions | 🟡 |

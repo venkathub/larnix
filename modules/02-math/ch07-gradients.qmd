@@ -1,0 +1,367 @@
+---
+title: "Gradients"
+module: "M2 — Math You Actually Need"
+chapter: 7
+difficulty: "intermediate"
+prereqs:
+  - "M2 Ch6 — Derivatives = sensitivity"
+learning_objectives:
+  - "Read a gradient as the slope generalised: the direction of steepest increase, so its negative points downhill"
+  - "Apply one gradient-descent step, new = old - learning_rate * gradient, to move toward a minimum"
+  - "Trace why repeated downhill steps on f(x) = x^2 walk x toward its minimum at 0"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: gradient-points-uphill
+    q: "Which way does a gradient point, and which way is downhill?"
+    a: "A gradient points in the direction of steepest increase (uphill). Its negative points downhill — the direction that decreases the function fastest."
+  - id: descent-step
+    q: "What is one gradient-descent step?"
+    a: "new = old - learning_rate * gradient. You nudge the value a small step opposite the gradient, so the function gets a little smaller."
+  - id: gradient-of-x-squared
+    q: "For f(x) = x^2, what is the gradient at x, and where is the minimum?"
+    a: "The gradient is the derivative 2*x. The minimum is at x = 0, where the gradient is 0 and steps stop moving."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Picture a ball dropped into a smooth, bowl-shaped valley. Wherever it lands, it
+rolls **downhill** — and it always rolls in the steepest downhill direction it can
+find, until it settles at the bottom. It never has to be told where the bottom is.
+At each spot, the shape of the ground under it is enough.
+
+A **gradient** is the math for "which way is uphill, and how steep." It is the
+slope from the previous chapter, generalised: it points in the direction of
+steepest **increase**. So its **negative** points downhill. A learning model is
+that rolling ball — it measures the gradient of its error, then takes a small step
+in the opposite direction to make the error a little smaller. Do that again and
+again and you walk to the bottom of the valley. That repeated downhill walk is
+**gradient descent**, and it is how almost every model you will meet learns.
+
+> You'll need from before: a derivative is the **slope** of a function at a point —
+> how sensitive the output is to a small nudge in the input (M2 Ch6). The gradient
+> is that same slope, used as a *direction*.
+
+---
+
+## The slope, used as a direction
+
+For a function of one input, the gradient *is* the derivative — the slope. There is
+nothing new to compute; what changes is how you read it.
+
+- The slope's **sign** tells you which way is uphill. A positive slope means the
+  function rises as `x` grows, so uphill is to the right; downhill is to the left.
+- The slope's **size** tells you how steep the ground is right there.
+
+To go downhill, you move **against** the slope. If the slope is positive (uphill is
+to the right), you step left; if it is negative, you step right. Both cases are
+captured by one rule — subtract the gradient:
+
+$$\text{new} = \text{old} - \text{learning\_rate} \times \text{gradient}$$
+
+The **learning rate** is your step size: a small positive number that decides how
+far each step travels. The gradient sets the *direction* (downhill) and a sense of
+steepness; the learning rate scales the *distance* you actually move.
+
+### One concrete bowl: f(x) = x^2
+
+The simplest valley is `f(x) = x^2` — a parabola, lowest at `x = 0`. Its slope at
+any point `x` is the derivative `2*x`:
+
+- At `x = 5`, the gradient is `2*5 = 10` (steep, sloping up to the right) — so
+  downhill is to the **left**, toward `0`.
+- At `x = -3`, the gradient is `2*(-3) = -6` (sloping down to the right) — so
+  downhill is to the **right**, again toward `0`.
+- At `x = 0`, the gradient is `0` — flat ground, the bottom. A step moves nowhere.
+
+Plug `f(x) = x^2` into the rule and one step from `x` with learning rate `lr` is:
+
+$$\text{new} = x - \text{lr} \times (2x)$$
+
+From `x = 5` with `lr = 0.1`: `5 - 0.1 * 10 = 4.0`. The ball moved from 5 toward 0,
+exactly as the picture promised. From `x = 4` with a bigger `lr = 0.5`:
+`4 - 0.5 * 8 = 0.0` — one large step lands right at the bottom.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+Gradient descent is a loop that nudges a value. The shape is one you have written a
+hundred times:
+
+```java
+double x = 10.0;
+double lr = 0.1;            // step-size knob
+for (int i = 0; i < 50; i++) {
+    double grad = 2 * x;    // slope of x*x at the current x
+    x = x - lr * grad;      // step downhill
+}
+// x is now very close to 0, the minimum
+```
+
+The **learning rate** `lr` is a tuning knob, like a step size in any iterative
+solver. Set it too small and the loop crawls — you need many iterations to reach
+the bottom. Set it too big and each step **overshoots** the minimum, landing
+farther up the opposite wall than where it started; the value can bounce outward
+and blow up to infinity instead of settling. Picking a sane step size is a real
+part of training models, and it is the same instinct as choosing a stable step in a
+numerical loop. You will tune it by feel and by watching the value settle.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Let's drop the ball and watch it roll. We start at `x = 9` on the bowl `f(x) = x^2`
+and take a handful of descent steps, each one `x - lr * (2*x)`. Plotting the bowl
+and marking where the ball sits after each step makes the downhill walk visible.
+
+```{pyodide}
+#| caption: "Gradient descent on f(x) = x^2: each step rolls the ball downhill toward the minimum at 0"
+#| fig-alt: "A U-shaped parabola for f(x) = x squared with marked points starting at x = 9 high on the right wall and stepping leftward and downward toward the bottom at x = 0, the steps bunching closer together as they approach the minimum."
+import matplotlib.pyplot as plt
+
+def f(x):
+    return x * x
+
+def gradient(x):
+    return 2 * x          # slope of x^2 at x
+
+lr = 0.2                  # learning rate (step size)
+x = 9.0                   # where the ball starts
+xs = [x]
+for _ in range(8):
+    x = x - lr * gradient(x)   # one downhill step
+    xs.append(x)
+
+# The bowl itself, drawn smoothly across the range.
+curve_x = [v / 10 for v in range(-100, 101)]
+curve_y = [f(v) for v in curve_x]
+
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(curve_x, curve_y, color="gray", label="f(x) = x^2")
+ax.plot(xs, [f(v) for v in xs], "o-", color="tab:blue", label="descent steps")
+ax.set_xlabel("x")
+ax.set_ylabel("f(x)")
+ax.set_title("Rolling downhill to the minimum")
+ax.legend()
+plt.show()
+
+print("x after each step:", [round(v, 3) for v in xs])
+```
+
+The takeaway is in the spacing of the dots: high on the right wall the slope is
+steep, so the steps are large; as the ball nears the bottom the slope flattens, the
+gradient shrinks toward `0`, and the steps get tiny. The ball glides in and settles
+near `x = 0` — the minimum — without ever being told where it was. That is gradient
+descent: follow the negative gradient, and the shape of the valley guides you to the
+bottom.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **gradient** is the slope generalised: it points in the direction of steepest
+   **increase**, so its **negative** points downhill — the way that decreases the
+   function fastest.
+2. One **gradient-descent step** is `new = old - learning_rate * gradient`: nudge
+   the value a small step opposite the gradient to shrink the function.
+3. For `f(x) = x^2` the gradient is `2*x`, the minimum is at `x = 0`, and there the
+   gradient is `0`, so steps stop moving.
+4. **Repeating** the step walks toward the minimum; the **learning rate** sets the
+   step size, and too large a rate overshoots instead of settling.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The heart of learning is one descent step. Complete `descent_step(x, grad, lr)` so
+it moves `x` a small step **against** the gradient: `x - lr * grad`. Replace `____`,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_step
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_step
+def descent_step(x, grad, lr):
+    """One gradient-descent step: move x against the gradient by lr * grad."""
+    return ____  # TODO: x minus the learning rate times the gradient
+
+run_tests([
+    ("step from 10", descent_step(10, 4, 0.1), 9.6),
+    ("negative move", descent_step(0, 5, 0.1), -0.5),
+    ("zero gradient = no move", descent_step(3, 0, 0.1), 3),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The rule is `new = old - learning_rate * gradient`. In code that is
+`x - lr * grad`. When `grad` is `0`, `lr * grad` is `0`, so `x` stays put — which is
+why a flat spot (the minimum) stops the walk.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def descent_step(x, grad, lr):
+    return x - lr * grad
+
+run_tests([
+    ("step from 10", descent_step(10, 4, 0.1), 9.6),
+    ("negative move", descent_step(0, 5, 0.1), -0.5),
+    ("zero gradient = no move", descent_step(3, 0, 0.1), 3),
+])
+```
+
+`x - lr * grad` steps opposite the gradient. From `x = 10` with `grad = 4` and
+`lr = 0.1` that is `10 - 0.1 * 4 = 9.6`. When `grad = 0` the step is `0`, so `x`
+does not move — the ball has reached flat ground.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Now wire in the gradient for a specific bowl. For `f(x) = x^2` the gradient at `x`
+is `2*x`. Write `step_x_squared(x, lr)` that does **one** descent step on this bowl:
+compute the gradient `2*x`, then return `x - lr * (2 * x)`. Complete the marked
+line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_xsq
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_xsq
+def step_x_squared(x, lr):
+    """One descent step on f(x) = x^2, whose gradient at x is 2*x."""
+    grad = ____  # TODO: the gradient of x^2 at x
+    return x - lr * grad
+
+run_tests([
+    ("from 5, lr 0.1", step_x_squared(5, 0.1), 4.0),
+    ("from 4, lr 0.5", step_x_squared(4, 0.5), 0.0),
+    ("already at minimum", step_x_squared(0, 0.1), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The gradient of `f(x) = x^2` is the derivative `2*x` — in code, `2 * x`. The step
+then reuses Exercise 1's rule: `x - lr * grad`. At `x = 0` the gradient is `0`, so
+the value stays at the minimum.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def step_x_squared(x, lr):
+    grad = 2 * x
+    return x - lr * grad
+
+run_tests([
+    ("from 5, lr 0.1", step_x_squared(5, 0.1), 4.0),
+    ("from 4, lr 0.5", step_x_squared(4, 0.5), 0.0),
+    ("already at minimum", step_x_squared(0, 0.1), 0.0),
+])
+```
+
+The gradient `2 * x` plugged into `x - lr * grad` gives `x - lr * (2 * x)`. From
+`x = 5`, `lr = 0.1`: `5 - 0.1 * 10 = 4.0`. From `x = 4`, `lr = 0.5`:
+`4 - 0.5 * 8 = 0.0`. At `x = 0` the gradient is `0`, so the step leaves `x` at the
+minimum.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Start from some `x` (say `10`) and
+apply `step_x_squared` a few times in a loop, printing `x` after each step. Show the
+value marching toward `0`. Then try a much larger learning rate and describe what
+changes.
+
+**Rubric — a good answer:**
+
+- Loops `step_x_squared` several times from a starting `x`, reassigning `x` each
+  time, and prints the value as it shrinks toward `0`.
+- Reports that with a small rate `x` settles toward the minimum at `0`.
+- Tries a larger rate and comments on the difference (faster, or overshooting and
+  bouncing if the rate is too big).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def step_x_squared(x, lr):
+    grad = 2 * x
+    return x - lr * grad
+
+# A small, stable rate: x glides down to the minimum.
+x = 10.0
+for i in range(6):
+    x = step_x_squared(x, 0.1)
+    print(f"step {i + 1}: x = {round(x, 4)}")
+
+print("---")
+
+# Too large a rate: each step overshoots and the value bounces outward.
+x = 10.0
+for i in range(6):
+    x = step_x_squared(x, 1.1)
+    print(f"big-rate step {i + 1}: x = {round(x, 4)}")
+```
+
+With `lr = 0.1` the value shrinks toward `0` and settles — the ball rolls into the
+bottom of the bowl. With `lr = 1.1` each step jumps past the minimum to a point
+farther up the opposite wall, so `x` grows in size and bounces outward instead of
+settling. That is overshooting: the step size matters as much as the direction.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch07.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now have the engine of learning: read the gradient, step the opposite way,
+repeat. On a one-input bowl that is the whole story. Real models, though, are deep
+stacks of functions, and to get the gradient of the error with respect to a buried
+weight you need to chain slopes together through every layer. Next we meet exactly
+that tool — **the chain rule** (Ch8) — which turns a single derivative into the
+backpropagation that trains real networks.
