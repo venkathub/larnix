@@ -41,8 +41,8 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 | 8 | [Reading a traceback](ch08-reading-a-traceback.qmd) |
 | 9 | [A little OOP](ch09-a-little-oop.qmd) |
 | 10 | [Clean, readable code](ch10-clean-readable-code.qmd) |
-| 11 | Pythonic data idioms |
-| 12 | A NumPy preview |
+| 11 | [Pythonic data idioms](ch11-pythonic-idioms.qmd) |
+| 12 | [A NumPy preview](ch12-numpy-preview.qmd) |
 | 13 | Environments & packages (venv/pip) — conceptual |
 | 14 | Notebooks, the IDE & Colab — conceptual |
 

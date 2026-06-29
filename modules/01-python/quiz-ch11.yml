@@ -1,0 +1,35 @@
+title: "Chapter 11 — quick check"
+id: "m1-ch11-idioms"
+questions:
+  - id: zip-result
+    prompt: "What does list(zip(['a', 'b'], [1, 2])) produce?"
+    options:
+      - "[('a', 1), ('b', 2)]"
+      - "['a', 'b', 1, 2]"
+      - "[('a', 'b'), (1, 2)]"
+    answer: 0
+    explanation: "zip pairs the lists element-by-element, so you get (a, 1) then (b, 2)."
+  - id: zip-mismatch
+    prompt: "What happens when you zip two lists of different lengths?"
+    options:
+      - "It raises a ValueError"
+      - "It pads the shorter list with None"
+      - "It stops at the shorter list and drops the extra items"
+    answer: 2
+    explanation: "zip stops as soon as the shortest input is used up; the leftover tail is ignored."
+  - id: enumerate-start
+    prompt: "How do you make enumerate count from 1 instead of 0?"
+    options:
+      - "enumerate(items, start=1)"
+      - "enumerate(items) + 1"
+      - "enumerate(1, items)"
+    answer: 0
+    explanation: "The start keyword sets the first index, so start=1 gives 1-based numbering."
+  - id: dict-get-missing
+    prompt: "What does {'steps': 7500}.get('mood', 'unknown') return?"
+    options:
+      - "It raises a KeyError"
+      - "'unknown'"
+      - "None"
+    answer: 1
+    explanation: "The 'mood' key is missing, so get returns the fallback you passed: 'unknown'."

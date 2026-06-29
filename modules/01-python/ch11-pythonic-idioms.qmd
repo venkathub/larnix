@@ -1,0 +1,316 @@
+---
+title: "Pythonic data idioms"
+module: "M1 — Python for AI"
+chapter: 11
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch4 — Data structures"
+  - "M1 Ch5 — Comprehensions"
+learning_objectives:
+  - "Pair two lists element-by-element with zip, and number items with enumerate"
+  - "Look up a dict key safely with dict.get(key, default) and a sensible fallback"
+  - "Unpack tuples into named variables, including in a for loop"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: zip-pairs
+    q: "What does zip(dates, steps) give you?"
+    a: "An iterator of pairs — (dates[0], steps[0]), (dates[1], steps[1]), … — stopping at the shorter list. Wrap it in list() to see them."
+  - id: enumerate-index
+    q: "How do you loop over a list and get a counter at the same time?"
+    a: "enumerate(items) yields (index, item) pairs; enumerate(items, start=1) makes the counter 1-based."
+  - id: dict-get-default
+    q: "What does row.get('mood', 'unknown') return when 'mood' is missing?"
+    a: "The fallback 'unknown'. dict.get returns the value if the key exists, otherwise the default you pass — no KeyError."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Your habits data often arrives as separate columns: one list of `dates`, another
+of `steps`. To work with them you need each date sitting next to its own step
+count. You *could* reach for `range(len(dates))` and index both lists by hand —
+but Python has cleaner tools for exactly this. `zip` pairs the two lists,
+`enumerate` numbers the rows for you, and `dict.get` reads a value with a fallback
+when a key is missing. These small idioms are what make data code short and
+readable.
+
+> You'll need from before: lists, tuples, and dicts (Ch4), and the loop-shaped
+> thinking behind comprehensions (Ch5).
+
+---
+
+## Pairing two lists with `zip`
+
+`zip` walks several lists together and hands you one item from each at a time:
+
+```python
+dates = ["2026-06-01", "2026-06-02"]
+steps = [7500, 8200]
+list(zip(dates, steps))   # [('2026-06-01', 7500), ('2026-06-02', 8200)]
+```
+
+Each result is a **tuple** — `dates[0]` paired with `steps[0]`, then `dates[1]`
+with `steps[1]`. `zip` stops at the **shorter** list, so mismatched lengths never
+raise; the extra tail is dropped. `zip` returns a lazy iterator, so wrap it in
+`list(...)` when you want to see or reuse the pairs.
+
+## Numbering items with `enumerate`
+
+When you want a counter alongside each item, `enumerate` beats tracking an index
+variable yourself:
+
+```python
+for i, step in enumerate(steps, start=1):
+    print(i, step)        # 1 7500 \n 2 8200
+```
+
+`enumerate(items)` yields `(index, item)` pairs starting at `0`; pass
+`start=1` for human-friendly 1-based numbering.
+
+## Tuple unpacking
+
+Both `zip` and `enumerate` hand back tuples, and Python lets you **unpack** a tuple
+straight into named variables in one step:
+
+```python
+pair = ("2026-06-01", 7500)
+date, steps = pair          # date = "2026-06-01", steps = 7500
+```
+
+That same move works in a `for` loop header, which is why the loops above read so
+cleanly:
+
+```python
+for date, steps in zip(dates, step_counts):
+    print(date, "->", steps)
+```
+
+No temporary `pair` variable, no `pair[0]` / `pair[1]` — the names say what each
+slot means.
+
+## Safe lookups with `dict.get`
+
+Indexing a missing key (`row["mood"]`) raises `KeyError`. `dict.get` lets you ask
+for a value **and** name a fallback for when it's absent:
+
+```python
+row = {"date": "2026-06-01", "steps": 7500}
+row.get("mood", "unknown")   # "unknown" — the key is missing, so the default
+row.get("steps", 0)          # 7500 — the key exists, so its value
+```
+
+This is the safe way to read optional columns from messy habits rows.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+These idioms replace index-based loops you'd write by reflex in Java. `zip` plus a
+`for date, steps in …` loop does the work of a `for (int i = 0; i < n; i++)` that
+reaches into two arrays by index; `enumerate(items, start=1)` is the same loop when
+you genuinely need the counter. Tuple unpacking (`date, steps = pair`) drops the
+temp variables you'd otherwise pull out with `pair.getKey()` / `pair.getValue()`.
+And `row.get("mood", "unknown")` is `Map.getOrDefault(key, fallback)` — one call,
+no `containsKey` check first.
+:::
+
+---
+
+## Let's build it (worked example)
+
+Pair the dates with their step counts, number the days, and read a mood that may be
+missing. Press **Run**.
+
+```{pyodide}
+#| caption: "zip pairs the columns; enumerate numbers the days"
+dates = ["2026-06-01", "2026-06-02", "2026-06-03"]
+steps = [7500, 8200, 6100]
+
+for day, (date, count) in enumerate(zip(dates, steps), start=1):
+    print(f"Day {day}: {date} — {count} steps")
+```
+
+`zip(dates, steps)` yields `(date, count)` pairs; `enumerate(..., start=1)` wraps
+each pair with a 1-based counter; the loop header unpacks both at once into `day`,
+`date`, and `count`.
+
+```{pyodide}
+#| caption: "dict.get reads an optional column with a fallback"
+row = {"date": "2026-06-03", "steps": 6100}   # no 'mood' recorded this day
+
+mood = row.get("mood", "unknown")
+print("mood:", mood)
+print("steps:", row.get("steps", 0))
+```
+
+The `mood` key is missing, so `get` returns the fallback `"unknown"` instead of
+raising `KeyError`; `steps` is present, so its real value comes back.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **`zip(a, b)`** pairs two lists element-by-element into tuples, stopping at the
+   shorter one — ideal for lining up parallel columns.
+2. **`enumerate(items, start=1)`** gives you a counter and the item together, so you
+   never hand-manage an index.
+3. **Tuple unpacking** (`date, steps = pair`, or `for date, steps in pairs:`) names
+   each slot and drops temporary variables.
+4. **`dict.get(key, default)`** reads a value safely, returning the fallback instead
+   of raising `KeyError` when the key is missing.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the safe lookup so `mood_or_unknown` returns the row's `mood`, or
+`"unknown"` when that key is missing. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mood
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mood
+def mood_or_unknown(row):
+    """Return row['mood'] if present, else the fallback 'unknown'."""
+    return row.get("mood", ____)  # TODO: the fallback when 'mood' is missing
+
+run_tests([
+    ("reads the recorded mood", mood_or_unknown({"mood": "good"}), "good"),
+    ("missing mood falls back", mood_or_unknown({}), "unknown"),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The fallback is the second argument to `get`. The task asks for the string
+`"unknown"` when no mood is recorded.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def mood_or_unknown(row):
+    return row.get("mood", "unknown")
+```
+
+`dict.get` returns the value for `"mood"` when it exists, and the second argument —
+`"unknown"` — when it doesn't, so the lookup never raises `KeyError`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `pair_days(dates, steps)` so it returns a list of `(date, steps)` tuples,
+using `zip` to line the two lists up. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pair
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_pair
+def pair_days(dates, steps):
+    """Pair each date with its step count into a list of (date, steps) tuples."""
+    return ____  # TODO: zip the two lists, then make a list of the pairs
+
+run_tests([
+    ("pairs line up", pair_days(["a", "b"], [1, 2]), [("a", 1), ("b", 2)]),
+    ("empty lists give empty", pair_days([], []), []),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`zip(dates, steps)` yields the pairs lazily; wrap it in `list(...)` to return them
+as an actual list of tuples.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def pair_days(dates, steps):
+    return list(zip(dates, steps))
+```
+
+`zip` walks both lists together, producing `(date, steps)` tuples; `list(...)`
+collects them. Two empty lists produce no pairs, so the result is `[]`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Write `print_days(dates)` that
+prints a **numbered** list of days, 1-based, using `enumerate`. Test it on a small
+list of dates.
+
+**Rubric — a good answer:**
+
+- Loops over the dates with `enumerate(dates, start=1)`.
+- Unpacks the counter and the date in the loop header (`for i, date in …`).
+- Prints each line as the number followed by its date, and runs on a sample list.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def print_days(dates):
+    for i, date in enumerate(dates, start=1):
+        print(f"{i}. {date}")
+
+print_days(["2026-06-01", "2026-06-02", "2026-06-03"])
+# 1. 2026-06-01
+# 2. 2026-06-02
+# 3. 2026-06-03
+```
+
+`enumerate(dates, start=1)` pairs each date with a 1-based counter; the loop header
+unpacks that pair into `i` and `date`, so each line numbers a day without any
+manual index bookkeeping.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch11.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now line up parallel columns, number rows, unpack tuples, and read optional
+keys safely — the everyday idioms that keep data code short. Next chapter is **A
+NumPy preview** (chapter 12), where these same lists become arrays you can do math
+on all at once, without writing the loop yourself.

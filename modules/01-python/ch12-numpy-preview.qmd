@@ -1,0 +1,349 @@
+---
+title: "A NumPy preview"
+module: "M1 — Python for AI"
+chapter: 12
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch2 — Control flow"
+  - "M1 Ch4 — Data structures"
+learning_objectives:
+  - "Make a NumPy array from a Python list with np.array"
+  - "Apply an element-wise operation to a whole array without a loop"
+  - "Summarise and filter an array with mean/sum/max and a boolean mask"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: what-is-array
+    q: "What is a NumPy array and how do you make one from a list?"
+    a: "A fixed-type container for numbers that supports whole-array maths. Build one with np.array([...])."
+  - id: vectorized-op
+    q: "What does `arr * 2` do to a NumPy array?"
+    a: "It multiplies every element by 2 at once and returns a new array — no Python loop needed."
+  - id: boolean-mask
+    q: "How do you count and select elements of `arr` that are at least the goal?"
+    a: "`(arr >= goal).sum()` counts the True values; `arr[arr >= goal]` selects the matching elements."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Suppose you want to double every step count in a week, or count how many days you
+hit your goal. With a plain Python list you reach for a loop — write it, track an
+index or a running total, append to a new list. NumPy lets you say what you want to
+the **whole** column at once: `steps * 2` doubles every value, and `steps >= 8000`
+tests every day in one go. No loop, no bookkeeping.
+
+That "do the maths on the entire array at once" idea is called **vectorized
+thinking**, and it's the foundation of the data and AI tools coming in M2 and M3.
+This chapter is your first taste.
+
+> You'll need from before: loops and conditions (Ch2) — the very thing NumPy lets
+> you stop writing by hand — and lists (Ch4), which is what an array is built from.
+
+---
+
+## What is a NumPy array?
+
+**NumPy** is Python's numerical-computing library. Its core type is the **array**:
+an ordered container of numbers that all share one type. You import the library
+under the customary short name and build an array from a list:
+
+```python
+import numpy as np
+
+steps = np.array([7000, 8200, 9000, 6500, 8000])
+```
+
+A list and an array look similar, but an array is built for maths on the **whole**
+collection. That difference is the whole point of this chapter.
+
+## Element-wise operations (no loop needed)
+
+Do arithmetic on an array and the operation applies to **every element**, giving
+back a new array of the same length:
+
+```python
+steps * 2        # every value doubled
+steps + 100      # 100 added to every value
+steps >= 8000    # a True/False for every value
+```
+
+The last one returns a **boolean array** — the result of testing each element
+against `8000`. Compare that with a list, where `steps * 2` would repeat the list
+and `steps >= 8000` would be an error. With an array, the operation reaches every
+element for you — this is what "vectorized" means.
+
+## Summary methods
+
+An array carries methods that reduce all its values to one number:
+
+```python
+steps.mean()     # the average
+steps.sum()      # the total
+steps.max()      # the largest value
+```
+
+One note for later: `steps.mean()` gives back a NumPy float, not a plain Python
+`float`. It prints and compares like a number, so for everyday use you won't
+notice the difference.
+
+## Boolean masking
+
+A boolean array can **select** elements. Put the test inside the square brackets
+and you get back only the elements where it was `True`:
+
+```python
+steps[steps >= 8000]      # the values that met the goal
+(steps >= 8000).sum()     # how many met it (True counts as 1)
+```
+
+`steps >= 8000` builds the mask; `steps[...]` keeps the matching values; `.sum()`
+on the mask counts the `True`s, because `True` behaves as `1` and `False` as `0`.
+When you want a plain Python `int` from that count, wrap it: `int((steps >=
+8000).sum())`.
+
+::: {.callout-note collapse="true"}
+## 🧱 For Java developers
+
+A NumPy array is closer to a typed numeric buffer than to `int[]` plus a loop. In
+Java you'd write `for (int i = 0; i < a.length; i++) b[i] = a[i] * 2;`. In NumPy
+`a * 2` expresses the same intent in one line, and the library runs the per-element
+work in compiled code — closer in spirit to bulk or SIMD-style math than to
+element-by-element iteration. The boolean mask `a[a >= 8000]` replaces the
+filter-into-a-new-list loop entirely.
+:::
+
+---
+
+## Let's build it (worked example)
+
+A week of step counts, handled without a single loop. Press **Run**.
+
+```{pyodide}
+#| caption: "One array, several whole-array operations"
+import numpy as np
+
+steps = np.array([7000, 8200, 9000, 6500, 8000])
+
+print("Doubled:", steps * 2)
+print("Hit goal? :", steps >= 8000)   # a boolean array
+print("Average  :", steps.mean())
+print("Best day :", steps.max())
+```
+
+`steps * 2` reaches every value; `steps >= 8000` tests every day at once and gives
+back `[False  True  True False  True]`. No index, no loop.
+
+```{pyodide}
+#| caption: "Counting and selecting active days with a boolean mask"
+import numpy as np
+
+steps = np.array([7000, 8200, 9000, 6500, 8000])
+goal = 8000
+
+active_count = int((steps >= goal).sum())   # plain int from the mask
+active_values = steps[steps >= goal]         # select the matching days
+
+print("Active days:", active_count)
+print("Their steps:", active_values)
+```
+
+The mask `steps >= goal` does double duty: `.sum()` counts the `True`s (three days)
+and `steps[mask]` keeps the matching values. Wrapping the count in `int(...)` gives
+a plain Python integer, handy when exact equality matters.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **NumPy array** (`np.array([...])`) holds numbers of one type and is built for
+   maths on the whole collection.
+2. **Element-wise** operations like `arr * 2` and `arr >= 8000` apply to every
+   element at once — no Python loop.
+3. **Summary methods** `arr.mean()`, `arr.sum()`, `arr.max()` reduce the whole
+   array to a single value.
+4. A **boolean mask** selects (`arr[arr >= 8000]`) and counts
+   (`int((arr >= 8000).sum())`) the matching elements.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete `array_mean` so it builds an array from `values` and returns its average.
+Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mean
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mean
+import numpy as np
+
+def array_mean(values):
+    """Build an array from values and return its mean."""
+    arr = np.array(values)
+    return arr.____()  # TODO: the summary method for the average
+
+run_tests([
+    ("two values", array_mean([8000, 9000]), 8500.0),
+    ("all the same", array_mean([5000, 5000, 5000]), 5000.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The average is the **mean**. An array has a method with that exact name —
+`arr.mean()`. The grader compares numbers with a tolerance, so a NumPy float is
+fine here.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def array_mean(values):
+    arr = np.array(values)
+    return arr.mean()
+
+run_tests([
+    ("two values", array_mean([8000, 9000]), 8500.0),
+    ("all the same", array_mean([5000, 5000, 5000]), 5000.0),
+])
+```
+
+`arr.mean()` averages every element of the array. `[8000, 9000]` averages to
+`8500.0`; three equal values average to that same value.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `count_active(steps, goal)` — build an array and return, as a **plain int**,
+how many step counts are at least `goal`. Use a boolean mask. Complete the marked
+line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count
+import numpy as np
+
+def count_active(steps, goal):
+    """Return how many step counts are >= goal, as a plain int."""
+    arr = np.array(steps)
+    return ____  # TODO: count the masked elements, wrapped in int(...)
+
+run_tests([
+    ("two of three", count_active([7000, 8200, 9000], 8000), 2),
+    ("none qualify", count_active([100, 200], 8000), 0),
+    ("both qualify", count_active([8000, 9000], 8000), 2),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The mask is `arr >= goal`. Counting its `True` values is `(arr >= goal).sum()`, and
+`int(...)` around it returns a plain Python integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def count_active(steps, goal):
+    arr = np.array(steps)
+    return int((arr >= goal).sum())
+
+run_tests([
+    ("two of three", count_active([7000, 8200, 9000], 8000), 2),
+    ("none qualify", count_active([100, 200], 8000), 0),
+    ("both qualify", count_active([8000, 9000], 8000), 2),
+])
+```
+
+`arr >= goal` builds a boolean mask; `.sum()` counts the `True`s because `True`
+acts as `1`; `int(...)` returns a plain Python integer. With goal `8000`, the
+first list has two qualifying days, the second none, the third two.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Use a boolean mask to **select**
+the step values that meet a goal and print them. Build an array, make the mask, and
+index with it.
+
+**Rubric — a good answer:**
+
+- Builds an array with `np.array(...)` and a goal value.
+- Uses a boolean mask to index the array: `arr[arr >= goal]`.
+- Prints the selected values and runs on a mix of above- and below-goal days.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+
+def active_values(steps, goal):
+    arr = np.array(steps)
+    return arr[arr >= goal]
+
+print(active_values([7000, 8200, 9000, 6500, 8000], 8000))   # [8200 9000 8000]
+```
+
+`arr >= goal` is a boolean mask, and `arr[mask]` keeps only the elements where the
+mask is `True`. Here three days meet the 8000 goal, so those three values print.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch12.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've met arrays and vectorized thinking — describing maths over a whole column
+instead of looping element by element. Next chapter, **Environments & packages**
+(Ch13), steps back from code to cover how libraries like NumPy get installed and
+isolated with venv and pip. After M1, NumPy returns in force: it underpins the
+tables and tensors of M2 (data handling) and M3 (the maths of machine learning),
+where every operation you saw here scales up to real datasets.

@@ -82,6 +82,10 @@ website:
             href: modules/01-python/ch09-a-little-oop.qmd
           - text: "Ch10 — Clean, readable code"
             href: modules/01-python/ch10-clean-readable-code.qmd
+          - text: "Ch11 — Pythonic data idioms"
+            href: modules/01-python/ch11-pythonic-idioms.qmd
+          - text: "Ch12 — A NumPy preview"
+            href: modules/01-python/ch12-numpy-preview.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
