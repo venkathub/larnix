@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m0-ch4-family-tree"
+questions:
+  - id: nesting-order
+    prompt: "Which statement about how the terms relate is correct?"
+    options:
+      - "AI, ML, DL, and GenAI are four separate, unrelated fields"
+      - "GenAI is a kind of DL, which is a kind of ML, which is a kind of AI"
+      - "AI is a kind of GenAI"
+    answer: 1
+    explanation: "They nest: GenAI ⊂ deep learning ⊂ machine learning ⊂ AI."
+  - id: dl-distinction
+    prompt: "What makes deep learning different from other machine learning?"
+    options:
+      - "It does not use any data"
+      - "It uses many-layered neural networks that learn their own features from raw data"
+      - "It is always rule-based and hand-written"
+    answer: 1
+    explanation: "Deep learning is ML built on many-layered neural networks that learn features directly from raw input."
+  - id: classify-vs-generate
+    prompt: "A model that writes a brand-new sentence is doing what?"
+    options:
+      - "Classifying — picking a label from a fixed set"
+      - "Generating — producing new content that wasn't in a list of options"
+      - "Nothing — sentences cannot be produced by models"
+    answer: 1
+    explanation: "Producing new content (text, images, audio) is generation; picking from fixed labels is classification."
+  - id: not-ml-example
+    prompt: "Which is an example of AI that is NOT machine learning?"
+    options:
+      - "The iris classifier from Chapter 1"
+      - "A chess program that searches moves using rules a person wrote"
+      - "A spam filter that learned spam words from examples"
+    answer: 1
+    explanation: "A rule-based chess engine is AI but learns nothing from data, so it is not machine learning."

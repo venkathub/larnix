@@ -33,7 +33,7 @@ All 🟢 Beginner · `browser` · `stable`.
 | 1 | [Train your first model — in your browser](ch01-train-your-first-model.qmd) | shipped |
 | 2 | [What you need & what it costs](ch02-what-you-need-and-what-it-costs.qmd) | shipped |
 | 3 | [What is AI, really?](ch03-what-is-ai-really.qmd) | shipped |
-| 4 | AI vs ML vs DL vs GenAI — a family tree | authored in P1 |
+| 4 | [AI vs ML vs DL vs GenAI — a family tree](ch04-ai-ml-dl-genai.qmd) | shipped |
 | 5 | A 10-minute history of AI | authored in P1 |
 | 6 | How this school works | authored in P1 |
 
