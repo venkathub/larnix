@@ -1,0 +1,395 @@
+---
+title: "NumPy & vectorization"
+module: "M3 — Data & Tooling"
+chapter: 1
+difficulty: "beginner"
+prereqs:
+  - "M1 Ch12 — A NumPy preview"
+  - "M2 Ch15 — Linear algebra in NumPy"
+learning_objectives:
+  - "Explain how a NumPy array differs from a Python list and when to reach for each"
+  - "Replace number-crunching loops with vectorized operations and broadcasting"
+  - "Aggregate and filter arrays with reductions and boolean masks"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: what-is-vectorization
+    q: "What does it mean to vectorize a calculation in NumPy?"
+    a: "Apply one operation to a whole array at once — like arr * 2 — instead of writing a Python loop over each element. The looping happens in fast compiled code."
+  - id: what-is-broadcasting
+    q: "What is broadcasting?"
+    a: "NumPy's rule for combining arrays of different shapes by stretching the smaller one to fit — for example adding a single number to every element of an array."
+  - id: boolean-masking
+    q: "How does a boolean mask select elements?"
+    a: "A comparison like arr > 3 builds an array of True/False values; indexing with arr[arr > 3] keeps only the elements where the mask is True."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Picture a checkout line where the cashier rings up one item, waits, rings up the
+next, waits, and so on. Now picture a scanner that prices the whole basket in one
+pass. A plain Python list of numbers is the first cashier: to double every value
+you write a loop and handle items one at a time. A **NumPy array** is the scanner:
+you say "double everything" once, and a layer of fast compiled code sweeps the
+whole array for you.
+
+That move — from *one element at a time* to *the whole array at once* — is called
+**vectorization**, and it is the habit this chapter builds. The payoff is two-fold:
+your code runs much faster on real data, and it reads closer to the math you meant.
+
+> You'll need from before: NumPy arrays as a container of numbers (M1 Ch12) and a
+> little linear-algebra-in-NumPy practice (M2 Ch15). We build straight on those.
+
+---
+
+## A list of numbers vs an array of numbers
+
+A Python list is a general-purpose box. It can hold anything — numbers, strings,
+other lists — so each element carries its own type information, and arithmetic over
+the list means a loop. To double every number in a list you write:
+
+```python
+nums = [1, 2, 3, 4]
+doubled = []
+for n in nums:
+    doubled.append(n * 2)
+# doubled == [2, 4, 6, 8]
+```
+
+A **NumPy array** is a tighter box built for numbers: every element is the same
+type, laid out together in memory. That lets NumPy push the loop down into compiled
+code and express the same idea in one line. Two reasons to prefer it for numeric
+work:
+
+- **Speed** — the per-element loop runs in optimized C, not in the Python
+  interpreter, so large arrays are processed far faster.
+- **Clean syntax** — `arr * 2` says what you mean. The loop and the temporary list
+  disappear, and the code looks like the formula.
+
+Let's see the array version side by side.
+
+```{pyodide}
+#| caption: "One operation over a whole array — no loop in sight"
+import numpy as np
+
+nums = np.array([1, 2, 3, 4])
+doubled = nums * 2
+
+print("array:  ", nums)
+print("doubled:", doubled)
+print("type:   ", type(doubled))
+```
+
+The `* 2` applied to every element at once. There is no `for` and no growing list —
+NumPy did the sweep. This is the shape of almost everything that follows.
+
+## Vectorized arithmetic
+
+Vectorized operations work element-by-element across a whole array. A single number
+combines with every element:
+
+- `arr * 2` multiplies each element by two,
+- `arr + 10` adds ten to each element,
+- `arr ** 2` squares each element.
+
+And two arrays of the **same shape** combine position-by-position: `a + b` adds the
+first element of `a` to the first of `b`, the second to the second, and so on. This
+matches how vectors add in the math from M2 — now it is one line of code.
+
+```{pyodide}
+#| caption: "Element-wise arithmetic on whole arrays"
+import numpy as np
+
+a = np.array([1, 2, 3])
+b = np.array([10, 20, 30])
+
+print("a + b:", a + b)      # pairs up by position
+print("a * b:", a * b)      # element-wise product, not a dot product
+print("b - a:", b - a)
+print("a ** 2:", a ** 2)    # each element squared
+```
+
+Read `a * b` carefully: it multiplies matching positions to give `[10, 40, 90]`.
+That is *not* the dot product from M2 (which would sum those into a single number);
+it is the plain element-wise product. NumPy keeps the two ideas separate, and you
+pick the one you need.
+
+## Broadcasting: mixing shapes on purpose
+
+In the first example, `nums * 2` combined an array with a single number even though
+they are different shapes. NumPy handled it by **broadcasting**: it stretches the
+smaller operand across the larger one so the shapes line up, without ever building
+the stretched copy in full.
+
+The everyday case is a scalar with an array, which is how `arr + 10` adds ten to
+every element. A useful mental picture: NumPy treats the lone number as if it were
+repeated to match the array, then does the element-wise operation.
+
+```{pyodide}
+#| caption: "A single number broadcasts across every element"
+import numpy as np
+
+temps_c = np.array([0, 20, 37, 100])
+
+# Convert Celsius to Fahrenheit: one formula, whole array.
+temps_f = temps_c * 9 / 5 + 32
+
+print("Celsius:   ", temps_c)
+print("Fahrenheit:", temps_f)
+```
+
+The `* 9 / 5 + 32` is a chain of broadcasts: each scalar combines with the whole
+array in turn. One readable line converts the entire dataset — and it stays the
+same line whether the array holds four temperatures or four million.
+
+## Aggregations: summarizing an array
+
+Often you want one number *out* of an array: a total, an average, a peak. NumPy
+calls these **reductions** or **aggregations**, and they read as methods on the
+array:
+
+- `arr.sum()` — add up every element,
+- `arr.mean()` — the average (sum divided by count),
+- `arr.max()` and `arr.min()` — the largest and smallest values.
+
+```{pyodide}
+#| caption: "From a whole array down to a single summary number"
+import numpy as np
+
+scores = np.array([72, 88, 95, 61, 79])
+
+print("total:  ", scores.sum())
+print("average:", scores.mean())
+print("highest:", scores.max())
+print("lowest: ", scores.min())
+```
+
+Each call collapses the five scores into one summary value. These reductions pair
+naturally with the arithmetic above: vectorize to transform the data, then
+aggregate to describe it.
+
+## Boolean masks: filtering without a loop
+
+Here is the idea that ties the chapter together. Compare an array to a value and
+NumPy gives you back an array of `True`/`False` — one verdict per element. That is
+a **boolean mask**.
+
+```{pyodide}
+#| caption: "A comparison builds a True/False mask, which then selects elements"
+import numpy as np
+
+arr = np.array([1, 5, 3, 8, 2, 4])
+
+mask = arr > 3
+print("mask:     ", mask)        # True where the element exceeds 3
+print("selected: ", arr[mask])   # keep only those elements
+print("shortcut: ", arr[arr > 3])  # the same, in one step
+```
+
+Indexing an array *with* a mask keeps only the elements where the mask is `True`,
+so `arr[arr > 3]` returns the values above three. No loop, no running list — the
+comparison and the selection are each one vectorized step.
+
+Because `True` counts as `1` and `False` as `0`, you can **count** matches by
+summing the mask. `(arr > 3).sum()` adds up the `True`s, which is exactly how many
+elements pass the test:
+
+```{pyodide}
+#| caption: "Summing a mask counts how many elements pass the test"
+import numpy as np
+
+arr = np.array([1, 5, 3, 8, 2, 4])
+
+print("mask:           ", arr > 3)
+print("how many > 3:   ", (arr > 3).sum())   # True counts as 1
+print("their average:  ", arr[arr > 3].mean())
+```
+
+Three elements (5, 8, and 4) clear the bar, so the count is `3`. Combine a mask
+with a reduction and you can answer questions like "how many?" and "what's the
+average of the ones that qualify?" — all without writing the loop yourself.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **NumPy array** stores numbers of one type together, so it is faster and reads
+   cleaner than a Python list for numeric work.
+2. **Vectorization** applies an operation to a whole array at once (`arr * 2`,
+   `a + b`) — no element-by-element loop in your code.
+3. **Broadcasting** stretches a smaller operand (often a single number) to fit a
+   larger array, so a scalar combines with every element.
+4. **Reductions** (`.sum()`, `.mean()`, `.max()`) collapse an array into a summary
+   number.
+5. A **boolean mask** like `arr > 3` selects elements with `arr[arr > 3]` and counts
+   them with `(arr > 3).sum()`.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Complete `scale` so it multiplies a sequence of numbers by a factor using
+vectorized NumPy, then returns a plain Python list. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_scale
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_scale
+def scale(arr, factor):
+    """Return arr times factor, element-wise, as a plain Python list."""
+    return ____  # TODO: make a NumPy array, multiply by factor, then .tolist()
+
+run_tests([
+    ("double", scale([1, 2, 3], 2), [2, 4, 6]),
+    ("by zero", scale([5, 9], 0), [0, 0]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Turn the input into an array with `np.array(arr)`, multiply the whole thing by
+`factor`, then convert the result back with `.tolist()` so the return value is an
+ordinary list.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def scale(arr, factor):
+    return (np.array(arr) * factor).tolist()
+```
+
+`np.array(arr) * factor` broadcasts the single `factor` across every element in one
+vectorized step; `.tolist()` hands back a plain Python list so the result matches
+the expected values.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `count_above` so it reports how many elements of `arr` are strictly greater
+than `threshold`, as a plain `int`. Build a boolean mask and sum it. Complete the
+marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count
+def count_above(arr, threshold):
+    """Count how many elements of arr exceed threshold, as a plain int."""
+    return ____  # TODO: mask with > threshold, sum the True values, wrap in int(...)
+
+run_tests([
+    ("three above 3", count_above([1, 5, 3, 8, 2, 4], 3), 3),
+    ("none above 5", count_above([1, 2, 3], 5), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`np.array(arr) > threshold` gives a True/False mask. Summing it counts the `True`
+values because each counts as `1`. Wrap the sum in `int(...)` so the return type is
+a plain Python integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def count_above(arr, threshold):
+    return int((np.array(arr) > threshold).sum())
+```
+
+`(np.array(arr) > threshold)` builds the mask, `.sum()` adds up its `True`s, and
+`int(...)` returns a plain integer. For `[1, 5, 3, 8, 2, 4]` with threshold `3`, the
+elements `5`, `8`, and `4` pass, so the count is `3`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Build a NumPy array of a few
+numbers, compute its mean, and use a boolean mask to print only the values that sit
+*above* the mean. Print both the mean and the selected values.
+
+**Rubric — a good answer:**
+
+- Creates a NumPy array and computes its mean with `.mean()`.
+- Builds a boolean mask comparing the array to its mean and uses it to index the
+  array.
+- Prints the mean and the above-mean values, and the printed values are all greater
+  than the mean.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+
+arr = np.array([4, 8, 15, 16, 23, 42])
+avg = arr.mean()
+above = arr[arr > avg]
+
+print("mean:        ", avg)
+print("above mean:  ", above)
+```
+
+`arr > avg` is a boolean mask, and `arr[arr > avg]` keeps only the elements that
+beat the average — the same masking move from the chapter, now pointed at a value
+you computed from the data itself.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch01.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Vectorization is the habit every data tool in this module rewards: think in whole
+arrays, not loops. You can now transform data with element-wise arithmetic and
+broadcasting, summarize it with reductions, and filter it with boolean masks. Next
+we move from a bare array of numbers to **labeled, tabular data** — rows and columns
+with names — where these same ideas reappear one level up.

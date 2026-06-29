@@ -1,0 +1,414 @@
+---
+title: "Indexing & selection"
+module: "M3 — Data & Tooling"
+chapter: 3
+difficulty: "beginner"
+prereqs:
+  - "M3 Ch2 — Pandas Series & DataFrame"
+learning_objectives:
+  - "Select columns and rows out of a DataFrame"
+  - "Use .loc to select by label and .iloc to select by position"
+  - "Filter rows with a boolean mask"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 16
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: loc-vs-iloc
+    q: "What is the difference between .loc and .iloc?"
+    a: ".loc selects by label (the index value or column name) and its slices are inclusive of the end; .iloc selects by integer position (0-based) and its slices stop before the end, like ordinary Python."
+  - id: boolean-mask
+    q: "What does a boolean mask do when you pass it to df[...]?"
+    a: "The mask is a Series of True/False, one per row. df[mask] keeps only the rows where the mask is True and drops the rest, so it filters the table down to the rows you care about."
+  - id: select-a-column
+    q: "How do you select a single column from a DataFrame, and what comes back?"
+    a: "Index the DataFrame with the column name in square brackets, df['col']. What comes back is a Series — that one labelled column, with the index attached."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A table is rarely interesting all at once. The questions you actually ask are
+small slices of it: *what species is in row 0?* *show me the first five rows.*
+*which penguins weigh more than four kilograms?* Each of those is a **selection** —
+you point at part of the table and pandas hands you back exactly that part.
+
+In the last chapter you loaded the Palmer Penguins table and sized it up. Now you
+learn to *reach into* it. There are three moves, and almost everything you do with
+data is a combination of them:
+
+- **Pick a column** by name — `df['species']`.
+- **Pick rows** — by their **position** with `.iloc`, or by their **label** with
+  `.loc`.
+- **Filter rows** with a **boolean mask** — keep only the rows that pass a test,
+  like `body_mass_g > 4000`.
+
+Get these three reflexes and a DataFrame stops being a wall of numbers and becomes
+something you can interrogate.
+
+> You'll need from before: a DataFrame is a table of named columns, and `df['col']`
+> returns one column as a Series (M3 Ch2). We build straight on that.
+
+---
+
+## Picking a column
+
+The simplest selection is one column, by name, in square brackets. What comes back
+is a **Series** — the labelled column you met last chapter.
+
+```{pyodide}
+#| caption: "Select one column by name — the result is a Series"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+species = df["species"]
+print(type(species).__name__)
+species.head()
+```
+
+`df["species"]` is a Series, so every Series tool carries over. A column of text is
+often best summarised by counting its values:
+
+```{pyodide}
+#| caption: "A column is a Series, so its summaries apply directly"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df["species"].value_counts()
+```
+
+That tallies **Adelie 152, Gentoo 124, Chinstrap 68**. To pull *several* columns at
+once, pass a **list** of names inside the brackets — note the double brackets, an
+outer pair for indexing and an inner pair for the list. The result is a smaller
+DataFrame, not a Series:
+
+```{pyodide}
+#| caption: "A list of names selects several columns — the result is a DataFrame"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df[["species", "body_mass_g"]].head()
+```
+
+One name in brackets gives a Series; a list of names gives a DataFrame. Keep that
+distinction in mind — it explains a lot of "why did I get a different shape?"
+surprises later.
+
+## Picking rows by position with `.iloc`
+
+Columns have names, but rows are easiest to reach by **position**: the first row,
+the first five rows, the last one. That is what `.iloc` does — **i** for *integer
+position*. It works like indexing a Python list, and it is 0-based, so the
+first row is position `0`:
+
+```{pyodide}
+#| caption: ".iloc[0] — the first row, returned as a Series"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.iloc[0]
+```
+
+A single row comes back as a Series, with the **column names** now acting as its
+index. Reading down it, row 0 is an **Adelie** penguin seen on Torgersen Island.
+
+To grab a *range* of rows, slice with a colon. `.iloc[:5]` means "positions 0 up to
+but not including 5" — the same half-open slicing Python lists use, so it returns
+exactly five rows:
+
+```{pyodide}
+#| caption: ".iloc[:5] — the first five rows, like list slicing"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+df.iloc[:5]
+```
+
+This is exactly what `df.head()` gave you last chapter; `.iloc` makes the
+positions explicit, so you can also ask for `df.iloc[10:13]` or the last row with
+`df.iloc[-1]`. Position-based selection never cares what the row labels are — only
+where the rows sit.
+
+## Picking rows by label with `.loc`
+
+`.loc` selects by **label** — the value in the row index, and the column name. For
+the penguins table the index is the default `0, 1, 2, …`, so a label often *looks*
+like a position, but it is a different idea: `.loc` asks "the row labelled `0`",
+not "the row in position 0". You can name the column in the same call:
+
+```{pyodide}
+#| caption: ".loc[label, 'column'] — select by row label and column name"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+print(df.loc[0, "species"])
+df.loc[0:4, ["species", "body_mass_g"]]
+```
+
+Two things to notice. First, `df.loc[0, "species"]` reaches a single cell — the
+species of the row labelled `0`, which is `Adelie`. Second, `df.loc[0:4, ...]`
+returns **five** rows, labels `0` through `4` — `.loc` slices are **inclusive** of
+the end label. That is the one gotcha worth memorising:
+
+- `.iloc[0:4]` → positions 0, 1, 2, 3 — **four** rows (end excluded).
+- `.loc[0:4]` → labels 0, 1, 2, 3, 4 — **five** rows (end included).
+
+Use `.iloc` when you think in *positions* ("the first ten rows") and `.loc` when you
+think in *labels* ("rows 0 through 4, and only these two columns"). Mixing them up
+is the most common early pandas bug, and naming which one you mean fixes it.
+
+## Filtering rows with a boolean mask
+
+The selection you'll reach for most is the **filter**: keep only the rows that meet
+a condition. It happens in two steps. First, compare a column to a value — this runs
+the test on every row at once and produces a **boolean mask**, a Series of
+`True`/`False`:
+
+```{pyodide}
+#| caption: "Comparing a column to a value builds a boolean mask"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+mask = df["body_mass_g"] > 4000
+mask.head()
+```
+
+The mask has one entry per row: `True` where the penguin weighs more than 4000 g,
+`False` otherwise. Now pass that mask back into the DataFrame in square brackets, and
+pandas keeps only the `True` rows:
+
+```{pyodide}
+#| caption: "df[mask] keeps the rows where the mask is True"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+heavy = df[df["body_mass_g"] > 4000]
+print("rows kept:", heavy.shape[0])
+heavy.head()
+```
+
+Out of 344 penguins, **172** weigh more than 4000 g. You can read
+`df[df["body_mass_g"] > 4000]` as a single sentence: "from `df`, take the rows where
+`body_mass_g` is over 4000." Filtering with `==` works the same way for text — this
+is how you isolate one species:
+
+```{pyodide}
+#| caption: "Filter by an exact match, then read a column off the subset"
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+gentoo = df[df["species"] == "Gentoo"]
+print("Gentoo penguins:", gentoo.shape[0])
+print("their mean body mass:", round(gentoo["body_mass_g"].mean(), 2))
+```
+
+That filter keeps **124** Gentoo penguins, and selecting the `body_mass_g` column of
+that subset and averaging it gives a mean of about **5076.02** g — Gentoos are
+the heavyweights of this dataset, well above the 4201.75 g average across all three
+species. Combining a mask (to choose rows) with a column selection (to choose what to
+measure) is the core loop of exploratory data analysis: *narrow the rows, then read a
+number off them.*
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. `df['col']` selects one column as a **Series**; `df[['a', 'b']]` (a list of
+   names) selects several columns as a **DataFrame**.
+2. **`.iloc`** selects by integer **position** (0-based, end-exclusive slices, like
+   Python lists); **`.loc`** selects by **label** (and its slices are
+   **inclusive** of the end label).
+3. A **boolean mask** — `df['col'] > value` — is a Series of True/False; `df[mask]`
+   keeps only the rows that are True.
+4. Narrow the rows with a mask, then read a column off the subset — for penguins,
+   `df[df['species'] == 'Gentoo']` keeps **124** rows.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+The first two use tiny hand-made data so the answers are exact.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Build a DataFrame from a dictionary, take its first `n` rows with `.head(n)`, and
+return how many rows that is as an `int`. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_first_n
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_first_n
+import pandas as pd
+
+def first_n(data, n):
+    """Build a DataFrame from data and return the row count of its first n rows."""
+    return ____  # TODO: int(pd.DataFrame(data).head(n).shape[0])
+
+run_tests([
+    ("first 2", first_n({"a": [1, 2, 3, 4]}, 2), 2),
+    ("first 0", first_n({"a": [1, 2, 3, 4]}, 0), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Build the table with `pd.DataFrame(data)`, take the first rows with `.head(n)`, then
+read the row count from `.shape[0]` (the first item of the `(rows, columns)` tuple).
+Wrap it in `int(...)` so the return type is a plain integer.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def first_n(data, n):
+    return int(pd.DataFrame(data).head(n).shape[0])
+```
+
+`pd.DataFrame(data)` builds the table, `.head(n)` keeps the first `n` rows, and
+`.shape[0]` is the number of rows that remain. Asking for `head(0)` keeps no rows, so
+the count is `0`.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write `count_above(data, col, threshold)`: build a DataFrame, then return how many
+rows have `col` **greater than** `threshold`. This is the boolean-mask pattern —
+compare a column, then count the `True` values. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_count_above
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_count_above
+import pandas as pd
+
+def count_above(data, col, threshold):
+    """Return the number of rows where data[col] exceeds threshold."""
+    return ____  # TODO: int((pd.DataFrame(data)[col] > threshold).sum())
+
+run_tests([
+    ("two above 2", count_above({"x": [1, 2, 3, 4]}, "x", 2), 2),
+    ("none above 9", count_above({"x": [1, 2, 3, 4]}, "x", 9), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`pd.DataFrame(data)[col]` is the column as a Series. Comparing it with `> threshold`
+gives a boolean mask (True/False per row). Calling `.sum()` on a boolean Series
+counts the `True` values, because `True` counts as 1; wrap that in `int(...)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import pandas as pd
+
+def count_above(data, col, threshold):
+    return int((pd.DataFrame(data)[col] > threshold).sum())
+```
+
+`(pd.DataFrame(data)[col] > threshold)` is the boolean mask; `.sum()` adds up its
+`True` values (each worth 1). With threshold 2 the values 3 and 4 pass, so the count
+is `2`; with threshold 9 none pass, so it is `0`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Load the penguins dataset, filter
+it down to the **Gentoo** penguins with a boolean mask, and report two facts in your
+own `print` statements: **how many** Gentoo penguins there are (124) and their
+**mean body mass** (about 5076.02 g).
+
+**Rubric — a good answer:**
+
+- Loads penguins with `load_csv` and builds a mask `df["species"] == "Gentoo"`.
+- Filters with `df[mask]` and prints the row count (124) read from the data.
+- Selects `body_mass_g` on that subset and prints its mean (≈ 5076.02 g).
+
+<details><summary>If you're stuck</summary>
+
+Build the mask `df["species"] == "Gentoo"`, then `df[mask]` is the Gentoo-only table.
+Its `.shape[0]` is the count; selecting `["body_mass_g"]` on that subset and calling
+`.mean()` gives the average mass.
+</details>
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from lib.data import load_csv
+import pandas as pd
+
+df = load_csv("penguins")
+gentoo = df[df["species"] == "Gentoo"]
+
+print("Gentoo penguins:", gentoo.shape[0])
+print("mean body mass (g):", round(gentoo["body_mass_g"].mean(), 2))
+```
+
+This prints `124` Gentoo penguins and a mean body mass of `5076.02` g — both read
+straight from the filtered subset rather than typed in by hand.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You can now reach into a table three ways: pick columns by name, pick rows by
+position (`.iloc`) or label (`.loc`), and filter rows with a boolean mask. Those moves
+combine into nearly every question you'll ask of data. Next we go from *selecting*
+what's already there to *cleaning* it — handling the missing values that `.describe()`
+quietly skipped, so your selections and summaries rest on solid ground.

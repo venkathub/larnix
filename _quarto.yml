@@ -126,6 +126,18 @@ website:
             href: modules/02-math/ch15-linear-algebra-in-numpy.qmd
           - text: "Ch16 — The math of one neuron"
             href: modules/02-math/ch16-the-math-of-one-neuron.qmd
+      - section: "M3 — Data & Tooling"
+        contents:
+          - text: "Ch1 — NumPy & vectorization"
+            href: modules/03-data/ch01-numpy-vectorization.qmd
+          - text: "Ch2 — Pandas Series & DataFrame"
+            href: modules/03-data/ch02-pandas-series-dataframe.qmd
+          - text: "Ch3 — Indexing & selection"
+            href: modules/03-data/ch03-indexing-selection.qmd
+          - text: "Ch4 — Cleaning data"
+            href: modules/03-data/ch04-cleaning-data.qmd
+          - text: "Ch5 — Joins & groupby"
+            href: modules/03-data/ch05-joins-groupby.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

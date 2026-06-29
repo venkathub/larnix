@@ -1,0 +1,35 @@
+title: "Chapter 1 — quick check"
+id: "m3-ch01-numpy"
+questions:
+  - id: vectorize-vs-loop
+    prompt: "What does it mean to vectorize doubling every number in an array?"
+    options:
+      - "Write a Python for-loop that multiplies each element by two"
+      - "Apply one operation to the whole array at once, as in arr * 2"
+      - "Convert the array to a list before multiplying"
+    answer: 1
+    explanation: "Vectorizing means expressing the operation over the whole array at once (arr * 2); NumPy runs the per-element work in fast compiled code instead of a Python loop."
+  - id: what-broadcasting-does
+    prompt: "What does broadcasting do in an expression like arr + 10?"
+    options:
+      - "Stretches the single number so it combines with every element of the array"
+      - "Appends 10 as a new element at the end of the array"
+      - "Raises an error because the shapes do not match"
+    answer: 0
+    explanation: "Broadcasting lines up shapes by stretching the smaller operand; the lone number 10 is treated as if repeated across the array, so it is added to every element."
+  - id: mask-sum
+    prompt: "For an array arr, what does (arr > 3).sum() compute?"
+    options:
+      - "The sum of the elements that are greater than 3"
+      - "How many elements are greater than 3"
+      - "The largest element that is greater than 3"
+    answer: 1
+    explanation: "arr > 3 is a True/False mask; True counts as 1, so summing the mask counts how many elements pass the test, not their total."
+  - id: array-vs-list
+    prompt: "Why prefer a NumPy array over a Python list for numeric work?"
+    options:
+      - "Arrays can hold a mix of strings, numbers, and other lists"
+      - "Same-type elements stored together give faster math and cleaner whole-array syntax"
+      - "Lists cannot store numbers at all"
+    answer: 1
+    explanation: "A NumPy array stores numbers of one type packed together, so element-wise math runs in compiled code and reads as one expression like arr * 2."

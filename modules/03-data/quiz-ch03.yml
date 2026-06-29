@@ -1,0 +1,35 @@
+title: "Chapter 3 — quick check"
+id: "m3-ch03-indexing"
+questions:
+  - id: loc-vs-iloc
+    prompt: "What is the difference between .loc and .iloc?"
+    options:
+      - ".loc selects by label (and its slices include the end); .iloc selects by integer position (and its slices exclude the end)"
+      - ".loc selects by position and .iloc selects by label — they are swapped names for the same thing"
+      - ".loc works only on columns and .iloc works only on rows"
+    answer: 0
+    explanation: ".loc is label-based with end-inclusive slices; .iloc is integer-position-based with end-exclusive slices like ordinary Python lists."
+  - id: boolean-mask
+    prompt: "What does a boolean mask do when you write df[df['body_mass_g'] > 4000]?"
+    options:
+      - "It sorts the rows so the heaviest penguins appear first"
+      - "It keeps only the rows where the condition is True and drops the rest"
+      - "It replaces every body mass under 4000 with the value 4000"
+    answer: 1
+    explanation: "The comparison builds a True/False Series, one per row; df[mask] keeps the True rows and discards the False ones — it filters the table."
+  - id: select-one-column
+    prompt: "How do you select a single column from a DataFrame, and what comes back?"
+    options:
+      - "df['species'] — and it returns a Series (the one labelled column)"
+      - "df[['species']] with a single name — and it always returns a single value"
+      - "df.species(0) — and it returns the first row"
+    answer: 0
+    explanation: "Indexing with one column name in square brackets, df['species'], returns that column as a Series with the index attached."
+  - id: filter-result
+    prompt: "In the penguins table, what does df[df['species'] == 'Gentoo'] give you?"
+    options:
+      - "A single Series listing every species name in the table"
+      - "A DataFrame of only the Gentoo penguins — 124 rows"
+      - "The number 124, the count of Gentoo penguins"
+    answer: 1
+    explanation: "The mask keeps only rows where species equals 'Gentoo', returning a 124-row DataFrame; you would call .shape[0] on it to get the count 124."

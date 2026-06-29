@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m3-ch05-groupby"
+questions:
+  - id: what-groupby-does
+    prompt: "What does df.groupby('species') set up?"
+    options:
+      - "It sorts the whole table alphabetically by species"
+      - "Split-apply-combine: split rows into groups by species, apply a summary to each, combine into one result per group"
+      - "It deletes every row whose species is missing"
+    answer: 1
+    explanation: "groupby is split-apply-combine: it splits the rows into one group per distinct value, lets you apply a summary to each group, and combines the answers into a result with one row per group."
+  - id: what-size-returns
+    prompt: "What does df.groupby('species').size() return?"
+    options:
+      - "The mean body mass of each species"
+      - "The number of columns in the table"
+      - "The count of rows in each group — for penguins, Adelie 152, Chinstrap 68, Gentoo 124"
+    answer: 2
+    explanation: ".size() counts the rows in each group, so it reports how many penguins fall in each species: Adelie 152, Chinstrap 68, Gentoo 124."
+  - id: what-merge-does
+    prompt: "What does pd.merge(left, right, on='species') do?"
+    options:
+      - "It joins the two tables into one by matching rows that share the same species value"
+      - "It stacks the two tables on top of each other, ignoring columns"
+      - "It averages the two tables together cell by cell"
+    answer: 0
+    explanation: "merge joins two tables on a key column: it matches each left row with the right row that has the same species, pasting the right table's extra columns alongside."
+  - id: reading-a-group-mean
+    prompt: "df.groupby('species')['body_mass_g'].mean().round(2) reports Adelie 3700.66, Chinstrap 3733.09, Gentoo 5076.02. Which species is heaviest on average?"
+    options:
+      - "Adelie"
+      - "Chinstrap"
+      - "Gentoo"
+    answer: 2
+    explanation: "Gentoo's mean body mass of 5076.02 g is the largest of the three, so Gentoo is the heaviest species on average."

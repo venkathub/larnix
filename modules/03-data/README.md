@@ -30,11 +30,11 @@ capstone deliberately uses a *different* public dataset to test transfer.
 
 | # | Chapter | Tier |
 |---|---------|------|
-| 1 | NumPy & vectorization | 🟢 |
-| 2 | Pandas Series & DataFrame | 🟢 |
-| 3 | Indexing & selection | 🟢 |
-| 4 | Cleaning data | 🟡 |
-| 5 | Joins & groupby | 🟡 |
+| 1 | [NumPy & vectorization](ch01-numpy-vectorization.qmd) | 🟢 |
+| 2 | [Pandas Series & DataFrame](ch02-pandas-series-dataframe.qmd) | 🟢 |
+| 3 | [Indexing & selection](ch03-indexing-selection.qmd) | 🟢 |
+| 4 | [Cleaning data](ch04-cleaning-data.qmd) | 🟡 |
+| 5 | [Joins & groupby](ch05-joins-groupby.qmd) | 🟡 |
 | 6 | Reshaping | 🟡 |
 | 7 | Plotting with Matplotlib | 🟢 |
 | 8 | Statistical plots | 🟡 |

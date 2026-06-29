@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m3-ch02-pandas-basics"
+questions:
+  - id: series-vs-dataframe
+    prompt: "What is the difference between a pandas Series and a DataFrame?"
+    options:
+      - "A Series is a single labelled column; a DataFrame is a table of named columns"
+      - "A Series is a table; a DataFrame is one column pulled out of it"
+      - "They are two names for the same object"
+    answer: 0
+    explanation: "A Series is one labelled 1-D column of values; a DataFrame is a 2-D table built from several named columns, each of which is a Series."
+  - id: what-shape-returns
+    prompt: "What does df.shape return for the penguins table?"
+    options:
+      - "The number of columns only"
+      - "A tuple (rows, columns) — for penguins, (344, 8)"
+      - "The names of the columns as a list"
+    answer: 1
+    explanation: "df.shape is a tuple of (rows, columns). The penguins DataFrame has 344 rows and 8 columns, so it returns (344, 8)."
+  - id: select-a-column
+    prompt: "How do you select the single column 'body_mass_g' from a DataFrame df?"
+    options:
+      - "df.column('body_mass_g')"
+      - "df['body_mass_g'], which returns that column as a Series"
+      - "df.shape('body_mass_g')"
+    answer: 1
+    explanation: "Indexing the DataFrame with a column name in square brackets, df['body_mass_g'], returns that column as a Series you can summarise."
+  - id: what-describe-gives
+    prompt: "What does df.describe() give you?"
+    options:
+      - "The first five rows of the table"
+      - "Per-column summary statistics: count, mean, std, min, max, and quartiles"
+      - "A list of the column names and their data types"
+    answer: 1
+    explanation: ".describe() reports summary statistics (count, mean, std, min, max, and quartiles) for each numeric column — a quick statistical overview."
