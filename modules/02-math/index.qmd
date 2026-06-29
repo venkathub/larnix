@@ -1,0 +1,48 @@
+---
+title: "M2 — Math You Actually Need"
+toc: false
+---
+
+The little math AI actually uses — a feel for vectors, slopes, and chance — built
+**picture first, symbols second**. No proofs, no exam tricks. The module assembles,
+piece by piece, into the math of a single artificial **neuron**.
+
+## Start here
+
+Work through the chapters in order, beginning with
+[**Chapter 1 — Why math for AI**](ch01-why-math-for-ai.qmd). Each runs in your
+browser at ₹0; press **Run** on every code block. Plots render with Matplotlib in
+Pyodide — no install.
+
+| # | Chapter |
+|---|---------|
+| 1 | [Why math for AI](ch01-why-math-for-ai.qmd) |
+| 2 | [Vectors & geometry](ch02-vectors-geometry.qmd) |
+| 3 | [Matrices as transformations](ch03-matrices-as-transformations.qmd) |
+| 4 | [Matrix multiplication, intuitively](ch04-matrix-multiplication.qmd) |
+| 5 | [Dot products & similarity](ch05-dot-products-similarity.qmd) |
+| 6 | [Derivatives = sensitivity](ch06-derivatives-sensitivity.qmd) |
+| 7 | [Gradients](ch07-gradients.qmd) |
+| 8 | [The chain rule](ch08-chain-rule.qmd) |
+| 9 | [Probability basics](ch09-probability-basics.qmd) |
+| 10 | [Distributions](ch10-distributions.qmd) |
+| 11 | [Mean, variance & standard deviation](ch11-mean-variance-std.qmd) |
+| 12 | [Bayes, intuitively](ch12-bayes-intuitively.qmd) |
+| 13 | [Correlation vs causation](ch13-correlation-vs-causation.qmd) |
+| 14 | [Sampling & uncertainty](ch14-sampling-uncertainty.qmd) |
+| 15 | [Linear algebra in NumPy](ch15-linear-algebra-in-numpy.qmd) |
+| 16 | [The math of one neuron](ch16-the-math-of-one-neuron.qmd) |
+
+## Module quiz
+
+When you've finished the chapters, test the whole module. Your score is saved in
+your browser.
+
+{{< quiz module-quiz.yml >}}
+
+## Capstone
+
+Finish with the module project:
+[**The math of one neuron**](capstone.md) — implement a neuron's forward pass and
+its gradient by hand in NumPy, then verify your analytic gradient against a numeric
+finite-difference estimate and report the maximum error.

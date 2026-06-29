@@ -92,6 +92,7 @@ website:
           - text: "Ch14 — Notebooks, the IDE & Colab"
             href: modules/01-python/ch14-notebooks-ide-colab.qmd
       - section: "M2 — Math You Actually Need"
+        href: modules/02-math/index.qmd
         contents:
           - text: "Ch1 — Why math for AI"
             href: modules/02-math/ch01-why-math-for-ai.qmd

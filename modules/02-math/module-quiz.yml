@@ -1,0 +1,99 @@
+title: "M2 — module quiz"
+id: "m2-module-quiz"
+questions:
+  - id: vector-as-point
+    prompt: "What is a vector, geometrically?"
+    options:
+      - "A single number"
+      - "A list of numbers that names a point (or an arrow) in space"
+      - "A square grid of numbers"
+    answer: 1
+    explanation: "A vector is an ordered list of numbers — coordinates of a point, or an arrow from the origin (Ch2)."
+  - id: matrix-transforms
+    prompt: "In this module, a matrix is best understood as…"
+    options:
+      - "A way to store text"
+      - "A transformation that moves and reshapes vectors"
+      - "A single probability"
+    answer: 1
+    explanation: "A matrix is a transformation: multiply a vector by it and the vector is rotated, scaled, or sheared (Ch3)."
+  - id: dot-product-similarity
+    prompt: "Two vectors point in nearly the same direction. Their dot product is…"
+    options:
+      - "Large and positive"
+      - "Near zero"
+      - "Always one"
+    answer: 0
+    explanation: "The dot product is large and positive for aligned vectors, near zero for perpendicular ones, negative for opposing ones — a similarity score (Ch5)."
+  - id: matmul-shape
+    prompt: "Multiplying a (2×3) matrix by a length-3 vector gives a result of shape…"
+    options:
+      - "(3,)"
+      - "(2,)"
+      - "(2, 3)"
+    answer: 1
+    explanation: "Rows of the matrix dot the vector; a (2×3) matrix times a (3,) vector yields a (2,) vector (Ch4, Ch15)."
+  - id: derivative-sensitivity
+    prompt: "A derivative measures…"
+    options:
+      - "The total area under a curve"
+      - "How much the output changes when you nudge the input — its sensitivity"
+      - "The average of two numbers"
+    answer: 1
+    explanation: "The derivative is the slope: the rate at which the output responds to a small change in the input (Ch6)."
+  - id: gradient-direction
+    prompt: "The gradient of a loss points in the direction of…"
+    options:
+      - "Steepest decrease of the loss"
+      - "Steepest increase of the loss"
+      - "No particular direction"
+    answer: 1
+    explanation: "The gradient points uphill (steepest increase); learning steps in the opposite direction to reduce the loss (Ch7)."
+  - id: chain-rule
+    prompt: "The chain rule lets you…"
+    options:
+      - "Add two derivatives together"
+      - "Find the derivative through a composition by multiplying the links"
+      - "Avoid derivatives entirely"
+    answer: 1
+    explanation: "For nested functions, multiply the derivative of each link: dL/dx = dL/du · du/dx (Ch8)."
+  - id: variance-meaning
+    prompt: "Variance measures…"
+    options:
+      - "The largest minus the smallest value"
+      - "The average squared distance of the values from their mean"
+      - "How many values are positive"
+    answer: 1
+    explanation: "Variance is the mean of the squared deviations from the mean; its square root is the standard deviation (Ch11)."
+  - id: bayes-base-rate
+    prompt: "A test for a rare disease comes back positive. Why might you still probably be healthy?"
+    options:
+      - "Because the test is broken"
+      - "Because the disease is rare, so most positives are false positives (the base rate matters)"
+      - "Because positive always means negative"
+    answer: 1
+    explanation: "When prevalence is low, false positives from the large healthy group outnumber true positives — Bayes with the base rate (Ch12)."
+  - id: correlation-causation
+    prompt: "Ice-cream sales and drownings rise together. The best explanation is…"
+    options:
+      - "Ice cream causes drownings"
+      - "A confounder — summer heat — drives both; correlation is not causation"
+      - "Drownings cause ice-cream sales"
+    answer: 1
+    explanation: "Correlation measures co-movement, not cause; a confounding variable can drive both (Ch13)."
+  - id: standard-error
+    prompt: "How does the uncertainty of a sample mean (its standard error) change as the sample grows?"
+    options:
+      - "It grows with the sample"
+      - "It shrinks — standard error is std / sqrt(n)"
+      - "It stays the same"
+    answer: 1
+    explanation: "Standard error = std / sqrt(n), so larger samples give a steadier, less uncertain estimate (Ch14)."
+  - id: neuron-backward
+    prompt: "For one neuron with squared-error loss and a sigmoid, the gradient of the loss with respect to a weight is…"
+    options:
+      - "2(a - y) · a(1 - a) · x_i — the chain rule, link by link"
+      - "Always equal to the input x_i"
+      - "The loss divided by the weight"
+    answer: 0
+    explanation: "Multiply the links: dL/da = 2(a - y), da/dz = a(1 - a), dz/dw_i = x_i — verified by a numeric gradient check (Ch16)."
