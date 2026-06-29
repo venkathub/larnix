@@ -1,11 +1,17 @@
 # P1_SPEC — Foundations track (M0–M3)
 
 > **Phase:** P1 — *Foundations track* (per `ROADMAP.md §3 P1`).
-> **Status:** ✅ APPROVED (2026-06-28). Spec approved; all P1 decisions confirmed at their
-> recommended options and logged in `DECISIONS.md` (D0015–D0016). Load-bearing technical claims
-> web-validated 2026-06-28 (see §9). Build proceeds in dependency order from §6.A Task 1
-> (grader single-source) — no chapter is authored until its one-paragraph plan is approved per
-> `CLAUDE.md`.
+> **Status:** ✅ **COMPLETE (2026-06-29).** All of §6 (Tasks 1–67) delivered: shared tooling +
+> **50 chapters across M0–M3**, 4 module quizzes, 4 rubric-graded capstones, all gates green.
+> Every §7 Definition-of-Done item is satisfied (see §7). Closed on branch
+> `feat/p1-foundations-spec`. *(Spec approved 2026-06-28; all P1 decisions confirmed at their
+> recommended options and logged in `DECISIONS.md` D0015–D0016; load-bearing technical claims
+> web-validated 2026-06-28, see §9.)*
+> **Evidence at close:** all 50 CPython twins execute cleanly (R10); 8 gate scripts + **111 unit
+> tests** green; codespell clean and zero banned/hype words in learner content; full site renders
+> (61 docs) and builds from a fresh clone; **§6.F Task 66 exhaustive ₹0 browser sweep — all 50
+> chapters loaded and run on Pyodide, PASS**; offline datasets confirmed live (habits.csv 35 rows;
+> Palmer Penguins 344×8); 4 module quizzes score and persist to `localStorage` (10/11/12/12).
 > **Authoritative parents:** `CLAUDE.md` (operating agreement, generic DoD), `ROADMAP.md §3 P1`
 > (phase goal + exit criteria), `Larnix-PLAN.md` (canonical M0–M3 chapter lists), `STYLE_GUIDE.md`
 > (the Varsity contract, tiers, banned words), `CHAPTER_TEMPLATE.md` (10-field front-matter schema),
@@ -13,7 +19,7 @@
 > (the proven platform this phase builds on; decisions D0004–D0014).
 > **Entry criteria:** P0 DoD met ✅ (verified 2026-06-28 — site builds, gates green, sample chapter
 > proven end-to-end).
-> **Last updated:** 2026-06-28
+> **Last updated:** 2026-06-29
 
 P1 is the first **content-at-scale** phase. P0 proved the machine on one chapter; P1 authors the
 **entire zero-to-literate on-ramp — Modules 0–3, ~50 chapters — every one of them in-browser at
@@ -443,17 +449,17 @@ alt-text** describing the takeaway (not just "a chart") — added to the correct
 
 ### 5.5 Correctness-review checklist (per-chapter PR gate — instantiates `STYLE_GUIDE §11` + R10)
 
-The author ticks, for **every** chapter:
+The author ticks, for **every** chapter (✅ verified across all 50 chapters at phase close):
 
-- [ ] Every code cell executed in CI (twin) and previewed in-browser; outputs shown.
-- [ ] Every term defined on first use; no banned words; reads for a true beginner (the house test).
-- [ ] Numbers/claims verified; primary sources cited; no invented citations.
-- [ ] Front-matter complete + accurate (all 10 fields); `last_reviewed` set; `review_cards` present.
-- [ ] ₹0/`browser` path confirmed; R3 import lint clean (Pyodide-safe imports only).
-- [ ] Exercises have working asserts + hidden solutions; tiers match; stretch labelled rubric-graded.
-- [ ] Quiz answers + explanations verified; quick-check + module-quiz entries added.
-- [ ] Plots/diagrams have meaningful alt-text; no colour-only meaning.
-- [ ] Datasets used are ledgered in `docs/ASSETS.md` with a license (R11).
+- [x] Every code cell executed in CI (twin) and previewed in-browser; outputs shown.
+- [x] Every term defined on first use; no banned words; reads for a true beginner (the house test).
+- [x] Numbers/claims verified; primary sources cited; no invented citations.
+- [x] Front-matter complete + accurate (all 10 fields); `last_reviewed` set; `review_cards` present.
+- [x] ₹0/`browser` path confirmed; R3 import lint clean (Pyodide-safe imports only).
+- [x] Exercises have working asserts + hidden solutions; tiers match; stretch labelled rubric-graded.
+- [x] Quiz answers + explanations verified; quick-check + module-quiz entries added.
+- [x] Plots/diagrams have meaningful alt-text; no colour-only meaning.
+- [x] Datasets used are ledgered in `docs/ASSETS.md` with a license (R11).
 
 ### 5.6 Scale-specific quality risks (new in P1)
 
@@ -474,6 +480,11 @@ Each task ≈ one commit/PR. **Shared tooling (§6.A) lands before content scale
 features" discipline applied within the phase), then modules in dependency order. Per `CLAUDE.md`,
 each non-trivial chapter gets a one-paragraph plan (hook, worked example, exercises, twin/grader,
 risks) approved before authoring.
+
+> ✅ **All tasks (1–67) complete (2026-06-29).** §6.A shared tooling, §6.B M0 (6 ch), §6.C M1 (14 ch),
+> §6.D M2 (16 ch), §6.E M3 (14 ch), and §6.F integration all delivered and committed on
+> `feat/p1-foundations-spec`. **P1-D5 merge log: 0 of 3 optional merges used** — M1 Ch7/Ch8 and
+> M3 Ch11/Ch12 were each kept as separate chapters (final counts 6/14/16/14 = 50).
 
 ### 6.A — Shared tooling first (unblocks all chapters)
 
@@ -520,51 +531,66 @@ review cards. *(Apply the P1-D5 merge if Ch7/Ch8 are thin.)*
 62. M3 — module quiz.
 63. M3 — capstone (end-to-end EDA on a new public dataset) + rubric + walkthrough; README finalize.
 
-### 6.F — Phase integration + DoD
+### 6.F — Phase integration + DoD ✅ complete
 
-64. Nav/landing update: M0–M3 listed as live in `_quarto.yml` + `index.qmd` course catalog.
-65. Full **fresh-clone build + green CI** pass across all ~50 chapters; fix any cross-chapter link/
-    nav/lint issues; verify all twins execute.
-66. **₹0 confirmation pass:** every chapter previewed in a real browser (Pyodide); the four
-    capstones run client-side; offline-load of vendored datasets confirmed.
-67. **Docs:** log `D0015+` decisions; `PORTFOLIO.md` quantified bullet; `RUNBOOK.md` authoring-at-
-    scale note; `docs/WALKTHROUGH.md` extended with a zero→EDA learner path.
+64. ✅ Nav/landing update: M0–M3 listed as live in `_quarto.yml` sidebar + `index.qmd` course catalog
+    (each module tile marked Available with a landing link).
+65. ✅ Full **fresh-clone build + green CI** pass across all 50 chapters; all 50 twins execute; no
+    cross-chapter link/nav/lint issues. (Found + fixed M2 Ch12's missing `live-html`/`execute` block
+    and added a render-safety guard to `chapter_structure_lint.py`.)
+66. ✅ **₹0 confirmation pass:** every one of the 50 chapters loaded in a real browser and run on
+    Pyodide — all PASS; the four capstone code paths run client-side (Iris, habits cleaning,
+    one-neuron gradient check 3.27e-11, EDA stack); offline load of vendored datasets confirmed live.
+67. ✅ **Docs:** `D0015+` decisions logged; `PORTFOLIO.md` quantified bullet added; `RUNBOOK.md`
+    authoring-at-scale note added; `docs/WALKTHROUGH.md` extended with the zero→EDA learner path.
 
 ---
 
 ## 7. Definition of Done (P1)
 
 Instantiates `ROADMAP §3 P1` exit criteria, expanded against the `CLAUDE.md` generic DoD and the
-per-chapter Varsity contract (`STYLE_GUIDE §11`). P1 is done when **all** hold:
+per-chapter Varsity contract (`STYLE_GUIDE §11`). ✅ **P1 is DONE — all items hold (2026-06-29):**
 
-- [ ] **M0–M3 complete** (~50 chapters); **every chapter passes the Varsity contract** (hook →
+- [x] **M0–M3 complete** (50 chapters); **every chapter passes the Varsity contract** (hook →
       explanation → runnable example → Key Takeaways → 2–4 graded exercises) with complete, accurate
-      10-field front-matter incl. `last_reviewed` and `review_cards`.
-- [ ] **100% of M0–M3 notebooks run in JupyterLite/Pyodide (₹0 confirmed)** *and* **every chapter's
+      10-field front-matter incl. `last_reviewed` and `review_cards`. *(Enforced by
+      `chapter_structure_lint.py` + `frontmatter_lint.py` + `review_cards_lint.py` — all green.)*
+- [x] **100% of M0–M3 notebooks run in JupyterLite/Pyodide (₹0 confirmed)** *and* **every chapter's
       CPython twin executes cleanly in CI** (R10). The R3 import lint confirms all imports are
-      Pyodide-safe.
-- [ ] **Each module has a quiz** (per-chapter quick checks + a cumulative `module-quiz.yml`) **and a
+      Pyodide-safe. *(All 50 twins execute; Task 66 ran all 50 live in-browser — PASS.)*
+- [x] **Each module has a quiz** (per-chapter quick checks + a cumulative `module-quiz.yml`) **and a
       graded capstone with a rubric**; every capstone requires a measured number ("did you measure
-      it?").
-- [ ] **M0 ships "What you need & what it costs"** stating the ₹0 path up front.
-- [ ] **Exercises have working auto-graders + hidden solutions**; stretch tasks are labelled
+      it?"). *(4 module quizzes scored 10/11/12/12 in-browser; 4 capstones finalized with rubrics.)*
+- [x] **M0 ships "What you need & what it costs"** stating the ₹0 path up front. *(M0 Ch2.)*
+- [x] **Exercises have working auto-graders + hidden solutions**; stretch tasks are labelled
       rubric-graded (R4). The grader is single-sourced (P1-D9); twins are generated/verified (P1-D10).
-- [ ] **CI green across the whole phase:** notebook execution (R10), Vale, markdownlint, codespell,
+- [x] **CI green across the whole phase:** notebook execution (R10), Vale, markdownlint, codespell,
       lychee, a11y (alt-text + contrast), R1/R3/R6 gates, and the new assets-ledger check.
-- [ ] **All datasets ledgered in `docs/ASSETS.md` with a license** (R11); no un-ledgered `data/` file.
-- [ ] **A non-technical learner can go zero → EDA capstone entirely in-browser at ₹0** — a clickable
+      *(8 gate scripts + 111 unit tests green; codespell clean; zero banned/hype words in content.)*
+- [x] **All datasets ledgered in `docs/ASSETS.md` with a license** (R11); no un-ledgered `data/` file.
+      *(penguins.csv CC0-1.0; habits.csv CC0-by-us; `assets_check.py` green.)*
+- [x] **A non-technical learner can go zero → EDA capstone entirely in-browser at ₹0** — a clickable
       "5-minute (and full) walkthrough" path recorded in `docs/WALKTHROUGH.md`.
-- [ ] **Builds cleanly from a fresh clone**; a preview deploy renders M0–M3 correctly with working
-      nav/search; the landing catalog shows M0–M3 live.
-- [ ] **`DECISIONS.md` updated** with confirmed `D0015+` (P1-Dn); **`STYLE_GUIDE.md` adhered to**
-      (lint/prose pass); module READMEs complete.
-- [ ] **`PORTFOLIO.md`** carries a quantified P1 bullet (e.g. "authored + auto-graded ~50 in-browser
-      chapters across 4 foundation modules, 100% runnable at ₹0, with ~150 spaced-repetition cards
+- [x] **Builds cleanly from a fresh clone**; a preview deploy renders M0–M3 correctly with working
+      nav/search; the landing catalog shows M0–M3 live. *(Full site renders 61 docs; fresh-clone
+      gates + twins re-verified.)*
+- [x] **`DECISIONS.md` updated** with confirmed `D0015+` (P1-Dn) incl. the §6.F completion note;
+      **`STYLE_GUIDE.md` adhered to** (lint/prose pass); module READMEs complete.
+- [x] **`PORTFOLIO.md`** carries a quantified P1 bullet ("authored + auto-graded **50 in-browser
+      chapters across 4 foundation modules, 100% runnable at ₹0**, with per-chapter review cards
       and 4 rubric-graded capstones").
 
 ---
 
 ## 8. Open questions (need your input before / during the build)
+
+> ✅ **All resolved (2026-06-28) and logged in `DECISIONS.md` D0015–D0016.** Q-1→P1-D2 (synthetic
+> `habits.csv` + Palmer Penguins CC0); Q-2→P1-D7 (Matplotlib-only, Seaborn as an optional note);
+> Q-3→P1-D3 (client-side transformers.js taste); Q-4→P1-D6 (env/tooling chapters stay
+> `browser`-conceptual with a runnable proxy + recorded transcript); Q-5→P1-D5 (merges allowed but
+> **0 used** — counts held at 6/14/16/14); Q-6 (kept `🧱 For Java developers` as collapsible asides);
+> Q-7 (M1/M2 capstones pair an auto-check with a rubric, M3 rubric-only); Q-8 (M0 = ₹0 what/why
+> setup; M1/M3 = how-it-works under the hood). Originals preserved below for the record.
 
 Focused ambiguities and missing-topic risks. Most map to a decision above; a few need a call.
 
