@@ -1,0 +1,326 @@
+---
+title: "A 10-minute history of AI"
+module: "M0 — Orientation"
+chapter: 5
+difficulty: "beginner"
+prereqs:
+  - "M0 Ch3 — What is AI, really?"
+  - "M0 Ch4 — AI vs ML vs DL vs GenAI"
+learning_objectives:
+  - "Place the major milestones of AI on a timeline"
+  - "Explain why progress came in booms and 'AI winters'"
+  - "Connect the 2012 deep-learning boom and the 2017 transformer to today's generative AI"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 15
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: ai-is-old
+    q: "Roughly how old is the idea of an artificial neuron?"
+    a: "About eighty years — McCulloch and Pitts proposed a mathematical neuron in 1943."
+  - id: ai-winters
+    q: "What is an 'AI winter'?"
+    a: "A period when progress stalled and funding dried up after early promises went unmet — notably after 1969 and again in the late 1980s."
+  - id: two-sparks
+    q: "Which two milestones most directly led to today's generative AI?"
+    a: "The 2012 deep-learning boom (AlexNet) and the 2017 transformer architecture ('Attention Is All You Need')."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Generative AI feels like it arrived overnight — ChatGPT reached the public in late
+2022 and the world changed its mind about computers in a year. But the first
+**artificial neuron** was described in **1943**, before the transistor existed. AI
+is roughly eighty years old. Its story is not a straight climb; it is a series of
+bold promises, crushing disappointments ("AI winters"), and a handful of
+breakthroughs that changed everything.
+
+Here is the ten-minute version.
+
+> You'll need from before: the family tree from Chapter 4 — AI ⊃ ML ⊃ deep
+> learning ⊃ generative AI. We'll watch those rings appear, in order, over time.
+
+---
+
+## The story, in five acts
+
+**Act 1 — The idea (1943–1958).** In 1943, Warren McCulloch and Walter Pitts wrote
+down a simple mathematical model of a neuron. In 1950, Alan Turing asked "can
+machines think?" and proposed a test for it. In 1956, a summer workshop at
+Dartmouth College gave the field its name: *artificial intelligence*. Then, in
+1958, Frank Rosenblatt built the **Perceptron** — a machine that *learned* to tell
+patterns apart from examples. Optimism ran high.
+
+**Act 2 — The first winter (1969–1980s).** In 1969, Marvin Minsky and Seymour
+Papert proved that a single-layer perceptron could not learn even simple patterns
+(famously, the "exclusive-or"). The limitation was real, the disappointment
+sharp, and funding collapsed. This was the first **AI winter** — a recurring
+pattern where hype outruns results and the money leaves.
+
+**Act 3 — Learning returns (1986–2010).** In 1986, a method called
+**backpropagation** (popularised by Rumelhart, Hinton, and Williams in *Nature*)
+let networks with *many* layers learn — sidestepping the 1969 limitation. Neural
+networks revived; by the 1990s they could read handwritten digits. Meanwhile, a
+different, rule-and-search kind of AI hit a milestone: in 1997, IBM's **Deep Blue**
+beat world chess champion Garry Kasparov. (Deep Blue searched moves by rules — it
+did not *learn*, a useful reminder that "AI" is broader than "machine learning.")
+
+**Act 4 — The deep-learning boom (2012–2017).** In 2012, a deep network called
+**AlexNet** (Krizhevsky, Sutskever, and Hinton) won the ImageNet image-recognition
+contest by a wide margin. Three things had finally come together: big datasets,
+fast GPUs, and deeper networks. Deep learning went from fringe to mainstream
+almost overnight. In 2016, DeepMind's **AlphaGo** beat Go champion Lee Sedol — a
+game long thought too intuitive for computers.
+
+**Act 5 — Transformers and generative AI (2017–today).** In 2017, eight
+researchers at Google published **"Attention Is All You Need,"** introducing the
+**transformer** — the architecture behind nearly every modern language model. Scaled
+up on enormous text, transformers became **foundation models**: trained once, then
+adapted to countless tasks. GPT-3 (2020) showed how capable they were; **ChatGPT**
+(2022) put one in everyone's hands. The current frontier extends this with models
+trained to *generate images and audio*, and **reasoning models** trained to work
+through problems step by step.
+
+> 🔬 Going deeper (optional): notice the rhythm — an idea, a wave of hype, a winter,
+> then a breakthrough that makes the old promise real. Today's excitement is the
+> warmest summer yet, but the pattern is worth remembering.
+
+---
+
+## Let's build it (worked example): the timeline as data
+
+History is easier to reason about as data. We'll put the milestones in a list and
+ask questions of it. Press **Run**.
+
+```{pyodide}
+#| caption: "The milestones as (year, event) data"
+timeline = [
+    (1943, "McCulloch & Pitts: a mathematical neuron"),
+    (1950, "Turing's 'can machines think?' test"),
+    (1956, "Dartmouth workshop names the field 'AI'"),
+    (1958, "Rosenblatt's Perceptron: a machine that learns"),
+    (1969, "Minsky & Papert show the perceptron's limits (first winter)"),
+    (1986, "Backpropagation lets deep networks learn"),
+    (1997, "Deep Blue beats Kasparov at chess"),
+    (2012, "AlexNet wins ImageNet (deep-learning boom)"),
+    (2016, "AlphaGo beats Lee Sedol at Go"),
+    (2017, "The transformer: 'Attention Is All You Need'"),
+    (2020, "GPT-3 shows the power of scale"),
+    (2022, "ChatGPT reaches the public"),
+]
+
+for year, event in timeline:
+    print(year, "—", event)
+```
+
+```{pyodide}
+#| caption: "From the first neuron to ChatGPT — how long?"
+first_year = timeline[0][0]      # 1943
+chatgpt_year = 2022
+print("Years from the first artificial neuron to ChatGPT:", chatgpt_year - first_year)
+```
+
+Seventy-nine years. The "overnight" success was almost a century in the making.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. AI is about **eighty years old** — the artificial neuron dates to 1943.
+2. Progress came in **booms and winters**: hype, disappointment, then a
+   breakthrough that delivered on the old promise.
+3. The **2012 deep-learning boom** (AlexNet) and the **2017 transformer** are the
+   two milestones that most directly enabled today's generative AI.
+4. "AI" is broader than "machine learning": Deep Blue (1997) was AI that searched
+   by rules, with no learning at all.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+We'll reuse the `timeline` data from the worked example.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `event_year` returns the year a named event happened
+(or `None` if it isn't in the timeline). Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_year
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_year
+timeline = [
+    (1958, "Rosenblatt's Perceptron"),
+    (2012, "AlexNet wins ImageNet"),
+    (2017, "The transformer"),
+]
+
+def event_year(timeline, name):
+    """Return the year whose event matches `name`, or None if not found."""
+    for year, event in timeline:
+        if event == name:
+            return ____  # TODO: hand back the matching year
+    return None
+
+run_tests([
+    ("finds AlexNet's year", event_year(timeline, "AlexNet wins ImageNet"), 2012),
+    ("finds the transformer's year", event_year(timeline, "The transformer"), 2017),
+    ("unknown event is None", event_year(timeline, "Moon landing"), None),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The loop has already unpacked each entry into `year` and `event`. When `event`
+matches, which of those two should the function return?
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+timeline = [
+    (1958, "Rosenblatt's Perceptron"),
+    (2012, "AlexNet wins ImageNet"),
+    (2017, "The transformer"),
+]
+
+def event_year(timeline, name):
+    for year, event in timeline:
+        if event == name:
+            return year
+    return None
+```
+
+When the event matches, return its `year`; if the loop finishes with no match, the
+event isn't in the timeline, so return `None`.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `events_in_era(timeline, start, end)` — return the list of event *names*
+whose year is between `start` and `end`, inclusive. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_era
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_era
+timeline = [
+    (1958, "Perceptron"),
+    (1986, "Backpropagation"),
+    (2012, "AlexNet"),
+    (2017, "Transformer"),
+    (2022, "ChatGPT"),
+]
+
+def events_in_era(timeline, start, end):
+    """Return event names with start <= year <= end, in timeline order."""
+    names = []
+    for year, event in timeline:
+        if ____:  # TODO: is this year inside the era?
+            names.append(event)
+    return names
+
+run_tests([
+    ("the deep-learning decade", events_in_era(timeline, 2010, 2019), ["AlexNet", "Transformer"]),
+    ("a single year", events_in_era(timeline, 2022, 2022), ["ChatGPT"]),
+    ("an empty era", events_in_era(timeline, 1990, 2000), []),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+"Between `start` and `end`, inclusive" is two comparisons joined with `and`:
+the year is at least `start` *and* at most `end`. Python lets you chain them:
+`start <= year <= end`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+timeline = [
+    (1958, "Perceptron"),
+    (1986, "Backpropagation"),
+    (2012, "AlexNet"),
+    (2017, "Transformer"),
+    (2022, "ChatGPT"),
+]
+
+def events_in_era(timeline, start, end):
+    names = []
+    for year, event in timeline:
+        if start <= year <= end:
+            names.append(event)
+    return names
+```
+
+`start <= year <= end` is `True` only for years inside the era, so only those
+event names are collected — in the order they appear in the timeline.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Pick **one** milestone from this
+chapter and argue, in three sentences, why it mattered — what became possible
+after it that was not possible before.
+
+**Rubric — a good answer:**
+
+- Names a real milestone and its (correct) year from the chapter.
+- States clearly what it unlocked (e.g. the transformer → scalable language models).
+- Connects it to something you've seen, used, or read about since.
+
+<details><summary>Show one possible answer</summary>
+
+"The 2017 transformer mattered because it let networks pay 'attention' to all parts
+of a text at once, which made training on enormous datasets practical. Before it,
+language models struggled to keep track of long context. Every chatbot I've used
+since — including the sentiment demo in Chapter 4 — descends from that one idea."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've placed AI in time: an eighty-year arc of booms, winters, and breakthroughs,
+arriving at the generative models of today. That's the end of the "what and why."
+The final chapter of this module is the "how" of *this school* — how to move
+through the tiers, exercises, quizzes, and capstones, and earn your certificate.

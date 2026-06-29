@@ -55,6 +55,8 @@ website:
             href: modules/00-orientation/ch03-what-is-ai-really.qmd
           - text: "Ch4 — AI vs ML vs DL vs GenAI"
             href: modules/00-orientation/ch04-ai-ml-dl-genai.qmd
+          - text: "Ch5 — A 10-minute history of AI"
+            href: modules/00-orientation/ch05-history-of-ai.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

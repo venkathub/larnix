@@ -34,7 +34,7 @@ All 🟢 Beginner · `browser` · `stable`.
 | 2 | [What you need & what it costs](ch02-what-you-need-and-what-it-costs.qmd) | shipped |
 | 3 | [What is AI, really?](ch03-what-is-ai-really.qmd) | shipped |
 | 4 | [AI vs ML vs DL vs GenAI — a family tree](ch04-ai-ml-dl-genai.qmd) | shipped |
-| 5 | A 10-minute history of AI | authored in P1 |
+| 5 | [A 10-minute history of AI](ch05-history-of-ai.qmd) | shipped |
 | 6 | How this school works | authored in P1 |
 
 ## Assessment

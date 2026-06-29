@@ -41,8 +41,10 @@
 - [ ] `compute: browser`; imports are Pyodide-safe (R3) — a runtime micropip install is
       annotated `# micropip: <name>`.
 - [ ] The CI **twin** is generated, not hand-written: run `python infra/ci/make_twin.py
-      --write <chapter.qmd>` and commit it; the hidden solution is a runnable cell given
-      the cells above it. (P1-D10)
+      --write <chapter.qmd>` and commit it. The hidden solution must be a **self-contained**
+      runnable cell — **redefine any data the asserts need**, because the twin runs every cell
+      in one shared namespace, so a worked-example variable of the same name can otherwise
+      shadow it (the in-browser exercise env is isolated, so it needs the data anyway). (P1-D10)
 
 ## Assessment
 
