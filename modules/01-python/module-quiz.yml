@@ -1,0 +1,91 @@
+title: "M1 — module quiz"
+id: "m1-module-quiz"
+questions:
+  - id: dynamic-typing
+    prompt: "Why is `steps = 7500` enough in Python, with no type declared?"
+    options:
+      - "Python has no types"
+      - "The type is inferred from the value — dynamic typing"
+      - "The type must be declared on the line above"
+    answer: 1
+    explanation: "Python infers a value's type from what you assign (Ch1)."
+  - id: file-values-strings
+    prompt: "A value read from a CSV is `7500`. What is it, before you convert it?"
+    options:
+      - "An int"
+      - "A string"
+      - "A float"
+    answer: 1
+    explanation: "CSV fields arrive as strings; convert with int()/float() before maths (Ch1, Ch6)."
+  - id: accumulator
+    prompt: "To count active days in a loop, you would…"
+    options:
+      - "Set count = 0 before the loop and do count += 1 when a day is active"
+      - "Use a while loop that never ends"
+      - "Print each day and hope"
+    answer: 0
+    explanation: "The accumulator pattern: start at 0, add 1 when the condition holds (Ch2)."
+  - id: function-return
+    prompt: "What does a function with no `return` give back?"
+    options:
+      - "0"
+      - "None"
+      - "An error"
+    answer: 1
+    explanation: "A function with no return returns None (Ch3)."
+  - id: dict-record
+    prompt: "Which structure best models one row of data with named fields?"
+    options:
+      - "A list, read by position"
+      - "A dict, read by key like row['steps']"
+      - "A set"
+    answer: 1
+    explanation: "A dict maps field names to values (Ch4)."
+  - id: comprehension
+    prompt: "What does `[d['steps'] for d in days]` produce?"
+    options:
+      - "A dict of steps"
+      - "A list of each day's steps"
+      - "A single number"
+    answer: 1
+    explanation: "A list comprehension maps the expression over the collection (Ch5)."
+  - id: dictreader
+    prompt: "What does csv.DictReader give for each row?"
+    options:
+      - "A list of values"
+      - "A dict keyed by the column headers"
+      - "A single string"
+    answer: 1
+    explanation: "DictReader maps each header to its value (Ch6)."
+  - id: try-except
+    prompt: "What is the point of try/except?"
+    options:
+      - "To run risky code and recover if it raises an error, instead of crashing"
+      - "To make code faster"
+      - "To declare types"
+    answer: 0
+    explanation: "try holds risky code; except recovers from the error (Ch7)."
+  - id: traceback
+    prompt: "Which line of a traceback do you read first?"
+    options:
+      - "The first line"
+      - "The last line — it holds the ExceptionType and message"
+      - "The middle line"
+    answer: 1
+    explanation: "Read bottom-up; the last line names the error (Ch8)."
+  - id: vectorized
+    prompt: "In NumPy, what does `steps >= 8000` give for an array `steps`?"
+    options:
+      - "A single True or False for the whole array"
+      - "A boolean array, one True/False per element"
+      - "An error"
+    answer: 1
+    explanation: "Vectorized comparison applies to every element at once (Ch12)."
+  - id: pin-version
+    prompt: "What does a requirements line `pandas==2.3.0` do?"
+    options:
+      - "Installs the newest pandas"
+      - "Pins an exact version for reproducibility"
+      - "Deletes pandas"
+    answer: 1
+    explanation: "== pins an exact version so every machine matches (Ch13)."
