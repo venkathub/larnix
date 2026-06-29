@@ -1,0 +1,298 @@
+---
+title: "How this school works"
+module: "M0 — Orientation"
+chapter: 6
+difficulty: "beginner"
+prereqs:
+  - "M0 Ch1 — Train your first model"
+learning_objectives:
+  - "Use the difficulty tiers and chapter structure deliberately"
+  - "Know the assessment ladder: exercises, quizzes, and capstones"
+  - "Understand spaced review and how finishing modules builds toward a certificate"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-06-29"
+est_minutes: 12
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: tiers
+    q: "What do the three difficulty tiers mean?"
+    a: "🟢 Beginner (no prior ML), 🟡 Intermediate (builds on earlier modules), 🔴 Advanced (solid fundamentals assumed). Read the badge at the top of each chapter."
+  - id: assessment-ladder
+    q: "What are the three ways your understanding is checked?"
+    a: "Auto-graded exercises in each chapter, quizzes (per-chapter quick checks plus an end-of-module quiz), and a build-something capstone per module."
+  - id: measure-it
+    q: "What must every capstone include?"
+    a: "A measured number — 'did you measure it?' A capstone with no measured result cannot score above Developing."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Without being told, you have already used almost every feature of this school. In
+the last five chapters you ran real code, were marked by an auto-grader, took a
+quiz, and met "review cards." This short chapter **names** those parts, so
+from here on you can use them on purpose — and shows you how to track your way to a
+certificate.
+
+> You'll need from before: nothing new. This is a map of the building you're
+> already standing in.
+
+---
+
+## The parts of the school
+
+### Difficulty tiers
+
+Every chapter wears a badge for its level:
+
+- 🟢 **Beginner** — assumes no prior machine learning; gentle pace.
+- 🟡 **Intermediate** — builds on earlier modules; introduces real tooling.
+- 🔴 **Advanced** — assumes solid fundamentals; production or frontier depth.
+
+All of M0 is 🟢. Later modules climb. You can always read the badge before you
+commit your time.
+
+### The shape of every chapter
+
+You've now seen the same rhythm five times — that's deliberate (it's called the
+*Varsity contract*):
+
+1. a **hook** (an analogy or a working demo first),
+2. a **plain-language explanation** of one idea,
+3. at least one **runnable example** you can press **Run** on,
+4. a **Key Takeaways** box, and
+5. a few **graded exercises** with hidden solutions.
+
+Knowing the shape means you always know where you are in a chapter.
+
+### Code that runs, and graders that check it
+
+Every code block runs **in your browser**, at ₹0 (Chapter 2). The exercises are
+checked by an auto-grader — the `run_tests` you've been using — which gives instant
+pass/fail feedback. Each exercise hides a **solution walkthrough** you should open
+only after a genuine try.
+
+### Quizzes and capstones
+
+Your understanding is checked three ways, in increasing size:
+
+- **Exercises** — small, inside each chapter, auto-graded.
+- **Quizzes** — a 2–3 question *quick check* per chapter, plus a longer
+  *module quiz* at the end of each module.
+- **Capstones** — one *build-something* project per module, graded by a rubric.
+  Every capstone must **report a number** ("did you measure it?"). A result you
+  did not measure cannot score well, however polished the write-up.
+
+### Spaced review, tracks, and the certificate
+
+Each chapter seeds a few **review cards** — short question/answer prompts drawn from
+its Key Takeaways — so you can come back and beat the forgetting curve. As you
+finish modules, you progress along a **learning track**; completing a track's
+quizzes and capstones is what earns a **certificate**. (The review scheduler and
+certificate are part of how the school is designed to grow; the cards are being
+seeded for every chapter as it ships.)
+
+---
+
+## Let's build it (worked example): track your progress
+
+Let's make "progress" concrete. We'll list the foundation modules with a flag for
+whether you've finished each, and compute how far along you are. Press **Run**.
+
+```{pyodide}
+#| caption: "Your foundation-track progress as data"
+modules = [
+    ("M0 — Orientation", True),
+    ("M1 — Python for AI", False),
+    ("M2 — Math You Actually Need", False),
+    ("M3 — Data & Tooling", False),
+]
+
+done = sum(1 for name, completed in modules if completed)
+print(f"Completed {done} of {len(modules)} modules ({done / len(modules):.0%}).")
+```
+
+```{pyodide}
+#| caption: "What's next?"
+upcoming = [name for name, completed in modules if not completed]
+print("Next up:", upcoming[0] if upcoming else "All done — you've finished the track!")
+```
+
+One module down. The same idea — a little data plus a little code — is how a
+progress page or a certificate check works under the hood.
+
+---
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. Read the **tier badge** (🟢/🟡/🔴) to know a chapter's level before you start.
+2. Every chapter follows the same shape: **hook → explanation → runnable example →
+   Key Takeaways → graded exercises**.
+3. Your understanding is checked at three sizes: **exercises → quizzes →
+   capstones**, and every capstone must **report a number**.
+4. **Review cards** help you remember, and finishing modules moves you along a
+   **track** toward a **certificate**.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Complete the marked line so `percent_complete` returns the fraction of modules
+finished, as a number from 0 to 1. Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pct
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_pct
+def percent_complete(modules):
+    """Fraction of (name, completed) modules that are completed, as a float in [0, 1]."""
+    done = sum(1 for name, completed in modules if completed)
+    return ____  # TODO: turn the count into a fraction of all modules
+
+run_tests([
+    ("half done", percent_complete([("A", True), ("B", False)]), 0.5),
+    ("all done", percent_complete([("A", True), ("B", True)]), 1.0),
+    ("none done", percent_complete([("A", False)]), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A fraction is a part divided by a whole: the number `done` divided by the total
+number of modules, which is `len(modules)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def percent_complete(modules):
+    done = sum(1 for name, completed in modules if completed)
+    return done / len(modules)
+```
+
+Dividing the completed count by the total number of modules gives a fraction from
+`0.0` (none done) to `1.0` (all done).
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+Write `next_module(modules)` — return the **name** of the first module that isn't
+finished, or `None` if every module is done. Complete the marked line.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_next
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_next
+def next_module(modules):
+    """Return the name of the first uncompleted module, or None if all are done."""
+    for name, completed in modules:
+        if not completed:
+            return ____  # TODO: hand back this module's name
+    return None
+
+run_tests([
+    ("first unfinished", next_module([("M0", True), ("M1", False), ("M2", False)]), "M1"),
+    ("skips finished ones", next_module([("M0", True), ("M1", True), ("M2", False)]), "M2"),
+    ("all finished is None", next_module([("M0", True), ("M1", True)]), None),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The loop stops at the first module where `completed` is `False`. At that point,
+which of the two unpacked values is the module's name?
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def next_module(modules):
+    for name, completed in modules:
+        if not completed:
+            return name
+    return None
+```
+
+Return the `name` of the first unfinished module; if the loop never finds one,
+every module is done, so return `None`.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Write your own learning plan, in
+three or four sentences: which track or modules you'll do first, roughly when, and
+**why** — what you want to be able to build by the end.
+
+**Rubric — a good plan:**
+
+- Names specific modules or a track (not "everything").
+- States a rough schedule you could actually keep.
+- Connects to a concrete goal (a project, a job, a skill) you care about.
+
+<details><summary>Show one possible plan</summary>
+
+```python
+plan = [
+    ("M0 — Orientation", "this week"),
+    ("M1 — Python for AI", "next two weeks"),
+    ("M3 — Data & Tooling", "the month after"),
+]
+for module, when in plan:
+    print(f"{when}: {module}")
+```
+
+"I'll finish M0 this week, then spend two weeks on M1 so I can clean data with my
+own functions, and follow with M3 to run a real EDA — because my goal is to analyse
+my city's open transport data and publish one honest chart."
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+That's the whole of Module 0: you've run a model, confirmed the ₹0 path, learned
+what AI is and how its pieces nest, placed it in history, and mapped how to learn
+here. Next comes the **module quiz** and the **M0 capstone** — your first
+build-something — after which Module 1 begins teaching the Python you'll use for
+everything that follows.

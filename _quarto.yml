@@ -57,6 +57,8 @@ website:
             href: modules/00-orientation/ch04-ai-ml-dl-genai.qmd
           - text: "Ch5 — A 10-minute history of AI"
             href: modules/00-orientation/ch05-history-of-ai.qmd
+          - text: "Ch6 — How this school works"
+            href: modules/00-orientation/ch06-how-this-school-works.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 
