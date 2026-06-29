@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Train your first model — in your browser – Larnix</title>
+<title>Linear algebra in NumPy – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/ch15-linear-algebra-in-numpy.html">Ch15 — Linear algebra in NumPy</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch1 — Train your first model</span></a>
   </div>
 </li>
@@ -583,7 +583,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/02-math/ch15-linear-algebra-in-numpy.html" class="sidebar-item-text sidebar-link">
+  <a href="../../modules/02-math/ch15-linear-algebra-in-numpy.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ch15 — Linear algebra in NumPy</span></a>
   </div>
 </li>
@@ -701,17 +701,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
-  <li><a href="#the-idea-in-plain-language" id="toc-the-idea-in-plain-language" class="nav-link" data-scroll-target="#the-idea-in-plain-language">The idea, in plain language</a></li>
-  <li><a href="#lets-build-it-worked-example" id="toc-lets-build-it-worked-example" class="nav-link" data-scroll-target="#lets-build-it-worked-example">Let’s build it (worked example)</a></li>
+  <li><a href="#vectors-and-matrices-are-arrays" id="toc-vectors-and-matrices-are-arrays" class="nav-link" data-scroll-target="#vectors-and-matrices-are-arrays">Vectors and matrices are arrays</a></li>
+  <li><a href="#element-wise-is-not-the-dot-product" id="toc-element-wise-is-not-the-dot-product" class="nav-link" data-scroll-target="#element-wise-is-not-the-dot-product">Element-wise is not the dot product</a></li>
+  <li><a href="#a-matrix-times-a-vector-apply-a-transformation" id="toc-a-matrix-times-a-vector-apply-a-transformation" class="nav-link" data-scroll-target="#a-matrix-times-a-vector-apply-a-transformation">A matrix times a vector: apply a transformation</a></li>
+  <li><a href="#a-matrix-times-a-matrix" id="toc-a-matrix-times-a-matrix" class="nav-link" data-scroll-target="#a-matrix-times-a-matrix">A matrix times a matrix</a></li>
+  <li><a href="#transpose-flipping-rows-and-columns" id="toc-transpose-flipping-rows-and-columns" class="nav-link" data-scroll-target="#transpose-flipping-rows-and-columns">Transpose: flipping rows and columns</a></li>
+  <li><a href="#the-identity-matrix" id="toc-the-identity-matrix" class="nav-link" data-scroll-target="#the-identity-matrix">The identity matrix</a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
   <ul class="collapse">
   <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
   </ul></li>
   <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
-  <li><a href="#exercise-3-stretch-optional-15-min" id="toc-exercise-3-stretch-optional-15-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</a></li>
+  <li><a href="#exercise-1-guided-4-min" id="toc-exercise-1-guided-4-min" class="nav-link" data-scroll-target="#exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</a></li>
+  <li><a href="#exercise-2-implement-8-min" id="toc-exercise-2-implement-8-min" class="nav-link" data-scroll-target="#exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-3-stretch-optional-8-min" id="toc-exercise-3-stretch-optional-8-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</a></li>
   </ul></li>
   <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
   <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
@@ -722,9 +726,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/ch15-linear-algebra-in-numpy.html">Ch15 — Linear algebra in NumPy</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Train your first model — in your browser</h1>
+<h1 class="title">Linear algebra in NumPy</h1>
 </div>
 
 
@@ -741,80 +745,99 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
+<p><span class="larnix-badge badge-difficulty badge-intermediate" role="img" aria-label="difficulty: Intermediate">Intermediate</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
-<p>You are about to train a real machine-learning model — in this browser tab, with nothing installed. No account, no download, no setup. Scroll to the first code block, press <strong>Run</strong>, and in a few seconds a model will sort flowers it has never seen before, and tell you how often it gets them right.</p>
-<p>The flowers are irises. Picture three species laid out on a table. For each flower someone measured four things: the length and width of its petals and of its sepals (the green leaf-like parts under the petals). Given those four numbers, can a computer learn to name the species? That is the whole task — and by the end of this page you will have built the thing that does it.</p>
+<p>Chapters 2 through 5 were pictures and arrows: a vector as a point, a matrix as a grid that moves points around, a dot product as a way to measure similarity. Those pictures built the intuition. But a model never draws an arrow — when it needs a dot product or a matrix multiply, it calls <strong>NumPy</strong>, millions of times a second.</p>
+<p>This chapter does the same operations you already understand, but in real code, in one tool. Nothing new conceptually — you are translating the pictures into the lines a model actually runs.</p>
 <blockquote class="blockquote">
-<p>By the end of this chapter you’ll be able to train a classifier, call it on new data, and read its accuracy.</p>
+<p>You’ll need from before: dot products and similarity (M2 Ch5), and the NumPy array basics (M1 Ch12). That’s the toolkit we build on here.</p>
 </blockquote>
 <hr>
 </section>
-<section id="the-idea-in-plain-language" class="level2">
-<h2 class="anchored" data-anchor-id="the-idea-in-plain-language">The idea, in plain language</h2>
-<p>Start with the word that does the heavy lifting: <strong>model</strong>.</p>
-<p>A <strong>model</strong> is a function that you <em>learn from examples</em> instead of writing by hand. You do not sit down and code the rule “if the petals are long and narrow, it’s species B.” Instead you show the computer many flowers whose species you already know, and it works out the rule for you.</p>
-<p>Three words describe the whole cycle:</p>
-<ul>
-<li><strong>Training</strong> (also called <em>fitting</em>): you hand the model a pile of examples where the answer is known — here, flowers labelled with their species — and it adjusts itself until its guesses match those known answers reasonably well.</li>
-<li><strong>Predicting</strong>: you give the trained model a <em>new</em> flower it has not seen, and it outputs a species.</li>
-<li><strong>Accuracy</strong>: you check how often it is right. If you test it on 40 flowers and it names 38 correctly, that is 38/40 = 0.95, or <strong>95%</strong> accuracy.</li>
-</ul>
-<p>One habit matters from day one: you test on flowers the model did <strong>not</strong> train on. A model can score well on examples it has already memorised and still fail on new ones, the way reciting answers you’ve seen is not the same as understanding. So we split the data into a <strong>training set</strong> (to learn from) and a <strong>test set</strong> (to grade on).</p>
-<p>That is the entire plan. The code below carries it out in five short steps.</p>
-<hr>
-</section>
-<section id="lets-build-it-worked-example" class="level2">
-<h2 class="anchored" data-anchor-id="lets-build-it-worked-example">Let’s build it (worked example)</h2>
-<p>These blocks run Python <strong>in your browser</strong> through Pyodide. The first run downloads the runtime, which takes a few seconds; after that it is instant. Press <strong>Run</strong> on each block in order.</p>
+<section id="vectors-and-matrices-are-arrays" class="level2">
+<h2 class="anchored" data-anchor-id="vectors-and-matrices-are-arrays">Vectors and matrices are arrays</h2>
+<p>In NumPy, a <strong>vector</strong> is a 1-D array and a <strong>matrix</strong> is a 2-D array (a list of rows). You build both with <code>np.array</code>:</p>
 <div>
 <div id="pyodide-1" class="exercise-cell">
 
 </div>
 <script type="pyodide-1-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDEg4oCUIGxvYWQgdGhlIGV4YW1wbGUgZmxvd2VycyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmRhdGFzZXRzIGltcG9ydCBsb2FkX2lyaXNcblxuWCwgeSA9IGxvYWRfaXJpcyhyZXR1cm5fWF95PVRydWUpXG5wcmludChcIk1lYXN1cmVtZW50cyBmb3JcIiwgWC5zaGFwZVswXSwgXCJmbG93ZXJzLCB3aXRoXCIsIFguc2hhcGVbMV0sIFwibnVtYmVycyBlYWNoLlwiKVxucHJpbnQoXCJGaXJzdCBmbG93ZXIncyBtZWFzdXJlbWVudHM6XCIsIFhbMF0pXG5wcmludChcIkl0cyBzcGVjaWVzIChhcyBhIG51bWJlciAwLzEvMik6XCIsIHlbMF0pIn0=
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbnYgPSBucC5hcnJheShbMSwgMiwgM10pICAgICAgICAgICAjIGEgdmVjdG9yOiAzIG51bWJlcnMgaW4gYSByb3dcbk0gPSBucC5hcnJheShbWzEsIDIsIDNdLCAgICAgICAgICAjIGEgbWF0cml4OiAyIHJvd3MsIDMgY29sdW1uc1xuICAgICAgICAgICAgICBbNCwgNSwgNl1dKVxuXG5wcmludChcInYgPVwiLCB2KVxucHJpbnQoXCJNID1cIilcbnByaW50KE0pXG5wcmludChcInYuc2hhcGUgPVwiLCB2LnNoYXBlKSAgICAgICAjICgzLCkgICAtPiBhIGxlbmd0aC0zIHZlY3RvclxucHJpbnQoXCJNLnNoYXBlID1cIiwgTS5zaGFwZSkgICAgICAgIyAoMiwgMykgLT4gMiByb3dzLCAzIGNvbHVtbnMifQ==
 </script>
 </div>
-<p><code>X</code> holds the four measurements for every flower; <code>y</code> holds the species, written as a number (0, 1, or 2) because models work with numbers.</p>
+<p>The <code>.shape</code> attribute is the single most useful thing to read off an array. It is a tuple giving the size along each dimension:</p>
+<ul>
+<li><code>v.shape</code> is <code>(3,)</code> — one dimension, length 3. (The trailing comma is Python’s way of writing a one-element tuple; it is not a typo.)</li>
+<li><code>M.shape</code> is <code>(2, 3)</code> — two dimensions: 2 rows then 3 columns. The convention is always <code>(rows, columns)</code>.</li>
+</ul>
+<p>When code breaks in real machine learning, it is almost always a shape that doesn’t line up. Reading <code>.shape</code> is your first debugging move, every time.</p>
+</section>
+<section id="element-wise-is-not-the-dot-product" class="level2">
+<h2 class="anchored" data-anchor-id="element-wise-is-not-the-dot-product">Element-wise is not the dot product</h2>
+<p>Multiply two arrays with <code>*</code> and NumPy multiplies them <strong>position by position</strong> — this is <em>element-wise</em>, and it gives back an array the same shape as the inputs. That is not the dot product. The dot product multiplies position by position <em>and then adds the results into a single number</em>.</p>
 <div>
 <div id="pyodide-2" class="exercise-cell">
 
 </div>
 <script type="pyodide-2-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDIg4oCUIHNwbGl0IGludG8gYSB0cmFpbmluZyBzZXQgYW5kIGEgdGVzdCBzZXQiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tb2RlbF9zZWxlY3Rpb24gaW1wb3J0IHRyYWluX3Rlc3Rfc3BsaXRcblxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFxuICAgIFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MFxuKVxucHJpbnQoXCJUcmFpbmluZyBmbG93ZXJzOlwiLCBYX3RyYWluLnNoYXBlWzBdKVxucHJpbnQoXCJUZXN0IGZsb3dlcnM6XCIsIFhfdGVzdC5zaGFwZVswXSkifQ==
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmEgPSBucC5hcnJheShbMSwgMiwgM10pXG5iID0gbnAuYXJyYXkoWzQsIDUsIDZdKVxuXG5wcmludChcImEgKiBiICAgPVwiLCBhICogYikgICAgICAgICMgWyA0IDEwIDE4IF0gIC0+IGVsZW1lbnQtd2lzZSwgc3RpbGwgYSB2ZWN0b3JcbnByaW50KFwic3VtICAgICA9XCIsIG5wLnN1bShhICogYikpIyAzMiAgICAgICAgICAgLT4gYWRkIHRoZW0gdXAgYnkgaGFuZFxucHJpbnQoXCJucC5kb3QgID1cIiwgbnAuZG90KGEsIGIpKSAjIDMyICAgICAgICAgICAtPiB0aGUgZG90IHByb2R1Y3QgZGlyZWN0bHlcbnByaW50KFwiYSBAIGIgICA9XCIsIGEgQCBiKSAgICAgICAgIyAzMiAgICAgICAgICAgLT4gdGhlIHNhbWUsIHdpdGggdGhlIEAgb3BlcmF0b3IifQ==
 </script>
 </div>
-<p>We keep a quarter of the flowers aside as the test set. <code>random_state=0</code> makes the split the same every time, so your numbers match this page.</p>
+<p>All three middle lines agree: <code>1·4 + 2·5 + 3·6 = 4 + 10 + 18 = 32</code>. The <code>@</code> operator is the one you’ll see most in real code — it is Python’s dedicated “matrix multiply” operator, and for two vectors it computes exactly the dot product from Ch5. <code>np.dot(a, b)</code> does the same job; <code>@</code> reads more cleanly when expressions get longer.</p>
+</section>
+<section id="a-matrix-times-a-vector-apply-a-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="a-matrix-times-a-vector-apply-a-transformation">A matrix times a vector: apply a transformation</h2>
+<p>Back in Ch3, a matrix was a machine that takes a point and moves it. In NumPy that machine is one <code>@</code>. Multiplying a matrix <code>M</code> by a vector <code>v</code> applies the transformation <code>M</code> describes to the point <code>v</code>:</p>
 <div>
 <div id="pyodide-3" class="exercise-cell">
 
 </div>
 <script type="pyodide-3-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDMg4oCUIHRyYWluIChmaXQpIHRoZSBtb2RlbCIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmxpbmVhcl9tb2RlbCBpbXBvcnQgTG9naXN0aWNSZWdyZXNzaW9uXG5cbm1vZGVsID0gTG9naXN0aWNSZWdyZXNzaW9uKG1heF9pdGVyPTIwMClcbm1vZGVsLmZpdChYX3RyYWluLCB5X3RyYWluKVxucHJpbnQoXCJUcmFpbmVkISBUaGUgbW9kZWwgaGFzIG5vdyBzZWVuXCIsIFhfdHJhaW4uc2hhcGVbMF0sIFwibGFiZWxsZWQgZmxvd2Vycy5cIikifQ==
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbiMgQSBtYXRyaXggdGhhdCBzY2FsZXMgeCBieSAyIGFuZCB5IGJ5IDMuXG5NID0gbnAuYXJyYXkoW1syLCAwXSxcbiAgICAgICAgICAgICAgWzAsIDNdXSlcbnYgPSBucC5hcnJheShbNCwgNV0pXG5cbnJlc3VsdCA9IE0gQCB2XG5wcmludChcIk0gQCB2ICAgPVwiLCByZXN1bHQpICAgICAgICMgWzggMTVdIC0+IHggZG91YmxlZCwgeSB0cmlwbGVkXG5wcmludChcInNoYXBlICAgPVwiLCByZXN1bHQuc2hhcGUpICMgKDIsKSAgIC0+IHN0aWxsIGEgMi1EIHBvaW50In0=
 </script>
 </div>
-<p><code>LogisticRegression</code> is a small, well-understood classifier — a good first model. <code>fit</code> is the training step. <code>max_iter=200</code> gives it enough rounds to settle.</p>
+<p>Read it row by row: the first output number is the first row of <code>M</code> dotted with <code>v</code> (<code>2·4 + 0·5 = 8</code>), and the second is the second row dotted with <code>v</code> (<code>0·4 + 3·5 = 15</code>). A matrix–vector product is <strong>one dot product per row</strong>. That is the whole idea: a layer of a neural network takes its input vector and does exactly this — a matrix times a vector — to produce the next vector.</p>
+<p>The shape rule is worth saying out loud: a <code>(2, 2)</code> matrix times a <code>(2,)</code> vector gives a <code>(2,)</code> vector. In general, multiplying a <code>(rows, k)</code> matrix by a length-<code>k</code> vector gives a length-<code>rows</code> vector. The inner sizes must match.</p>
+</section>
+<section id="a-matrix-times-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="a-matrix-times-a-matrix">A matrix times a matrix</h2>
+<p>Stacking transformations means multiplying matrices together, again with <code>@</code>. Each entry of the result is one row of the left matrix dotted with one column of the right matrix:</p>
 <div>
 <div id="pyodide-4" class="exercise-cell">
 
 </div>
 <script type="pyodide-4-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDQg4oCUIHByZWRpY3Qgb24gZmxvd2VycyBpdCBoYXMgbmV2ZXIgc2VlbiIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicHJlZGljdGlvbnMgPSBtb2RlbC5wcmVkaWN0KFhfdGVzdClcbnByaW50KFwiUHJlZGljdGVkIHNwZWNpZXMgZm9yIHRoZSBmaXJzdCAxMCB0ZXN0IGZsb3dlcnM6XCIpXG5wcmludChwcmVkaWN0aW9uc1s6MTBdKVxucHJpbnQoXCJUaGUgdHJ1ZSBzcGVjaWVzIGZvciB0aG9zZSBzYW1lIGZsb3dlcnM6XCIpXG5wcmludCh5X3Rlc3RbOjEwXSkifQ==
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbkEgPSBucC5hcnJheShbWzEsIDJdLFxuICAgICAgICAgICAgICBbMywgNF1dKVxuQiA9IG5wLmFycmF5KFtbNSwgNl0sXG4gICAgICAgICAgICAgIFs3LCA4XV0pXG5cbnByaW50KFwiQSBAIEIgPVwiKVxucHJpbnQoQSBAIEIpICAgICAgICAgICAgICAgICAgICAgIyBbWzE5IDIyXSBbNDMgNTBdXVxucHJpbnQoXCJzaGFwZSA9XCIsIChBIEAgQikuc2hhcGUpICAjICgyLCAyKSJ9
 </script>
 </div>
+<p>The top-left entry is row 0 of <code>A</code> dotted with column 0 of <code>B</code>: <code>1·5 + 2·7 = 19</code>. Work the other three the same way and you get the full grid. For matrix–matrix multiplication the rule is <code>(m, k) @ (k, n)</code> gives <code>(m, n)</code>: the two inner numbers must match and they cancel, leaving the outer two as the result shape.</p>
+</section>
+<section id="transpose-flipping-rows-and-columns" class="level2">
+<h2 class="anchored" data-anchor-id="transpose-flipping-rows-and-columns">Transpose: flipping rows and columns</h2>
+<p>The transpose, written <code>.T</code>, flips a matrix over its diagonal: rows become columns and columns become rows. The element at row <code>i</code>, column <code>j</code> ends up at row <code>j</code>, column <code>i</code>.</p>
 <div>
 <div id="pyodide-5" class="exercise-cell">
 
 </div>
 <script type="pyodide-5-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tZXRyaWNzIGltcG9ydCBhY2N1cmFjeV9zY29yZVxuXG5hY2MgPSBhY2N1cmFjeV9zY29yZSh5X3Rlc3QsIG1vZGVsLnByZWRpY3QoWF90ZXN0KSlcbnByaW50KGZcIkFjY3VyYWN5IG9uIHRoZSB0ZXN0IHNldDoge2FjYzouMiV9XCIpIn0=
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbk0gPSBucC5hcnJheShbWzEsIDIsIDNdLFxuICAgICAgICAgICAgICBbNCwgNSwgNl1dKVxuXG5wcmludChcIk0uc2hhcGUgICA9XCIsIE0uc2hhcGUpICAgICMgKDIsIDMpXG5wcmludChcIk0uVCA9XCIpXG5wcmludChNLlQpICAgICAgICAgICAgICAgICAgICAgICAjIFtbMSA0XSBbMiA1XSBbMyA2XV1cbnByaW50KFwiTS5ULnNoYXBlID1cIiwgTS5ULnNoYXBlKSAgIyAoMywgMikifQ==
 </script>
 </div>
-<p>That percentage is the share of test flowers the model named correctly. You built a model, trained it, used it on new data, and graded it — the full loop.</p>
-<blockquote class="blockquote">
-<p>🔬 Going deeper (optional): try changing <code>test_size</code> to <code>0.5</code> and re-running from Step 2. With fewer training flowers, does the accuracy move? That tension — more data to learn from versus more data to grade on — comes back often.</p>
-</blockquote>
+<p>Transpose shows up constantly: to make shapes line up for an <code>@</code>, or to read the same data the other way around. One handy fact you’ll meet again: <code>(A @ B).T</code> equals <code>B.T @ A.T</code> — transposing a product reverses the order. You’ll verify that yourself in the stretch exercise.</p>
+</section>
+<section id="the-identity-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="the-identity-matrix">The identity matrix</h2>
+<p>One special matrix does nothing: the <strong>identity</strong>, ones on the diagonal and zeros elsewhere. Build it with <code>np.eye(n)</code>. Multiplying any vector or matrix by the identity returns it unchanged — it is the matrix equivalent of multiplying a number by 1.</p>
+<div>
+<div id="pyodide-6" class="exercise-cell">
+
+</div>
+<script type="pyodide-6-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbkkgPSBucC5leWUoMilcbnYgPSBucC5hcnJheShbNSwgN10pXG5cbnByaW50KFwiSSA9XCIpXG5wcmludChJKSAgICAgICAgICAgICAgICAgICAgICAgICAjIFtbMS4gMC5dIFswLiAxLl1dXG5wcmludChcIkkgQCB2ID1cIiwgSSBAIHYpICAgICAgICAgICMgWzUuIDcuXSAtPiB2LCB1bmNoYW5nZWQifQ==
+</script>
+</div>
+<p>The identity is the reference point for talking about inverses and “undoing” a transformation later. For now, it is a clean check that your <code>@</code> is doing what you expect: an identity should always hand back exactly what it received.</p>
 <hr>
 </section>
 <section id="key-takeaways" class="level2">
@@ -822,102 +845,133 @@ eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVl
 <section id="key-takeaways-1" class="level3 key-takeaways">
 <h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
 <ol type="1">
-<li>A <strong>model</strong> is a function learned from labelled examples, not a rule you write by hand.</li>
-<li><strong>Training</strong> (fitting) adjusts the model on known answers; <strong>predicting</strong> runs it on new inputs.</li>
-<li><strong>Accuracy</strong> is the fraction of predictions that match the truth — always measured on data the model did <strong>not</strong> train on.</li>
-<li>You did all of this in the browser, at zero cost and zero install.</li>
+<li>A <strong>vector</strong> is a 1-D NumPy array and a <strong>matrix</strong> is a 2-D array; read <code>.shape</code> (as <code>(rows, columns)</code>) to know what you’re holding.</li>
+<li><code>*</code> multiplies <strong>element-wise</strong>; <code>@</code> (and <code>np.dot</code>) computes the <strong>dot product</strong> for vectors and <strong>matrix multiplication</strong> for 2-D arrays.</li>
+<li>A <strong>matrix times a vector</strong> applies a transformation — one dot product per row; the inner sizes must match.</li>
+<li><code>.T</code> <strong>transposes</strong> (flips rows and columns), and <code>np.eye(n)</code> is the <strong>identity</strong> matrix that leaves things unchanged.</li>
 </ol>
 </section>
 <hr>
 </section>
 <section id="practice" class="level2">
 <h2 class="anchored" data-anchor-id="practice">Practice</h2>
-<p>Each exercise below is auto-graded by <code>run_tests</code>, the shared Larnix grader. It is loaded for you from <code>lib/grader.py</code> — you do not paste or define it.</p>
-<section id="exercise-1-guided-5-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</h3>
-<p>Complete the one marked line so the model is trained. Replace <code>____</code> with the call that fits <code>model</code> on the training data, then press <strong>Run</strong>.</p>
-<script type="exercise-setup-ex_fit-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0Iiwic2V0dXAiOnRydWV9LCJjb2RlIjoiIyBMb2FkcyB0aGUgc2hhcmVkIGF1dG8tZ3JhZGVyIGludG8gdGhpcyBleGVyY2lzZSBmcm9tIGxpYi9ncmFkZXIucHkg4oCUIGNvcGllZCBpbnRvXG4jIHRoZSBQeW9kaWRlIGZpbGVzeXN0ZW0gYXQgc3RhcnR1cCB2aWEgdGhlIHBhZ2UncyBgcmVzb3VyY2VzOmAga2V5IChzaW5nbGUgc291cmNlXG4jIG9mIHRydXRoLCBERUNJU0lPTlMgRDAwMTYpLiBPbmUgc2V0dXAgY2VsbCBwZXIgZXhlcmNpc2UgKGl0cyBvd24gZW52aXJvbm1lbnQpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>.</p>
+<section id="exercise-1-guided-4-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</h3>
+<p>Complete <code>dot(a, b)</code> so it returns the dot product of two vectors as a plain <code>int</code>. Use <code>@</code> on NumPy arrays, then wrap the result in <code>int(...)</code>. Replace <code>____</code>, then press <strong>Run</strong>.</p>
+<script type="exercise-setup-ex_dot-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZG90Iiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
 </script>
 <div>
-<div id="pyodide-7" class="exercise-cell">
+<div id="pyodide-8" class="exercise-cell">
 
 </div>
-<script type="pyodide-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0In0sImNvZGUiOiJmcm9tIHNrbGVhcm4ubGluZWFyX21vZGVsIGltcG9ydCBMb2dpc3RpY1JlZ3Jlc3Npb25cbmZyb20gc2tsZWFybi5kYXRhc2V0cyBpbXBvcnQgbG9hZF9pcmlzXG5mcm9tIHNrbGVhcm4ubW9kZWxfc2VsZWN0aW9uIGltcG9ydCB0cmFpbl90ZXN0X3NwbGl0XG5cblgsIHkgPSBsb2FkX2lyaXMocmV0dXJuX1hfeT1UcnVlKVxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MClcblxubW9kZWwgPSBMb2dpc3RpY1JlZ3Jlc3Npb24obWF4X2l0ZXI9MjAwKVxuX19fXyAgIyBUT0RPOiB0cmFpbiB0aGUgbW9kZWwgb24gWF90cmFpbiBhbmQgeV90cmFpblxuXG5ydW5fdGVzdHMoW1xuICAgIChcIm1vZGVsIHByZWRpY3RzIG9uZSBsYWJlbCBwZXIgdGVzdCBmbG93ZXJcIiwgbGVuKG1vZGVsLnByZWRpY3QoWF90ZXN0KSksIGxlbih5X3Rlc3QpKSxcbl0pIn0=
+<script type="pyodide-8-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZG90In0sImNvZGUiOiJpbXBvcnQgbnVtcHkgYXMgbnBcblxuZGVmIGRvdChhLCBiKTpcbiAgICBcIlwiXCJSZXR1cm4gdGhlIGRvdCBwcm9kdWN0IG9mIHZlY3RvcnMgYSBhbmQgYiBhcyBhIHBsYWluIGludC5cIlwiXCJcbiAgICByZXR1cm4gX19fXyAgIyBUT0RPOiBpbnQobnAuYXJyYXkoYSkgQCBucC5hcnJheShiKSlcblxucnVuX3Rlc3RzKFtcbiAgICAoXCIzLXZlY3RvcnNcIiwgZG90KFsxLCAyLCAzXSwgWzQsIDUsIDZdKSwgMzIpLFxuICAgIChcIm9ydGhvZ29uYWxcIiwgZG90KFsxLCAwXSwgWzAsIDFdKSwgMCksXG5dKSJ9
 </script>
 </div>
 <details>
 <summary>
-Show solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>fit</code> is the training step: it takes the inputs <code>X_train</code> and their known answers <code>y_train</code>. After it runs, <code>model.predict</code> works on new data.
+Turn each list into an array with <code>np.array(...)</code>, combine them with <code>@</code> to get the sum of products, then wrap the whole thing in <code>int(...)</code> so the result is a plain Python integer rather than a NumPy number.
 </details>
-</section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write <code>accuracy(y_true, y_pred)</code> — the fraction of predictions that match the truth, as a number between 0 and 1. Complete the marked line.</p>
-<script type="exercise-setup-ex_accuracy-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiIjIFNhbWUgc2hhcmVkIGdyYWRlciwgbG9hZGVkIGludG8gdGhpcyBleGVyY2lzZSdzIGVudmlyb25tZW50IChERUNJU0lPTlMgRDAwMTYpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
-</script>
-<div>
-<div id="pyodide-9" class="exercise-cell">
-
-</div>
-<script type="pyodide-9-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kifSwiY29kZSI6ImRlZiBhY2N1cmFjeSh5X3RydWUsIHlfcHJlZCk6XG4gICAgXCJcIlwiUmV0dXJuIHRoZSBmcmFjdGlvbiBvZiBtYXRjaGluZyBwcmVkaWN0aW9ucywgYXMgYSBmbG9hdCBpbiBbMCwgMV0uXCJcIlwiXG4gICAgY29ycmVjdCA9IHN1bSgxIGZvciBhLCBiIGluIHppcCh5X3RydWUsIHlfcHJlZCkgaWYgX19fXykgICMgVE9ETzogY29tcGFyZSBhIGFuZCBiXG4gICAgcmV0dXJuIGNvcnJlY3QgLyBsZW4oeV90cnVlKVxuXG5ydW5fdGVzdHMoW1xuICAgIChcImFsbCBjb3JyZWN0XCIsIGFjY3VyYWN5KFsxLCAxLCAxXSwgWzEsIDEsIDFdKSwgMS4wKSxcbiAgICAoXCJoYWxmIHJpZ2h0XCIsICBhY2N1cmFjeShbMSwgMF0sICAgIFsxLCAxXSksICAgIDAuNSksXG4gICAgKFwibm9uZSByaWdodFwiLCAgYWNjdXJhY3koWzAsIDBdLCAgICBbMSwgMV0pLCAgICAwLjApLFxuXSkifQ==
-</script>
-</div>
 <details>
 <summary>
 Show solution
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accuracy(y_true, y_pred):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    correct <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred) <span class="cf">if</span> a <span class="op">==</span> b)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> correct <span class="op">/</span> <span class="bu">len</span>(y_true)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>a == b</code> is <code>True</code> when a prediction matches the truth; summing those <code>True</code>s counts the matches, and dividing by the number of labels gives the fraction. This is what <code>accuracy_score</code> computed for you in Step 5.
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dot(a, b):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">int</span>(np.array(a) <span class="op">@</span> np.array(b))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>np.array(a) @ np.array(b)</code> multiplies the vectors position by position and adds the results: <code>1·4 + 2·5 + 3·6 = 32</code>. The orthogonal pair <code>[1, 0]</code> and <code>[0, 1]</code> share no direction, so their dot product is <code>0</code>. <code>int(...)</code> returns a plain Python integer.
 </details>
 </section>
-<section id="exercise-3-stretch-optional-15-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</h3>
-<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Starting from the worked example, try to <strong>beat 95% accuracy</strong> on the test set. Ideas: raise <code>max_iter</code>, or swap <code>LogisticRegression</code> for another classifier such as <code>from sklearn.neighbors import KNeighborsClassifier</code>.</p>
-<p><strong>Rubric — a good solution:</strong></p>
+<section id="exercise-2-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
+<p>Write <code>matvec(M, v)</code> that applies matrix <code>M</code> to vector <code>v</code> and returns the result as a plain Python <strong>list</strong>. Convert both inputs with <code>np.array</code>, multiply with <code>@</code>, and turn the array back into a list with <code>.tolist()</code>. Complete the marked line.</p>
+<script type="exercise-setup-ex_matvec-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0dmVjIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+</script>
+<div>
+<div id="pyodide-10" class="exercise-cell">
+
+</div>
+<script type="pyodide-10-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0dmVjIn0sImNvZGUiOiJpbXBvcnQgbnVtcHkgYXMgbnBcblxuZGVmIG1hdHZlYyhNLCB2KTpcbiAgICBcIlwiXCJBcHBseSBtYXRyaXggTSB0byB2ZWN0b3IgdjsgcmV0dXJuIGEgcGxhaW4gUHl0aG9uIGxpc3QuXCJcIlwiXG4gICAgcmV0dXJuIF9fX18gICMgVE9ETzogKG5wLmFycmF5KE0pIEAgbnAuYXJyYXkodikpLnRvbGlzdCgpXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwiaWRlbnRpdHkga2VlcHMgdlwiLCBtYXR2ZWMoW1sxLCAwXSwgWzAsIDFdXSwgWzUsIDddKSwgWzUsIDddKSxcbiAgICAoXCJzY2FsZXMgYXhlc1wiLCBtYXR2ZWMoW1syLCAwXSwgWzAsIDNdXSwgWzQsIDVdKSwgWzgsIDE1XSksXG5dKSJ9
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+The pattern mirrors Exercise 1: <code>np.array(M) @ np.array(v)</code> does the matrix–vector multiply (one dot product per row of <code>M</code>). The result is a NumPy array, so call <code>.tolist()</code> on it to hand back an ordinary Python list.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> matvec(M, v):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (np.array(M) <span class="op">@</span> np.array(v)).tolist()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Each output entry is one row of <code>M</code> dotted with <code>v</code>. With the identity matrix every row picks out one element of <code>v</code> unchanged, so <code>[5, 7]</code> comes straight back. The scaling matrix <code>[[2, 0], [0, 3]]</code> doubles the first entry and triples the second: <code>[8, 15]</code>. <code>.tolist()</code> converts the NumPy array to a plain list.
+</details>
+</section>
+<section id="exercise-3-stretch-optional-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</h3>
+<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Build two 2×2 matrices <code>A</code> and <code>B</code> as NumPy arrays, compute <code>A @ B</code>, and verify the identity <code>(A @ B).T == B.T @ A.T</code> — transposing a product reverses the order. Print both sides and compare them.</p>
+<p><strong>Rubric — a good answer:</strong></p>
 <ul>
-<li>Trains on <code>X_train</code>/<code>y_train</code> only and reports accuracy on the held-out <code>X_test</code>/<code>y_test</code> (no testing on training data).</li>
-<li>States the change you made and the accuracy you reached.</li>
-<li>Reaches at least the worked example’s baseline, ideally higher.</li>
+<li>Builds two 2×2 arrays with <code>np.array</code> and computes <code>A @ B</code> with <code>@</code>.</li>
+<li>Prints <code>(A @ B).T</code> and <code>B.T @ A.T</code> so the two sides can be read side by side.</li>
+<li>Confirms they are equal with <code>np.array_equal(...)</code> and prints the <code>True</code> result.</li>
 </ul>
 <details>
 <summary>
-Show one possible solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>knn.fit(X_train, y_train)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"k-NN accuracy: </span><span class="sc">{</span>accuracy_score(y_test, knn.predict(X_test))<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-A nearest-neighbour classifier often does well on Iris. Other approaches are fine too — the point is to change one thing, measure honestly on the test set, and compare.
+Pick any numbers for <code>A</code> and <code>B</code>. Compute the left side as <code>(A @ B).T</code> and the right side as <code>B.T @ A.T</code>. To compare two whole arrays for equality, use <code>np.array_equal(left, right)</code> — comparing with plain <code>==</code> gives an array of True/False rather than a single answer.
+</details>
+<details>
+<summary>
+Show one possible answer
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>],</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">3</span>, <span class="dv">4</span>]])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.array([[<span class="dv">5</span>, <span class="dv">6</span>],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">7</span>, <span class="dv">8</span>]])</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>left <span class="op">=</span> (A <span class="op">@</span> B).T</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>right <span class="op">=</span> B.T <span class="op">@</span> A.T</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"(A @ B).T ="</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(left)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"B.T @ A.T ="</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(right)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"equal?"</span>, np.array_equal(left, right))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Both sides print the same grid, and <code>np.array_equal</code> returns <code>True</code>: transposing a product flips the order of the factors. This identity is why you’ll often see <code>.T</code> rearranged across an <code>@</code> when lining up shapes in later chapters.
 </details>
 <hr>
 </section>
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch1-train-your-first-model","questions":[{"answer":"1","explanation":"A model is the learned function; we fit it on examples, then call it to predict.","id":"what-is-a-model","options":["A spreadsheet that stores the flower measurements","A function learned from labelled examples that maps an input to a prediction","The chart that shows the accuracy score"],"prompt":"In this chapter, a model is best described as…"},{"answer":"1","explanation":"Testing on unseen data checks whether the model generalises, rather than only memorises.","id":"why-a-test-set","options":["Because the test set is always larger than the training set","Because a model can score well on examples it has already seen yet fail on new ones","Because scikit-learn refuses to predict on training data"],"prompt":"Why do we measure accuracy on a separate test set instead of the training data?"},{"answer":"0","explanation":"Accuracy is the fraction of predictions that match the true labels.","id":"what-accuracy-means","options":["It named 95% of the test flowers correctly","It is 95% confident about every single flower","It used 95% of the flowers for training"],"prompt":"The model reports 95% accuracy on the test set. That means…"}],"title":"Chapter 1 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-ch15-numpy-linalg","questions":[{"answer":"1","explanation":"@ is the matrix-multiply operator: for two vectors it gives the dot product (sum of products), and for 2-D arrays it does matrix multiplication. Element-wise multiplication is *.","id":"what-at-computes","options":["Element-wise multiplication, position by position","The dot product for vectors, and matrix multiplication for 2-D arrays","The larger of the two arrays"],"prompt":"What does the @ operator compute for two NumPy arrays?"},{"answer":"1","explanation":".shape reads as (rows, columns). Two rows of three columns is (2, 3).","id":"shape-of-2x3","options":["(3, 2)","(2, 3)","(6,)"],"prompt":"An array built from two rows of three numbers each has what .shape?"},{"answer":"0","explanation":".T is the transpose: rows become columns and columns become rows, so a (2, 3) matrix becomes (3, 2).","id":"what-T-does","options":["Flips rows and columns, so element (i, j) moves to (j, i)","Adds up every element into a single number","Sorts each row from smallest to largest"],"prompt":"What does .T do to a matrix?"},{"answer":"2","explanation":"A (rows, k) matrix times a length-k vector gives a length-rows vector. The inner 3s match and cancel, leaving shape (2,) — one dot product per row.","id":"matvec-shape","options":["(3,)","(2, 3)","(2,)"],"prompt":"Multiplying a (2, 3) matrix by a length-3 vector gives a result of what shape?"}],"title":"Chapter 15 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You have run the complete machine-learning loop — load, split, train, predict, measure — on a classic dataset, without installing anything. Every later module reuses this loop on bigger data and stronger models. Next, we look at what the accuracy number does <em>not</em> tell you, and when it can mislead.</p>
+<p>You’ve moved from pictures to running code: arrays for vectors and matrices, <code>.shape</code> to read them, <code>@</code> for dot products and matrix multiplies, and <code>.T</code> to flip rows and columns. These are the exact operations a model runs at every layer. Next you’ll assemble them into a single artificial <strong>neuron</strong> — its forward pass written written in the NumPy you practiced here.</p>
 
 
 <script type="pyodide-data">
 eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
 </script>
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzkgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzksIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzkgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzkuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS03LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNyA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNywge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNy5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV81ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl81LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTQtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV80ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl80LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTMtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8zID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTEwIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMTAgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTEwLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtMTAtY29udGVudHNcIixcbiAgICAgIGVudmlyOiBgZXhlcmNpc2UtZW52LSR7YmxvY2suYXR0ci5leGVyY2lzZX1gLFxuICAgICAgZXJyb3I6IGZhbHNlLFxuICAgICAgY2FwdGlvbjogJ0V4ZXJjaXNlJyxcbiAgICB9LFxuICAgIGJsb2NrLmF0dHJcbiAgKTtcblxuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbnZpZXdvZiBfcHlvZGlkZV92YWx1ZV8xMCA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfMTAsIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzEwID0ge1xuICBjb25zdCB7IFB5b2RpZGVHcmFkZXIgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IGVtcHR5RmVlZGJhY2sgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTtcblxuICBjb25zdCBncmFkZXIgPSBuZXcgUHlvZGlkZUdyYWRlcihfcHlvZGlkZV92YWx1ZV8xMC5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS04IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfOCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtOC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIC8vIERlZmF1bHQgZXhlcmNpc2UgY29uZmlndXJhdGlvblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbihcbiAgICB7XG4gICAgICBpZDogXCJweW9kaWRlLTgtY29udGVudHNcIixcbiAgICAgIGVudmlyOiBgZXhlcmNpc2UtZW52LSR7YmxvY2suYXR0ci5leGVyY2lzZX1gLFxuICAgICAgZXJyb3I6IGZhbHNlLFxuICAgICAgY2FwdGlvbjogJ0V4ZXJjaXNlJyxcbiAgICB9LFxuICAgIGJsb2NrLmF0dHJcbiAgKTtcblxuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbnZpZXdvZiBfcHlvZGlkZV92YWx1ZV84ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl84LCB7fSk7XG5fcHlvZGlkZV9mZWVkYmFja184ID0ge1xuICBjb25zdCB7IFB5b2RpZGVHcmFkZXIgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IGVtcHR5RmVlZGJhY2sgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTtcblxuICBjb25zdCBncmFkZXIgPSBuZXcgUHlvZGlkZUdyYWRlcihfcHlvZGlkZV92YWx1ZV84LmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTYiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl82ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzYgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzYsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl81ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS01LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzUgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzUsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTQiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl80ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS00LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzQgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTMiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8zID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0zLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzMgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzMsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzIgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0xLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzEgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJweW9kaWRlT2pzID0ge1xuICBjb25zdCB7XG4gICAgUHlvZGlkZUV2YWx1YXRvcixcbiAgICBQeW9kaWRlRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUHl0aG9uLFxuICAgIHN0YXJ0UHlvZGlkZVdvcmtlcixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoLFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gUHlvZGlkZSBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICBsZXQgcHlvZGlkZVByb21pc2UgPSAoYXN5bmMgKCkgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgUHlvZGlkZWA7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHN0YXJ0UHlvZGlkZVdvcmtlcihkYXRhLm9wdGlvbnMpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiBtaWNyb3BpcGA7XG4gICAgYXdhaXQgcHlvZGlkZS5sb2FkUGFja2FnZShcIm1pY3JvcGlwXCIpO1xuICAgIGNvbnN0IG1pY3JvcGlwID0gYXdhaXQgcHlvZGlkZS5weWltcG9ydChcIm1pY3JvcGlwXCIpO1xuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIG1pY3JvcGlwLmluc3RhbGwocGtnKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcbiAgICBhd2FpdCBtaWNyb3BpcC5kZXN0cm95KCk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCBweW9kaWRlLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKGUubmFtZSAhPT0gXCJFcnJub0Vycm9yXCIpIHRocm93IGU7XG4gICAgICAgICAgaWYgKGUuZXJybm8gIT09IDIwKSB7XG4gICAgICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yICR7ZS5lcnJub30gXCIke2Vycm9yVGV4dH1cIi5gKTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHRyeSB7XG4gICAgICAgIHJldHVybiBhd2FpdCBweW9kaWRlLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuVVRGOFRvU3RyaW5nKGVycm9yVGV4dFB0cik7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICB9XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFB5b2RpZGUgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUHl0aG9uKHB5b2RpZGUpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHB5b2RpZGU7XG4gIH0pKCkuY2F0Y2goKGVycikgPT4ge1xuICAgIHN0YXR1c1RleHQuc3R5bGUuY29sb3IgPSBcInZhcigtLWV4ZXJjaXNlLWVkaXRvci1obC1lciwgI0FEMDAwMClcIjtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gZXJyLm1lc3NhZ2U7XG4gICAgLy9pbmRpY2F0b3JDb250YWluZXIucXVlcnlTZWxlY3RvcihcIi5zcGlubmVyLWdyb3dcIikuY2xhc3NMaXN0LmFkZChcImQtbm9uZVwiKTtcbiAgICB0aHJvdyBlcnI7XG4gIH0pO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCBweW9kaWRlID0gYXdhaXQgcHlvZGlkZVByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFB5b2RpZGVFdmFsdWF0b3IocHlvZGlkZSwgY29udGV4dCk7XG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHlvZGlkZVByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gICAgcHJvY2VzcyxcbiAgfTtcbn1cbiJ9XX0=
 </script>
 <div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
 <div id="exercise-loading-status" class="d-flex gap-2">
@@ -1099,7 +1153,7 @@ eyJjb250ZW50cyI6W119
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../modules/00-orientation";
+window._ojs.paths.runtimeToDoc = "../../modules/02-math";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "../..";
 window._ojs.selfContained = false;

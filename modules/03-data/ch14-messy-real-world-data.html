@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Train your first model — in your browser – Larnix</title>
+<title>Messy real-world data – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/03-data/index.html">M3 — Data &amp; Tooling</a></li><li class="breadcrumb-item"><a href="../../modules/03-data/ch14-messy-real-world-data.html">Ch14 — Messy real-world data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch1 — Train your first model</span></a>
   </div>
 </li>
@@ -684,7 +684,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/03-data/ch14-messy-real-world-data.html" class="sidebar-item-text sidebar-link">
+  <a href="../../modules/03-data/ch14-messy-real-world-data.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
   </div>
 </li>
@@ -701,17 +701,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
-  <li><a href="#the-idea-in-plain-language" id="toc-the-idea-in-plain-language" class="nav-link" data-scroll-target="#the-idea-in-plain-language">The idea, in plain language</a></li>
-  <li><a href="#lets-build-it-worked-example" id="toc-lets-build-it-worked-example" class="nav-link" data-scroll-target="#lets-build-it-worked-example">Let’s build it (worked example)</a></li>
+  <li><a href="#text-the-computer-sees-not-text-you-read" id="toc-text-the-computer-sees-not-text-you-read" class="nav-link" data-scroll-target="#text-the-computer-sees-not-text-you-read">Text the computer sees, not text you read</a></li>
+  <li><a href="#consolidating-categories-that-mean-the-same-thing" id="toc-consolidating-categories-that-mean-the-same-thing" class="nav-link" data-scroll-target="#consolidating-categories-that-mean-the-same-thing">Consolidating categories that mean the same thing</a></li>
+  <li><a href="#numbers-hiding-inside-strings" id="toc-numbers-hiding-inside-strings" class="nav-link" data-scroll-target="#numbers-hiding-inside-strings">Numbers hiding inside strings</a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
   <ul class="collapse">
   <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
   </ul></li>
   <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
-  <li><a href="#exercise-3-stretch-optional-15-min" id="toc-exercise-3-stretch-optional-15-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</a></li>
+  <li><a href="#exercise-1-guided-4-min" id="toc-exercise-1-guided-4-min" class="nav-link" data-scroll-target="#exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</a></li>
+  <li><a href="#exercise-2-implement-8-min" id="toc-exercise-2-implement-8-min" class="nav-link" data-scroll-target="#exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-3-stretch-optional-8-min" id="toc-exercise-3-stretch-optional-8-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</a></li>
   </ul></li>
   <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
   <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
@@ -722,9 +723,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/03-data/index.html">M3 — Data &amp; Tooling</a></li><li class="breadcrumb-item"><a href="../../modules/03-data/ch14-messy-real-world-data.html">Ch14 — Messy real-world data</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Train your first model — in your browser</h1>
+<h1 class="title">Messy real-world data</h1>
 </div>
 
 
@@ -741,80 +742,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
+<p><span class="larnix-badge badge-difficulty badge-intermediate" role="img" aria-label="difficulty: Intermediate">Intermediate</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
-<p>You are about to train a real machine-learning model — in this browser tab, with nothing installed. No account, no download, no setup. Scroll to the first code block, press <strong>Run</strong>, and in a few seconds a model will sort flowers it has never seen before, and tell you how often it gets them right.</p>
-<p>The flowers are irises. Picture three species laid out on a table. For each flower someone measured four things: the length and width of its petals and of its sepals (the green leaf-like parts under the petals). Given those four numbers, can a computer learn to name the species? That is the whole task — and by the end of this page you will have built the thing that does it.</p>
+<p>You ask a hundred people for their gender on a paper form and type the answers into a spreadsheet. Back come <code>"Male"</code>, <code>"male"</code>, <code>"M"</code>, <code>" Male "</code> with a stray space, and <code>"MALE"</code> in a fit of enthusiasm. To you they all mean the same thing. To pandas they are <strong>five different values</strong> — because the computer compares text exactly, character for character, and a capital <code>M</code> is not a lowercase <code>m</code>.</p>
+<p>That gap between what a human reads and what a machine stores is the daily reality of real-world data. The same trouble shows up everywhere:</p>
+<ul>
+<li><strong>Inconsistent text</strong> — <code>"Mumbai"</code>, <code>"mumbai "</code>, <code>"MUMBAI"</code> are one city to you, three categories to a <code>value_counts()</code>.</li>
+<li><strong>Numbers wearing a costume</strong> — <code>"₹1,200"</code> looks like a price, but the currency symbol and the comma make it <em>text</em>, and you can’t add text.</li>
+<li><strong>The same idea, many spellings</strong> — <code>"M"</code>, <code>"male"</code>, and <code>"Male"</code> all mean one category that you want counted once.</li>
+</ul>
+<p>In Chapter 4 you handled <em>missing</em> values and wrong <em>types</em>: holes in the table and columns stored as the wrong dtype. This chapter is about the rows that are present and look fine but are written <strong>inconsistently</strong> — the messy strings and formats that quietly split one real category into many and hide numbers inside text. The fixes are a small, dependable set of pandas <strong>string methods</strong>.</p>
 <blockquote class="blockquote">
-<p>By the end of this chapter you’ll be able to train a classifier, call it on new data, and read its accuracy.</p>
+<p>You’ll need from before: counting and repairing columns (M3 Ch4). Here we repair a different kind of mess — not the gaps, but the formatting.</p>
 </blockquote>
 <hr>
 </section>
-<section id="the-idea-in-plain-language" class="level2">
-<h2 class="anchored" data-anchor-id="the-idea-in-plain-language">The idea, in plain language</h2>
-<p>Start with the word that does the heavy lifting: <strong>model</strong>.</p>
-<p>A <strong>model</strong> is a function that you <em>learn from examples</em> instead of writing by hand. You do not sit down and code the rule “if the petals are long and narrow, it’s species B.” Instead you show the computer many flowers whose species you already know, and it works out the rule for you.</p>
-<p>Three words describe the whole cycle:</p>
-<ul>
-<li><strong>Training</strong> (also called <em>fitting</em>): you hand the model a pile of examples where the answer is known — here, flowers labelled with their species — and it adjusts itself until its guesses match those known answers reasonably well.</li>
-<li><strong>Predicting</strong>: you give the trained model a <em>new</em> flower it has not seen, and it outputs a species.</li>
-<li><strong>Accuracy</strong>: you check how often it is right. If you test it on 40 flowers and it names 38 correctly, that is 38/40 = 0.95, or <strong>95%</strong> accuracy.</li>
-</ul>
-<p>One habit matters from day one: you test on flowers the model did <strong>not</strong> train on. A model can score well on examples it has already memorised and still fail on new ones, the way reciting answers you’ve seen is not the same as understanding. So we split the data into a <strong>training set</strong> (to learn from) and a <strong>test set</strong> (to grade on).</p>
-<p>That is the entire plan. The code below carries it out in five short steps.</p>
-<hr>
-</section>
-<section id="lets-build-it-worked-example" class="level2">
-<h2 class="anchored" data-anchor-id="lets-build-it-worked-example">Let’s build it (worked example)</h2>
-<p>These blocks run Python <strong>in your browser</strong> through Pyodide. The first run downloads the runtime, which takes a few seconds; after that it is instant. Press <strong>Run</strong> on each block in order.</p>
+<section id="text-the-computer-sees-not-text-you-read" class="level2">
+<h2 class="anchored" data-anchor-id="text-the-computer-sees-not-text-you-read">Text the computer sees, not text you read</h2>
+<p>Start with the gender column from the hook. Put it in a Series and ask <code>value_counts()</code> how many of each value there are.</p>
 <div>
 <div id="pyodide-1" class="exercise-cell">
 
 </div>
 <script type="pyodide-1-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDEg4oCUIGxvYWQgdGhlIGV4YW1wbGUgZmxvd2VycyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmRhdGFzZXRzIGltcG9ydCBsb2FkX2lyaXNcblxuWCwgeSA9IGxvYWRfaXJpcyhyZXR1cm5fWF95PVRydWUpXG5wcmludChcIk1lYXN1cmVtZW50cyBmb3JcIiwgWC5zaGFwZVswXSwgXCJmbG93ZXJzLCB3aXRoXCIsIFguc2hhcGVbMV0sIFwibnVtYmVycyBlYWNoLlwiKVxucHJpbnQoXCJGaXJzdCBmbG93ZXIncyBtZWFzdXJlbWVudHM6XCIsIFhbMF0pXG5wcmludChcIkl0cyBzcGVjaWVzIChhcyBhIG51bWJlciAwLzEvMik6XCIsIHlbMF0pIn0=
+eyJhdHRyIjp7ImNhcHRpb24iOiJTaXggZW50cmllcyB0aGF0IG1lYW4gdHdvIHRoaW5ncyDigJQgYnV0IHBhbmRhcyBjb3VudHMgc2l4IG5lYXItZGlzdGluY3QgdmFsdWVzIiwiZWRpdCI6dHJ1ZSwiZXZhbCI6dHJ1ZX0sImNvZGUiOiJpbXBvcnQgcGFuZGFzIGFzIHBkXG5cbnJhdyA9IHBkLlNlcmllcyhbXCIgIE1hbGVcIiwgXCJtYWxlXCIsIFwiTVwiLCBcIkZlbWFsZSBcIiwgXCJGRU1BTEVcIiwgXCJmXCJdKVxucmF3LnZhbHVlX2NvdW50cygpIn0=
 </script>
 </div>
-<p><code>X</code> holds the four measurements for every flower; <code>y</code> holds the species, written as a number (0, 1, or 2) because models work with numbers.</p>
+<p>Every entry comes back as its <strong>own</strong> category. <code>"  Male"</code> (with leading spaces) and <code>"male"</code> are different; <code>"Female "</code> (trailing space) and <code>"FEMALE"</code> are different. Two real groups — male and female — have shattered into six. Any analysis built on this column is wrong before it starts: a group-by would make six groups, a chart six bars, a model six categories where there are two.</p>
+<p>Two differences cause almost all of this:</p>
+<ul>
+<li><strong>Whitespace</strong> — invisible spaces at the start or end. <code>"Male"</code> and <code>"Male "</code> look identical on screen but are not equal.</li>
+<li><strong>Case</strong> — <code>"Male"</code>, <code>"male"</code>, and <code>"MALE"</code> differ only in capitalisation.</li>
+</ul>
+<p>Pandas gives you a vectorised string toolkit under the <code>.str</code> accessor that fixes both across a whole column at once — no loop. <code>.str.strip()</code> removes leading and trailing whitespace; <code>.str.lower()</code> forces everything to lowercase. Chain them.</p>
 <div>
 <div id="pyodide-2" class="exercise-cell">
 
 </div>
 <script type="pyodide-2-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDIg4oCUIHNwbGl0IGludG8gYSB0cmFpbmluZyBzZXQgYW5kIGEgdGVzdCBzZXQiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tb2RlbF9zZWxlY3Rpb24gaW1wb3J0IHRyYWluX3Rlc3Rfc3BsaXRcblxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFxuICAgIFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MFxuKVxucHJpbnQoXCJUcmFpbmluZyBmbG93ZXJzOlwiLCBYX3RyYWluLnNoYXBlWzBdKVxucHJpbnQoXCJUZXN0IGZsb3dlcnM6XCIsIFhfdGVzdC5zaGFwZVswXSkifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJTdHJpcCB3aGl0ZXNwYWNlIGFuZCBsb3dlcmNhc2UgdGhlIHdob2xlIGNvbHVtbiBpbiBvbmUgcGFzcyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IHBhbmRhcyBhcyBwZFxuXG5yYXcgPSBwZC5TZXJpZXMoW1wiICBNYWxlXCIsIFwibWFsZVwiLCBcIk1cIiwgXCJGZW1hbGUgXCIsIFwiRkVNQUxFXCIsIFwiZlwiXSlcbnRpZGllZCA9IHJhdy5zdHIuc3RyaXAoKS5zdHIubG93ZXIoKVxudGlkaWVkLnZhbHVlX2NvdW50cygpIn0=
 </script>
 </div>
-<p>We keep a quarter of the flowers aside as the test set. <code>random_state=0</code> makes the split the same every time, so your numbers match this page.</p>
+<p>The six categories have already collapsed toward three: <code>"male"</code>, <code>"female"</code>, and the stragglers <code>"m"</code> and <code>"f"</code>. Stripping and lowercasing did the heavy lifting — <code>"  Male"</code>, <code>"male"</code>, and <code>"MALE"</code> are now the single string <code>"male"</code>. What remains is a question of <em>meaning</em>, not formatting: <code>"m"</code> and <code>"f"</code> are abbreviations that stand for the full words. That is the next job.</p>
+</section>
+<section id="consolidating-categories-that-mean-the-same-thing" class="level2">
+<h2 class="anchored" data-anchor-id="consolidating-categories-that-mean-the-same-thing">Consolidating categories that mean the same thing</h2>
+<p><code>.str.strip().str.lower()</code> fixes how text is <em>written</em>. It cannot know that <code>"m"</code> <em>means</em> <code>"male"</code> — that is domain knowledge only you have. To fold synonyms and abbreviations into one label, write the mapping down explicitly and apply it with <code>.replace()</code>, which swaps any value it finds as a dictionary key for the corresponding value.</p>
 <div>
 <div id="pyodide-3" class="exercise-cell">
 
 </div>
 <script type="pyodide-3-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDMg4oCUIHRyYWluIChmaXQpIHRoZSBtb2RlbCIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmxpbmVhcl9tb2RlbCBpbXBvcnQgTG9naXN0aWNSZWdyZXNzaW9uXG5cbm1vZGVsID0gTG9naXN0aWNSZWdyZXNzaW9uKG1heF9pdGVyPTIwMClcbm1vZGVsLmZpdChYX3RyYWluLCB5X3RyYWluKVxucHJpbnQoXCJUcmFpbmVkISBUaGUgbW9kZWwgaGFzIG5vdyBzZWVuXCIsIFhfdHJhaW4uc2hhcGVbMF0sIFwibGFiZWxsZWQgZmxvd2Vycy5cIikifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJNYXAgYWJicmV2aWF0aW9ucyBvbnRvIGZ1bGwgbGFiZWxzIHNvIGVhY2ggY2F0ZWdvcnkgaXMgY291bnRlZCBvbmNlIiwiZWRpdCI6dHJ1ZSwiZXZhbCI6dHJ1ZX0sImNvZGUiOiJpbXBvcnQgcGFuZGFzIGFzIHBkXG5cbnJhdyA9IHBkLlNlcmllcyhbXCIgIE1hbGVcIiwgXCJtYWxlXCIsIFwiTVwiLCBcIkZlbWFsZSBcIiwgXCJGRU1BTEVcIiwgXCJmXCJdKVxudGlkaWVkID0gcmF3LnN0ci5zdHJpcCgpLnN0ci5sb3dlcigpXG5cbm1hcHBpbmcgPSB7XCJtXCI6IFwibWFsZVwiLCBcImZcIjogXCJmZW1hbGVcIn1cbmNvbnNvbGlkYXRlZCA9IHRpZGllZC5yZXBsYWNlKG1hcHBpbmcpXG5jb25zb2xpZGF0ZWQudmFsdWVfY291bnRzKCkifQ==
 </script>
 </div>
-<p><code>LogisticRegression</code> is a small, well-understood classifier — a good first model. <code>fit</code> is the training step. <code>max_iter=200</code> gives it enough rounds to settle.</p>
+<p>Now there are exactly <strong>two</strong> categories: <code>male</code> with 3 and <code>female</code> with 3. Notice the order of operations — strip and lowercase <em>first</em>, then map. If you tried to map the raw values you would need keys for <code>"  Male"</code>, <code>"MALE"</code>, <code>"Male "</code> and every other variant; by normalising case and spacing first, your mapping only has to know the <em>clean</em> spellings (<code>"m"</code>, <code>"f"</code>) it still needs to fold in. A small, readable dictionary instead of a sprawling one.</p>
+<p>This pattern — <strong>normalise, then map</strong> — is how you turn a column that a survey, a web form, or three different data-entry clerks filled in into the tidy set of categories your analysis expects.</p>
+</section>
+<section id="numbers-hiding-inside-strings" class="level2">
+<h2 class="anchored" data-anchor-id="numbers-hiding-inside-strings">Numbers hiding inside strings</h2>
+<p>The other classic mess is a number that arrives dressed as text. Prices, amounts, and measurements often carry a symbol or a separator: <code>"₹1,200"</code>, <code>"$3.50"</code>, <code>"1,050 kg"</code>. To a person these are clearly quantities. To pandas the currency symbol, the thousands comma, and the unit are ordinary characters, so the whole value is a <strong>string</strong> — and string columns refuse to do arithmetic. Try to sum them and pandas either errors or, worse, glues the texts end to end.</p>
+<p>The fix is two steps: <strong>strip the non-numeric characters</strong>, then <strong>convert</strong> what remains to a real number with <code>.astype(float)</code>.</p>
 <div>
 <div id="pyodide-4" class="exercise-cell">
 
 </div>
 <script type="pyodide-4-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDQg4oCUIHByZWRpY3Qgb24gZmxvd2VycyBpdCBoYXMgbmV2ZXIgc2VlbiIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicHJlZGljdGlvbnMgPSBtb2RlbC5wcmVkaWN0KFhfdGVzdClcbnByaW50KFwiUHJlZGljdGVkIHNwZWNpZXMgZm9yIHRoZSBmaXJzdCAxMCB0ZXN0IGZsb3dlcnM6XCIpXG5wcmludChwcmVkaWN0aW9uc1s6MTBdKVxucHJpbnQoXCJUaGUgdHJ1ZSBzcGVjaWVzIGZvciB0aG9zZSBzYW1lIGZsb3dlcnM6XCIpXG5wcmludCh5X3Rlc3RbOjEwXSkifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJTdHJpcCB0aGUgY3VycmVuY3kgc3ltYm9sIGFuZCBjb21tYSwgdGhlbiBjb252ZXJ0IHRoZSBjb2x1bW4gdG8gbnVtYmVycyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IHBhbmRhcyBhcyBwZFxuXG5vcmRlcnMgPSBwZC5EYXRhRnJhbWUoe1xuICAgIFwiaXRlbVwiOiBbXCJwZW5cIiwgXCJiYWdcIiwgXCJsYW1wXCJdLFxuICAgIFwicHJpY2VcIjogW1wi4oK5MSwyMDBcIiwgXCLigrk4NVwiLCBcIuKCuTIsNDk5XCJdLFxufSlcblxub3JkZXJzW1wicHJpY2VfbnVtXCJdID0gKFxuICAgIG9yZGVyc1tcInByaWNlXCJdXG4gICAgLnN0ci5yZXBsYWNlKFwi4oK5XCIsIFwiXCIsIHJlZ2V4PUZhbHNlKVxuICAgIC5zdHIucmVwbGFjZShcIixcIiwgXCJcIiwgcmVnZXg9RmFsc2UpXG4gICAgLmFzdHlwZShmbG9hdClcbilcblxucHJpbnQob3JkZXJzKVxucHJpbnQoXCJ0b3RhbDpcIiwgb3JkZXJzW1wicHJpY2VfbnVtXCJdLnN1bSgpKVxucHJpbnQoXCJtZWFuIDpcIiwgcm91bmQob3JkZXJzW1wicHJpY2VfbnVtXCJdLm1lYW4oKSwgMikpIn0=
 </script>
 </div>
-<div>
-<div id="pyodide-5" class="exercise-cell">
-
-</div>
-<script type="pyodide-5-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tZXRyaWNzIGltcG9ydCBhY2N1cmFjeV9zY29yZVxuXG5hY2MgPSBhY2N1cmFjeV9zY29yZSh5X3Rlc3QsIG1vZGVsLnByZWRpY3QoWF90ZXN0KSlcbnByaW50KGZcIkFjY3VyYWN5IG9uIHRoZSB0ZXN0IHNldDoge2FjYzouMiV9XCIpIn0=
-</script>
-</div>
-<p>That percentage is the share of test flowers the model named correctly. You built a model, trained it, used it on new data, and graded it — the full loop.</p>
-<blockquote class="blockquote">
-<p>🔬 Going deeper (optional): try changing <code>test_size</code> to <code>0.5</code> and re-running from Step 2. With fewer training flowers, does the accuracy move? That tension — more data to learn from versus more data to grade on — comes back often.</p>
-</blockquote>
+<p>Each <code>.str.replace(old, new, regex=False)</code> deletes one offending character: first the <code>₹</code> symbol, then the thousands comma, leaving a clean numeric string like <code>"1200"</code>. Only then does <code>.astype(float)</code> succeed, turning <code>"1200"</code> into <code>1200.0</code>. With a real numeric column, <code>.sum()</code> and <code>.mean()</code> work as expected — the total comes to <strong>3784.0</strong>, which would have been impossible on the original text. Passing <code>regex=False</code> tells pandas to treat the pattern as a literal string, which is the safe choice when removing punctuation that could otherwise be read as a regular expression.</p>
+<p>The same recipe handles units and other currencies: drop a <code>"$"</code> the same way, or strip a trailing <code>" kg"</code> before converting. The shape never changes — <strong>remove what isn’t part of the number, then <code>astype</code> the rest</strong> — and a column you couldn’t do maths on becomes one you can.</p>
+<p>A quick word on dates, the third common offender: they arrive as <code>"2026-06-29"</code>, <code>"29/06/2026"</code>, and <code>"June 29, 2026"</code>, all text. Pandas has a dedicated tool for them, <code>pd.to_datetime</code>, which parses many formats into a real date type. The principle is the same one running through this whole chapter — a value that <em>looks</em> like a date or a number is still text until you convert it.</p>
 <hr>
 </section>
 <section id="key-takeaways" class="level2">
@@ -822,102 +822,121 @@ eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVl
 <section id="key-takeaways-1" class="level3 key-takeaways">
 <h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
 <ol type="1">
-<li>A <strong>model</strong> is a function learned from labelled examples, not a rule you write by hand.</li>
-<li><strong>Training</strong> (fitting) adjusts the model on known answers; <strong>predicting</strong> runs it on new inputs.</li>
-<li><strong>Accuracy</strong> is the fraction of predictions that match the truth — always measured on data the model did <strong>not</strong> train on.</li>
-<li>You did all of this in the browser, at zero cost and zero install.</li>
+<li>Pandas compares text <strong>exactly</strong>, so <code>"  Male"</code>, <code>"male"</code>, and <code>"M"</code> are different values — case, whitespace, and abbreviations split one real category into many.</li>
+<li><code>.str.strip()</code> removes stray whitespace and <code>.str.lower()</code> forces one case; chaining them (<code>.str.strip().str.lower()</code>) normalises a whole column at once.</li>
+<li>To fold synonyms together, <strong>normalise first, then map</strong> with <code>.replace({...})</code> — a small dictionary of clean spellings to one label.</li>
+<li>A number wearing a symbol or comma (<code>"₹1,200"</code>) is text: strip the non-numeric characters with <code>.str.replace(..., regex=False)</code>, then <code>.astype(float)</code> before doing any maths.</li>
 </ol>
 </section>
 <hr>
 </section>
 <section id="practice" class="level2">
 <h2 class="anchored" data-anchor-id="practice">Practice</h2>
-<p>Each exercise below is auto-graded by <code>run_tests</code>, the shared Larnix grader. It is loaded for you from <code>lib/grader.py</code> — you do not paste or define it.</p>
-<section id="exercise-1-guided-5-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</h3>
-<p>Complete the one marked line so the model is trained. Replace <code>____</code> with the call that fits <code>model</code> on the training data, then press <strong>Run</strong>.</p>
-<script type="exercise-setup-ex_fit-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0Iiwic2V0dXAiOnRydWV9LCJjb2RlIjoiIyBMb2FkcyB0aGUgc2hhcmVkIGF1dG8tZ3JhZGVyIGludG8gdGhpcyBleGVyY2lzZSBmcm9tIGxpYi9ncmFkZXIucHkg4oCUIGNvcGllZCBpbnRvXG4jIHRoZSBQeW9kaWRlIGZpbGVzeXN0ZW0gYXQgc3RhcnR1cCB2aWEgdGhlIHBhZ2UncyBgcmVzb3VyY2VzOmAga2V5IChzaW5nbGUgc291cmNlXG4jIG9mIHRydXRoLCBERUNJU0lPTlMgRDAwMTYpLiBPbmUgc2V0dXAgY2VsbCBwZXIgZXhlcmNpc2UgKGl0cyBvd24gZW52aXJvbm1lbnQpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>. The first two use tiny hand-made values so the answers are exact.</p>
+<section id="exercise-1-guided-4-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</h3>
+<p>Write <code>clean_text(s)</code> that normalises one string: trim the whitespace from both ends and lowercase it. Replace <code>____</code>, then press <strong>Run</strong>.</p>
+<script type="exercise-setup-ex_clean_text-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY2xlYW5fdGV4dCIsInNldHVwIjp0cnVlfSwiY29kZSI6ImZyb20gbGliLmdyYWRlciBpbXBvcnQgcnVuX3Rlc3RzIn0=
 </script>
 <div>
-<div id="pyodide-7" class="exercise-cell">
+<div id="pyodide-6" class="exercise-cell">
 
 </div>
-<script type="pyodide-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0In0sImNvZGUiOiJmcm9tIHNrbGVhcm4ubGluZWFyX21vZGVsIGltcG9ydCBMb2dpc3RpY1JlZ3Jlc3Npb25cbmZyb20gc2tsZWFybi5kYXRhc2V0cyBpbXBvcnQgbG9hZF9pcmlzXG5mcm9tIHNrbGVhcm4ubW9kZWxfc2VsZWN0aW9uIGltcG9ydCB0cmFpbl90ZXN0X3NwbGl0XG5cblgsIHkgPSBsb2FkX2lyaXMocmV0dXJuX1hfeT1UcnVlKVxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MClcblxubW9kZWwgPSBMb2dpc3RpY1JlZ3Jlc3Npb24obWF4X2l0ZXI9MjAwKVxuX19fXyAgIyBUT0RPOiB0cmFpbiB0aGUgbW9kZWwgb24gWF90cmFpbiBhbmQgeV90cmFpblxuXG5ydW5fdGVzdHMoW1xuICAgIChcIm1vZGVsIHByZWRpY3RzIG9uZSBsYWJlbCBwZXIgdGVzdCBmbG93ZXJcIiwgbGVuKG1vZGVsLnByZWRpY3QoWF90ZXN0KSksIGxlbih5X3Rlc3QpKSxcbl0pIn0=
+<script type="pyodide-6-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY2xlYW5fdGV4dCJ9LCJjb2RlIjoiZGVmIGNsZWFuX3RleHQocyk6XG4gICAgXCJcIlwiVHJpbSBsZWFkaW5nL3RyYWlsaW5nIHdoaXRlc3BhY2UgYW5kIGxvd2VyY2FzZSB0aGUgc3RyaW5nLlwiXCJcIlxuICAgIHJldHVybiBfX19fICAjIFRPRE86IHMuc3RyaXAoKS5sb3dlcigpXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwidHJpbXMrbG93ZXJzXCIsIGNsZWFuX3RleHQoXCIgIEhlbGxvIFwiKSwgXCJoZWxsb1wiKSxcbiAgICAoXCJhbHJlYWR5IGNsZWFuXCIsIGNsZWFuX3RleHQoXCJtYWxlXCIpLCBcIm1hbGVcIiksXG5dKSJ9
 </script>
 </div>
 <details>
 <summary>
-Show solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>fit</code> is the training step: it takes the inputs <code>X_train</code> and their known answers <code>y_train</code>. After it runs, <code>model.predict</code> works on new data.
+Python strings have the same two methods pandas uses on a column. <code>s.strip()</code> removes the spaces at each end, and <code>.lower()</code> forces lowercase. Chain them on the input: strip first, then lower.
 </details>
-</section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write <code>accuracy(y_true, y_pred)</code> — the fraction of predictions that match the truth, as a number between 0 and 1. Complete the marked line.</p>
-<script type="exercise-setup-ex_accuracy-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiIjIFNhbWUgc2hhcmVkIGdyYWRlciwgbG9hZGVkIGludG8gdGhpcyBleGVyY2lzZSdzIGVudmlyb25tZW50IChERUNJU0lPTlMgRDAwMTYpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
-</script>
-<div>
-<div id="pyodide-9" class="exercise-cell">
-
-</div>
-<script type="pyodide-9-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kifSwiY29kZSI6ImRlZiBhY2N1cmFjeSh5X3RydWUsIHlfcHJlZCk6XG4gICAgXCJcIlwiUmV0dXJuIHRoZSBmcmFjdGlvbiBvZiBtYXRjaGluZyBwcmVkaWN0aW9ucywgYXMgYSBmbG9hdCBpbiBbMCwgMV0uXCJcIlwiXG4gICAgY29ycmVjdCA9IHN1bSgxIGZvciBhLCBiIGluIHppcCh5X3RydWUsIHlfcHJlZCkgaWYgX19fXykgICMgVE9ETzogY29tcGFyZSBhIGFuZCBiXG4gICAgcmV0dXJuIGNvcnJlY3QgLyBsZW4oeV90cnVlKVxuXG5ydW5fdGVzdHMoW1xuICAgIChcImFsbCBjb3JyZWN0XCIsIGFjY3VyYWN5KFsxLCAxLCAxXSwgWzEsIDEsIDFdKSwgMS4wKSxcbiAgICAoXCJoYWxmIHJpZ2h0XCIsICBhY2N1cmFjeShbMSwgMF0sICAgIFsxLCAxXSksICAgIDAuNSksXG4gICAgKFwibm9uZSByaWdodFwiLCAgYWNjdXJhY3koWzAsIDBdLCAgICBbMSwgMV0pLCAgICAwLjApLFxuXSkifQ==
-</script>
-</div>
 <details>
 <summary>
 Show solution
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accuracy(y_true, y_pred):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    correct <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred) <span class="cf">if</span> a <span class="op">==</span> b)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> correct <span class="op">/</span> <span class="bu">len</span>(y_true)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>a == b</code> is <code>True</code> when a prediction matches the truth; summing those <code>True</code>s counts the matches, and dividing by the number of labels gives the fraction. This is what <code>accuracy_score</code> computed for you in Step 5.
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_text(s):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s.strip().lower()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>s.strip()</code> drops the leading and trailing spaces, turning <code>"  Hello "</code> into <code>"Hello"</code>; <code>.lower()</code> then makes it <code>"hello"</code>. A string that is already clean, like <code>"male"</code>, passes through unchanged. This is exactly what <code>.str.strip().str.lower()</code> does to a whole column, one value at a time.
 </details>
 </section>
-<section id="exercise-3-stretch-optional-15-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</h3>
-<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Starting from the worked example, try to <strong>beat 95% accuracy</strong> on the test set. Ideas: raise <code>max_iter</code>, or swap <code>LogisticRegression</code> for another classifier such as <code>from sklearn.neighbors import KNeighborsClassifier</code>.</p>
-<p><strong>Rubric — a good solution:</strong></p>
+<section id="exercise-2-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
+<p>Write <code>to_number(s)</code> that turns a price string into a <code>float</code>. Strip a leading currency symbol (handle both <code>₹</code> and <code>$</code>) and any thousands commas, then convert what’s left. Complete the marked line.</p>
+<script type="exercise-setup-ex_to_number-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfdG9fbnVtYmVyIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+</script>
+<div>
+<div id="pyodide-8" class="exercise-cell">
+
+</div>
+<script type="pyodide-8-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfdG9fbnVtYmVyIn0sImNvZGUiOiJkZWYgdG9fbnVtYmVyKHMpOlxuICAgIFwiXCJcIlN0cmlwIGEgY3VycmVuY3kgc3ltYm9sIGFuZCB0aG91c2FuZHMgY29tbWFzLCB0aGVuIHJldHVybiBhIGZsb2F0LlwiXCJcIlxuICAgIHJldHVybiBfX19fICAjIFRPRE86IGZsb2F0KHMucmVwbGFjZShcIuKCuVwiLCBcIlwiKS5yZXBsYWNlKFwiJFwiLCBcIlwiKS5yZXBsYWNlKFwiLFwiLCBcIlwiKSlcblxucnVuX3Rlc3RzKFtcbiAgICAoXCJydXBlZXNcIiwgdG9fbnVtYmVyKFwi4oK5MSwyMDBcIiksIDEyMDAuMCksXG4gICAgKFwicGxhaW5cIiwgdG9fbnVtYmVyKFwiMy41XCIpLCAzLjUpLFxuXSkifQ==
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+Remove each unwanted character with <code>str.replace(old, "")</code>, which deletes every copy of <code>old</code>. Chain three of them — one for <code>"₹"</code>, one for <code>"$"</code>, one for <code>","</code> — so a value with none of them (like <code>"3.5"</code>) is untouched. Then wrap the result in <code>float(...)</code>.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_number(s):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(s.replace(<span class="st">"₹"</span>, <span class="st">""</span>).replace(<span class="st">"$"</span>, <span class="st">""</span>).replace(<span class="st">","</span>, <span class="st">""</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Each <code>.replace(old, "")</code> strips one character: <code>"₹1,200"</code> loses its <code>₹</code> to become <code>"1,200"</code>, then its comma to become <code>"1200"</code>, which <code>float(...)</code> reads as <code>1200.0</code>. A plain <code>"3.5"</code> has none of those characters, so the three replaces leave it alone and <code>float(...)</code> returns <code>3.5</code>. This is the single-value version of the <code>.str.replace(...).astype(float)</code> chain you used on a column.
+</details>
+</section>
+<section id="exercise-3-stretch-optional-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</h3>
+<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Take a messy category column such as <code>["M", "male", " Male "]</code>, normalise it (strip + lowercase + map to one label), and report the <strong>unique values before and after</strong> so the consolidation is visible.</p>
+<p><strong>Rubric — a good answer:</strong></p>
 <ul>
-<li>Trains on <code>X_train</code>/<code>y_train</code> only and reports accuracy on the held-out <code>X_test</code>/<code>y_test</code> (no testing on training data).</li>
-<li>States the change you made and the accuracy you reached.</li>
-<li>Reaches at least the worked example’s baseline, ideally higher.</li>
+<li>Builds a Series from a messy category column and shows its unique values <em>before</em> cleaning (three or more variants).</li>
+<li>Normalises with <code>.str.strip().str.lower()</code> and folds abbreviations together with <code>.replace({...})</code>.</li>
+<li>Reports the unique values <em>after</em>, showing they collapse to the single intended label.</li>
 </ul>
 <details>
 <summary>
-Show one possible solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>knn.fit(X_train, y_train)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"k-NN accuracy: </span><span class="sc">{</span>accuracy_score(y_test, knn.predict(X_test))<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-A nearest-neighbour classifier often does well on Iris. Other approaches are fine too — the point is to change one thing, measure honestly on the test set, and compare.
+<code>series.unique()</code> lists the distinct values, so print it once before and once after cleaning. Between the two prints, chain <code>.str.strip().str.lower()</code> and then <code>.replace({"m": "male"})</code> to fold the abbreviation into the full word.
+</details>
+<details>
+<summary>
+Show one possible answer
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>messy <span class="op">=</span> pd.Series([<span class="st">"M"</span>, <span class="st">"male"</span>, <span class="st">" Male "</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"before:"</span>, <span class="bu">list</span>(messy.unique()))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>cleaned <span class="op">=</span> messy.<span class="bu">str</span>.strip().<span class="bu">str</span>.lower().replace({<span class="st">"m"</span>: <span class="st">"male"</span>})</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"after :"</span>, <span class="bu">list</span>(cleaned.unique()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Before cleaning, <code>unique()</code> shows three variants — <code>['M', 'male', ' Male ']</code> — because case and the stray spaces make them distinct. After <code>.str.strip().str.lower()</code> they all become <code>"male"</code>, and <code>.replace({"m": "male"})</code> folds the abbreviation in, so <code>after</code> prints the single label <code>['male']</code>: one real category, counted once.
 </details>
 <hr>
 </section>
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch1-train-your-first-model","questions":[{"answer":"1","explanation":"A model is the learned function; we fit it on examples, then call it to predict.","id":"what-is-a-model","options":["A spreadsheet that stores the flower measurements","A function learned from labelled examples that maps an input to a prediction","The chart that shows the accuracy score"],"prompt":"In this chapter, a model is best described as…"},{"answer":"1","explanation":"Testing on unseen data checks whether the model generalises, rather than only memorises.","id":"why-a-test-set","options":["Because the test set is always larger than the training set","Because a model can score well on examples it has already seen yet fail on new ones","Because scikit-learn refuses to predict on training data"],"prompt":"Why do we measure accuracy on a separate test set instead of the training data?"},{"answer":"0","explanation":"Accuracy is the fraction of predictions that match the true labels.","id":"what-accuracy-means","options":["It named 95% of the test flowers correctly","It is 95% confident about every single flower","It used 95% of the flowers for training"],"prompt":"The model reports 95% accuracy on the test set. That means…"}],"title":"Chapter 1 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m3-ch14-messy-data","questions":[{"answer":"1","explanation":"Pandas matches strings character for character. Differences in case and abbreviation make distinct values, so a count or group-by splits one real category into three.","id":"why-variants-are-a-problem","options":["Pandas automatically merges values that look similar, so they are already one group","Pandas compares text exactly, so it counts them as three separate categories even though they mean one thing","Text columns can never be counted or grouped at all"],"prompt":"Why are ‘M’, ‘male’, and ‘Male’ a problem in a category column?"},{"answer":"0","explanation":".str.strip() removes the leading and trailing whitespace and .str.lower() forces one case, so all three become the single string ‘male’.","id":"how-to-normalise-text","options":["col.str.strip().str.lower()","col.astype(int)","col.dropna()"],"prompt":"Which one-line fix collapses ’ Male’, ‘male’, and ‘MALE’ into the same value?"},{"answer":"0","explanation":"The symbol and thousands comma make the value a string. You strip them with .str.replace(…) and then .astype(float) so .sum() and .mean() work on real numbers.","id":"why-currency-needs-conversion","options":["It is text — the currency symbol and comma make it a string, so arithmetic fails or concatenates instead of adding","The number is too large for pandas to store","Pandas needs the rupee symbol removed for legal reasons"],"prompt":"Why must ‘₹1,200’ be converted before you can total a price column?"},{"answer":"2","explanation":"Folding synonyms into one label means a real category is represented by a single value, so counts, group-bys, and models reflect the true groups rather than spelling variants.","id":"what-consolidating-achieves","options":["It deletes rows that contain abbreviations","It makes the column take up less memory but changes nothing about the analysis","It counts each real category once, so group-bys, charts, and models see the true number of groups"],"prompt":"What does consolidating categories (mapping ‘m’ and ‘male’ to one label) achieve?"}],"title":"Chapter 14 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You have run the complete machine-learning loop — load, split, train, predict, measure — on a classic dataset, without installing anything. Every later module reuses this loop on bigger data and stronger models. Next, we look at what the accuracy number does <em>not</em> tell you, and when it can mislead.</p>
+<p>Real datasets rarely arrive tidy. With Chapter 4’s missing-value and type tools and this chapter’s string toolkit, you can take a column written by many hands — inconsistent case, stray spaces, currency symbols, abbreviations — and turn it into clean text and real numbers your analysis can trust. Next we move from cleaning single columns to combining whole tables: joining datasets together and grouping rows to summarise them.</p>
 
 
 <script type="pyodide-data">
-eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
+eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIiwicGFuZGFzIl19fQ==
 </script>
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzkgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzksIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzkgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzkuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS03LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNyA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNywge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNy5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV81ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl81LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTQtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV80ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl80LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTMtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8zID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTgiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl84ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS04LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOC1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzggPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzgsIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzggPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzguZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzYgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTYtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS02LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNiA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNiwge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNi5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTQtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV80ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl80LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTMtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8zID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
 </script>
 <div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
 <div id="exercise-loading-status" class="d-flex gap-2">
@@ -1099,7 +1118,7 @@ eyJjb250ZW50cyI6W119
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../modules/00-orientation";
+window._ojs.paths.runtimeToDoc = "../../modules/03-data";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "../..";
 window._ojs.selfContained = false;

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Train your first model — in your browser – Larnix</title>
+<title>Cleaning data – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/03-data/index.html">M3 — Data &amp; Tooling</a></li><li class="breadcrumb-item"><a href="../../modules/03-data/ch04-cleaning-data.html">Ch4 — Cleaning data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch1 — Train your first model</span></a>
   </div>
 </li>
@@ -624,7 +624,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/03-data/ch04-cleaning-data.html" class="sidebar-item-text sidebar-link">
+  <a href="../../modules/03-data/ch04-cleaning-data.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ch4 — Cleaning data</span></a>
   </div>
 </li>
@@ -701,17 +701,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
-  <li><a href="#the-idea-in-plain-language" id="toc-the-idea-in-plain-language" class="nav-link" data-scroll-target="#the-idea-in-plain-language">The idea, in plain language</a></li>
-  <li><a href="#lets-build-it-worked-example" id="toc-lets-build-it-worked-example" class="nav-link" data-scroll-target="#lets-build-it-worked-example">Let’s build it (worked example)</a></li>
+  <li><a href="#missing-data-is-a-hole-not-a-zero" id="toc-missing-data-is-a-hole-not-a-zero" class="nav-link" data-scroll-target="#missing-data-is-a-hole-not-a-zero">Missing data is a hole, not a zero</a></li>
+  <li><a href="#counting-whats-missing-with-.isna.sum" id="toc-counting-whats-missing-with-.isna.sum" class="nav-link" data-scroll-target="#counting-whats-missing-with-.isna.sum">Counting what’s missing with <code>.isna().sum()</code></a></li>
+  <li><a href="#dropping-rows-with-.dropna" id="toc-dropping-rows-with-.dropna" class="nav-link" data-scroll-target="#dropping-rows-with-.dropna">Dropping rows with <code>.dropna()</code></a></li>
+  <li><a href="#filling-gaps-with-.fillna" id="toc-filling-gaps-with-.fillna" class="nav-link" data-scroll-target="#filling-gaps-with-.fillna">Filling gaps with <code>.fillna()</code></a></li>
+  <li><a href="#converting-types-with-.astype" id="toc-converting-types-with-.astype" class="nav-link" data-scroll-target="#converting-types-with-.astype">Converting types with <code>.astype()</code></a></li>
+  <li><a href="#removing-duplicates-with-.drop_duplicates" id="toc-removing-duplicates-with-.drop_duplicates" class="nav-link" data-scroll-target="#removing-duplicates-with-.drop_duplicates">Removing duplicates with <code>.drop_duplicates()</code></a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
   <ul class="collapse">
   <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
   </ul></li>
   <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
-  <li><a href="#exercise-3-stretch-optional-15-min" id="toc-exercise-3-stretch-optional-15-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</a></li>
+  <li><a href="#exercise-1-guided-4-min" id="toc-exercise-1-guided-4-min" class="nav-link" data-scroll-target="#exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</a></li>
+  <li><a href="#exercise-2-implement-8-min" id="toc-exercise-2-implement-8-min" class="nav-link" data-scroll-target="#exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-3-stretch-optional-8-min" id="toc-exercise-3-stretch-optional-8-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</a></li>
   </ul></li>
   <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
   <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
@@ -722,9 +726,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/03-data/index.html">M3 — Data &amp; Tooling</a></li><li class="breadcrumb-item"><a href="../../modules/03-data/ch04-cleaning-data.html">Ch4 — Cleaning data</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Train your first model — in your browser</h1>
+<h1 class="title">Cleaning data</h1>
 </div>
 
 
@@ -741,80 +745,107 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
+<p><span class="larnix-badge badge-difficulty badge-intermediate" role="img" aria-label="difficulty: Intermediate">Intermediate</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
-<p>You are about to train a real machine-learning model — in this browser tab, with nothing installed. No account, no download, no setup. Scroll to the first code block, press <strong>Run</strong>, and in a few seconds a model will sort flowers it has never seen before, and tell you how often it gets them right.</p>
-<p>The flowers are irises. Picture three species laid out on a table. For each flower someone measured four things: the length and width of its petals and of its sepals (the green leaf-like parts under the petals). Given those four numbers, can a computer learn to name the species? That is the whole task — and by the end of this page you will have built the thing that does it.</p>
+<p>Real data is messy. A sensor misfires, someone leaves a form field blank, two records get entered twice — and the clean table you imagined arrives full of holes and oddities instead. Before you can average a column, plot a relationship, or train a model on it, you have to <strong>clean</strong> the data: find the gaps, decide what to do about them, and fix the rough edges.</p>
+<p>You met the penguins table in Chapter 2 and learned to select from it in Chapter 3. Look closely and you’ll notice it isn’t perfect: a handful of penguins are missing measurements, and 11 are missing a recorded sex. That is completely normal — almost every real dataset has gaps. This chapter teaches the small, repeatable toolkit pandas gives you for the most common cleaning jobs:</p>
+<ul>
+<li><strong>find</strong> missing values and count them, so you know the scale of the problem;</li>
+<li><strong>drop</strong> the incomplete rows, or <strong>fill</strong> the gaps with a chosen value;</li>
+<li><strong>convert</strong> a column to the right type, and <strong>remove</strong> duplicate rows.</li>
+</ul>
+<p>None of these are hard, but doing them in the right order — and knowing the trade-offs — is the difference between a trustworthy analysis and a misleading one.</p>
 <blockquote class="blockquote">
-<p>By the end of this chapter you’ll be able to train a classifier, call it on new data, and read its accuracy.</p>
+<p>You’ll need from before: selecting columns and rows (M3 Ch3). We use that to inspect and repair specific parts of the table.</p>
 </blockquote>
 <hr>
 </section>
-<section id="the-idea-in-plain-language" class="level2">
-<h2 class="anchored" data-anchor-id="the-idea-in-plain-language">The idea, in plain language</h2>
-<p>Start with the word that does the heavy lifting: <strong>model</strong>.</p>
-<p>A <strong>model</strong> is a function that you <em>learn from examples</em> instead of writing by hand. You do not sit down and code the rule “if the petals are long and narrow, it’s species B.” Instead you show the computer many flowers whose species you already know, and it works out the rule for you.</p>
-<p>Three words describe the whole cycle:</p>
-<ul>
-<li><strong>Training</strong> (also called <em>fitting</em>): you hand the model a pile of examples where the answer is known — here, flowers labelled with their species — and it adjusts itself until its guesses match those known answers reasonably well.</li>
-<li><strong>Predicting</strong>: you give the trained model a <em>new</em> flower it has not seen, and it outputs a species.</li>
-<li><strong>Accuracy</strong>: you check how often it is right. If you test it on 40 flowers and it names 38 correctly, that is 38/40 = 0.95, or <strong>95%</strong> accuracy.</li>
-</ul>
-<p>One habit matters from day one: you test on flowers the model did <strong>not</strong> train on. A model can score well on examples it has already memorised and still fail on new ones, the way reciting answers you’ve seen is not the same as understanding. So we split the data into a <strong>training set</strong> (to learn from) and a <strong>test set</strong> (to grade on).</p>
-<p>That is the entire plan. The code below carries it out in five short steps.</p>
-<hr>
+<section id="missing-data-is-a-hole-not-a-zero" class="level2">
+<h2 class="anchored" data-anchor-id="missing-data-is-a-hole-not-a-zero">Missing data is a hole, not a zero</h2>
+<p>When pandas reads a CSV and a cell has no value, it doesn’t guess. It stores a special marker called <strong>NaN</strong> — short for “not a number” — that means <em>we don’t know this value</em>. NaN is not the same as <code>0</code>, and it is not an empty string <code>""</code>. A body mass of <code>0</code> grams would be a (very wrong) measurement; a NaN says no measurement was recorded at all. Keeping that distinction is the whole point: if you silently treated missing masses as zero, every average you computed would be dragged toward zero and quietly lie to you.</p>
+<p>This is why missing data breaks math. Most arithmetic with NaN gives NaN back: add a number to “we don’t know” and the answer is still “we don’t know”. Pandas is careful here — its column summaries like <code>.mean()</code> skip NaN by default, which is helpful but also easy to forget. The safe habit is to <em>see</em> your missing values first and decide what they mean, rather than letting a default quietly handle them for you.</p>
 </section>
-<section id="lets-build-it-worked-example" class="level2">
-<h2 class="anchored" data-anchor-id="lets-build-it-worked-example">Let’s build it (worked example)</h2>
-<p>These blocks run Python <strong>in your browser</strong> through Pyodide. The first run downloads the runtime, which takes a few seconds; after that it is instant. Press <strong>Run</strong> on each block in order.</p>
+<section id="counting-whats-missing-with-.isna.sum" class="level2">
+<h2 class="anchored" data-anchor-id="counting-whats-missing-with-.isna.sum">Counting what’s missing with <code>.isna().sum()</code></h2>
+<p>The first question on any new table is: <em>where are the holes, and how many?</em> Two methods answer it together. <code>df.isna()</code> returns a table the same shape as your data, filled with <code>True</code> wherever a value is missing and <code>False</code> everywhere else. On its own that is a wall of booleans — but <code>.sum()</code> collapses it. Because Python counts <code>True</code> as <code>1</code> and <code>False</code> as <code>0</code>, summing each column gives the <strong>number of missing values per column</strong>.</p>
 <div>
 <div id="pyodide-1" class="exercise-cell">
 
 </div>
 <script type="pyodide-1-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDEg4oCUIGxvYWQgdGhlIGV4YW1wbGUgZmxvd2VycyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmRhdGFzZXRzIGltcG9ydCBsb2FkX2lyaXNcblxuWCwgeSA9IGxvYWRfaXJpcyhyZXR1cm5fWF95PVRydWUpXG5wcmludChcIk1lYXN1cmVtZW50cyBmb3JcIiwgWC5zaGFwZVswXSwgXCJmbG93ZXJzLCB3aXRoXCIsIFguc2hhcGVbMV0sIFwibnVtYmVycyBlYWNoLlwiKVxucHJpbnQoXCJGaXJzdCBmbG93ZXIncyBtZWFzdXJlbWVudHM6XCIsIFhbMF0pXG5wcmludChcIkl0cyBzcGVjaWVzIChhcyBhIG51bWJlciAwLzEvMik6XCIsIHlbMF0pIn0=
+eyJhdHRyIjp7ImNhcHRpb24iOiJDb3VudCBtaXNzaW5nIHZhbHVlcyBpbiBldmVyeSBjb2x1bW4gb2YgdGhlIHBlbmd1aW5zIHRhYmxlIiwiZWRpdCI6dHJ1ZSwiZXZhbCI6dHJ1ZX0sImNvZGUiOiJpbXBvcnQgcGFuZGFzIGFzIHBkXG5mcm9tIGxpYi5kYXRhIGltcG9ydCBsb2FkX2NzdlxuXG5kZiA9IGxvYWRfY3N2KFwicGVuZ3VpbnNcIilcbmRmLmlzbmEoKS5zdW0oKSJ9
 </script>
 </div>
-<p><code>X</code> holds the four measurements for every flower; <code>y</code> holds the species, written as a number (0, 1, or 2) because models work with numbers.</p>
+<p>Read that result top to bottom. <code>species</code>, <code>island</code>, and <code>year</code> have <strong>0</strong> missing values — they are complete. The four body measurements (<code>bill_length_mm</code>, <code>bill_depth_mm</code>, <code>flipper_length_mm</code>, <code>body_mass_g</code>) are each missing <strong>2</strong> values, and <code>sex</code> is missing <strong>11</strong>. So the gaps are not spread evenly: most of the trouble is in the <code>sex</code> column, where 11 penguins were never sexed.</p>
+<p>To get a single grand total — handy as a quick “how dirty is this?” number — sum twice. The first <code>.sum()</code> counts per column; a second <code>.sum()</code> adds those column totals together.</p>
 <div>
 <div id="pyodide-2" class="exercise-cell">
 
 </div>
 <script type="pyodide-2-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDIg4oCUIHNwbGl0IGludG8gYSB0cmFpbmluZyBzZXQgYW5kIGEgdGVzdCBzZXQiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tb2RlbF9zZWxlY3Rpb24gaW1wb3J0IHRyYWluX3Rlc3Rfc3BsaXRcblxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFxuICAgIFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MFxuKVxucHJpbnQoXCJUcmFpbmluZyBmbG93ZXJzOlwiLCBYX3RyYWluLnNoYXBlWzBdKVxucHJpbnQoXCJUZXN0IGZsb3dlcnM6XCIsIFhfdGVzdC5zaGFwZVswXSkifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJBIHNpbmdsZSBncmFuZCB0b3RhbCBvZiBtaXNzaW5nIGNlbGxzIGFjcm9zcyB0aGUgd2hvbGUgdGFibGUiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImltcG9ydCBwYW5kYXMgYXMgcGRcbmZyb20gbGliLmRhdGEgaW1wb3J0IGxvYWRfY3N2XG5cbmRmID0gbG9hZF9jc3YoXCJwZW5ndWluc1wiKVxudG90YWxfbWlzc2luZyA9IGludChkZi5pc25hKCkuc3VtKCkuc3VtKCkpXG5wcmludChcInRvdGFsIG1pc3NpbmcgY2VsbHM6XCIsIHRvdGFsX21pc3NpbmcpIn0=
 </script>
 </div>
-<p>We keep a quarter of the flowers aside as the test set. <code>random_state=0</code> makes the split the same every time, so your numbers match this page.</p>
+<p>That double-sum (<code>2 + 2 + 2 + 2 + 11 = 19</code>) gives <strong>19</strong> missing cells in all. You now know both the shape of the problem (mostly <code>sex</code>) and its size (19 cells out of a 344-row table). Only now is it sensible to decide what to do.</p>
+</section>
+<section id="dropping-rows-with-.dropna" class="level2">
+<h2 class="anchored" data-anchor-id="dropping-rows-with-.dropna">Dropping rows with <code>.dropna()</code></h2>
+<p>The simplest response is to throw away every row that has <em>any</em> missing value. <code>df.dropna()</code> does exactly that and returns a <strong>new</strong> DataFrame — it does not change the original. The penguins table starts with 344 rows; after dropping every incomplete row we are left with fewer.</p>
 <div>
 <div id="pyodide-3" class="exercise-cell">
 
 </div>
 <script type="pyodide-3-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDMg4oCUIHRyYWluIChmaXQpIHRoZSBtb2RlbCIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmxpbmVhcl9tb2RlbCBpbXBvcnQgTG9naXN0aWNSZWdyZXNzaW9uXG5cbm1vZGVsID0gTG9naXN0aWNSZWdyZXNzaW9uKG1heF9pdGVyPTIwMClcbm1vZGVsLmZpdChYX3RyYWluLCB5X3RyYWluKVxucHJpbnQoXCJUcmFpbmVkISBUaGUgbW9kZWwgaGFzIG5vdyBzZWVuXCIsIFhfdHJhaW4uc2hhcGVbMF0sIFwibGFiZWxsZWQgZmxvd2Vycy5cIikifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJEcm9wIGV2ZXJ5IHJvdyB0aGF0IGhhcyBhdCBsZWFzdCBvbmUgbWlzc2luZyB2YWx1ZSIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IHBhbmRhcyBhcyBwZFxuZnJvbSBsaWIuZGF0YSBpbXBvcnQgbG9hZF9jc3ZcblxuZGYgPSBsb2FkX2NzdihcInBlbmd1aW5zXCIpXG5jbGVhbiA9IGRmLmRyb3BuYSgpXG5wcmludChcInJvd3MgYmVmb3JlOlwiLCBkZi5zaGFwZVswXSlcbnByaW50KFwicm93cyBhZnRlciA6XCIsIGNsZWFuLnNoYXBlWzBdKVxucHJpbnQoXCJyb3dzIGRyb3BwZWQ6XCIsIGRmLnNoYXBlWzBdIC0gY2xlYW4uc2hhcGVbMF0pIn0=
 </script>
 </div>
-<p><code>LogisticRegression</code> is a small, well-understood classifier — a good first model. <code>fit</code> is the training step. <code>max_iter=200</code> gives it enough rounds to settle.</p>
+<p>We go from <strong>344 rows to 333</strong> — 11 rows removed. Notice that the count of dropped rows matches the <code>sex</code> gap, because the rows missing a measurement are mostly the same rows that are also missing <code>sex</code>. Dropping is honest and easy, and when the gaps are few it is often the right call. But it has a cost: every dropped row takes its <em>good</em> values with it. Throw away a penguin because its sex is unknown and you also lose its perfectly fine body mass. When missing values are rare that loss is acceptable; when they are common, dropping can shrink a dataset dramatically.</p>
+</section>
+<section id="filling-gaps-with-.fillna" class="level2">
+<h2 class="anchored" data-anchor-id="filling-gaps-with-.fillna">Filling gaps with <code>.fillna()</code></h2>
+<p>The alternative is to <strong>keep</strong> every row and replace each NaN with a value you choose. <code>df.fillna(value)</code> does this. For a text column like <code>sex</code>, a sensible fill is a label that says “we don’t know” out loud, so the missing-ness stays visible rather than masquerading as real data.</p>
 <div>
 <div id="pyodide-4" class="exercise-cell">
 
 </div>
 <script type="pyodide-4-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDQg4oCUIHByZWRpY3Qgb24gZmxvd2VycyBpdCBoYXMgbmV2ZXIgc2VlbiIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicHJlZGljdGlvbnMgPSBtb2RlbC5wcmVkaWN0KFhfdGVzdClcbnByaW50KFwiUHJlZGljdGVkIHNwZWNpZXMgZm9yIHRoZSBmaXJzdCAxMCB0ZXN0IGZsb3dlcnM6XCIpXG5wcmludChwcmVkaWN0aW9uc1s6MTBdKVxucHJpbnQoXCJUaGUgdHJ1ZSBzcGVjaWVzIGZvciB0aG9zZSBzYW1lIGZsb3dlcnM6XCIpXG5wcmludCh5X3Rlc3RbOjEwXSkifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJGaWxsIG1pc3Npbmcgc2V4IGxhYmVscyB3aXRoIGFuIGV4cGxpY2l0ICd1bmtub3duJyBtYXJrZXIiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImltcG9ydCBwYW5kYXMgYXMgcGRcbmZyb20gbGliLmRhdGEgaW1wb3J0IGxvYWRfY3N2XG5cbmRmID0gbG9hZF9jc3YoXCJwZW5ndWluc1wiKVxuZmlsbGVkID0gZGYuY29weSgpXG5maWxsZWRbXCJzZXhcIl0gPSBmaWxsZWRbXCJzZXhcIl0uZmlsbG5hKFwidW5rbm93blwiKVxuXG5wcmludChcIm1pc3Npbmcgc2V4IGJlZm9yZTpcIiwgaW50KGRmW1wic2V4XCJdLmlzbmEoKS5zdW0oKSkpXG5wcmludChcIm1pc3Npbmcgc2V4IGFmdGVyIDpcIiwgaW50KGZpbGxlZFtcInNleFwiXS5pc25hKCkuc3VtKCkpKVxucHJpbnQoZmlsbGVkW1wic2V4XCJdLnZhbHVlX2NvdW50cygpKSJ9
 </script>
 </div>
+<p>After filling, the <code>sex</code> column has <strong>0</strong> missing values, and <code>value_counts()</code> shows a new <code>unknown</code> group of 11 alongside <code>male</code> and <code>female</code>. For a numeric column you might instead fill with the column’s mean or median, so the gap doesn’t distort later sums — but always remember you are <em>inventing</em> values. A filled value is a reasonable guess, not a measurement, and any honest analysis should say which columns were filled and how.</p>
+<p>Choosing between dropping and filling is a judgement call, not a rule:</p>
+<ul>
+<li><strong>Drop</strong> when missing rows are few and you can spare them, or when a partial row is useless for your task.</li>
+<li><strong>Fill</strong> when you can’t afford to lose rows, and you have a defensible value to put in (a marker like <code>"unknown"</code>, or a column average) — and you record what you did.</li>
+</ul>
+</section>
+<section id="converting-types-with-.astype" class="level2">
+<h2 class="anchored" data-anchor-id="converting-types-with-.astype">Converting types with <code>.astype()</code></h2>
+<p>Once the holes are handled, the next common chore is fixing <strong>types</strong>. Each column has a data type (its <code>dtype</code>): numbers are usually <code>int64</code> or <code>float64</code>, text is <code>object</code>. Sometimes a column arrives as the wrong type — body mass, for instance, is stored as <code>float64</code> (with decimals) even though grams are whole numbers. After removing the missing values, you can convert it to a plain integer with <code>.astype(...)</code>.</p>
 <div>
 <div id="pyodide-5" class="exercise-cell">
 
 </div>
 <script type="pyodide-5-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tZXRyaWNzIGltcG9ydCBhY2N1cmFjeV9zY29yZVxuXG5hY2MgPSBhY2N1cmFjeV9zY29yZSh5X3Rlc3QsIG1vZGVsLnByZWRpY3QoWF90ZXN0KSlcbnByaW50KGZcIkFjY3VyYWN5IG9uIHRoZSB0ZXN0IHNldDoge2FjYzouMiV9XCIpIn0=
+eyJhdHRyIjp7ImNhcHRpb24iOiJDb252ZXJ0IGJvZHkgbWFzcyBmcm9tIGZsb2F0IHRvIGludGVnZXIgYWZ0ZXIgZHJvcHBpbmcgZ2FwcyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IHBhbmRhcyBhcyBwZFxuZnJvbSBsaWIuZGF0YSBpbXBvcnQgbG9hZF9jc3ZcblxuZGYgPSBsb2FkX2NzdihcInBlbmd1aW5zXCIpXG5jbGVhbiA9IGRmLmRyb3BuYSgpXG5wcmludChcImJlZm9yZTpcIiwgY2xlYW5bXCJib2R5X21hc3NfZ1wiXS5kdHlwZSlcblxuY2xlYW4gPSBjbGVhbi5jb3B5KClcbmNsZWFuW1wiYm9keV9tYXNzX2dcIl0gPSBjbGVhbltcImJvZHlfbWFzc19nXCJdLmFzdHlwZShpbnQpXG5wcmludChcImFmdGVyIDpcIiwgY2xlYW5bXCJib2R5X21hc3NfZ1wiXS5kdHlwZSlcbnByaW50KGNsZWFuW1wiYm9keV9tYXNzX2dcIl0uaGVhZCgpKSJ9
 </script>
 </div>
-<p>That percentage is the share of test flowers the model named correctly. You built a model, trained it, used it on new data, and graded it — the full loop.</p>
-<blockquote class="blockquote">
-<p>🔬 Going deeper (optional): try changing <code>test_size</code> to <code>0.5</code> and re-running from Step 2. With fewer training flowers, does the accuracy move? That tension — more data to learn from versus more data to grade on — comes back often.</p>
-</blockquote>
+<p>The dtype changes from <code>float64</code> to <code>int64</code>, and the masses now print without decimal points. One important catch: you must clear the NaNs <em>before</em> converting to <code>int</code>, because the integer type has no way to store a missing value — that’s why we <code>dropna()</code> first. Converting types matters because the type controls what you can do: maths needs numbers, and some operations (like grouping or joining) behave differently for text than for numbers.</p>
+</section>
+<section id="removing-duplicates-with-.drop_duplicates" class="level2">
+<h2 class="anchored" data-anchor-id="removing-duplicates-with-.drop_duplicates">Removing duplicates with <code>.drop_duplicates()</code></h2>
+<p>The last common mess is <strong>duplicate rows</strong> — the same record entered more than once, which would double-count it in any total. <code>df.drop_duplicates()</code> keeps the first occurrence of each distinct row and drops the rest. You can also apply it to a subset of columns to find the unique <em>combinations</em> of those columns — for example, which island each species was actually seen on:</p>
+<div>
+<div id="pyodide-6" class="exercise-cell">
+
+</div>
+<script type="pyodide-6-contents">
+eyJhdHRyIjp7ImNhcHRpb24iOiJVbmlxdWUgc3BlY2llcy9pc2xhbmQgcGFpcnMgdmlhIGRyb3BfZHVwbGljYXRlcyBvbiBhIGNvbHVtbiBzdWJzZXQiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImltcG9ydCBwYW5kYXMgYXMgcGRcbmZyb20gbGliLmRhdGEgaW1wb3J0IGxvYWRfY3N2XG5cbmRmID0gbG9hZF9jc3YoXCJwZW5ndWluc1wiKVxucGFpcnMgPSBkZltbXCJzcGVjaWVzXCIsIFwiaXNsYW5kXCJdXS5kcm9wX2R1cGxpY2F0ZXMoKVxucHJpbnQoXCJ1bmlxdWUgc3BlY2llcy9pc2xhbmQgY29tYmluYXRpb25zOlwiLCBwYWlycy5zaGFwZVswXSlcbnByaW50KHBhaXJzLnNvcnRfdmFsdWVzKFtcInNwZWNpZXNcIiwgXCJpc2xhbmRcIl0pLnRvX3N0cmluZyhpbmRleD1GYWxzZSkpIn0=
+</script>
+</div>
+<p>Here <code>drop_duplicates()</code> collapses 344 rows down to the handful of distinct species-and-island pairs, which is a quick way to see the structure of a dataset. On the full table, <code>df.drop_duplicates()</code> would remove any row that is an exact copy of an earlier one — the penguins table happens to have none, but in data you collect yourself, duplicate records are common and easy to miss.</p>
+<p>Put the moves together and you have a dependable cleaning routine: <strong>count</strong> the missing values, <strong>drop or fill</strong> them, <strong>convert</strong> any wrong types, and <strong>de-duplicate</strong>. Run in that order, it turns almost any raw table into something you can compute on with confidence.</p>
 <hr>
 </section>
 <section id="key-takeaways" class="level2">
@@ -822,102 +853,131 @@ eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVl
 <section id="key-takeaways-1" class="level3 key-takeaways">
 <h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
 <ol type="1">
-<li>A <strong>model</strong> is a function learned from labelled examples, not a rule you write by hand.</li>
-<li><strong>Training</strong> (fitting) adjusts the model on known answers; <strong>predicting</strong> runs it on new inputs.</li>
-<li><strong>Accuracy</strong> is the fraction of predictions that match the truth — always measured on data the model did <strong>not</strong> train on.</li>
-<li>You did all of this in the browser, at zero cost and zero install.</li>
+<li><strong>NaN</strong> is pandas’ marker for a missing value — “we don’t know”, not <code>0</code> or <code>""</code>. Most arithmetic with NaN returns NaN, which is why gaps break math.</li>
+<li><code>df.isna().sum()</code> counts missing values per column; a second <code>.sum()</code> gives a grand total. For penguins: <code>sex</code> is missing 11, each measurement 2, for <strong>19</strong> missing cells overall.</li>
+<li><code>df.dropna()</code> removes every row with any NaN (penguins: <strong>344 → 333</strong>); <code>df.fillna(value)</code> keeps the rows and replaces NaN with a value you choose.</li>
+<li><code>.astype(...)</code> converts a column’s type (clear NaNs first for <code>int</code>), and <code>.drop_duplicates()</code> removes repeated rows.</li>
 </ol>
 </section>
 <hr>
 </section>
 <section id="practice" class="level2">
 <h2 class="anchored" data-anchor-id="practice">Practice</h2>
-<p>Each exercise below is auto-graded by <code>run_tests</code>, the shared Larnix grader. It is loaded for you from <code>lib/grader.py</code> — you do not paste or define it.</p>
-<section id="exercise-1-guided-5-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</h3>
-<p>Complete the one marked line so the model is trained. Replace <code>____</code> with the call that fits <code>model</code> on the training data, then press <strong>Run</strong>.</p>
-<script type="exercise-setup-ex_fit-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0Iiwic2V0dXAiOnRydWV9LCJjb2RlIjoiIyBMb2FkcyB0aGUgc2hhcmVkIGF1dG8tZ3JhZGVyIGludG8gdGhpcyBleGVyY2lzZSBmcm9tIGxpYi9ncmFkZXIucHkg4oCUIGNvcGllZCBpbnRvXG4jIHRoZSBQeW9kaWRlIGZpbGVzeXN0ZW0gYXQgc3RhcnR1cCB2aWEgdGhlIHBhZ2UncyBgcmVzb3VyY2VzOmAga2V5IChzaW5nbGUgc291cmNlXG4jIG9mIHRydXRoLCBERUNJU0lPTlMgRDAwMTYpLiBPbmUgc2V0dXAgY2VsbCBwZXIgZXhlcmNpc2UgKGl0cyBvd24gZW52aXJvbm1lbnQpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>. The first two use tiny hand-made data — with <code>None</code> standing in for the missing values — so the answers are exact.</p>
+<section id="exercise-1-guided-4-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</h3>
+<p>Count <em>all</em> the missing values in a small table. Build a DataFrame from the dict, then count the NaNs across the whole thing. Replace <code>____</code>, then press <strong>Run</strong>.</p>
+<script type="exercise-setup-ex_count_missing-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY291bnRfbWlzc2luZyIsInNldHVwIjp0cnVlfSwiY29kZSI6ImZyb20gbGliLmdyYWRlciBpbXBvcnQgcnVuX3Rlc3RzIn0=
 </script>
 <div>
-<div id="pyodide-7" class="exercise-cell">
+<div id="pyodide-8" class="exercise-cell">
 
 </div>
-<script type="pyodide-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0In0sImNvZGUiOiJmcm9tIHNrbGVhcm4ubGluZWFyX21vZGVsIGltcG9ydCBMb2dpc3RpY1JlZ3Jlc3Npb25cbmZyb20gc2tsZWFybi5kYXRhc2V0cyBpbXBvcnQgbG9hZF9pcmlzXG5mcm9tIHNrbGVhcm4ubW9kZWxfc2VsZWN0aW9uIGltcG9ydCB0cmFpbl90ZXN0X3NwbGl0XG5cblgsIHkgPSBsb2FkX2lyaXMocmV0dXJuX1hfeT1UcnVlKVxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MClcblxubW9kZWwgPSBMb2dpc3RpY1JlZ3Jlc3Npb24obWF4X2l0ZXI9MjAwKVxuX19fXyAgIyBUT0RPOiB0cmFpbiB0aGUgbW9kZWwgb24gWF90cmFpbiBhbmQgeV90cmFpblxuXG5ydW5fdGVzdHMoW1xuICAgIChcIm1vZGVsIHByZWRpY3RzIG9uZSBsYWJlbCBwZXIgdGVzdCBmbG93ZXJcIiwgbGVuKG1vZGVsLnByZWRpY3QoWF90ZXN0KSksIGxlbih5X3Rlc3QpKSxcbl0pIn0=
+<script type="pyodide-8-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY291bnRfbWlzc2luZyJ9LCJjb2RlIjoiaW1wb3J0IHBhbmRhcyBhcyBwZFxuXG5kZWYgY291bnRfbWlzc2luZyhkYXRhKTpcbiAgICBcIlwiXCJSZXR1cm4gdGhlIHRvdGFsIG51bWJlciBvZiBtaXNzaW5nIChOYU4pIGNlbGxzIGFjcm9zcyB0aGUgd2hvbGUgdGFibGUuXCJcIlwiXG4gICAgcmV0dXJuIF9fX18gICMgVE9ETzogaW50KHBkLkRhdGFGcmFtZShkYXRhKS5pc25hKCkuc3VtKCkuc3VtKCkpXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwidHdvIG1pc3NpbmdcIiwgY291bnRfbWlzc2luZyh7XCJhXCI6IFsxLCBOb25lLCAzXSwgXCJiXCI6IFtOb25lLCAyLCAzXX0pLCAyKSxcbiAgICAoXCJub25lIG1pc3NpbmdcIiwgY291bnRfbWlzc2luZyh7XCJhXCI6IFsxLCAyXSwgXCJiXCI6IFszLCA0XX0pLCAwKSxcbl0pIn0=
 </script>
 </div>
 <details>
 <summary>
-Show solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>fit</code> is the training step: it takes the inputs <code>X_train</code> and their known answers <code>y_train</code>. After it runs, <code>model.predict</code> works on new data.
+<code>pd.DataFrame(data)</code> builds the table; <code>.isna()</code> marks every cell <code>True</code>/<code>False</code>; the first <code>.sum()</code> counts per column and a second <code>.sum()</code> adds those into one grand total. Wrap it in <code>int(...)</code> for a plain integer.
 </details>
-</section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write <code>accuracy(y_true, y_pred)</code> — the fraction of predictions that match the truth, as a number between 0 and 1. Complete the marked line.</p>
-<script type="exercise-setup-ex_accuracy-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiIjIFNhbWUgc2hhcmVkIGdyYWRlciwgbG9hZGVkIGludG8gdGhpcyBleGVyY2lzZSdzIGVudmlyb25tZW50IChERUNJU0lPTlMgRDAwMTYpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
-</script>
-<div>
-<div id="pyodide-9" class="exercise-cell">
-
-</div>
-<script type="pyodide-9-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kifSwiY29kZSI6ImRlZiBhY2N1cmFjeSh5X3RydWUsIHlfcHJlZCk6XG4gICAgXCJcIlwiUmV0dXJuIHRoZSBmcmFjdGlvbiBvZiBtYXRjaGluZyBwcmVkaWN0aW9ucywgYXMgYSBmbG9hdCBpbiBbMCwgMV0uXCJcIlwiXG4gICAgY29ycmVjdCA9IHN1bSgxIGZvciBhLCBiIGluIHppcCh5X3RydWUsIHlfcHJlZCkgaWYgX19fXykgICMgVE9ETzogY29tcGFyZSBhIGFuZCBiXG4gICAgcmV0dXJuIGNvcnJlY3QgLyBsZW4oeV90cnVlKVxuXG5ydW5fdGVzdHMoW1xuICAgIChcImFsbCBjb3JyZWN0XCIsIGFjY3VyYWN5KFsxLCAxLCAxXSwgWzEsIDEsIDFdKSwgMS4wKSxcbiAgICAoXCJoYWxmIHJpZ2h0XCIsICBhY2N1cmFjeShbMSwgMF0sICAgIFsxLCAxXSksICAgIDAuNSksXG4gICAgKFwibm9uZSByaWdodFwiLCAgYWNjdXJhY3koWzAsIDBdLCAgICBbMSwgMV0pLCAgICAwLjApLFxuXSkifQ==
-</script>
-</div>
 <details>
 <summary>
 Show solution
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accuracy(y_true, y_pred):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    correct <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred) <span class="cf">if</span> a <span class="op">==</span> b)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> correct <span class="op">/</span> <span class="bu">len</span>(y_true)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>a == b</code> is <code>True</code> when a prediction matches the truth; summing those <code>True</code>s counts the matches, and dividing by the number of labels gives the fraction. This is what <code>accuracy_score</code> computed for you in Step 5.
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_missing(data):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">int</span>(pd.DataFrame(data).isna().<span class="bu">sum</span>().<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>.isna()</code> turns each cell into <code>True</code> (missing) or <code>False</code>; summing once counts the missing cells per column, and summing again totals those counts into a single number. The <code>None</code> values in the dict become NaN inside the DataFrame, so they are exactly what gets counted.
 </details>
 </section>
-<section id="exercise-3-stretch-optional-15-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</h3>
-<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Starting from the worked example, try to <strong>beat 95% accuracy</strong> on the test set. Ideas: raise <code>max_iter</code>, or swap <code>LogisticRegression</code> for another classifier such as <code>from sklearn.neighbors import KNeighborsClassifier</code>.</p>
-<p><strong>Rubric — a good solution:</strong></p>
+<section id="exercise-2-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
+<p>Now decide how many rows <em>survive</em> a <code>dropna()</code>. Build a DataFrame from the dict, drop every row with any missing value, and return how many rows are left. Complete the marked line.</p>
+<script type="exercise-setup-ex_drop_missing-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZHJvcF9taXNzaW5nIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+</script>
+<div>
+<div id="pyodide-10" class="exercise-cell">
+
+</div>
+<script type="pyodide-10-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZHJvcF9taXNzaW5nIn0sImNvZGUiOiJpbXBvcnQgcGFuZGFzIGFzIHBkXG5cbmRlZiBkcm9wX21pc3NpbmcoZGF0YSk6XG4gICAgXCJcIlwiUmV0dXJuIHRoZSByb3cgY291bnQgYWZ0ZXIgZHJvcHBpbmcgZXZlcnkgcm93IHRoYXQgaGFzIGFueSBOYU4uXCJcIlwiXG4gICAgcmV0dXJuIF9fX18gICMgVE9ETzogaW50KHBkLkRhdGFGcmFtZShkYXRhKS5kcm9wbmEoKS5zaGFwZVswXSlcblxucnVuX3Rlc3RzKFtcbiAgICAoXCJvbmUgcm93IHN1cnZpdmVzXCIsIGRyb3BfbWlzc2luZyh7XCJhXCI6IFsxLCBOb25lLCAzXSwgXCJiXCI6IFs0LCA1LCBOb25lXX0pLCAxKSxcbiAgICAoXCJhbGwgc3Vydml2ZVwiLCBkcm9wX21pc3Npbmcoe1wiYVwiOiBbMSwgMl0sIFwiYlwiOiBbMywgNF19KSwgMiksXG5dKSJ9
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+<code>pd.DataFrame(data).dropna()</code> returns a new table with the incomplete rows removed. Its <code>.shape</code> is <code>(rows, columns)</code>, so <code>.shape[0]</code> is the surviving row count — wrap it in <code>int(...)</code>.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drop_missing(data):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">int</span>(pd.DataFrame(data).dropna().shape[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+In the first case the rows are <code>(1, 4)</code>, <code>(None, 5)</code>, and <code>(3, None)</code>: the first row is complete and survives, while the other two each have a NaN and are dropped — so one row remains. In the second case neither row has a gap, so both survive.
+</details>
+</section>
+<section id="exercise-3-stretch-optional-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</h3>
+<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Load the penguins dataset, count the missing values <strong>per column</strong> with <code>df.isna().sum()</code>, then run <code>df.dropna()</code> and report how many rows remain (you should find <strong>333</strong>). Print both results.</p>
+<p><strong>Rubric — a good answer:</strong></p>
 <ul>
-<li>Trains on <code>X_train</code>/<code>y_train</code> only and reports accuracy on the held-out <code>X_test</code>/<code>y_test</code> (no testing on training data).</li>
-<li>States the change you made and the accuracy you reached.</li>
-<li>Reaches at least the worked example’s baseline, ideally higher.</li>
+<li>Loads penguins with <code>load_csv</code> and prints the per-column missing counts from <code>df.isna().sum()</code> (showing <code>sex</code> at 11).</li>
+<li>Calls <code>df.dropna()</code> and reports the surviving row count read from the data, not typed in by hand.</li>
+<li>States the contrast in plain words: 344 rows in, 333 out, 11 dropped.</li>
 </ul>
 <details>
 <summary>
-Show one possible solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<code>df.isna().sum()</code> gives the per-column counts. For the row count after cleaning, <code>df.dropna().shape[0]</code> reads it straight from the cleaned table; compare it to <code>df.shape[0]</code> for the rows you started with.
+</details>
+<details>
+<summary>
+Show one possible answer
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lib.data <span class="im">import</span> load_csv</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>knn.fit(X_train, y_train)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"k-NN accuracy: </span><span class="sc">{</span>accuracy_score(y_test, knn.predict(X_test))<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-A nearest-neighbour classifier often does well on Iris. Other approaches are fine too — the point is to change one thing, measure honestly on the test set, and compare.
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> load_csv(<span class="st">"penguins"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"missing per column:"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.isna().<span class="bu">sum</span>())</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> df.shape[<span class="dv">0</span>]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> df.dropna().shape[<span class="dv">0</span>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows before: </span><span class="sc">{</span>before<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows after : </span><span class="sc">{</span>after<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows dropped: </span><span class="sc">{</span>before <span class="op">-</span> after<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+This prints <code>sex</code> as the worst column (11 missing), then reports the table shrinking from <code>344</code> rows to <code>333</code> — the 11 dropped rows read straight from the data rather than typed in.
 </details>
 <hr>
 </section>
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch1-train-your-first-model","questions":[{"answer":"1","explanation":"A model is the learned function; we fit it on examples, then call it to predict.","id":"what-is-a-model","options":["A spreadsheet that stores the flower measurements","A function learned from labelled examples that maps an input to a prediction","The chart that shows the accuracy score"],"prompt":"In this chapter, a model is best described as…"},{"answer":"1","explanation":"Testing on unseen data checks whether the model generalises, rather than only memorises.","id":"why-a-test-set","options":["Because the test set is always larger than the training set","Because a model can score well on examples it has already seen yet fail on new ones","Because scikit-learn refuses to predict on training data"],"prompt":"Why do we measure accuracy on a separate test set instead of the training data?"},{"answer":"0","explanation":"Accuracy is the fraction of predictions that match the true labels.","id":"what-accuracy-means","options":["It named 95% of the test flowers correctly","It is 95% confident about every single flower","It used 95% of the flowers for training"],"prompt":"The model reports 95% accuracy on the test set. That means…"}],"title":"Chapter 1 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m3-ch04-cleaning","questions":[{"answer":"1","explanation":"NaN (‘not a number’) marks a missing value — ‘we don’t know’. It is deliberately distinct from 0 and from an empty string, both of which are real values.","id":"what-is-nan","options":["The value is zero","The value is missing — no data was recorded for that cell","The value is an empty piece of text"],"prompt":"In a pandas column, what does a NaN value mean?"},{"answer":"1","explanation":".isna() marks each cell True where it is missing; .sum() counts those Trues down each column, so you get a per-column count of missing values.","id":"isna-sum-returns","options":["The total of all the numbers in the table","The number of missing values in each column","The rows that have no missing values"],"prompt":"What does df.isna().sum() give you?"},{"answer":"1","explanation":".dropna() throws away any row with a missing value (losing its good values too); .fillna(value) keeps every row and substitutes a value you pick for each gap.","id":"drop-vs-fill","options":["They are two names for the same operation",".dropna() removes rows that contain a NaN, while .fillna() keeps the rows and replaces each NaN with a chosen value",".dropna() deletes columns, while .fillna() deletes rows"],"prompt":"How do .dropna() and .fillna() differ?"},{"answer":"0","explanation":"Most arithmetic with NaN returns NaN, and default summaries quietly skip missing values, so untreated gaps can mislead you. Deciding what gaps mean first keeps your results honest.","id":"why-clean-first","options":["Because NaN propagates through arithmetic, so gaps can silently distort or block results","Because pandas refuses to load a table that has any NaN in it","Because cleaning makes the file smaller on disk"],"prompt":"Why clean missing values before computing on a column?"}],"title":"Chapter 4 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You have run the complete machine-learning loop — load, split, train, predict, measure — on a classic dataset, without installing anything. Every later module reuses this loop on bigger data and stronger models. Next, we look at what the accuracy number does <em>not</em> tell you, and when it can mislead.</p>
+<p>Cleaning is the unglamorous step that makes everything after it trustworthy: a mean computed on data full of silent gaps is a mean you can’t believe. You can now find missing values, drop or fill them on purpose, fix column types, and remove duplicates — the routine a data scientist runs on almost every fresh table. Next we move from repairing a table to <em>reshaping and summarising</em> it: grouping rows and aggregating them to answer questions like “what’s the average body mass per species?”</p>
 
 
 <script type="pyodide-data">
-eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
+eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIiwicGFuZGFzIl19fQ==
 </script>
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzkgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzksIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzkgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzkuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS03LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNyA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNywge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNy5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV81ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl81LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTQtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV80ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl80LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTMtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8zID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTEwIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMTAgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTEwLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtMTAtY29udGVudHNcIixcbiAgICAgIGVudmlyOiBgZXhlcmNpc2UtZW52LSR7YmxvY2suYXR0ci5leGVyY2lzZX1gLFxuICAgICAgZXJyb3I6IGZhbHNlLFxuICAgICAgY2FwdGlvbjogJ0V4ZXJjaXNlJyxcbiAgICB9LFxuICAgIGJsb2NrLmF0dHJcbiAgKTtcblxuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbnZpZXdvZiBfcHlvZGlkZV92YWx1ZV8xMCA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfMTAsIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzEwID0ge1xuICBjb25zdCB7IFB5b2RpZGVHcmFkZXIgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IGVtcHR5RmVlZGJhY2sgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTtcblxuICBjb25zdCBncmFkZXIgPSBuZXcgUHlvZGlkZUdyYWRlcihfcHlvZGlkZV92YWx1ZV8xMC5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS04IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfOCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtOC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIC8vIERlZmF1bHQgZXhlcmNpc2UgY29uZmlndXJhdGlvblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbihcbiAgICB7XG4gICAgICBpZDogXCJweW9kaWRlLTgtY29udGVudHNcIixcbiAgICAgIGVudmlyOiBgZXhlcmNpc2UtZW52LSR7YmxvY2suYXR0ci5leGVyY2lzZX1gLFxuICAgICAgZXJyb3I6IGZhbHNlLFxuICAgICAgY2FwdGlvbjogJ0V4ZXJjaXNlJyxcbiAgICB9LFxuICAgIGJsb2NrLmF0dHJcbiAgKTtcblxuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbnZpZXdvZiBfcHlvZGlkZV92YWx1ZV84ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl84LCB7fSk7XG5fcHlvZGlkZV9mZWVkYmFja184ID0ge1xuICBjb25zdCB7IFB5b2RpZGVHcmFkZXIgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IGVtcHR5RmVlZGJhY2sgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTtcblxuICBjb25zdCBncmFkZXIgPSBuZXcgUHlvZGlkZUdyYWRlcihfcHlvZGlkZV92YWx1ZV84LmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTYiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl82ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzYgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzYsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl81ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS01LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzUgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzUsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTQiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl80ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS00LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtNC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzQgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTMiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8zID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0zLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzMgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzMsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzIgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0xLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzEgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJweW9kaWRlT2pzID0ge1xuICBjb25zdCB7XG4gICAgUHlvZGlkZUV2YWx1YXRvcixcbiAgICBQeW9kaWRlRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUHl0aG9uLFxuICAgIHN0YXJ0UHlvZGlkZVdvcmtlcixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoLFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gUHlvZGlkZSBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICBsZXQgcHlvZGlkZVByb21pc2UgPSAoYXN5bmMgKCkgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgUHlvZGlkZWA7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHN0YXJ0UHlvZGlkZVdvcmtlcihkYXRhLm9wdGlvbnMpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiBtaWNyb3BpcGA7XG4gICAgYXdhaXQgcHlvZGlkZS5sb2FkUGFja2FnZShcIm1pY3JvcGlwXCIpO1xuICAgIGNvbnN0IG1pY3JvcGlwID0gYXdhaXQgcHlvZGlkZS5weWltcG9ydChcIm1pY3JvcGlwXCIpO1xuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIG1pY3JvcGlwLmluc3RhbGwocGtnKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcbiAgICBhd2FpdCBtaWNyb3BpcC5kZXN0cm95KCk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCBweW9kaWRlLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKGUubmFtZSAhPT0gXCJFcnJub0Vycm9yXCIpIHRocm93IGU7XG4gICAgICAgICAgaWYgKGUuZXJybm8gIT09IDIwKSB7XG4gICAgICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yICR7ZS5lcnJub30gXCIke2Vycm9yVGV4dH1cIi5gKTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHRyeSB7XG4gICAgICAgIHJldHVybiBhd2FpdCBweW9kaWRlLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuVVRGOFRvU3RyaW5nKGVycm9yVGV4dFB0cik7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICB9XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFB5b2RpZGUgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUHl0aG9uKHB5b2RpZGUpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHB5b2RpZGU7XG4gIH0pKCkuY2F0Y2goKGVycikgPT4ge1xuICAgIHN0YXR1c1RleHQuc3R5bGUuY29sb3IgPSBcInZhcigtLWV4ZXJjaXNlLWVkaXRvci1obC1lciwgI0FEMDAwMClcIjtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gZXJyLm1lc3NhZ2U7XG4gICAgLy9pbmRpY2F0b3JDb250YWluZXIucXVlcnlTZWxlY3RvcihcIi5zcGlubmVyLWdyb3dcIikuY2xhc3NMaXN0LmFkZChcImQtbm9uZVwiKTtcbiAgICB0aHJvdyBlcnI7XG4gIH0pO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCBweW9kaWRlID0gYXdhaXQgcHlvZGlkZVByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFB5b2RpZGVFdmFsdWF0b3IocHlvZGlkZSwgY29udGV4dCk7XG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHlvZGlkZVByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gICAgcHJvY2VzcyxcbiAgfTtcbn1cbiJ9XX0=
 </script>
 <div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
 <div id="exercise-loading-status" class="d-flex gap-2">
@@ -928,7 +988,7 @@ eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2RO
 </div>
 </div>
 <script type="vfs-file">
-WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
+WyIuLi8uLi9saWIvZ3JhZGVyLnB5IiwiLi4vLi4vbGliL2RhdGEucHkiLCJkYXRhL3Blbmd1aW5zLmNzdiJd
 </script>
 </section>
 
@@ -1099,7 +1159,7 @@ eyJjb250ZW50cyI6W119
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../modules/00-orientation";
+window._ojs.paths.runtimeToDoc = "../../modules/03-data";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "../..";
 window._ojs.selfContained = false;

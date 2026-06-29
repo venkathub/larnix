@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Train your first model — in your browser – Larnix</title>
+<title>Clean, readable code – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/01-python/index.html">M1 — Python for AI</a></li><li class="breadcrumb-item"><a href="../../modules/01-python/ch10-clean-readable-code.html">Ch10 — Clean, readable code</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../modules/00-orientation/ch01-train-your-first-model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch1 — Train your first model</span></a>
   </div>
 </li>
@@ -458,7 +458,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/01-python/ch10-clean-readable-code.html" class="sidebar-item-text sidebar-link">
+  <a href="../../modules/01-python/ch10-clean-readable-code.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ch10 — Clean, readable code</span></a>
   </div>
 </li>
@@ -701,7 +701,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
-  <li><a href="#the-idea-in-plain-language" id="toc-the-idea-in-plain-language" class="nav-link" data-scroll-target="#the-idea-in-plain-language">The idea, in plain language</a></li>
+  <li><a href="#descriptive-names" id="toc-descriptive-names" class="nav-link" data-scroll-target="#descriptive-names">Descriptive names</a></li>
+  <li><a href="#small-single-purpose-functions" id="toc-small-single-purpose-functions" class="nav-link" data-scroll-target="#small-single-purpose-functions">Small, single-purpose functions</a></li>
+  <li><a href="#name-your-constants" id="toc-name-your-constants" class="nav-link" data-scroll-target="#name-your-constants">Name your constants</a></li>
+  <li><a href="#comments-explain-why-not-what" id="toc-comments-explain-why-not-what" class="nav-link" data-scroll-target="#comments-explain-why-not-what">Comments explain WHY, not WHAT</a></li>
+  <li><a href="#dont-repeat-yourself-dry" id="toc-dont-repeat-yourself-dry" class="nav-link" data-scroll-target="#dont-repeat-yourself-dry">Don’t repeat yourself (DRY)</a></li>
   <li><a href="#lets-build-it-worked-example" id="toc-lets-build-it-worked-example" class="nav-link" data-scroll-target="#lets-build-it-worked-example">Let’s build it (worked example)</a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
   <ul class="collapse">
@@ -709,9 +713,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
   <ul class="collapse">
-  <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
-  <li><a href="#exercise-3-stretch-optional-15-min" id="toc-exercise-3-stretch-optional-15-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</a></li>
+  <li><a href="#exercise-1-guided-4-min" id="toc-exercise-1-guided-4-min" class="nav-link" data-scroll-target="#exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</a></li>
+  <li><a href="#exercise-2-implement-8-min" id="toc-exercise-2-implement-8-min" class="nav-link" data-scroll-target="#exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</a></li>
+  <li><a href="#exercise-3-stretch-optional-8-min" id="toc-exercise-3-stretch-optional-8-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</a></li>
   </ul></li>
   <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
   <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
@@ -722,9 +726,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/00-orientation/index.html">M0 — Orientation</a></li><li class="breadcrumb-item"><a href="../../modules/00-orientation/ch01-train-your-first-model.html">Ch1 — Train your first model</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/01-python/index.html">M1 — Python for AI</a></li><li class="breadcrumb-item"><a href="../../modules/01-python/ch10-clean-readable-code.html">Ch10 — Clean, readable code</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Train your first model — in your browser</h1>
+<h1 class="title">Clean, readable code</h1>
 </div>
 
 
@@ -744,77 +748,101 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
-<p>You are about to train a real machine-learning model — in this browser tab, with nothing installed. No account, no download, no setup. Scroll to the first code block, press <strong>Run</strong>, and in a few seconds a model will sort flowers it has never seen before, and tell you how often it gets them right.</p>
-<p>The flowers are irises. Picture three species laid out on a table. For each flower someone measured four things: the length and width of its petals and of its sepals (the green leaf-like parts under the petals). Given those four numbers, can a computer learn to name the species? That is the whole task — and by the end of this page you will have built the thing that does it.</p>
+<p>You write code once, but you (and others) re-read it many times. The reader you should write for is a tired beginner — maybe yourself, three weeks from now — opening the habits cleaner and trying to understand it fast.</p>
+<p>Compare two lines that do the same thing on the habits data:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> x <span class="kw">in</span> d <span class="cf">if</span> x <span class="op">&gt;=</span> <span class="dv">8000</span>)      <span class="co"># what is c? what is d? why 8000?</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>active_days <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> steps <span class="kw">in</span> day_steps <span class="cf">if</span> steps <span class="op">&gt;=</span> GOAL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The second line reads like a sentence. Clarity beats cleverness every time, and this chapter is the handful of habits that get you there.</p>
 <blockquote class="blockquote">
-<p>By the end of this chapter you’ll be able to train a classifier, call it on new data, and read its accuracy.</p>
+<p>You’ll need from before: writing and calling your own functions (Ch3) — the main tool for keeping code small and avoiding repetition.</p>
 </blockquote>
 <hr>
 </section>
-<section id="the-idea-in-plain-language" class="level2">
-<h2 class="anchored" data-anchor-id="the-idea-in-plain-language">The idea, in plain language</h2>
-<p>Start with the word that does the heavy lifting: <strong>model</strong>.</p>
-<p>A <strong>model</strong> is a function that you <em>learn from examples</em> instead of writing by hand. You do not sit down and code the rule “if the petals are long and narrow, it’s species B.” Instead you show the computer many flowers whose species you already know, and it works out the rule for you.</p>
-<p>Three words describe the whole cycle:</p>
+<section id="descriptive-names" class="level2">
+<h2 class="anchored" data-anchor-id="descriptive-names">Descriptive names</h2>
+<p>A name is a tiny piece of documentation. <code>s</code> and <code>x</code> make the reader decode the code; <code>steps</code> and <code>active_days</code> let them read it.</p>
 <ul>
-<li><strong>Training</strong> (also called <em>fitting</em>): you hand the model a pile of examples where the answer is known — here, flowers labelled with their species — and it adjusts itself until its guesses match those known answers reasonably well.</li>
-<li><strong>Predicting</strong>: you give the trained model a <em>new</em> flower it has not seen, and it outputs a species.</li>
-<li><strong>Accuracy</strong>: you check how often it is right. If you test it on 40 flowers and it names 38 correctly, that is 38/40 = 0.95, or <strong>95%</strong> accuracy.</li>
+<li>Name a value for <strong>what it holds</strong>: <code>steps</code>, not <code>s</code>; <code>active_days</code>, not <code>x</code>.</li>
+<li>A function name is <strong>what it does</strong>: <code>average_steps</code>, not <code>calc</code>.</li>
+<li>Short names are fine for short lives — a loop index <code>i</code>, or <code>n</code> for a count in a two-line function. The longer a value lives, the more its name should say.</li>
 </ul>
-<p>One habit matters from day one: you test on flowers the model did <strong>not</strong> train on. A model can score well on examples it has already memorised and still fail on new ones, the way reciting answers you’ve seen is not the same as understanding. So we split the data into a <strong>training set</strong> (to learn from) and a <strong>test set</strong> (to grade on).</p>
-<p>That is the entire plan. The code below carries it out in five short steps.</p>
+<p>You don’t need comments to explain a good name — the name already did it.</p>
+</section>
+<section id="small-single-purpose-functions" class="level2">
+<h2 class="anchored" data-anchor-id="small-single-purpose-functions">Small, single-purpose functions</h2>
+<p>A function should do <strong>one</strong> thing you can name. If you can’t name it without saying “and”, it’s probably two functions. Small functions are easier to read, to test, and to reuse.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_active(steps):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A day is active when it reaches the step goal."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> steps <span class="op">&gt;=</span> GOAL</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That one idea — “is this day active?” — now has a name you can use anywhere.</p>
+</section>
+<section id="name-your-constants" class="level2">
+<h2 class="anchored" data-anchor-id="name-your-constants">Name your constants</h2>
+<p>A bare number sitting in the middle of code is a hard-coded number: the reader has to guess what it means, and if it appears five times you have to change all five. Give it a name in <code>UPPER_CASE</code>, once, at the top:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>GOAL <span class="op">=</span> <span class="dv">8000</span>          <span class="co"># daily step target</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_active(steps):</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> steps <span class="op">&gt;=</span> GOAL</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now <code>GOAL</code> explains itself, and moving the target to <code>10000</code> is a one-line change.</p>
+</section>
+<section id="comments-explain-why-not-what" class="level2">
+<h2 class="anchored" data-anchor-id="comments-explain-why-not-what">Comments explain WHY, not WHAT</h2>
+<p>Good code already says <em>what</em> it does. A comment earns its place by saying <em>why</em> — the reason a reader can’t see from the code alone.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>steps <span class="op">=</span> <span class="bu">int</span>(raw.replace(<span class="st">","</span>, <span class="st">""</span>))   <span class="co"># bad: restates the code</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>steps <span class="op">=</span> <span class="bu">int</span>(raw.replace(<span class="st">","</span>, <span class="st">""</span>))   <span class="co"># good: some rows store steps as "8,200"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If a comment only repeats the line, delete it and improve the names instead.</p>
+</section>
+<section id="dont-repeat-yourself-dry" class="level2">
+<h2 class="anchored" data-anchor-id="dont-repeat-yourself-dry">Don’t repeat yourself (DRY)</h2>
+<p>If you copy a piece of logic, every future fix has to be made in every copy — and one will get missed. Put the logic in a function (Ch3) and call it. That single function becomes the one place the rule lives.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>active_days <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> steps <span class="kw">in</span> day_steps <span class="cf">if</span> is_active(steps))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>best_streak <span class="op">=</span> <span class="bu">max</span>(steps <span class="cf">for</span> steps <span class="kw">in</span> day_steps <span class="cf">if</span> is_active(steps))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Both lines lean on the same <code>is_active</code> rule, so “what counts as active” is defined exactly once.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🧱 For Java developers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Python’s style conventions differ from Java’s, and the linters enforce them:</p>
+<ul>
+<li>Names and functions use <strong><code>snake_case</code></strong> (<code>active_days</code>, <code>average_steps</code>), not <code>camelCase</code>.</li>
+<li>You don’t write <strong>getters/setters</strong>; read and assign attributes directly, and reach for <code>@property</code> only if you later need computed access.</li>
+<li>A <strong>docstring</strong> (the <code>"""..."""</code> under a <code>def</code>) is Python’s Javadoc — it documents the function and shows up in <code>help()</code>.</li>
+<li>Constants are <strong><code>UPPER_CASE</code> by convention</strong> — Python has no <code>final</code> keyword, so the capitals are the signal “treat this as fixed”.</li>
+</ul>
+</div>
+</div>
+</div>
 <hr>
 </section>
 <section id="lets-build-it-worked-example" class="level2">
 <h2 class="anchored" data-anchor-id="lets-build-it-worked-example">Let’s build it (worked example)</h2>
-<p>These blocks run Python <strong>in your browser</strong> through Pyodide. The first run downloads the runtime, which takes a few seconds; after that it is instant. Press <strong>Run</strong> on each block in order.</p>
+<p>Here is a “before” that counts active days and the percentage active — with cryptic names, a hard-coded <code>8000</code> in two places, and the same test copied twice. Press <strong>Run</strong>.</p>
 <div>
 <div id="pyodide-1" class="exercise-cell">
 
 </div>
 <script type="pyodide-1-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDEg4oCUIGxvYWQgdGhlIGV4YW1wbGUgZmxvd2VycyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmRhdGFzZXRzIGltcG9ydCBsb2FkX2lyaXNcblxuWCwgeSA9IGxvYWRfaXJpcyhyZXR1cm5fWF95PVRydWUpXG5wcmludChcIk1lYXN1cmVtZW50cyBmb3JcIiwgWC5zaGFwZVswXSwgXCJmbG93ZXJzLCB3aXRoXCIsIFguc2hhcGVbMV0sIFwibnVtYmVycyBlYWNoLlwiKVxucHJpbnQoXCJGaXJzdCBmbG93ZXIncyBtZWFzdXJlbWVudHM6XCIsIFhbMF0pXG5wcmludChcIkl0cyBzcGVjaWVzIChhcyBhIG51bWJlciAwLzEvMik6XCIsIHlbMF0pIn0=
+eyJhdHRyIjp7ImNhcHRpb24iOiJCZWZvcmU6IGNyeXB0aWMgbmFtZXMsIGEgaGFyZC1jb2RlZCBudW1iZXIsIHJlcGVhdGVkIGxvZ2ljIiwiZWRpdCI6dHJ1ZSwiZXZhbCI6dHJ1ZX0sImNvZGUiOiJkID0gWzgyMDAsIDUxMDAsIDkzMDAsIDYwMDAsIDgwMDBdXG5cbmMgPSAwXG5mb3IgeCBpbiBkOlxuICAgIGlmIHggPj0gODAwMDogICAgICAgICMgd2hhdCBkb2VzIDgwMDAgbWVhbj8gcmVwZWF0ZWQgYmVsb3csIHRvb1xuICAgICAgICBjID0gYyArIDFcblxucCA9IDBcbmZvciB4IGluIGQ6XG4gICAgaWYgeCA+PSA4MDAwOiAgICAgICAgIyB0aGUgc2FtZSBydWxlLCBjb3BpZWRcbiAgICAgICAgcCA9IHAgKyAxXG5cbnByaW50KChjLCByb3VuZChwIC8gbGVuKGQpICogMTAwKSkpIn0=
 </script>
 </div>
-<p><code>X</code> holds the four measurements for every flower; <code>y</code> holds the species, written as a number (0, 1, or 2) because models work with numbers.</p>
+<p>Now the “after”: descriptive names, one named constant, and a small <code>is_active</code> helper used in both places. It computes the identical result.</p>
 <div>
 <div id="pyodide-2" class="exercise-cell">
 
 </div>
 <script type="pyodide-2-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDIg4oCUIHNwbGl0IGludG8gYSB0cmFpbmluZyBzZXQgYW5kIGEgdGVzdCBzZXQiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tb2RlbF9zZWxlY3Rpb24gaW1wb3J0IHRyYWluX3Rlc3Rfc3BsaXRcblxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFxuICAgIFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MFxuKVxucHJpbnQoXCJUcmFpbmluZyBmbG93ZXJzOlwiLCBYX3RyYWluLnNoYXBlWzBdKVxucHJpbnQoXCJUZXN0IGZsb3dlcnM6XCIsIFhfdGVzdC5zaGFwZVswXSkifQ==
+eyJhdHRyIjp7ImNhcHRpb24iOiJBZnRlcjogY2xlYXIgbmFtZXMsIGEgbmFtZWQgY29uc3RhbnQsIG9uZSByZXVzYWJsZSBoZWxwZXIiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6IkdPQUwgPSA4MDAwICAgIyBkYWlseSBzdGVwIHRhcmdldFxuXG5kZWYgaXNfYWN0aXZlKHN0ZXBzKTpcbiAgICBcIlwiXCJBIGRheSBpcyBhY3RpdmUgd2hlbiBpdCByZWFjaGVzIHRoZSBzdGVwIGdvYWwuXCJcIlwiXG4gICAgcmV0dXJuIHN0ZXBzID49IEdPQUxcblxuZGF5X3N0ZXBzID0gWzgyMDAsIDUxMDAsIDkzMDAsIDYwMDAsIDgwMDBdXG5hY3RpdmVfZGF5cyA9IHN1bSgxIGZvciBzdGVwcyBpbiBkYXlfc3RlcHMgaWYgaXNfYWN0aXZlKHN0ZXBzKSlcbnBlcmNlbnRfYWN0aXZlID0gcm91bmQoYWN0aXZlX2RheXMgLyBsZW4oZGF5X3N0ZXBzKSAqIDEwMClcblxucHJpbnQoKGFjdGl2ZV9kYXlzLCBwZXJjZW50X2FjdGl2ZSkpIn0=
 </script>
 </div>
-<p>We keep a quarter of the flowers aside as the test set. <code>random_state=0</code> makes the split the same every time, so your numbers match this page.</p>
-<div>
-<div id="pyodide-3" class="exercise-cell">
-
-</div>
-<script type="pyodide-3-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDMg4oCUIHRyYWluIChmaXQpIHRoZSBtb2RlbCIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnJvbSBza2xlYXJuLmxpbmVhcl9tb2RlbCBpbXBvcnQgTG9naXN0aWNSZWdyZXNzaW9uXG5cbm1vZGVsID0gTG9naXN0aWNSZWdyZXNzaW9uKG1heF9pdGVyPTIwMClcbm1vZGVsLmZpdChYX3RyYWluLCB5X3RyYWluKVxucHJpbnQoXCJUcmFpbmVkISBUaGUgbW9kZWwgaGFzIG5vdyBzZWVuXCIsIFhfdHJhaW4uc2hhcGVbMF0sIFwibGFiZWxsZWQgZmxvd2Vycy5cIikifQ==
-</script>
-</div>
-<p><code>LogisticRegression</code> is a small, well-understood classifier — a good first model. <code>fit</code> is the training step. <code>max_iter=200</code> gives it enough rounds to settle.</p>
-<div>
-<div id="pyodide-4" class="exercise-cell">
-
-</div>
-<script type="pyodide-4-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDQg4oCUIHByZWRpY3Qgb24gZmxvd2VycyBpdCBoYXMgbmV2ZXIgc2VlbiIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicHJlZGljdGlvbnMgPSBtb2RlbC5wcmVkaWN0KFhfdGVzdClcbnByaW50KFwiUHJlZGljdGVkIHNwZWNpZXMgZm9yIHRoZSBmaXJzdCAxMCB0ZXN0IGZsb3dlcnM6XCIpXG5wcmludChwcmVkaWN0aW9uc1s6MTBdKVxucHJpbnQoXCJUaGUgdHJ1ZSBzcGVjaWVzIGZvciB0aG9zZSBzYW1lIGZsb3dlcnM6XCIpXG5wcmludCh5X3Rlc3RbOjEwXSkifQ==
-</script>
-</div>
-<div>
-<div id="pyodide-5" class="exercise-cell">
-
-</div>
-<script type="pyodide-5-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVlLCJldmFsIjp0cnVlfSwiY29kZSI6ImZyb20gc2tsZWFybi5tZXRyaWNzIGltcG9ydCBhY2N1cmFjeV9zY29yZVxuXG5hY2MgPSBhY2N1cmFjeV9zY29yZSh5X3Rlc3QsIG1vZGVsLnByZWRpY3QoWF90ZXN0KSlcbnByaW50KGZcIkFjY3VyYWN5IG9uIHRoZSB0ZXN0IHNldDoge2FjYzouMiV9XCIpIn0=
-</script>
-</div>
-<p>That percentage is the share of test flowers the model named correctly. You built a model, trained it, used it on new data, and graded it — the full loop.</p>
-<blockquote class="blockquote">
-<p>🔬 Going deeper (optional): try changing <code>test_size</code> to <code>0.5</code> and re-running from Step 2. With fewer training flowers, does the accuracy move? That tension — more data to learn from versus more data to grade on — comes back often.</p>
-</blockquote>
+<p>Both cells print <code>(3, 60)</code> — same answer, but the second one you can read once and trust. The rule “≥ 8000” now lives in exactly one place (<code>GOAL</code> + <code>is_active</code>), so changing the target is a single edit instead of a hunt.</p>
 <hr>
 </section>
 <section id="key-takeaways" class="level2">
@@ -822,102 +850,130 @@ eyJhdHRyIjp7ImNhcHRpb24iOiJTdGVwIDUg4oCUIG1lYXN1cmUgYWNjdXJhY3kiLCJlZGl0Ijp0cnVl
 <section id="key-takeaways-1" class="level3 key-takeaways">
 <h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
 <ol type="1">
-<li>A <strong>model</strong> is a function learned from labelled examples, not a rule you write by hand.</li>
-<li><strong>Training</strong> (fitting) adjusts the model on known answers; <strong>predicting</strong> runs it on new inputs.</li>
-<li><strong>Accuracy</strong> is the fraction of predictions that match the truth — always measured on data the model did <strong>not</strong> train on.</li>
-<li>You did all of this in the browser, at zero cost and zero install.</li>
+<li><strong>Descriptive names</strong> (<code>steps</code>, <code>active_days</code>) turn code into something you read, not decode.</li>
+<li>Keep functions <strong>small and single-purpose</strong>, and replace hard-coded numbers with a <strong>named constant</strong> like <code>GOAL = 8000</code>.</li>
+<li>Comments explain <strong>WHY</strong>, not what the code already says.</li>
+<li><strong>DRY:</strong> put repeated logic in one function and call it, so a rule is defined once.</li>
 </ol>
 </section>
 <hr>
 </section>
 <section id="practice" class="level2">
 <h2 class="anchored" data-anchor-id="practice">Practice</h2>
-<p>Each exercise below is auto-graded by <code>run_tests</code>, the shared Larnix grader. It is loaded for you from <code>lib/grader.py</code> — you do not paste or define it.</p>
-<section id="exercise-1-guided-5-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</h3>
-<p>Complete the one marked line so the model is trained. Replace <code>____</code> with the call that fits <code>model</code> on the training data, then press <strong>Run</strong>.</p>
-<script type="exercise-setup-ex_fit-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0Iiwic2V0dXAiOnRydWV9LCJjb2RlIjoiIyBMb2FkcyB0aGUgc2hhcmVkIGF1dG8tZ3JhZGVyIGludG8gdGhpcyBleGVyY2lzZSBmcm9tIGxpYi9ncmFkZXIucHkg4oCUIGNvcGllZCBpbnRvXG4jIHRoZSBQeW9kaWRlIGZpbGVzeXN0ZW0gYXQgc3RhcnR1cCB2aWEgdGhlIHBhZ2UncyBgcmVzb3VyY2VzOmAga2V5IChzaW5nbGUgc291cmNlXG4jIG9mIHRydXRoLCBERUNJU0lPTlMgRDAwMTYpLiBPbmUgc2V0dXAgY2VsbCBwZXIgZXhlcmNpc2UgKGl0cyBvd24gZW52aXJvbm1lbnQpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>.</p>
+<section id="exercise-1-guided-4-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-guided-4-min">Exercise 1 — Guided (≈4 min) 🟢</h3>
+<p>Replace the hard-coded <code>8000</code> with a named constant so the goal has a name. Fill in <code>STEP_GOAL</code>, then press <strong>Run</strong>.</p>
+<script type="exercise-setup-ex_const-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY29uc3QiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiJmcm9tIGxpYi5ncmFkZXIgaW1wb3J0IHJ1bl90ZXN0cyJ9
 </script>
 <div>
-<div id="pyodide-7" class="exercise-cell">
+<div id="pyodide-4" class="exercise-cell">
 
 </div>
-<script type="pyodide-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZml0In0sImNvZGUiOiJmcm9tIHNrbGVhcm4ubGluZWFyX21vZGVsIGltcG9ydCBMb2dpc3RpY1JlZ3Jlc3Npb25cbmZyb20gc2tsZWFybi5kYXRhc2V0cyBpbXBvcnQgbG9hZF9pcmlzXG5mcm9tIHNrbGVhcm4ubW9kZWxfc2VsZWN0aW9uIGltcG9ydCB0cmFpbl90ZXN0X3NwbGl0XG5cblgsIHkgPSBsb2FkX2lyaXMocmV0dXJuX1hfeT1UcnVlKVxuWF90cmFpbiwgWF90ZXN0LCB5X3RyYWluLCB5X3Rlc3QgPSB0cmFpbl90ZXN0X3NwbGl0KFgsIHksIHRlc3Rfc2l6ZT0wLjI1LCByYW5kb21fc3RhdGU9MClcblxubW9kZWwgPSBMb2dpc3RpY1JlZ3Jlc3Npb24obWF4X2l0ZXI9MjAwKVxuX19fXyAgIyBUT0RPOiB0cmFpbiB0aGUgbW9kZWwgb24gWF90cmFpbiBhbmQgeV90cmFpblxuXG5ydW5fdGVzdHMoW1xuICAgIChcIm1vZGVsIHByZWRpY3RzIG9uZSBsYWJlbCBwZXIgdGVzdCBmbG93ZXJcIiwgbGVuKG1vZGVsLnByZWRpY3QoWF90ZXN0KSksIGxlbih5X3Rlc3QpKSxcbl0pIn0=
+<script type="pyodide-4-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfY29uc3QifSwiY29kZSI6IlNURVBfR09BTCA9IF9fX18gICMgVE9ETzogdGhlIGRhaWx5IHN0ZXAgdGFyZ2V0LCA4MDAwXG5cbmRlZiBpc19hY3RpdmUoc3RlcHMpOlxuICAgIFwiXCJcIkEgZGF5IGlzIGFjdGl2ZSB3aGVuIGl0IHJlYWNoZXMgdGhlIHN0ZXAgZ29hbC5cIlwiXCJcbiAgICByZXR1cm4gc3RlcHMgPj0gU1RFUF9HT0FMXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwiODIwMCByZWFjaGVzIHRoZSBnb2FsXCIsIGlzX2FjdGl2ZSg4MjAwKSwgVHJ1ZSksXG4gICAgKFwiNTAwMCBkb2VzIG5vdFwiLCBpc19hY3RpdmUoNTAwMCksIEZhbHNlKSxcbl0pIn0=
 </script>
 </div>
 <details>
 <summary>
-Show solution
+If you’re stuck
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>fit</code> is the training step: it takes the inputs <code>X_train</code> and their known answers <code>y_train</code>. After it runs, <code>model.predict</code> works on new data.
+The target is <code>8000</code>. Put that value after <code>STEP_GOAL =</code>, so the comparison <code>steps &gt;= STEP_GOAL</code> checks against the named goal.
 </details>
-</section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write <code>accuracy(y_true, y_pred)</code> — the fraction of predictions that match the truth, as a number between 0 and 1. Complete the marked line.</p>
-<script type="exercise-setup-ex_accuracy-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiIjIFNhbWUgc2hhcmVkIGdyYWRlciwgbG9hZGVkIGludG8gdGhpcyBleGVyY2lzZSdzIGVudmlyb25tZW50IChERUNJU0lPTlMgRDAwMTYpLlxuZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
-</script>
-<div>
-<div id="pyodide-9" class="exercise-cell">
-
-</div>
-<script type="pyodide-9-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYWNjdXJhY3kifSwiY29kZSI6ImRlZiBhY2N1cmFjeSh5X3RydWUsIHlfcHJlZCk6XG4gICAgXCJcIlwiUmV0dXJuIHRoZSBmcmFjdGlvbiBvZiBtYXRjaGluZyBwcmVkaWN0aW9ucywgYXMgYSBmbG9hdCBpbiBbMCwgMV0uXCJcIlwiXG4gICAgY29ycmVjdCA9IHN1bSgxIGZvciBhLCBiIGluIHppcCh5X3RydWUsIHlfcHJlZCkgaWYgX19fXykgICMgVE9ETzogY29tcGFyZSBhIGFuZCBiXG4gICAgcmV0dXJuIGNvcnJlY3QgLyBsZW4oeV90cnVlKVxuXG5ydW5fdGVzdHMoW1xuICAgIChcImFsbCBjb3JyZWN0XCIsIGFjY3VyYWN5KFsxLCAxLCAxXSwgWzEsIDEsIDFdKSwgMS4wKSxcbiAgICAoXCJoYWxmIHJpZ2h0XCIsICBhY2N1cmFjeShbMSwgMF0sICAgIFsxLCAxXSksICAgIDAuNSksXG4gICAgKFwibm9uZSByaWdodFwiLCAgYWNjdXJhY3koWzAsIDBdLCAgICBbMSwgMV0pLCAgICAwLjApLFxuXSkifQ==
-</script>
-</div>
 <details>
 <summary>
 Show solution
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accuracy(y_true, y_pred):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    correct <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred) <span class="cf">if</span> a <span class="op">==</span> b)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> correct <span class="op">/</span> <span class="bu">len</span>(y_true)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>a == b</code> is <code>True</code> when a prediction matches the truth; summing those <code>True</code>s counts the matches, and dividing by the number of labels gives the fraction. This is what <code>accuracy_score</code> computed for you in Step 5.
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>STEP_GOAL <span class="op">=</span> <span class="dv">8000</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_active(steps):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> steps <span class="op">&gt;=</span> STEP_GOAL</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>STEP_GOAL</code> names the target once; <code>is_active</code> reads against that name, so the number <code>8000</code> no longer floats unexplained inside the comparison.
 </details>
 </section>
-<section id="exercise-3-stretch-optional-15-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-15-min">Exercise 3 — Stretch (optional, ≈15 min) 🔴</h3>
-<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Starting from the worked example, try to <strong>beat 95% accuracy</strong> on the test set. Ideas: raise <code>max_iter</code>, or swap <code>LogisticRegression</code> for another classifier such as <code>from sklearn.neighbors import KNeighborsClassifier</code>.</p>
-<p><strong>Rubric — a good solution:</strong></p>
+<section id="exercise-2-implement-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
+<p>Write one small, well-named function: <code>average_steps(day_steps)</code> returns the mean of a list of step counts. Guard the empty case so it returns <code>0</code> instead of dividing by zero. Complete the marked line.</p>
+<script type="exercise-setup-ex_avg-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYXZnIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
+</script>
+<div>
+<div id="pyodide-6" class="exercise-cell">
+
+</div>
+<script type="pyodide-6-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfYXZnIn0sImNvZGUiOiJkZWYgYXZlcmFnZV9zdGVwcyhkYXlfc3RlcHMpOlxuICAgIFwiXCJcIk1lYW4gb2YgYSBsaXN0IG9mIHN0ZXAgY291bnRzOyAwIHdoZW4gdGhlIGxpc3QgaXMgZW1wdHkuXCJcIlwiXG4gICAgaWYgX19fXzogICAgICAgICAgICAjIFRPRE86IGhhbmRsZSB0aGUgZW1wdHkgbGlzdCBiZWZvcmUgZGl2aWRpbmdcbiAgICAgICAgcmV0dXJuIDBcbiAgICByZXR1cm4gc3VtKGRheV9zdGVwcykgLyBsZW4oZGF5X3N0ZXBzKVxuXG5ydW5fdGVzdHMoW1xuICAgIChcIm1lYW4gb2YgdHdvIGRheXNcIiwgYXZlcmFnZV9zdGVwcyhbODAwMCwgOTAwMF0pLCA4NTAwKSxcbiAgICAoXCJlbXB0eSBsaXN0IGlzIDBcIiwgYXZlcmFnZV9zdGVwcyhbXSksIDApLFxuXSkifQ==
+</script>
+</div>
+<details>
+<summary>
+If you’re stuck
+</summary>
+An empty list has length <code>0</code>, and <code>sum([]) / len([])</code> would divide by zero. Test for the empty list first — <code>not day_steps</code> is <code>True</code> when the list is empty.
+</details>
+<details>
+<summary>
+Show solution
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> average_steps(day_steps):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> day_steps:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">sum</span>(day_steps) <span class="op">/</span> <span class="bu">len</span>(day_steps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+The guard <code>if not day_steps</code> returns <code>0</code> for the empty list; otherwise <code>sum() / len()</code> is the mean. The name and docstring say exactly what the function does.
+</details>
+</section>
+<section id="exercise-3-stretch-optional-8-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-8-min">Exercise 3 — Stretch (optional, ≈8 min) 🔴</h3>
+<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Rewrite this cryptic snippet for readability — <strong>without changing what it computes</strong>. It counts how many days hit the step target and is hard to follow:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(l):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> l:</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> v <span class="op">&gt;=</span> <span class="dv">8000</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            n <span class="op">=</span> n <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Rubric — a good answer:</strong></p>
 <ul>
-<li>Trains on <code>X_train</code>/<code>y_train</code> only and reports accuracy on the held-out <code>X_test</code>/<code>y_test</code> (no testing on training data).</li>
-<li>States the change you made and the accuracy you reached.</li>
-<li>Reaches at least the worked example’s baseline, ideally higher.</li>
+<li>Uses <strong>descriptive names</strong> for the function, parameter, and loop value.</li>
+<li>Replaces the hard-coded <code>8000</code> with a <strong>named constant</strong>.</li>
+<li>Pulls the “is this day active?” test into a <strong>small helper</strong> and reuses it (DRY).</li>
+<li>Returns the <strong>same count</strong> as the original for the same input.</li>
 </ul>
 <details>
 <summary>
-Show one possible solution
+Show one possible answer
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>knn.fit(X_train, y_train)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"k-NN accuracy: </span><span class="sc">{</span>accuracy_score(y_test, knn.predict(X_test))<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-A nearest-neighbour classifier often does well on Iris. Other approaches are fine too — the point is to change one thing, measure honestly on the test set, and compare.
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>STEP_GOAL <span class="op">=</span> <span class="dv">8000</span>   <span class="co"># daily step target</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_active(steps):</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A day is active when it reaches the step goal."""</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> steps <span class="op">&gt;=</span> STEP_GOAL</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_active_days(day_steps):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""How many days reached the step goal."""</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> steps <span class="kw">in</span> day_steps <span class="cf">if</span> is_active(steps))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(count_active_days([<span class="dv">8200</span>, <span class="dv">5100</span>, <span class="dv">9300</span>, <span class="dv">6000</span>, <span class="dv">8000</span>]))   <span class="co"># 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+Same count as <code>f</code>, but the names tell the story, <code>STEP_GOAL</code> explains the number, and the active-day rule lives once in <code>is_active</code>.
 </details>
 <hr>
 </section>
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch1-train-your-first-model","questions":[{"answer":"1","explanation":"A model is the learned function; we fit it on examples, then call it to predict.","id":"what-is-a-model","options":["A spreadsheet that stores the flower measurements","A function learned from labelled examples that maps an input to a prediction","The chart that shows the accuracy score"],"prompt":"In this chapter, a model is best described as…"},{"answer":"1","explanation":"Testing on unseen data checks whether the model generalises, rather than only memorises.","id":"why-a-test-set","options":["Because the test set is always larger than the training set","Because a model can score well on examples it has already seen yet fail on new ones","Because scikit-learn refuses to predict on training data"],"prompt":"Why do we measure accuracy on a separate test set instead of the training data?"},{"answer":"0","explanation":"Accuracy is the fraction of predictions that match the true labels.","id":"what-accuracy-means","options":["It named 95% of the test flowers correctly","It is 95% confident about every single flower","It used 95% of the flowers for training"],"prompt":"The model reports 95% accuracy on the test set. That means…"}],"title":"Chapter 1 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m1-ch10-clean-code","questions":[{"answer":"1","explanation":"A descriptive name like day_steps says what the value holds, so the code reads without decoding.","id":"better-name","options":["d","day_steps","x2"],"prompt":"Which variable name reads most clearly for a list of daily step counts?"},{"answer":"1","explanation":"A named constant documents the value and centralises it, so a change is one edit instead of many.","id":"named-constant","options":["It makes the program run faster","It names what the number means and lets you change the target in one place","Python requires constants for comparisons"],"prompt":"Why write GOAL = 8000 instead of repeating the number 8000 in your code?"},{"answer":"1","explanation":"Good code shows the WHAT; a comment earns its place by giving the WHY behind it.","id":"why-comment","options":["It restates exactly what the line of code does","It explains WHY the code does something the reader can’t see from the code","It repeats the function name"],"prompt":"What makes a comment worth keeping?"},{"answer":"1","explanation":"Putting shared logic in one function means a fix is made once, not in every copy.","id":"dry","options":["Paste it wherever it’s needed so each copy is independent","Put it in one function and call that function","Add a comment above each copy"],"prompt":"What does the DRY (don’t repeat yourself) idea recommend for logic you’d otherwise copy?"}],"title":"Chapter 10 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You have run the complete machine-learning loop — load, split, train, predict, measure — on a classic dataset, without installing anything. Every later module reuses this loop on bigger data and stronger models. Next, we look at what the accuracy number does <em>not</em> tell you, and when it can mislead.</p>
+<p>You can now write code a beginner can re-read: clear names, small functions, named constants, WHY-comments, and no copied logic. Next chapter — <strong>Pythonic data idioms</strong> — builds on this with the idiomatic patterns that make Python code both shorter <em>and</em> clearer, so readable and concise stop being a trade-off.</p>
 
 
 <script type="pyodide-data">
 eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
 </script>
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtOS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzkgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzksIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzkgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzkuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS03LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNyA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNywge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNy5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV81ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl81LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTQtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV80ID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl80LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTMtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8zID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTYiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl82ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtNi1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzYgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzYsIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzYgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzYuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzQgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS00LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNCA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNCwge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNC5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
 </script>
 <div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
 <div id="exercise-loading-status" class="d-flex gap-2">
@@ -1099,7 +1155,7 @@ eyJjb250ZW50cyI6W119
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../modules/00-orientation";
+window._ojs.paths.runtimeToDoc = "../../modules/01-python";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "../..";
 window._ojs.selfContained = false;
