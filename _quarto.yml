@@ -115,6 +115,16 @@ website:
             href: modules/02-math/ch10-distributions.qmd
           - text: "Ch11 — Mean, variance & standard deviation"
             href: modules/02-math/ch11-mean-variance-std.qmd
+          - text: "Ch12 — Bayes, intuitively"
+            href: modules/02-math/ch12-bayes-intuitively.qmd
+          - text: "Ch13 — Correlation vs causation"
+            href: modules/02-math/ch13-correlation-vs-causation.qmd
+          - text: "Ch14 — Sampling & uncertainty"
+            href: modules/02-math/ch14-sampling-uncertainty.qmd
+          - text: "Ch15 — Linear algebra in NumPy"
+            href: modules/02-math/ch15-linear-algebra-in-numpy.qmd
+          - text: "Ch16 — The math of one neuron"
+            href: modules/02-math/ch16-the-math-of-one-neuron.qmd
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

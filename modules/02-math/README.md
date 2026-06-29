@@ -43,11 +43,11 @@ gradients). All visuals via Matplotlib in the browser.
 | 9 | [Probability basics](ch09-probability-basics.qmd) | 🟢 |
 | 10 | [Distributions](ch10-distributions.qmd) | 🟡 |
 | 11 | [Mean, variance & standard deviation](ch11-mean-variance-std.qmd) | 🟢 |
-| 12 | Bayes, intuitively | 🟡 |
-| 13 | Correlation vs causation | 🟢 |
-| 14 | Sampling & uncertainty | 🟡 |
-| 15 | Linear algebra in NumPy | 🟡 |
-| 16 | The math of one neuron | 🟡 |
+| 12 | [Bayes, intuitively](ch12-bayes-intuitively.qmd) | 🟡 |
+| 13 | [Correlation vs causation](ch13-correlation-vs-causation.qmd) | 🟢 |
+| 14 | [Sampling & uncertainty](ch14-sampling-uncertainty.qmd) | 🟡 |
+| 15 | [Linear algebra in NumPy](ch15-linear-algebra-in-numpy.qmd) | 🟡 |
+| 16 | [The math of one neuron](ch16-the-math-of-one-neuron.qmd) | 🟡 |
 
 ## Assessment
 
