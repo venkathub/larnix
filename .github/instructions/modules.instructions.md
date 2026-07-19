@@ -35,3 +35,12 @@ explain the *why* in your comments (tutor mode):
 9. **Math/data correctness**: verify derivatives, chain-rule products, probability
    arithmetic, matrix shapes, and pandas idioms (modern, copy-on-write-safe; no
    `inplace=True`, no chained assignment). Recompute spot values where feasible.
+
+## Example finding (expected shape and tone)
+
+> `[blocking]` `modules/03-data/ch05-joins-groupby.qmd` — the worked example prints
+> "Adelie 3701.0" but running the shown groupby on the vendored penguins CSV gives
+> 3700.66; either the output was hand-typed or the code changed after the output
+> was captured. Concrete fix: re-run the cell and paste the real output.
+> Principle: a learner who runs the cell and gets a different number than the
+> chapter loses trust in every other number we print.

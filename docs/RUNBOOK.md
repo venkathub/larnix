@@ -117,6 +117,11 @@ Rules of the road:
 - Rubric changes: edit the two instruction files — both layers pick them up
   (`infra/ci/ai_review.py` embeds them at run time; unit-tested in
   `test_ai_review.py`).
+- **Rubric audit cadence** (PR #5 AI-review question, adopted): re-read a sample of
+  recent AI review comments against the rubric at every **quarterly content
+  refresh** (the same cadence as the currency pass). Look for drift (findings the
+  rubric should have caught but didn't, or noise it produced) and for model
+  deprecations; log rubric/model changes in `DECISIONS.md` under D0018.
 
 ## GPU notebook policy
 

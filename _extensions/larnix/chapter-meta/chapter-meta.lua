@@ -10,6 +10,15 @@
 -- Registered project-wide in `_quarto.yml` (`filters:`), so it applies to both
 -- the plain `html` pages (which skip it — no `compute:`) and the `live-html`
 -- chapters.
+--
+-- Extending the strip (maintainer note, per PR #5 AI review): to surface a new
+-- front-matter field, (1) make sure it is validated first in
+-- `infra/ci/frontmatter_lint.py` (the strip renders only CI-validated
+-- metadata — that is the whole point), (2) append a `table.insert(parts, …)`
+-- below with the same "label: value" shape, (3) style stays automatic — the
+-- output is one `<div class="lx-chapter-meta">` (see theme/_larnix-components
+-- .scss), (4) the e2e smoke test asserts the strip renders (`.lx-chapter-meta`
+-- in infra/e2e/tests/smoke.spec.js), so a broken filter fails CI.
 
 local function stringify(v)
   return pandoc.utils.stringify(v)

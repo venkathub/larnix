@@ -23,6 +23,16 @@ Review every PR from **two perspectives at once**:
 - **Severity-tag findings**: `[blocking]` correctness/honesty/broken learner path;
   `[should-fix]` pedagogy or convention violations; `[consider]` improvements.
 
+### Example finding (the expected shape and tone)
+
+> `[should-fix]` `modules/02-math/ch07-gradients.qmd` — Exercise 2 gives the whole
+> update rule and blanks only the learning rate, but this module's convention is
+> that Ex2 is a genuine write-the-body implement. Concrete fix: keep the def line +
+> docstring, replace the body with `...` and move the formula into the hint.
+> Principle: the middle rung of the exercise ladder is where learners first
+> *produce* code — a one-blank fill-in skips the practice that makes the chapter
+> stick.
+
 ## Engineering conventions (repo-wide)
 
 - Clarity over cleverness; this is a teaching codebase.
