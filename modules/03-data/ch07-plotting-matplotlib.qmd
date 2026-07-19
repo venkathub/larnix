@@ -11,7 +11,7 @@ learning_objectives:
   - "Choose the chart type that fits the question you are asking"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -307,10 +307,10 @@ when plotted against the x-values.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-A bar chart compares a count per category, so first you need those counts. Write
-`category_counts(items)` that returns a dictionary mapping each value to how many times
-it appears — the heights for a bar chart. Use `collections.Counter`. Complete the marked
-line.
+A bar chart compares a count per category, so first you need those counts. Write the
+body of `category_counts(items)` — return a dictionary mapping each value to how many
+times it appears — the heights for a bar chart. The `Counter` import is given; you
+write the rest of the body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -323,7 +323,7 @@ from lib.grader import run_tests
 def category_counts(items):
     """Return a dict mapping each item to its count (bar heights for a bar chart)."""
     from collections import Counter
-    return ____  # TODO: dict(Counter(items))
+    ...  # TODO: write the rest — tally the items with Counter and return them as a plain dict
 
 run_tests([
     ("counts", category_counts(["a", "a", "b"]), {"a": 2, "b": 1}),

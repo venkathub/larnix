@@ -11,7 +11,7 @@ learning_objectives:
   - "Choose the right tool: a notebook to explore, a script to automate and reproduce"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 14
 resources:
   - ../../lib/grader.py
@@ -204,8 +204,8 @@ the extension is how you tell a script from a notebook on disk.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 When you move notebook cells into a script, you join their lines into one file.
-Write `make_script(lines)` — join a list of code lines into a single string, one per
-line. Complete the marked line.
+Write the body of `make_script(lines)` — join a list of code lines into a single
+string, one per line. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -217,7 +217,7 @@ from lib.grader import run_tests
 #| exercise: ex_makescript
 def make_script(lines):
     """Join code lines into one script string, one line each."""
-    return ____  # TODO: join the lines with a newline character
+    ...  # TODO: write the body — glue the lines together with a newline between each
 
 run_tests([
     ("two lines", make_script(["a = 1", "print(a)"]), "a = 1\nprint(a)"),

@@ -276,9 +276,9 @@ does to a whole column, one value at a time.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `to_number(s)` that turns a price string into a `float`. Strip a leading
-currency symbol (handle both `₹` and `$`) and any thousands commas, then convert
-what's left. Complete the marked line.
+Write the body of `to_number(s)` — turn a price string into a `float`. Strip a
+leading currency symbol (handle both `₹` and `$`) and any thousands commas, then
+convert what's left. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -290,7 +290,7 @@ from lib.grader import run_tests
 #| exercise: ex_to_number
 def to_number(s):
     """Strip a currency symbol and thousands commas, then return a float."""
-    return ____  # TODO: float(s.replace("₹", "").replace("$", "").replace(",", ""))
+    ...  # TODO: write the body — strip ₹, $, and commas, then convert what's left to a float
 
 run_tests([
     ("rupees", to_number("₹1,200"), 1200.0),

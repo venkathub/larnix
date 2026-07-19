@@ -315,9 +315,10 @@ three keys of two values each is `(2, 3)`. `.shape` reports `(rows, columns)`, a
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Step 4 is *summaries*. Write `summary(data, col)` that returns a small dict
-`{"mean": .., "min": .., "max": ..}` for one column — the mean rounded to 2 decimals,
-the min and max as plain ints. Complete the marked line.
+Step 4 is *summaries*. Write the body of `summary(data, col)` — return a small dict
+`{"mean": .., "min": .., "max": ..}` for one column: the mean rounded to 2 decimals,
+the min and max as plain ints. You write the whole body yourself — build the frame,
+select the column, compute the three numbers.
 
 ```{pyodide}
 #| setup: true
@@ -331,9 +332,7 @@ import pandas as pd
 
 def summary(data, col):
     """Return {'mean', 'min', 'max'} for one column; mean rounded to 2 decimals."""
-    df = pd.DataFrame(data)
-    s = df[col]
-    return ____  # TODO: {"mean": round(float(s.mean()), 2), "min": int(s.min()), "max": int(s.max())}
+    ...  # TODO: write the body — build the frame, select the column, return the three summaries
 
 run_tests([
     ("col a", summary({"a": [1, 2, 3, 4]}, "a"), {"mean": 2.5, "min": 1, "max": 4}),

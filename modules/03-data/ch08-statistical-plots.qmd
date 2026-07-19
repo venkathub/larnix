@@ -12,7 +12,7 @@ learning_objectives:
   - "Read a scatter plot for the relationship between two variables"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -276,9 +276,10 @@ decimals, so `[2, 4, 6, 8]` returns `(5.0, 2.24)`.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-A histogram is, at heart, *counting how many values land in each bin*. Write
-`count_in_range(values, lo, hi)` that returns how many values fall in one bin —
-between `lo` and `hi` **inclusive** of both ends. Complete the marked line.
+A histogram is, at heart, *counting how many values land in each bin*. Write the
+body of `count_in_range(values, lo, hi)` — return how many values fall in one bin,
+between `lo` and `hi` **inclusive** of both ends, as a plain `int`. You write the
+whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -290,7 +291,7 @@ from lib.grader import run_tests
 #| exercise: ex_count_range
 def count_in_range(values, lo, hi):
     """Count how many values satisfy lo <= v <= hi (one histogram bin)."""
-    return ____  # TODO: int(sum(1 for v in values if lo <= v <= hi))
+    ...  # TODO: write the body — count the values with lo <= v <= hi, return a plain int
 
 run_tests([
     ("middle bin", count_in_range([1, 2, 3, 4, 5], 2, 4), 3),

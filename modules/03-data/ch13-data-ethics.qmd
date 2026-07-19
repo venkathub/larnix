@@ -272,9 +272,10 @@ about 20% of the table".
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Now do it for every group at once. Write `class_shares(counts)`, which takes a dict
-of `class → count` and returns a dict of `class → rounded share`. Complete the
-marked lines.
+Now do it for every group at once. Write the body of `class_shares(counts)` — take
+a dict of `class → count` and return a dict of `class → rounded share`. You write
+the whole body yourself: total the counts first, then divide each class by that
+total.
 
 ```{pyodide}
 #| setup: true
@@ -286,8 +287,7 @@ from lib.grader import run_tests
 #| exercise: ex_class_shares
 def class_shares(counts):
     """Map each class to its share of the total, rounded to 2 decimals."""
-    total = ____            # TODO: sum of all the counts
-    return ____             # TODO: {k: round(v / total, 2) for k, v in counts.items()}
+    ...  # TODO: write the body — total the counts, then map each class to its rounded share
 
 run_tests([
     ("imbalanced", class_shares({"a": 3, "b": 1}), {"a": 0.75, "b": 0.25}),
