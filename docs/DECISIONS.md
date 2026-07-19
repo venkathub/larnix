@@ -53,7 +53,16 @@
      hidden solutions in the P1 pattern; CI `--check` fails on drift. Grader logic stays
      single-sourced. *Rejected:* hand-authored notebook + `.qmd` pairs (re-creates the P1-D10
      drift problem ×~15, R9); `.ipynb`-only authoring rendered by Quarto (abandons the
-     template/lint pipeline all 51 existing chapters share).
+     template/lint pipeline all 51 existing chapters share). *Implementation note
+     (2026-07-19):* shipped as `infra/ci/make_colab.py` (26 unit tests). Companion-bound code
+     is authored in **Pandoc-attribute fences** (```` ```{.python …} ````), not executable
+     `{python}` cells — the CI render job installs Quarto without Jupyter, so executable cells
+     would break the render gate; attribute roles (`setup`/`parameters`/`exercise`/
+     `companion="false"`) mirror the `{pyodide}` `#|` options. Companions are named
+     `<stem>-colab.ipynb`; exercise cells carry `metadata.larnix.solution` (the P2-D9
+     substitution contract); the generator fails closed on a missing `LARNIX_CI` parameters
+     cell, torch without `torch-floor:`, or a graded exercise without a solution; the
+     bootstrap's raw-URL fetch is skipped under `LARNIX_CI` (offline-deterministic CI).
   4. **P2-D9 = A — CPU-scaled companion execution in CI + recorded manual Colab run.** Every
      companion carries a parameters cell honouring `LARNIX_CI` (tiny epochs/subset, ≤ ~90 s per
      notebook); CI installs **exact-pinned CPU-only torch/torchvision** (official

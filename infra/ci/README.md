@@ -15,6 +15,7 @@ GitHub Actions workflows.
 | `free_fallback_check.py` | R6 (P0 task 11) | Chapters referencing a paid API must also show a free fallback (Ollama/Groq/free tier). |
 | `review_cards_lint.py` | SR seeding (P0 task 13, P0-D3) | Validates the optional `review_cards:` front-matter block (Q/A pairs from Key Takeaways). |
 | `make_twin.py` | Twin drift (P1-D10 / D0016) | **Generates** each browser chapter's CI twin `.ipynb` from its `.qmd` (worked-example cells + a grader bootstrap + per-exercise `<details>` solution + asserts) and, in `--check` mode, fails if a committed twin drifts from source. |
+| `make_colab.py` | Companion drift (P2-D8 / D0020) | **Generates** each `compute: colab` chapter's learner-facing companion `<stem>-colab.ipynb` from its `.qmd` (header + badge, torch version-floor guard (P2-D11), `LARNIX_CI` parameters cell (P2-D9), grader bootstrap with inlined fallback, worked/exercise cells with `<details>` solutions and per-cell solution metadata) and, in `--check` mode, fails on drift. **Fail-closed:** missing/`LARNIX_CI`-less parameters cell, torch without `torch-floor:` front-matter, or a graded exercise without a solution are build errors. |
 
 ## Run locally
 
@@ -58,3 +59,32 @@ Dependencies: `infra/ci/requirements.txt` (PyYAML) for the schema linters;
   `python infra/ci/make_twin.py --write <chapter.qmd>` (omit the path to do all
   browser chapters) and commit it. CI runs `make_twin.py --check` to fail on drift,
   so a chapter edit that isn't reflected in its twin is caught at PR time.
+- **Colab companions are generated too (P2-D8):** a `compute: colab` chapter is a
+  rendered `.qmd` (prose + code with *recorded* outputs; nothing executes at
+  render — the render gate installs no Jupyter) plus a generated companion
+  `<stem>-colab.ipynb` that the `{{< colab >}}` button opens. Companion-bound
+  code lives in **Pandoc-attribute fences**, which render highlighted with the
+  attributes invisible to the learner:
+
+  ````markdown
+  ```{.python}                     → worked cell, copied in document order
+  ```{.python setup="true"}        → dropped (the generated grader bootstrap replaces it)
+  ```{.python companion="false"}   → display-only, never copied
+  ```{.python parameters="true"}   → the LARNIX_CI parameters cell (exactly one; P2-D9)
+  ```{.python exercise="ex_id"}    → exercise starter, paired with the next <details> solution
+  ````
+
+  Plain ```` ```python ```` fences (e.g. inside `<details>` solutions) are prose,
+  never cells. Regenerate with `python infra/ci/make_colab.py --write
+  <chapter.qmd>`; CI runs `--check`. The grader bootstrap fetches
+  `lib/grader.py` from the repo raw URL (Colab is online) with an **inlined
+  fallback embedded at generation time** — so a grader change drifts every
+  companion and the gate forces regeneration; under `LARNIX_CI` the fetch is
+  skipped entirely (offline-deterministic). Exercise cells carry
+  `metadata.larnix.solution` (rubric exercises: `metadata.larnix.rubric`) — the
+  contract the CPU-scaled CI runner (P2-D9) uses to substitute solutions.
+  Repo/branch for badge + raw URLs come from `_quarto.yml`
+  `larnix-colab-repo/-branch` (env `LARNIX_COLAB_REPO/BRANCH` fallback — never
+  hardcoded). Note: the badge and raw URL point at the deploy branch, so they
+  resolve **after merge** (same as the P0 shortcode, D0012); pre-merge
+  verification is the recorded manual Colab run.
