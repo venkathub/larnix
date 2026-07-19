@@ -16,12 +16,16 @@ import chapter_structure_lint as cs  # noqa: E402
 GOOD = """\
 ---
 compute: "browser"
+difficulty: "beginner"
+status: "stable"
 format:
   live-html:
     toc: true
 execute:
   enabled: false
 ---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
 
 ## Build it
 
@@ -109,6 +113,25 @@ class ChapterDetectionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             self._write(d, "ch.qmd", "---\ncompute: \"browser\"\n---\n# bare\n")
             self.assertEqual(cs.main([os.path.join(d, "ch.qmd")]), 1)
+
+
+class BadgeDriftTests(unittest.TestCase):
+    FM = {"difficulty": "beginner", "compute": "browser", "status": "stable"}
+    BADGES = ("{{< badge difficulty=beginner >}} "
+              "{{< badge compute=browser >}} {{< badge status=stable >}}")
+
+    def test_matching_badges_pass(self):
+        self.assertEqual(cs.check_badges(self.BADGES, self.FM), [])
+
+    def test_drifted_badge_fails(self):
+        text = self.BADGES.replace("difficulty=beginner", "difficulty=advanced")
+        problems = cs.check_badges(text, self.FM)
+        self.assertTrue(any("disagrees with front-matter" in p for p in problems))
+
+    def test_missing_badge_fails(self):
+        text = "{{< badge difficulty=beginner >}}"  # compute + status absent
+        problems = cs.check_badges(text, self.FM)
+        self.assertEqual(sum("missing" in p for p in problems), 2, problems)
 
 
 if __name__ == "__main__":

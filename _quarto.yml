@@ -24,6 +24,12 @@ larnix-colab-branch: "main"
 execute:
   freeze: auto
 
+# Project-wide filters. chapter-meta renders the "⏱ ~N min · Needs: …" strip
+# from each chapter's CI-validated front-matter (review 2026-07-19, U8) — it
+# no-ops on pages without `compute:` (landing pages, capstones, sandboxes).
+filters:
+  - larnix/chapter-meta
+
 website:
   title: "Larnix"
   description: "A free, beginner-to-frontier school for AI/ML — every chapter runs."

@@ -4,8 +4,8 @@
 Schema (one MCQ set per file):
 
     title: "Chapter 1 — quick check"      # optional string
-    id: "m0-ch1"                          # optional string (storage key)
-    shuffle: false                        # optional bool
+    id: "m0-ch1"                          # REQUIRED string (storage key)
+    shuffle: false                        # optional bool (engine shuffles options)
     questions:                            # required, non-empty list
       - id: what-is-a-model               # optional string, unique within file
         prompt: "A model is…"             # required, non-empty string
@@ -21,8 +21,8 @@ Usage:
 With no PATH, scans default globs. Exit 0 = pass (or nothing to check); 1 = fail.
 
 Two kinds of quiz file share this schema (P1-D11 / DECISIONS D0016):
-  • per-chapter quick check  — `quiz.yml` beside a chapter (2–3 MCQ), mounted by
-    `{{< quiz quiz.yml >}}` in the chapter;
+  • per-chapter quick check  — `quiz-chNN.yml` beside a chapter (3–4 MCQ), mounted
+    by `{{< quiz quiz-chNN.yml >}}` in the chapter;
   • cumulative module quiz   — `module-quiz.yml` in a module dir (~8–12 MCQ),
     mounted on the module landing page (`modules/<NN>/index.qmd`).
 A `module-quiz.yml` outside the ~8–12-question band gets an advisory NOTE (not a
@@ -58,8 +58,12 @@ def validate_quiz(data) -> list[str]:
 
     if "title" in data and not _nonempty_str(data["title"]):
         errors.append("title must be a non-empty string")
-    if "id" in data and not _nonempty_str(data["id"]):
-        errors.append("id must be a non-empty string")
+    # `id` is REQUIRED (review 2026-07-19): it is the localStorage progress key.
+    # The engine's fallback (title, then pathname) silently orphans a learner's
+    # best score on rename and collides when two id-less quizzes share a page —
+    # every authored quiz already sets one, so enforce the convention.
+    if not _nonempty_str(data.get("id")):
+        errors.append("id is required (non-empty string — the stable storage key)")
     if "shuffle" in data and not isinstance(data["shuffle"], bool):
         errors.append("shuffle must be a boolean")
 
