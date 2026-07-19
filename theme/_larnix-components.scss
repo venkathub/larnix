@@ -109,6 +109,38 @@ html[data-lx-mode="sepia"] {
 
 // ── Base typography ─────────────────────────────────────────────────────────
 body { background: var(--lx-bg); color: var(--lx-text); }
+
+// Content links must not rely on colour alone (axe link-in-text-block,
+// review 2026-07-19): underline links in running prose/tables. Buttons,
+// pills, badges, nav and heading-anchor links keep their own affordances.
+main.content p a:not(.btn-clay):not(.lx-pill):not(.larnix-badge),
+main.content li a:not(.btn-clay):not(.lx-pill):not(.larnix-badge),
+main.content td a:not(.btn-clay):not(.lx-pill):not(.larnix-badge) {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+// Mobile: wide markdown tables (e.g. the 17-module curriculum map) scroll
+// inside the table instead of stretching the page (375px overflow was 157px
+// before this — caught by the e2e mobile check). `min-width: 0` matters:
+// main.content is a grid item, and grid items default to min-width:auto,
+// which lets a wide table's intrinsic width stretch the whole column past
+// the viewport before the table's own overflow rule can help.
+main.content, #quarto-document-content { min-width: 0; }
+// …and on page-layout:full pages, main.content is ITSELF the page grid and
+// its children (.lx-plain, the title block) are the grid items whose
+// min-width:auto lets a wide table stretch the tracks. Zeroing grid-item
+// minimums is the standard containment fix and is safe for block content.
+main.content > * { min-width: 0; }
+@media (max-width: 767px) {
+  main.content table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 h1, h2, h3, h4, .h1, .h2, .h3, .navbar-brand {
   font-family: "Fredoka", "Nunito", sans-serif;
   color: var(--lx-heading);
@@ -290,7 +322,11 @@ body:has(.lx-landing) #quarto-content,
 body:has(.lx-landing) main.content,
 body:has(.lx-plain) #quarto-content,
 body:has(.lx-plain) main.content {
-  max-width: 1080px; margin-inline: auto; padding-inline: 1.2rem;
+  // width:100% matters: auto inline margins disable a grid item's default
+  // stretch alignment, so with width:auto the item falls back to FIT-CONTENT —
+  // a wide table then sets the page width (375px viewport overflowed by 157px;
+  // caught by the e2e mobile check, review 2026-07-19).
+  width: 100%; max-width: 1080px; margin-inline: auto; padding-inline: 1.2rem;
 }
 
 // ── Breadcrumb (secondary nav) typography ───────────────────────────────────
@@ -305,6 +341,10 @@ body:has(.lx-plain) main.content {
 .quarto-page-breadcrumbs .breadcrumb-item:last-child {
   color: var(--lx-heading); font-weight: 800;
 }
+// Quarto's own stylesheet paints the LAST breadcrumb's <a> Bootstrap gray
+// (#6c757d — 4.0:1 on the cream page, a real axe "serious"). Match its
+// selector specificity and use the heading colour instead (axe-verified).
+.quarto-title-breadcrumbs .breadcrumb li:last-of-type a { color: var(--lx-heading); }
 
 // ── Sidebar (module + chapter list) typography ──────────────────────────────
 #quarto-sidebar .sidebar-item-section > .sidebar-item-container .menu-text {

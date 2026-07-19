@@ -74,5 +74,45 @@ class AltTextTests(unittest.TestCase):
             self.assertEqual(len(a.check_alt_text([bad])), 1)
 
 
+class ScssSyncTests(unittest.TestCase):
+    """SCSS ↔ THEME_PAIRS drift detection (review 2026-07-19 / D0017)."""
+
+    PAIRS_SRC = 'THEME_PAIRS = [\n    ("x", "#0c5f57", "#d4f3ee"),\n]\n'
+
+    def test_current_repo_state_is_in_sync(self):
+        repo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+        files = [os.path.join(repo, p) for p in a.THEME_SCSS_FILES]
+        self.assertEqual(a.run_scss_sync(files), [])
+
+    def test_orphaned_pair_colour_fails(self):
+        scss = ":root { --clay-teal-bg: #d4f3ee; --clay-teal-tx: #0c5f57; }"
+        src = 'THEME_PAIRS = [\n    ("x", "#0c5f57", "#d4f3ee"),\n    ("gone", "#123456", "#d4f3ee"),\n]\n'
+        fails = a.check_scss_sync(scss, src)
+        self.assertTrue(any("#123456" in f and "stale pair" in f for f in fails), fails)
+
+    def test_ungated_clay_pair_fails(self):
+        scss = (":root { --clay-teal-bg: #d4f3ee; --clay-teal-tx: #0c5f57;"
+                " --clay-new-bg: #eeeeee; --clay-new-tx: #111111; }")
+        # 'new' is declared in SCSS but the pairs block doesn't gate it. Its
+        # hexes must not trip the orphan check, so include them as literals.
+        src = ('THEME_PAIRS = [\n    ("x", "#0c5f57", "#d4f3ee"),\n'
+               '    # seen: #eeeeee #111111\n]\n')
+        fails = a.check_scss_sync(scss, src)
+        self.assertTrue(any("clay pair 'new'" in f for f in fails), fails)
+
+    def test_ungated_badge_fails(self):
+        # NB: colours chosen to NOT match any real THEME_PAIRS combo.
+        scss = ".badge-shiny { background: #e7f4eb; color: #145232; border-color: #bfe3c9; }"
+        src = 'THEME_PAIRS = [\n    ("x", "#0c5f57", "#d4f3ee"),\n    # #e7f4eb #145232 #bfe3c9\n]\n'
+        fails = a.check_scss_sync(scss, src)
+        self.assertTrue(any("badge 'shiny'" in f for f in fails), fails)
+
+    def test_gated_state_passes(self):
+        scss = (":root { --clay-teal-bg: #d4f3ee; --clay-teal-tx: #0c5f57; }\n"
+                ".badge-b { background: #d4f3ee; color: #0c5f57; }")
+        fails = a.check_scss_sync(scss, self.PAIRS_SRC)
+        self.assertEqual(fails, [])
+
+
 if __name__ == "__main__":
     unittest.main()

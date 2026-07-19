@@ -3,6 +3,7 @@
   "private": true,
   "description": "Browser smoke tests for the two learner-critical paths: live Pyodide cells and the quiz engine. See README.md.",
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
     "@playwright/test": "1.61.1",
     "http-server": "14.1.1"
   },
