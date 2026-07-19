@@ -48,7 +48,7 @@ All 🟢 Beginner · `browser` · `stable`. (Authored across P1; Ch7+Ch8 may mer
 
 ## Assessment
 
-- Per-chapter **quick check** (`quiz.yml`, 2–3 MCQ).
+- Per-chapter **quick check** (`quiz.yml`, 3–4 MCQ).
 - Cumulative **module quiz** (`module-quiz.yml`, ~8–12 MCQ) on the module landing.
 - **Capstone:** a data-cleaning notebook — see [`capstone.md`](capstone.md).
 

@@ -12,7 +12,7 @@ learning_objectives:
   - "Summarise and filter an array with mean/sum/max and a boolean mask"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -251,8 +251,8 @@ run_tests([
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Write `count_active(steps, goal)` — build an array and return, as a **plain int**,
-how many step counts are at least `goal`. Use a boolean mask. Complete the marked
-line.
+how many step counts are at least `goal`. Use a boolean mask. Write the full
+function body yourself from the docstring.
 
 ```{pyodide}
 #| setup: true
@@ -266,8 +266,7 @@ import numpy as np
 
 def count_active(steps, goal):
     """Return how many step counts are >= goal, as a plain int."""
-    arr = np.array(steps)
-    return ____  # TODO: count the masked elements, wrapped in int(...)
+    ...  # TODO: write the body — build the array, mask it, count, wrap in int(...)
 
 run_tests([
     ("two of three", count_active([7000, 8200, 9000], 8000), 2),

@@ -12,7 +12,7 @@ learning_objectives:
   - "Catch specific exceptions so you don't hide unrelated bugs"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -50,8 +50,8 @@ execute:
 
 One bad value can sink an entire script. In the habits file, `sleep_hours` has a
 stray `"8h"` and `steps` has `"7,500"`. The moment your code hits `int("8h")`, it
-raises an error — and if nothing catches it, the loop stops dead, even though the
-other 34 rows were perfectly fine.
+raises an error — and if nothing catches it, the loop stops dead, even though most
+of the other rows were perfectly usable.
 
 Real data always has bad values. Robust code **expects** them and keeps going.
 `try`/`except` is how you do that.

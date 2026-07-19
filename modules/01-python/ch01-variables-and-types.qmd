@@ -11,7 +11,7 @@ learning_objectives:
   - "Convert string values from a file into numbers before doing maths"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -218,7 +218,8 @@ def as_int(text):
 ### Exercise 2 — Implement (≈10 min) 🟡
 
 Write `met_goal(steps_text, goal)` — convert the string `steps_text` to a number
-and return whether it **reaches** the goal (a `bool`). Complete the marked line.
+and return whether it **reaches** the goal (a `bool`). This time you write the
+whole body yourself: the conversion *and* the comparison.
 
 ```{pyodide}
 #| setup: true
@@ -230,8 +231,7 @@ from lib.grader import run_tests
 #| exercise: ex_metgoal
 def met_goal(steps_text, goal):
     """Convert steps_text to an int and return True if it reaches goal, else False."""
-    steps = int(steps_text)
-    return ____  # TODO: True if steps reaches the goal
+    ...  # TODO: write the body — convert the text, then compare against goal
 
 run_tests([
     ("8200 reaches 8000", met_goal("8200", 8000), True),
