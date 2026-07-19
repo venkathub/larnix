@@ -5,6 +5,147 @@
 
 ---
 
+## D0020 — P2 technical decisions (XGBoost-in-browser reversal, stochastic grader, colab pipeline, CI tier, provider & version policy)
+
+- **Date:** 2026-07-19
+- **Status:** Accepted
+- **Context.** Grooming Phase **P2 — Core ML & Deep Learning (M4–M6)** (`docs/phases/P2_SPEC.md
+  §3`). The technical choices needed to author ~52 chapters across two compute tiers without
+  regressing the P1 gates: the first real `colab` chapters, and auto-grading under stochastic
+  training. Load-bearing claims web/codebase-validated 2026-07-19 (`P2_SPEC.md §9`). All
+  confirmed at the recommended option.
+- **Decisions (P2-Dn → chosen option).**
+  1. **P2-D6 = A (revised by research) — XGBoost runs in-browser; the draft Colab-companion plan
+     is dropped.** The draft assumed no Pyodide xgboost build. **Verified false:** Pyodide
+     **0.28.1** — the exact version our vendored quarto-live pins
+     (`_extensions/r-wasm/live/live.lua:531`) — ships **`xgboost 2.1.4` and `lightgbm 4.6.0` as
+     built-ins** (also present in current 314.0.2). M4 Ch12 teaches boosting with sklearn
+     `HistGradientBoosting*` then real XGBoost, all `browser`; **M4 is 100% browser/₹0**.
+     Consequences: `browser_import_lint.py` moves xgboost/lightgbm from `KNOWN_UNSAFE` to the
+     allow-list (torch stays unsafe — it has no Pyodide build, verified); the wheel arrives from
+     the Pyodide CDN on first use, so the chapter carries a "needs internet for this cell" note
+     (same honesty rule as P1-D7's Seaborn); the CI twin pins `xgboost==2.1.4` under CPython.
+     *Rejected:* the draft's sklearn+Colab-companion split (now needless complexity; would put
+     the first Colab touchpoint before M5 Ch11 teaches it); skipping XGBoost (PLAN names it; the
+     tabular workhorse employers expect).
+  2. **P2-D7 = A — two explicit auto-grading modes, chosen by compute tier.**
+     **Seeded-deterministic** for `browser`/CPU-twin exercises (all seeds pinned; existing `tol`
+     asserts; same-seed-same-result proven by the CI twin) and **property-based** for
+     `colab`/GPU (assert properties of a successful run: loss fell ≥ N%, held-out accuracy ≥
+     threshold-with-margin, params changed, gradient-check within tolerance — via new
+     `run_tests` helpers `assert_between`/`assert_decreased`/gradient-check). Thresholds
+     calibrated on **≥3 recorded Colab runs** per graded training exercise (Q-7 confirmed), set
+     with generous margin. Honest limit, accepted: property asserts grade "built a thing that
+     trains", not solution quality — the rubric layer covers quality (R4's
+     match-grader-to-type). *Rejected:* seeded-everywhere (GPU nondeterminism — cuDNN kernels,
+     atomics, uncontrolled Colab driver/image drift — makes bit-exactness a lie; would flake);
+     property-everywhere (throws away the browser tier's genuine determinism, the clearest
+     beginner feedback).
+  3. **P2-D8 = A — colab companion notebooks are generated from the chapter `.qmd`.** Extend the
+     twin pipeline (`make_colab.py`/`make_twin.py` sibling): tagged cells → companion `.ipynb`
+     with standard header, pinned-setup cell, **embedded grader-bootstrap** (fetches
+     `lib/grader.py` from the repo raw URL with an inlined fallback — Colab has no quarto-live
+     VFS, and Colab is by definition online; never done in `browser` chapters), exercises +
+     hidden solutions in the P1 pattern; CI `--check` fails on drift. Grader logic stays
+     single-sourced. *Rejected:* hand-authored notebook + `.qmd` pairs (re-creates the P1-D10
+     drift problem ×~15, R9); `.ipynb`-only authoring rendered by Quarto (abandons the
+     template/lint pipeline all 51 existing chapters share).
+  4. **P2-D9 = A — CPU-scaled companion execution in CI + recorded manual Colab run.** Every
+     companion carries a parameters cell honouring `LARNIX_CI` (tiny epochs/subset, ≤ ~90 s per
+     notebook); CI installs **exact-pinned CPU-only torch/torchvision** (official
+     `download.pytorch.org/whl/cpu` index, ~200 MB-class, cached) and executes the scaled
+     notebook — "everything runs" (R10) stays *automated* for colab chapters. The **D0012
+     recorded manual Colab run remains required per chapter** for the real-GPU path and
+     calibrates P2-D7 thresholds. Accepted cost (confirmed): ~5–8 min CI wall-clock. *Rejected:*
+     manual-only verification (a third of the phase never executed by CI — drift found only at
+     quarterly refresh); GPU runners in CI (violates ₹0 build discipline).
+  5. **P2-D10 = A — Colab is the default one-click button; Kaggle documented once** (M5 Ch11) as
+     the named alternate, per R13's don't-hard-couple rule. *Rejected:* dual buttons everywhere
+     (2× manual-verification burden; brittle Kaggle deep-links); Kaggle-default (heavier
+     onboarding, clunkier open-from-GitHub).
+  6. **P2-D11 = A — torch version-floor guard on Colab; exact-pin only in CI.** Companions
+     assert `torch.__version__ >=` a floor with a friendly failure message and print the running
+     version; the PR records the verified version/date; CI's CPU tier is exact-pinned so the
+     automated gate stays reproducible while Colab's image floats (verified: Colab's
+     preinstalled torch genuinely moves — the reason a pin fights the platform). *Rejected:*
+     `pip install torch==X` in the notebook (multi-GB reinstall + runtime restart every learner
+     session; CUDA/driver mismatch risk); no policy (un-diagnosable breakage when Colab bumps).
+- **Rationale.** Each choice keeps the phase ₹0 (browser or free Colab/Kaggle), keeps R10
+  automated across both compute tiers, and single-sources every duplicated artifact (R9) —
+  reusing P0/P1 machinery (colab shortcode D0012, twin generation P1-D10, grader P1-D9) instead
+  of adding subsystems.
+- **Consequences.** New shared tooling lands before content (`P2_SPEC.md §6.A`): grader
+  extensions + tests, the companion generator + drift check, the `LARNIX_CI` CPU tier +
+  pinned CPU-torch requirements, `infra/ci/colab_check.py` (button ↔ notebook ↔ params ↔
+  version-guard, fails closed), the R3 allow-list correction, and `ASSETS.md` entries incl. —
+  for the first time — **pretrained-weights licences**. RUNBOOK gains the recorded-Colab-run
+  template (GPU type, torch version, wall time, metrics, calibration runs).
+
+---
+
+## D0019 — P2 pedagogical decisions (eval-early M4, running threads/datasets, micrograd depth, the Colab handoff chapter, granularity)
+
+- **Date:** 2026-07-19
+- **Status:** Accepted
+- **Context.** Grooming Phase **P2 — Core ML & Deep Learning (M4–M6)** (`docs/phases/P2_SPEC.md
+  §3`). The shape of the first phase where the learner trains models and crosses the
+  browser→GPU boundary. All confirmed at the recommended option (2026-07-19); the missing-topic
+  audit found **every PLAN M4–M6 topic covered** — deltas are reorders only, listed below.
+- **Decisions (P2-Dn → chosen option).**
+  1. **P2-D1 = A — M4 is evaluation-early.** Train/val/test + CV (Ch4), metrics (Ch6),
+     overfitting/regularization (Ch7), bias–variance (Ch8) land right after the first models
+     (Ch2–3, Ch5), *before* the algorithm tour — every subsequent chapter then practices honest
+     evaluation, seeding the ROADMAP's eval spine. Precedent: Kaggle Learn's Intro-to-ML
+     sequences validation + under/overfitting immediately after the first model. *Rejected:*
+     PLAN's listed order (nine models trained before "judging on training data is a sin" —
+     the field's worst habit taught by omission); eval-before-any-model (violates
+     taste-before-theory).
+  2. **P2-D2 = A — running threads/datasets** (all licences verified, `P2_SPEC.md §9`; all
+     ledgered in `ASSETS.md`, R11). **M4** "the apprentice appraiser": regression = vendored
+     ~1,000-row **California Housing** sample (1990 US Census derivative, public domain;
+     sampling script committed), classification = **Palmer Penguins reused from M3** (zero new
+     context cost), capstone = **UCI Bank Marketing** (CC BY 4.0; naturally imbalanced, new
+     domain → forces transfer). **M5** "teach the machine to read your handwriting": sklearn
+     `load_digits` (8×8, browser) → **MNIST** (CC BY-SA 3.0, torchvision-downloaded, nothing
+     vendored) on Colab — one problem, built twice. **M6** "see, then read": **Fashion-MNIST**
+     (MIT) for CNN training, an **Oxford-IIIT Pets** subset (CC BY-SA 4.0) for transfer
+     learning, **SSA baby names** (US-gov public domain) for the char-level generator, a
+     vendored **GloVe subset** (PDDL) for in-browser similarity. *Rejected:* one dataset for
+     all three modules (can't carry regression/imbalance/images/sequences honestly); Kaggle
+     competition data (licence friction, account requirement in `browser` chapters).
+  3. **P2-D3 = A — full scalar micrograd, two chapters (M5 Ch8–9), then an MLP on it (Ch10).**
+     ~150 lines of dependency-free Python, Pyodide-perfect; the learner owns backprop before
+     PyTorch hides it, and `.backward()` stops being magic; gradient-check reuses the M2
+     capstone skill. *Rejected:* NumPy-matrix backprop only (never shows *how autograd works* —
+     the best transfer into PyTorch); straight-to-PyTorch (contradicts PLAN's "micrograd style"
+     M5 objective and the build-from-first-principles spine).
+  4. **P2-D4 = A — a dedicated browser→Colab handoff chapter (M5 Ch11, "GPUs & your first Colab
+     notebook") at the scratch→PyTorch seam.** Ch1–10 stay `browser` (₹0); Ch11 teaches why
+     (parallel hardware) and how (account, GPU runtime, session limits, **Kaggle as the named
+     alternate** — R13) exactly once; Ch12–18 and M6+ assume it. Absorbs PLAN's "GPUs & why
+     they matter" — a chapter about GPUs belongs where the learner first needs one. The
+     school's steepest drop-off cliff (R12) gets a whole chapter, not a sidebar. *Rejected:*
+     setup-callout-in-first-PyTorch-chapter (cliff handled in a sidebar); all-Colab M5
+     (surrenders ten ₹0 chapters that run fine in Pyodide).
+  5. **P2-D5 = A — counts held at 20/18/14 (~52 chapters) with ≤3 documented merges allowed**
+     (candidates: M4 Ch17+18 clustering pair; M6 Ch3→Ch2; M5 Ch17→Ch18). M5 reaches 18 via the
+     micrograd split + handoff chapter while absorbing PLAN's GPU chapter — net counts match
+     PLAN. Reorders logged as content deltas: M4 eval-early (P2-D1), M5 GPUs→Ch11 (P2-D4), M6
+     vanishing-gradients moved *before* LSTM/GRU (it motivates the gates; PLAN listed it
+     after). *Rejected:* PLAN-verbatim (forces thin chapters and the late eval block);
+     aggressive consolidation (~40 ch — breaks one-concept-per-chapter at the school's
+     steepest grade).
+- **Rationale.** Every choice serves the phase bet — pedagogy surviving nondeterminism and a
+  second compute tier: familiar data across the boundary (penguins→housing→digits→MNIST), the
+  eval habit installed before the algorithm zoo, from-scratch understanding before framework
+  magic, and the one cliff (GPU handoff) given maximum scaffolding.
+- **Consequences.** `P2_SPEC.md §2` chapter tables are now the authoritative M4–M6 lists
+  (supersede PLAN's within-module ordering for these modules); capstone datasets commit the
+  ledger entries above; the M6 finale ("limits of RNNs") is written as the explicit cliffhanger
+  handoff into M7/P3.
+
+---
+
 ## D0018 — AI review on every PR: Copilot steering + a GitHub-Models advisory check
 
 - **Date:** 2026-07-19
