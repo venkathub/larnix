@@ -48,10 +48,21 @@
 
 ## Assessment
 
-- [ ] A per-chapter **quick check** `quiz.yml` (2–3 MCQ) mounted with `{{< quiz quiz.yml >}}`;
-      each MCQ has an `answer` and a one-line `explanation`. (P1-D11)
+- [ ] A per-chapter **quick check** `quiz-chNN.yml` (3–4 MCQ, top-level `id:` required) mounted
+      with `{{< quiz quiz-chNN.yml >}}`; each MCQ has an `answer` and a one-line `explanation`;
+      every answer/explanation is traceable to the chapter body (no untaught facts). (P1-D11, D0017)
 - [ ] **3 spaced-repetition cards** in the front-matter `review_cards:` block, drawn from
-      the Key Takeaways.
+      the Key Takeaways — and, like quiz items, only from **taught** content.
+- [ ] Module quizzes (when touched): transfer/application questions only — no verbatim reuse
+      of chapter-quiz questions. (D0017)
+
+## Continuity (D0017 — the reorder trap)
+
+- [ ] The closing "Where this fits / what's next" hands off to the **actual next chapter**
+      (by number and topic). After ANY chapter reorder, re-read every affected transition.
+- [ ] The exercise ladder is real: Ex2 is a genuine write-the-body implement, not a second
+      one-blank; no exercise requires syntax a later module teaches (or the helper is given
+      code + a "taught in Module N" callout).
 
 ## Correctness & accessibility review (P1_SPEC §5.5)
 

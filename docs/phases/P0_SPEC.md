@@ -1,6 +1,13 @@
 # P0_SPEC — Platform MVP + the Pedagogy Gate
 
 > **Phase:** P0 — *Platform MVP + the pedagogy gate* (per `ROADMAP.md §3`).
+> **Post-completion review addendum (2026-07-19).** See `docs/phases/P1_REVIEW.md` +
+> `DECISIONS.md D0017`: the P0 platform held up under independent review, with these
+> corrections landed afterwards — rendering + rendered-link + browser-smoke gates were
+> added to `Checks` (P0's gates validated sources only), the quiz engine gained the
+> schema's `shuffle`, attempt-locking, and a required `id`, and the dead-demo progress
+> CSS became a real progress feature. P0's own honesty notes (§5.5) made this review
+> tractable — keep writing them.
 > **Status:** ✅ COMPLETE (2026-06-28). Spec approved; all P0 decisions logged in `DECISIONS.md`
 > (D0004–D0014); all 18 tasks (§6) shipped and every DoD item (§7) met. Verified on codebase
 > analysis: the site renders from a fresh clone (Quarto 1.8.27 via Docker), the sample chapter runs

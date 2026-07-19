@@ -53,6 +53,15 @@ inherits a green, automated quality bar.*
   imports, twin-drift, render-safety, WCAG-AA, prose/spell/banned-word) caught real
   defects (e.g. a missing render block) before merge; the full site (61 docs) renders
   cleanly and builds from a fresh clone.
+- **Ran an adversarial post-completion review of my own "done" phases and shipped the
+  fixes** (2026-07-19): found a live 404-class defect the green gate suite could not see
+  (capstones served as raw markdown — source-level link checks never inspect the rendered
+  site), then closed the *class*, not just the bug — added a render + rendered-site
+  link-check + **Playwright browser-smoke gate** (quiz persistence, chapter progress, one
+  real in-browser Pyodide execution) to CI; fixed pedagogy regressions across all 4 modules
+  (exercise sequencing, capstone/rubric/walkthrough agreement with every number recomputed
+  against the vendored data, reorder-broken transitions); and codified 9 review-born
+  conventions into the standing style guide/checklist/DoD so P2+ inherits them.
 
 *Why it matters: a complete beginner on a low-spec laptop can go from "what is AI" to
 deriving a neuron's gradient by hand and running an EDA on real data — entirely free,

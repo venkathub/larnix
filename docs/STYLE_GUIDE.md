@@ -21,6 +21,10 @@ Every chapter MUST contain these parts, in this order. A chapter missing any par
 
 1. **Hook** — open with a real-world analogy OR a working demo (taste before theory). Never open with a definition or a wall of math. Earn the reader's attention in the first three sentences.
 2. **Plain-language explanation** — one concept per chapter. ~1,500–3,000 words of prose, OR a 15–25 minute notebook. If it needs more, split it into two chapters.
+   *Clarification (review 2026-07-19, `D0017`):* for runnable notebook-style chapters the
+   15–25-minute clause governs, but **prose (code excluded) must not fall below ~900 words** —
+   below that a multi-concept chapter reads compressed (the review's M1 Ch4 case). Aim for the
+   word band on concept-heavy chapters.
 3. **At least one runnable worked example** — real code that actually executes (a notebook cell or snippet). No "illustrative" pseudo-code that can't run.
 4. **Key Takeaways box** — 3–6 numbered points recapping what matters. (See format in §7.)
 5. **Hands-on exercises** — 2–4 exercises with auto-graders and hidden solution walkthroughs, scaffolded by difficulty (see §6).
@@ -65,12 +69,18 @@ Each chapter ships 2–4 exercises that progress in difficulty:
 
 1. **Fill-in-the-blank / guided** — the structure is given; the learner completes one or two lines. (Confidence-builder.)
 2. **Implement-this-function** — a clear spec + an auto-grader (assert-based unit tests). (Core practice.)
+   **This must be a genuine implement** (review 2026-07-19, `D0017`): the learner writes the whole
+   function body from a docstring/spec against visible tests — a second one-blank fill-in does
+   **not** qualify as this rung. (Exemplars: M1 Ch1 `met_goal`, M1 Ch12 `count_active`.)
 3. **Open-ended mini-task** — a small problem with multiple valid solutions, graded by rubric or by a looser check. (Stretch.)
 
 Rules:
 
 - Every coded exercise has a **working auto-grader** and a **hidden solution walkthrough** revealed only after an attempt.
 - Match exercise difficulty to the chapter's tier. A 🟢 chapter must not hide a 🔴 exercise without labelling it a stretch goal.
+- **No syntax before its chapter.** An exercise may not require constructs a later module teaches
+  (the M0 review found generator-expression blanks before M1 existed). If advanced syntax must
+  appear, the helper is *given code*, the blank is a single call, and a callout says where it's taught.
 - State the expected time to complete.
 
 ### Quizzes & module assessment (P1-D11)
@@ -78,14 +88,17 @@ Rules:
 Two quiz artifacts share one schema (`infra/ci/quiz_lint.py`), both rendered and
 scored client-side by the P0 quiz engine (score saved to `localStorage`, ₹0):
 
-- **Per-chapter quick check** — a `quiz.yml` (2–3 MCQ) beside each chapter, mounted
-  in the chapter with `{{< quiz quiz.yml >}}`. Immediate recall after the lesson.
-  When several chapters share a module directory, name the file
-  `quiz-<chNN>.yml` (e.g. `quiz-ch02.yml`) and mount it with
-  `{{< quiz quiz-ch02.yml >}}` — these still match the `quiz*.yml` lint glob.
+- **Per-chapter quick check** — a `quiz-chNN.yml` (3–4 MCQ) beside each chapter,
+  mounted with `{{< quiz quiz-ch02.yml >}}` (these match the `quiz*.yml` lint
+  glob). Immediate recall after the lesson. A top-level `id:` is **required** —
+  it is the learner's `localStorage` score key, so never rename one casually.
 - **Cumulative module quiz** — one `module-quiz.yml` (~8–12 MCQ) per module,
   mounted on the **module landing page** (`modules/<NN>/index.qmd`) with
   `{{< quiz module-quiz.yml >}}`. End-of-module consolidation (the Varsity model).
+  **Module quizzes ask transfer/application questions** — never verbatim reuse of
+  chapter-quiz questions (that measures recognition, not integration; `D0017`).
+- **Quizzes and review cards may only test taught content** — a correct answer's
+  explanation must be traceable to the chapter body, not outside knowledge.
 
 Each MCQ needs an `answer` (0-based) and a one-line `explanation`. The linter flags
 a module quiz outside the ~8–12 band with an advisory note (not a failure).

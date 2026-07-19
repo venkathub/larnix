@@ -9,11 +9,12 @@ best score in `localStorage`. The quiz file is schema-validated in CI by
 
 ### Authoring a quiz
 
-1. Write a `quiz.yml` next to the chapter `.qmd`:
+1. Write a `quiz-chNN.yml` next to the chapter `.qmd`:
 
 ```yaml
 title: "Chapter 1 — quick check"   # optional
-id: "m0-ch1"                       # optional; the localStorage key
+id: "m0-ch1"                       # REQUIRED; the localStorage key (never rename casually)
+shuffle: false                     # optional; true = engine shuffles option order
 questions:
   - id: what-is-a-model            # optional, unique within the file
     prompt: "A model is…"          # required
@@ -27,7 +28,7 @@ questions:
 2. Mount it in the chapter with one line:
 
 ```markdown
-{{</* quiz quiz.yml */>}}
+{{</* quiz quiz-chNN.yml */>}}
 ```
 
 (The `*` form above is the literal escape — write it without the `*` to actually
@@ -40,8 +41,12 @@ so always escape literal examples.)
   converts it to JSON (via Pandoc), embeds it in a mount `<div>`, and registers
   the engine assets once.
 - `_extensions/larnix/quiz/resources/larnix-quiz.{js,css}` — the client-side
-  engine: renders MCQs, scores on submit, shows correct/incorrect + explanations,
-  persists `{best,last,total,at}` to `localStorage` under `larnix-quiz:<id>`.
+  engine: renders MCQs (optionally shuffling option order per `shuffle:`), scores
+  on submit, shows correct/incorrect + explanations, locks the graded attempt
+  behind an explicit **Try again** (a fresh, reshuffled render), moves focus to
+  the first incorrect answer, and persists `{best,last,total,at}` to
+  `localStorage` under `larnix-quiz:<id>`. Covered by the Playwright smoke tests
+  in `infra/e2e/` (review 2026-07-19, D0017).
 
 A worked example is at `sandbox-quiz.qmd` (+ `quiz-sandbox.yml`).
 
