@@ -95,6 +95,29 @@ relax protection, fix, then restore it.
 
 Actions → **Publish site** → **Run workflow** → branch `main`.
 
+## AI review (D0018 — advisory, never a required check)
+
+Every PR gets an AI review from the **AI-engineer expert + tutor** perspective, in
+two layers that share one rubric (`.github/copilot-instructions.md` + the
+path-scoped `.github/instructions/modules.instructions.md`):
+
+| Layer | What | Setup |
+|-------|------|-------|
+| **Copilot code review** | GitHub's native PR reviewer; reads the rubric files automatically. | Requires a Copilot subscription. One-time (admin UI, cannot be committed): **Settings → Rules → Rulesets → New branch ruleset** targeting `main` PRs → enable **"Request pull request review from Copilot"**. Until then, request Copilot manually via the PR's *Reviewers* picker. |
+| **`ai-review.yml` check** | In-repo check on **GitHub Models** (free tier, Actions `GITHUB_TOKEN` + `models: read` — no API keys, ₹0). Posts one sticky, self-updating PR comment; generated files (`.ipynb` twins, lockfiles, vendored quarto-live) are excluded from the reviewed diff; oversized diffs are truncated *visibly*. | None — works on first PR. |
+
+Rules of the road:
+
+- **Do not add `AI review` to required status checks.** LLM judgment is
+  nondeterministic; it must never gate a merge. It exits 0 on fork PRs (token has
+  no `models` permission), rate limits, and API errors — by design, with a notice
+  in the log. Deterministic gates live in `checks.yml`.
+- Treat `[blocking]` findings as strong signals to re-check by hand, not as truth:
+  the deterministic gates and your own verification remain authoritative.
+- Rubric changes: edit the two instruction files — both layers pick them up
+  (`infra/ci/ai_review.py` embeds them at run time; unit-tested in
+  `test_ai_review.py`).
+
 ## GPU notebook policy
 
 GPU work never runs on the builder's laptop and **never runs in CI** (there is no

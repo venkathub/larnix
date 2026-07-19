@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Unit tests for ai_review (stdlib unittest; no network — the pure parts only)."""
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import ai_review as ar  # noqa: E402
+
+
+class ClipDiffTests(unittest.TestCase):
+    def test_small_diff_untouched(self):
+        text, truncated = ar.clip_diff("small diff")
+        self.assertEqual(text, "small diff")
+        self.assertFalse(truncated)
+
+    def test_large_diff_truncated_with_visible_note(self):
+        text, truncated = ar.clip_diff("x" * (ar.MAX_DIFF_CHARS + 100))
+        self.assertTrue(truncated)
+        self.assertIn("DIFF TRUNCATED", text)  # never silently incomplete
+        self.assertLess(len(text), ar.MAX_DIFF_CHARS + 200)
+
+
+class RubricTests(unittest.TestCase):
+    def test_rubric_loads_from_repo(self):
+        rubric = ar.load_rubric()
+        # Both perspectives must be present in the steering text.
+        self.assertIn("Senior AI engineer", rubric)
+        self.assertIn("Tutor", rubric)
+        # Path-scoped content rubric is folded in (single source of truth).
+        self.assertIn("Varsity contract", rubric)
+
+    def test_missing_rubric_raises(self):
+        from pathlib import Path
+        with self.assertRaises(FileNotFoundError):
+            ar.load_rubric(Path("/nonexistent"))
+
+
+class MessageBuildTests(unittest.TestCase):
+    def test_messages_shape_and_content(self):
+        msgs = ar.build_messages("diff --git a/x b/x", "title", "body", "RUBRIC")
+        self.assertEqual([m["role"] for m in msgs], ["system", "user"])
+        self.assertIn("RUBRIC", msgs[0]["content"])
+        self.assertIn("[blocking]", msgs[0]["content"])  # severity convention
+        self.assertIn("diff --git", msgs[1]["content"])
+        self.assertIn("title", msgs[1]["content"])
+
+    def test_empty_body_is_labelled(self):
+        msgs = ar.build_messages("d", "t", "", "R")
+        self.assertIn("(none)", msgs[1]["content"])
+
+
+class ResponseTests(unittest.TestCase):
+    def test_extract_review(self):
+        resp = {"choices": [{"message": {"role": "assistant", "content": " ok "}}]}
+        self.assertEqual(ar.extract_review(resp), "ok")
+
+    def test_bad_response_raises(self):
+        with self.assertRaises(ValueError):
+            ar.extract_review({"unexpected": True})
+
+
+class CommentTests(unittest.TestCase):
+    def test_comment_has_marker_and_advisory_note(self):
+        c = ar.render_comment("review body")
+        self.assertTrue(c.startswith(ar.COMMENT_MARKER))  # sticky-update anchor
+        self.assertIn("Advisory only", c)
+        self.assertIn("review body", c)
+        self.assertNotIn("TRUNCATED", c)
+
+    def test_truncation_note_shown(self):
+        self.assertIn("truncated", ar.render_comment("r", truncated=True))
+
+
+if __name__ == "__main__":
+    unittest.main()

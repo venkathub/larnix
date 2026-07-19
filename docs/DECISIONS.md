@@ -5,6 +5,49 @@
 
 ---
 
+## D0018 — AI review on every PR: Copilot steering + a GitHub-Models advisory check
+
+- **Date:** 2026-07-19
+- **Status:** Accepted
+- **Context.** The P0/P1 review (D0017) was a one-off, human-driven pass that caught what green
+  deterministic gates could not (pedagogy regressions, honesty gaps, sequencing bugs). We want a
+  standing, per-PR version of that "AI-engineer expert + tutor" perspective — without pretending an
+  LLM can be a deterministic gate.
+- **Options considered.**
+  - **(A, chosen) Two layers sharing one rubric.** (1) Steering files for **GitHub Copilot code
+    review** (`.github/copilot-instructions.md` repo-wide + path-scoped
+    `.github/instructions/modules.instructions.md` for `modules/**`) — native PR reviews when
+    Copilot is available. (2) An in-repo **`AI review` workflow check** calling **GitHub Models**
+    (`models: read` + the Actions `GITHUB_TOKEN`; free tier — no API keys, keeps the ₹0/no-secrets
+    discipline in CI) that embeds the *same* rubric files and posts one sticky PR comment.
+    Mechanisms web-verified current 2026-07-19 (GitHub docs: Copilot custom-instruction files incl.
+    path-scoped `*.instructions.md`; Models-in-Actions quickstart with `models: read` +
+    `https://models.github.ai/inference/chat/completions`).
+  - (B) Copilot code review only. *Rejected as sole layer:* needs a subscription + an
+    admin-UI ruleset (not committable); nothing would exist in-repo as an actual PR check.
+  - (C) Anthropic/OpenAI API in Actions with a secret. *Rejected:* introduces a paid key + secret
+    into a repo whose discipline is env-var-free ₹0 CI; GitHub Models does the job keyless.
+  - (D) Make the AI review a required/blocking check. *Rejected on principle:* LLM judgment is
+    nondeterministic and gameable; only deterministic gates (`checks.yml`) gate merges. The AI
+    review is **advisory by design** — it exits 0 on fork PRs (no `models` permission on the
+    read-only token), rate limits, and API errors, with a visible notice.
+- **Design details.** Logic lives in `infra/ci/ai_review.py` (P0-D10 convention: script + unit
+  tests — 10 in `test_ai_review.py`, no network in tests). Single source of truth: the script
+  embeds the same two rubric files Copilot reads, so editing the rubric updates both layers.
+  Reviewed diff excludes generated/vendored noise (`modules/**/*.ipynb` twins, lockfiles,
+  `_extensions/r-wasm/**`); diffs over 60k chars are truncated **visibly** (the model is told the
+  tail was not reviewed). Sticky comment (marker `<!-- larnix-ai-review -->`) is updated in place,
+  not re-posted. Model `openai/gpt-4.1` at temperature 0.2 — bump deliberately and log it here.
+- **One-time manual step (documented in `RUNBOOK.md → AI review`):** auto-requesting Copilot
+  review needs a branch ruleset toggled in the admin UI and a Copilot subscription; until then
+  Copilot is requested manually per PR. The Models-based check needs nothing.
+- **Consequences.** Every PR gets a tutor-voiced, severity-tagged (`[blocking]`/`[should-fix]`/
+  `[consider]`) review comment at ₹0; the rubric is versioned and reviewable like code. Honest
+  limits: first live Models call happens on the PR itself (unit tests cover the pure paths only);
+  advisory findings are signals for the human, never a merge gate.
+
+---
+
 ## D0017 — P0/P1 post-completion review: gates extended, learner UX fixed, conventions hardened
 
 - **Date:** 2026-07-19

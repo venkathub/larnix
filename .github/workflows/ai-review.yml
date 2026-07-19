@@ -1,0 +1,67 @@
+# AI review — a PR check that reviews every pull request from the Larnix
+# AI-engineer-expert + tutor perspective (DECISIONS D0018).
+#
+# Two-layer design:
+#   Layer 1 — GitHub Copilot code review, steered by .github/copilot-instructions.md
+#             and .github/instructions/*.instructions.md. Requires a Copilot
+#             subscription + a one-time repo ruleset to auto-request it
+#             (docs/RUNBOOK.md → "AI review"); nothing to run here.
+#   Layer 2 — THIS workflow: an in-repo check on GitHub Models (free tier, the
+#             Actions GITHUB_TOKEN, `models: read` — no API keys, ₹0 like
+#             everything else). It reads the SAME rubric files as layer 1 and
+#             posts one sticky, self-updating PR comment.
+#
+# Advisory by design: LLM judgment is nondeterministic, so this check never
+# blocks a merge — it succeeds when it ran (or was cleanly skipped, e.g. fork
+# PRs where the token has no models permission). Deterministic gates live in
+# checks.yml. Do NOT add this check to required status checks.
+
+name: AI review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# One review run per PR at a time; a new push supersedes the old run.
+concurrency:
+  group: ai-review-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  models: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI-engineer + tutor review (advisory)
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: Checkout (full history for merge-base diff)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build reviewable diff (generated files excluded)
+        run: |
+          set -euo pipefail
+          git diff "origin/${{ github.base_ref }}...HEAD" \
+            -- . \
+            ':(exclude)modules/**/*.ipynb' \
+            ':(exclude)**/package-lock.json' \
+            ':(exclude)_extensions/r-wasm/**' \
+            > pr.diff
+          wc -c pr.diff
+
+      - name: Unit tests (ai_review)
+        working-directory: infra/ci
+        run: python3 -m unittest test_ai_review -v
+
+      - name: Review with GitHub Models + post sticky comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: python3 infra/ci/ai_review.py --diff-file pr.diff --post
