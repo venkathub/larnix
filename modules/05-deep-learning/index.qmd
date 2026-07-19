@@ -1,0 +1,55 @@
+---
+title: "M5 — Deep Learning Foundations"
+toc: false
+---
+
+::: {.callout-note}
+**Module in progress.** Chapters unlock as they are built; titles below become
+links when each chapter lands. Ch1–10 run **in your browser at ₹0**; from Ch11
+on you train on a **free Colab/Kaggle GPU** — the handoff chapter walks you
+through it, step by step.
+:::
+
+One goal for eighteen chapters: **teach the machine to read your handwriting.**
+First you build a digit classifier *by hand* — a neuron, then a tiny autograd
+engine (micrograd), then a full MLP — entirely in the browser on 8×8 digit
+images. Then you rebuild it properly in **PyTorch on MNIST**, on a free GPU.
+Backprop's recurring analogy is *the blame game*: every knob learns how much it
+contributed to the error.
+
+The compute split **is** the pedagogy: by the time PyTorch hides the machinery,
+you will have built every part of it yourself.
+
+## Chapters
+
+| # | Chapter | Tier | Compute |
+|---|---------|------|---------|
+| 1 | From logistic regression to a neuron | 🟡 | browser |
+| 2 | Activation functions | 🟡 | browser |
+| 3 | Layers & networks | 🟡 | browser |
+| 4 | The forward pass | 🟡 | browser |
+| 5 | Loss functions | 🟡 | browser |
+| 6 | Backpropagation, spelled out | 🟡 | browser |
+| 7 | Gradient-descent variants | 🟡 | browser |
+| 8 | Build micrograd I: the autograd engine | 🟡 | browser |
+| 9 | Build micrograd II: backward through a graph | 🟡 | browser |
+| 10 | An MLP from scratch | 🟡 | browser |
+| 11 | GPUs & your first Colab notebook | 🟡 | colab |
+| 12 | Enter PyTorch: tensors & autograd | 🟡 | colab |
+| 13 | `nn.Module` & the training loop | 🟡 | colab |
+| 14 | Dropout & batch norm | 🟡 | colab |
+| 15 | Initialization & learning-rate tuning | 🟡 | colab |
+| 16 | Diagnosing training | 🟡 | colab |
+| 17 | Saving, loading & checkpoints | 🟡 | colab |
+| 18 | A reproducible training harness | 🟡 | colab |
+
+## Module quiz
+
+Lands with the module build — transfer questions over the whole module, scored
+in your browser.
+
+## Capstone
+
+Lands with the module build: [**digits from scratch → PyTorch**](capstone.md) —
+train your own micrograd MLP in the browser, then re-implement it in PyTorch on
+MNIST on a free GPU, and compare the two with measured numbers.

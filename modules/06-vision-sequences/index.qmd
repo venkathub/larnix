@@ -1,0 +1,49 @@
+---
+title: "M6 — Specialized DL: Vision & Sequences"
+toc: false
+---
+
+::: {.callout-note}
+**Module in progress.** Chapters unlock as they are built; titles below become
+links when each chapter lands. Intuition chapters run **in your browser at
+₹0**; training chapters use a **free Colab/Kaggle GPU** (the workflow you
+learned in M5 Ch11).
+:::
+
+**Teach the machine to see, then to read.** Two acts, one arc. In the vision
+act you build convolution by hand in NumPy, train a CNN on Fashion-MNIST, then
+do what working practitioners do by default: **fine-tune a pretrained model**
+on your own images. In the sequence act you build a char-level **name
+generator**, meet RNNs and LSTMs, use **embeddings** for semantic search on
+vendored word vectors — and end by watching the generator *fail* on long-range
+structure. That failure is the cliffhanger that motivates attention, in M7.
+
+## Chapters
+
+| # | Chapter | Tier | Compute |
+|---|---------|------|---------|
+| 1 | Images as tensors | 🟡 | browser |
+| 2 | Convolution, intuitively | 🟡 | browser |
+| 3 | Pooling, padding & strides | 🟡 | browser |
+| 4 | A CNN in PyTorch | 🟡 | colab |
+| 5 | LeNet → ResNet: how CNNs grew up | 🟡 | colab |
+| 6 | Transfer learning & fine-tuning | 🟡 | colab |
+| 7 | Data augmentation | 🟡 | colab |
+| 8 | Sequences & memory | 🟡 | browser |
+| 9 | RNNs | 🔴 | colab |
+| 10 | Vanishing gradients | 🔴 | browser |
+| 11 | LSTM & GRU | 🔴 | colab |
+| 12 | Word embeddings (word2vec) | 🔴 | colab |
+| 13 | Embeddings for search & similarity | 🔴 | browser |
+| 14 | The limits of RNNs | 🔴 | browser |
+
+## Module quiz
+
+Lands with the module build — transfer questions over the whole module, scored
+in your browser.
+
+## Capstone
+
+Lands with the module build: [**an image-classifier app + a char-level sequence
+model**](capstone.md) — fine-tune a pretrained CNN on real images, train the
+name generator, and document one clear long-range failure (your bridge to M7).

@@ -1,0 +1,56 @@
+---
+title: "M4 — Classical Machine Learning"
+toc: false
+---
+
+::: {.callout-note}
+**Module in progress.** Chapters unlock as they are built; titles below become
+links when each chapter lands. Everything in this module runs **in your browser
+at ₹0** — including real XGBoost.
+:::
+
+Stop exploring data and start **training models**. The running thread is *the
+apprentice appraiser*: an intern learns to price houses from examples — and is
+graded only on houses they've never seen. Generalization is the spine of the
+module: you meet honest evaluation (train/test splits, cross-validation, the
+right metric) **early**, then practice it on every algorithm that follows.
+
+Two datasets carry the module: a vendored sample of **California Housing** for
+the regression thread, and the **Palmer Penguins** you already know from M3 for
+classification — so every new algorithm lands on familiar ground.
+
+## Chapters
+
+| # | Chapter | Tier |
+|---|---------|------|
+| 1 | What is learning? | 🟢 |
+| 2 | Linear regression | 🟡 |
+| 3 | Cost functions & gradient descent | 🟡 |
+| 4 | Generalization: train/val/test & cross-validation | 🟡 |
+| 5 | Logistic regression | 🟡 |
+| 6 | Classification metrics | 🟡 |
+| 7 | Overfitting & regularization | 🟡 |
+| 8 | Bias–variance | 🟡 |
+| 9 | K-nearest neighbours | 🟡 |
+| 10 | Decision trees | 🟡 |
+| 11 | Random forests & ensembles | 🟡 |
+| 12 | Gradient boosting (+ XGBoost) | 🟡 |
+| 13 | Support vector machines | 🟡 |
+| 14 | Naive Bayes | 🟡 |
+| 15 | Imbalanced data | 🟡 |
+| 16 | Feature engineering | 🟡 |
+| 17 | k-means clustering | 🟡 |
+| 18 | Hierarchical clustering | 🟡 |
+| 19 | PCA & dimensionality reduction | 🟡 |
+| 20 | The scikit-learn workflow + your first model card | 🟡 |
+
+## Module quiz
+
+Lands with the module build — transfer questions over the whole module, scored
+in your browser.
+
+## Capstone
+
+Lands with the module build: [**an end-to-end tabular predictor + model
+card**](capstone.md) on new, imbalanced data — the full workflow from split to
+held-out evaluation, documented honestly.
