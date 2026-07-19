@@ -77,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
 <link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
@@ -300,6 +300,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -389,6 +393,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -484,6 +494,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -593,6 +609,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -688,6 +710,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -706,7 +734,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#classify-vs-generate-the-key-split" id="toc-classify-vs-generate-the-key-split" class="nav-link" data-scroll-target="#classify-vs-generate-the-key-split">Classify vs generate — the key split</a></li>
   </ul></li>
   <li><a href="#lets-build-it-worked-example-a-baby-generator" id="toc-lets-build-it-worked-example-a-baby-generator" class="nav-link" data-scroll-target="#lets-build-it-worked-example-a-baby-generator">Let’s build it (worked example): a baby generator</a></li>
-  <li><a href="#feel-it-real-generative-adjacent-ai-in-your-browser" id="toc-feel-it-real-generative-adjacent-ai-in-your-browser" class="nav-link" data-scroll-target="#feel-it-real-generative-adjacent-ai-in-your-browser">Feel it: real generative-adjacent AI, in your browser</a></li>
+  <li><a href="#feel-it-a-real-deep-learning-model-in-your-browser" id="toc-feel-it-a-real-deep-learning-model-in-your-browser" class="nav-link" data-scroll-target="#feel-it-a-real-deep-learning-model-in-your-browser">Feel it: a real deep-learning model, in your browser</a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
   <ul class="collapse">
   <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
@@ -714,7 +742,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
   <ul class="collapse">
   <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
+  <li><a href="#exercise-2-ask-the-ring-walker-10-min" id="toc-exercise-2-ask-the-ring-walker-10-min" class="nav-link" data-scroll-target="#exercise-2-ask-the-ring-walker-10-min">Exercise 2 — Ask the ring-walker (≈10 min) 🟡</a></li>
   <li><a href="#exercise-3-stretch-optional-10-min" id="toc-exercise-3-stretch-optional-10-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-10-min">Exercise 3 — Stretch (optional, ≈10 min) 🔴</a></li>
   </ul></li>
   <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
@@ -745,6 +773,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="lx-chapter-meta">
+<p>⏱ ~20 min, reading + running the code  ·  Needs: M0 Ch1 — Train your first model · M0 Ch3 — What is AI, really?</p>
+</div>
 <p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
@@ -803,13 +834,16 @@ eyJhdHRyIjp7ImNhcHRpb24iOiJHZW5lcmF0ZSBhIG5ldyBzZW50ZW5jZSBieSB3YWxraW5nIHRoZSBj
 </script>
 </div>
 <p>That sentence was <strong>created</strong>, not chosen from a list — it may even be one that was never in the corpus. That is the essence of “generative.” Swap the toy chain for a deep neural network trained on much of the internet, and you have a modern language model. Same shape, vastly more scale.</p>
+<blockquote class="blockquote">
+<p>One honest footnote: tiny generators like this word-chain exist <em>outside</em> deep learning — people built them decades before neural networks worked well — so the neat nesting AI ⊃ ML ⊃ DL ⊃ GenAI is a simplification; it describes the modern, deep-learning-based generative AI this course is about.</p>
+</blockquote>
 <hr>
 </section>
-<section id="feel-it-real-generative-adjacent-ai-in-your-browser" class="level2">
-<h2 class="anchored" data-anchor-id="feel-it-real-generative-adjacent-ai-in-your-browser">Feel it: real generative-adjacent AI, in your browser</h2>
-<p>The toy above is readable but tiny. Here is a <strong>real neural network</strong> — the kind behind deep learning — running entirely in your browser, no Python and no server. Type a sentence and it judges the sentiment. The first click downloads a small model (it needs the internet once); after that it runs offline.</p>
+<section id="feel-it-a-real-deep-learning-model-in-your-browser" class="level2">
+<h2 class="anchored" data-anchor-id="feel-it-a-real-deep-learning-model-in-your-browser">Feel it: a real deep-learning model, in your browser</h2>
+<p>The toy above is readable but tiny. Here is a <strong>real neural network</strong> — the kind behind deep learning — running entirely in your browser, no Python and no server. To be precise about the split you learned above: this model is a <strong>classifier</strong>, not a generator — it picks a label (positive or negative) for your sentence. Generation models run in the browser the same way; they are the same kind of network, only much bigger. Type a sentence and it judges the sentiment. The first click downloads a small model (it needs the internet once); after that it runs offline.</p>
 <div class="larnix-genai-demo" style="border:1px solid var(--bs-border-color,#bbb);border-radius:8px;padding:1rem;margin:1rem 0;">
-  <p style="margin-top:0;"><strong>Sentiment demo</strong> — a deep-learning model judging your text. This is a taste, not a graded exercise.</p>
+  <p style="margin-top:0;"><strong>Sentiment demo</strong> — a deep-learning classifier judging your text. This is a taste, not a graded exercise.</p>
   <label for="genai-input" style="display:block;font-weight:600;margin-bottom:.25rem;">Your sentence</label>
   <textarea id="genai-input" rows="2" style="width:100%;box-sizing:border-box;">This course is free and I learned a lot.</textarea>
   <button id="genai-run" type="button" class="btn btn-primary" style="margin-top:.5rem;">Analyse sentiment</button>
@@ -895,9 +929,12 @@ Show solution
 <code>.get</code> returns the parent if it exists and <code>None</code> otherwise, so <code>parent("AI")</code> is <code>None</code> without a special case.
 </details>
 </section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write <code>is_kind_of(node, ancestor)</code> — <code>True</code> if <code>ancestor</code> is <code>node</code> itself or any ring outside it. This is the “is GenAI a kind of AI?” question. Complete the line that steps outward.</p>
+<section id="exercise-2-ask-the-ring-walker-10-min" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-ask-the-ring-walker-10-min">Exercise 2 — Ask the ring-walker (≈10 min) 🟡</h3>
+<p><code>is_kind_of(node, ancestor)</code> is written for you — it answers “is this ring a kind of that one?” by stepping outward, ring by ring. Read it, then complete the marked line: <strong>call</strong> <code>is_kind_of</code> to ask whether <code>"GenAI"</code> is a kind of <code>"AI"</code> — the same shape as <code>parent("ML")</code> in Exercise 1.</p>
+<blockquote class="blockquote">
+<p>💡 The <code>while</code> loop inside is Module 1 material — you’re not expected to understand it yet. Read it as “step outward until you hit the ancestor or run out of rings,” and fill in only the marked line.</p>
+</blockquote>
 <script type="exercise-setup-ex_iskind-contents">
 eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNraW5kIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
 </script>
@@ -906,14 +943,14 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNraW5kIiwic2V0
 
 </div>
 <script type="pyodide-6-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNraW5kIn0sImNvZGUiOiJwYXJlbnRfb2YgPSB7XCJNTFwiOiBcIkFJXCIsIFwiRExcIjogXCJNTFwiLCBcIkdlbkFJXCI6IFwiRExcIn1cblxuZGVmIGlzX2tpbmRfb2Yobm9kZSwgYW5jZXN0b3IpOlxuICAgIFwiXCJcIlRydWUgaWYgYGFuY2VzdG9yYCBpcyBgbm9kZWAgb3IgYW55IHJpbmcgb3V0c2lkZSBpdC5cIlwiXCJcbiAgICB3aGlsZSBub2RlIGlzIG5vdCBOb25lOlxuICAgICAgICBpZiBub2RlID09IGFuY2VzdG9yOlxuICAgICAgICAgICAgcmV0dXJuIFRydWVcbiAgICAgICAgbm9kZSA9IF9fX18gICMgVE9ETzogc3RlcCBvdXQgdG8gdGhlIHBhcmVudCByaW5nXG4gICAgcmV0dXJuIEZhbHNlXG5cbnJ1bl90ZXN0cyhbXG4gICAgKFwiR2VuQUkgaXMgYSBraW5kIG9mIEFJXCIsIGlzX2tpbmRfb2YoXCJHZW5BSVwiLCBcIkFJXCIpLCBUcnVlKSxcbiAgICAoXCJETCBpcyBhIGtpbmQgb2YgTUxcIiwgaXNfa2luZF9vZihcIkRMXCIsIFwiTUxcIiksIFRydWUpLFxuICAgIChcImEgcmluZyBpcyBhIGtpbmQgb2YgaXRzZWxmXCIsIGlzX2tpbmRfb2YoXCJNTFwiLCBcIk1MXCIpLCBUcnVlKSxcbiAgICAoXCJBSSBpcyBub3QgYSBraW5kIG9mIEdlbkFJXCIsIGlzX2tpbmRfb2YoXCJBSVwiLCBcIkdlbkFJXCIpLCBGYWxzZSksXG5dKSJ9
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNraW5kIn0sImNvZGUiOiIjIEdpdmVuIGNvZGUg4oCUIHJlYWQgaXQsIGRvbid0IGNoYW5nZSBpdC5cbnBhcmVudF9vZiA9IHtcIk1MXCI6IFwiQUlcIiwgXCJETFwiOiBcIk1MXCIsIFwiR2VuQUlcIjogXCJETFwifVxuXG5kZWYgaXNfa2luZF9vZihub2RlLCBhbmNlc3Rvcik6XG4gICAgXCJcIlwiVHJ1ZSBpZiBgYW5jZXN0b3JgIGlzIGBub2RlYCBvciBhbnkgcmluZyBvdXRzaWRlIGl0LlwiXCJcIlxuICAgIHdoaWxlIG5vZGUgaXMgbm90IE5vbmU6XG4gICAgICAgIGlmIG5vZGUgPT0gYW5jZXN0b3I6XG4gICAgICAgICAgICByZXR1cm4gVHJ1ZVxuICAgICAgICBub2RlID0gcGFyZW50X29mLmdldChub2RlKVxuICAgIHJldHVybiBGYWxzZVxuXG5nZW5haV9pc19haSA9IF9fX18gICMgVE9ETzogY2FsbCBpc19raW5kX29mIHdpdGggXCJHZW5BSVwiIGFuZCBcIkFJXCJcblxucnVuX3Rlc3RzKFtcbiAgICAoXCJHZW5BSSBpcyBhIGtpbmQgb2YgQUlcIiwgZ2VuYWlfaXNfYWksIFRydWUpLFxuICAgIChcIkRMIGlzIGEga2luZCBvZiBNTFwiLCBpc19raW5kX29mKFwiRExcIiwgXCJNTFwiKSwgVHJ1ZSksXG4gICAgKFwiYSByaW5nIGlzIGEga2luZCBvZiBpdHNlbGZcIiwgaXNfa2luZF9vZihcIk1MXCIsIFwiTUxcIiksIFRydWUpLFxuICAgIChcIkFJIGlzIG5vdCBhIGtpbmQgb2YgR2VuQUlcIiwgaXNfa2luZF9vZihcIkFJXCIsIFwiR2VuQUlcIiksIEZhbHNlKSxcbl0pIn0=
 </script>
 </div>
 <details>
 <summary>
 If you’re stuck
 </summary>
-Each turn of the loop should move one ring outward. You already wrote the function that finds the ring outside a node in Exercise 1 — use the same <code>parent_of.get</code>.
+A call is the function’s name with its inputs in parentheses, in order: first the inner ring, then the candidate ancestor. Both are strings in quotes.
 </details>
 <details>
 <summary>
@@ -926,8 +963,10 @@ Show solution
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="op">==</span> ancestor:</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">True</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        node <span class="op">=</span> parent_of.get(node)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-The loop walks outward — GenAI → DL → ML → AI — returning <code>True</code> if it ever lands on <code>ancestor</code>, and stopping at <code>None</code> (past the outermost ring) otherwise.
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>genai_is_ai <span class="op">=</span> is_kind_of(<span class="st">"GenAI"</span>, <span class="st">"AI"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<code>is_kind_of("GenAI", "AI")</code> walks outward — GenAI → DL → ML → AI — and lands on <code>"AI"</code>, so it returns <code>True</code>: a chatbot really is AI, three rings deep. Asking the other way round, <code>is_kind_of("AI", "GenAI")</code>, walks past the outermost ring and returns <code>False</code>.
 </details>
 </section>
 <section id="exercise-3-stretch-optional-10-min" class="level3">
@@ -950,7 +989,7 @@ Show one possible answer
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch4-family-tree","questions":[{"answer":"1","explanation":"They nest: GenAI ⊂ deep learning ⊂ machine learning ⊂ AI.","id":"nesting-order","options":["AI, ML, DL, and GenAI are four separate, unrelated fields","GenAI is a kind of DL, which is a kind of ML, which is a kind of AI","AI is a kind of GenAI"],"prompt":"Which statement about how the terms relate is correct?"},{"answer":"1","explanation":"Deep learning is ML built on many-layered neural networks that learn features directly from raw input.","id":"dl-distinction","options":["It does not use any data","It uses many-layered neural networks that learn their own features from raw data","It is always rule-based and hand-written"],"prompt":"What makes deep learning different from other machine learning?"},{"answer":"1","explanation":"Producing new content (text, images, audio) is generation; picking from fixed labels is classification.","id":"classify-vs-generate","options":["Classifying — picking a label from a fixed set","Generating — producing new content that wasn’t in a list of options","Nothing — sentences cannot be produced by models"],"prompt":"A model that writes a brand-new sentence is doing what?"},{"answer":"1","explanation":"A rule-based chess engine is AI but learns nothing from data, so it is not machine learning.","id":"not-ml-example","options":["The iris classifier from Chapter 1","A chess program that searches moves using rules a person wrote","A spam filter that learned spam words from examples"],"prompt":"Which is an example of AI that is NOT machine learning?"}],"title":"Chapter 4 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch4-family-tree","questions":[{"answer":1,"explanation":"They nest: GenAI ⊂ deep learning ⊂ machine learning ⊂ AI.","id":"nesting-order","options":["AI, ML, DL, and GenAI are four separate, unrelated fields","GenAI is a kind of DL, which is a kind of ML, which is a kind of AI","AI is a kind of GenAI"],"prompt":"Which statement about how the terms relate is correct?"},{"answer":1,"explanation":"Deep learning is ML built on many-layered neural networks that learn features directly from raw input.","id":"dl-distinction","options":["It does not use any data","It uses many-layered neural networks that learn their own features from raw data","It is always rule-based and hand-written"],"prompt":"What makes deep learning different from other machine learning?"},{"answer":1,"explanation":"Producing new content (text, images, audio) is generation; picking from fixed labels is classification.","id":"classify-vs-generate","options":["Classifying — picking a label from a fixed set","Generating — producing new content that wasn't in a list of options","Nothing — sentences cannot be produced by models"],"prompt":"A model that writes a brand-new sentence is doing what?"},{"answer":1,"explanation":"A rule-based chess engine is AI but learns nothing from data, so it is not machine learning.","id":"not-ml-example","options":["The iris classifier from Chapter 1","A chess program that searches moves using rules a person wrote","A spam filter that learned spam words from examples"],"prompt":"Which is an example of AI that is NOT machine learning?"}],"title":"Chapter 4 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
@@ -1136,6 +1175,222 @@ WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 

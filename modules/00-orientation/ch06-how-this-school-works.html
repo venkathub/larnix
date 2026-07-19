@@ -77,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
 <link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
@@ -300,6 +300,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -389,6 +393,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -484,6 +494,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -593,6 +609,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -688,6 +710,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -748,6 +776,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="lx-chapter-meta">
+<p>⏱ ~12 min, reading + running the code  ·  Needs: M0 Ch1 — Train your first model</p>
+</div>
 <p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
@@ -927,7 +958,7 @@ Show one possible plan
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch6-how-school-works","questions":[{"answer":"1","explanation":"Each chapter shows a difficulty badge so you know its level up front.","id":"tier-badge","options":["By counting the number of code cells","By reading the tier badge (🟢 Beginner / 🟡 Intermediate / 🔴 Advanced) at the top","Every chapter is the same difficulty"],"prompt":"How do you tell a chapter’s difficulty before you start it?"},{"answer":"1","explanation":"Small auto-graded exercises, then quizzes (per-chapter + per-module), then a build-something capstone.","id":"assessment-ladder","options":["Quizzes → exercises → capstones","Exercises → quizzes → capstones","Capstones → exercises → quizzes"],"prompt":"Which lists the three checks in increasing size?"},{"answer":"1","explanation":"Every capstone reports a number; a result you did not measure cannot score well.","id":"capstone-number","options":["At least 1000 words of writing","A measured number — ‘did you measure it?’","A paid API call"],"prompt":"What must every capstone include?"},{"answer":"1","explanation":"Review cards are spaced-repetition prompts drawn from each chapter’s Key Takeaways.","id":"review-cards","options":["Grading your exercises","Short question/answer prompts that help you remember Key Takeaways over time","Unlocking paid features"],"prompt":"What are review cards for?"}],"title":"Chapter 6 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-ch6-how-school-works","questions":[{"answer":1,"explanation":"Each chapter shows a difficulty badge so you know its level up front.","id":"tier-badge","options":["By counting the number of code cells","By reading the tier badge (🟢 Beginner / 🟡 Intermediate / 🔴 Advanced) at the top","Every chapter is the same difficulty"],"prompt":"How do you tell a chapter's difficulty before you start it?"},{"answer":1,"explanation":"Small auto-graded exercises, then quizzes (per-chapter + per-module), then a build-something capstone.","id":"assessment-ladder","options":["Quizzes → exercises → capstones","Exercises → quizzes → capstones","Capstones → exercises → quizzes"],"prompt":"Which lists the three checks in increasing size?"},{"answer":1,"explanation":"Every capstone reports a number; a result you did not measure cannot score well.","id":"capstone-number","options":["At least 1000 words of writing","A measured number — 'did you measure it?'","A paid API call"],"prompt":"What must every capstone include?"},{"answer":1,"explanation":"Review cards are spaced-repetition prompts drawn from each chapter's Key Takeaways.","id":"review-cards","options":["Grading your exercises","Short question/answer prompts that help you remember Key Takeaways over time","Unlocking paid features"],"prompt":"What are review cards for?"}],"title":"Chapter 6 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
@@ -1113,6 +1144,222 @@ WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 

@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
 <link href="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -261,6 +261,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -350,6 +354,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -445,6 +455,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -554,6 +570,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -649,6 +671,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -722,11 +750,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="module-quiz" class="level2">
 <h2 class="anchored" data-anchor-id="module-quiz">Module quiz</h2>
 <p>When you’ve finished the chapters, test the whole module. Your score is saved in your browser.</p>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-module-quiz","questions":[{"answer":"1","explanation":"A model is the learned function; you fit it on examples, then call it to predict (Ch1).","id":"what-is-a-model","options":["A spreadsheet that stores the training data","A function learned from labelled examples that maps an input to a prediction","The chart that displays an accuracy score"],"prompt":"In machine learning, a model is best described as…"},{"answer":"1","explanation":"Held-out data checks whether the model generalises rather than memorises (Ch1).","id":"test-set","options":["The test set is always larger than the training set","A model can score well on examples it has seen yet fail on new ones","scikit-learn refuses to predict on training data"],"prompt":"Why is accuracy measured on a separate test set rather than the training data?"},{"answer":"1","explanation":"Modules 0–10 run in the browser or on free Colab/Kaggle tiers (Ch2).","id":"cost-of-m0-m10","options":["A monthly subscription","₹0 — a browser, with free GPU tiers when needed","One rented GPU per module"],"prompt":"What does it cost to work through Modules 0–10?"},{"answer":"1","explanation":"Paid steps are always optional with a free fallback; keys are never required to learn (Ch2).","id":"paid-fallback","options":["You must add a card to continue","It is optional and paired with a free fallback (Ollama or a free tier)","The lesson cannot be finished without paying"],"prompt":"When a later lesson shows a paid API, what is guaranteed?"},{"answer":"1","explanation":"Machine learning replaces hand-written rules with rules learned from examples (Ch3).","id":"rules-vs-learning","options":["Writing ever more detailed rules by hand","Showing the computer examples and letting it learn the rule","Running the same rules on faster hardware"],"prompt":"What is the shift that powers modern AI?"},{"answer":"1","explanation":"A model reflects its training data and outputs answers with no sense of doubt (Ch3).","id":"confidently-wrong","options":["It always warns you when unsure","Its behaviour is learned from data, so gaps or bias in the examples carry into the model","Computers cannot do arithmetic reliably"],"prompt":"Why can a trained model be ‘confidently wrong’?"},{"answer":"1","explanation":"They nest: generative AI is a special case of deep learning, of ML, of AI (Ch4).","id":"nesting","options":["They are four separate, unrelated fields","GenAI ⊂ deep learning ⊂ machine learning ⊂ AI","AI is a kind of generative AI"],"prompt":"How do AI, ML, deep learning, and generative AI relate?"},{"answer":"1","explanation":"Producing new content is generation; picking from fixed labels is classification (Ch4).","id":"classify-vs-generate","options":["Classifying — picking a label from a fixed set","Generating — producing new content not chosen from a list","Nothing — models cannot produce sentences"],"prompt":"A model that writes a brand-new sentence is doing what?"},{"answer":"1","explanation":"AlexNet (2012) made deep learning mainstream and the transformer (2017) underlies modern language models (Ch5).","id":"two-sparks","options":["Deep Blue (1997) and AlphaGo (2016)","The 2012 deep-learning boom (AlexNet) and the 2017 transformer","The Perceptron (1958) and the Turing test (1950)"],"prompt":"Which two milestones most directly led to today’s generative AI?"},{"answer":"1","explanation":"Every capstone reports a number; an unmeasured result cannot score well (Ch6).","id":"capstone-number","options":["At least 1000 words of writing","A measured number — ‘did you measure it?’","A paid API call"],"prompt":"What must every Larnix capstone include?"}],"title":"M0 — module quiz"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m0-module-quiz","questions":[{"answer":2,"explanation":"Scoring on training data rewards memorising; only a held-out test set shows whether the model generalises (Ch1).","id":"friend-hundred-percent","options":["Perfect — the model is ready to use","That number can't be computed on training data","The number proves little: grade the model on held-out data it has never seen"],"prompt":"A friend trains a classifier and celebrates: '100% accuracy — measured on the same examples it trained on!' What should you tell them?"},{"answer":0,"explanation":"Predicting needs a trained model: fit on the training set first, then predict on new data (Ch1).","id":"fit-vs-predict","options":["Fitting the model on the training data first","Converting predictions to percentages","Loading a bigger dataset"],"prompt":"In a scikit-learn workflow, a teammate calls model.predict(X_test) and gets an error saying the model isn't ready. Which step did they skip?"},{"answer":1,"explanation":"The ₹0 path covers Modules 0–10; free GPU tiers appear when needed and the only optional spend is the M11 capstone (Ch2).","id":"budget-worry","options":["Module 5 requires buying a GPU","Nothing — everything through Module 10 runs in the browser or on free Colab/Kaggle tiers","She must rent a GPU by the second from Module 3 onward"],"prompt":"Asha has a laptop, a browser, and no credit card. She wants to reach Module 8. What stops her?"},{"answer":1,"explanation":"Keys are never required to learn; if a page appears to demand one, that breaks the course's own free-fallback rule (Ch2).","id":"key-wall","options":["As intended — some lessons genuinely require payment","As a bug — every paid step here is optional and paired with a free fallback such as Ollama or a free tier","As a sign you skipped a prerequisite chapter"],"prompt":"Halfway through a later lesson, a page seems to demand a paid API key before you can continue. How should you read that?"},{"answer":2,"explanation":"Machine learning learns the rule from labelled examples — nobody can hand-write every rule for what a cat looks like (Ch3).","id":"cat-feature","options":["Write if-then rules describing whiskers, fur, and pointy ears","Run the hand-written rules on a faster computer","Show a program many labelled cat / not-cat photos and let it work out the pattern"],"prompt":"You must build a photo feature that finds every cat picture. Which approach uses the shift behind modern AI?"},{"answer":1,"explanation":"A model is only as good as its data, and it can be confidently wrong — biased or missing examples carry straight into its behaviour (Ch3).","id":"skin-model-gap","options":["Models refuse to answer outside their training data","Gaps in the training examples become gaps in the model, and it outputs answers with no sense of doubt","The computer's arithmetic becomes unreliable on new inputs"],"prompt":"A skin-lesion model trained mostly on light-skin photos misdiagnoses darker skin — while reporting high confidence. Why does this happen?"},{"answer":0,"explanation":"It learned from data (so it's ML inside AI), but without many-layered neural networks it is neither DL nor GenAI — and it classifies rather than generates (Ch4).","id":"fraud-detector-ring","options":["Machine learning — learned from examples, but not deep learning","Generative AI — it produces new transactions","Deep learning — everything learned is deep learning"],"prompt":"Your bank's fraud detector learned to flag unusual transactions from millions of labelled past transactions, but it is not a neural network. What is the innermost ring of the family tree it belongs to?"},{"answer":2,"explanation":"Spam/ham is a fixed label set — classification; writing a fresh reply is generation (Ch4).","id":"spam-vs-chatbot","options":["Both generate new content","The spam filter generates; the chatbot classifies","The spam filter classifies (picks a label from fixed options); the chatbot generates (produces new text)"],"prompt":"Your email's spam filter and a chatbot are both 'AI'. Which pairing describes what each one produces?"},{"answer":0,"explanation":"The field's rhythm is hype, winter, then a breakthrough — the perceptron collapse after 1969 and the late-1980s expert-systems bust are the two winters (Ch5).","id":"hype-history","options":["Twice before, booms of promises ended in 'winters' when results fell short — after 1969, and again in the late 1980s when expert systems collapsed","Progress since 1943 has been one straight climb","AI research only began in 2012, so there is no history to learn from"],"prompt":"A colleague says today's AI boom guarantees smooth progress from here. Which pattern from AI's history argues for more caution?"},{"answer":1,"explanation":"Every Larnix capstone reports a number; 'felt more accurate' without a measured comparison cannot score above Developing (Ch6).","id":"capstone-felt-better","options":["A longer written explanation","The measured before-and-after accuracy numbers — 'did you measure it?'","A paid API call to verify the result"],"prompt":"An M0 capstone note reads: 'I swapped in a different model and it felt more accurate.' Under the rubric, what is missing?"}],"title":"M0 — module quiz"}</script></div>
 </section>
 <section id="capstone" class="level2">
 <h2 class="anchored" data-anchor-id="capstone">Capstone</h2>
-<p>Finish with the module project: <a href="capstone.md"><strong>Set up &amp; run</strong></a> — confirm the ₹0 toolchain, run the Chapter 1 model, change one thing, and report whether your accuracy moved.</p>
+<p>Finish with the module project: <a href="../../modules/00-orientation/capstone.html"><strong>Set up &amp; run</strong></a> — confirm the ₹0 toolchain, run the Chapter 1 model, change one thing, and report whether your accuracy moved.</p>
 
 
 </section>
@@ -890,6 +918,222 @@ ul.task-list li input[type="checkbox"] {
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 

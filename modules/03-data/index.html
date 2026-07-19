@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
 <link href="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -261,6 +261,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -350,6 +354,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -445,6 +455,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -554,6 +570,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -647,6 +669,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/03-data/ch14-messy-real-world-data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
   </div>
 </li>
       </ul>
@@ -754,11 +782,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="module-quiz" class="level2">
 <h2 class="anchored" data-anchor-id="module-quiz">Module quiz</h2>
 <p>When you’ve finished the chapters, test the whole module. Your score is saved in your browser.</p>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m3-module-quiz","questions":[{"answer":"0","explanation":"Vectorized operations apply to the whole array at once — clearer and much faster than a per-element loop (Ch1).","id":"vectorization","options":["It is shorter and runs as one fast whole-array operation","Loops cannot do arithmetic","NumPy is the only way to add numbers"],"prompt":"Why prefer a NumPy vectorized operation over a Python loop for numeric work?"},{"answer":"1","explanation":"A Series is a single labelled 1-D column; a DataFrame is a table made of aligned Series (Ch2).","id":"series-vs-frame","options":["A Series is a table; a DataFrame is one column","A Series is one labelled column; a DataFrame is a table of columns","They are the same thing"],"prompt":"What is the difference between a Series and a DataFrame?"},{"answer":"0","explanation":".loc indexes by label, .iloc by integer position (Ch3).","id":"loc-iloc","options":[".loc selects by label; .iloc selects by integer position",".loc is for columns only; .iloc is for rows only","They are interchangeable"],"prompt":"How do .loc and .iloc differ?"},{"answer":"1","explanation":".isna() flags missing cells; .sum() counts them per column — the first step before dropna/fillna (Ch4).","id":"missing-data","options":["The total of all numbers in the table","How many missing (NaN) values are in each column","How many rows there are"],"prompt":"df.isna().sum() tells you…"},{"answer":"1","explanation":"groupby splits rows by the key, applies the aggregate per group, and combines the results (Ch5).","id":"groupby","options":["One overall mean body mass","The mean body mass within each species (split-apply-combine)","The number of species"],"prompt":"What does df.groupby('species')['body_mass_g'].mean() compute?"},{"answer":"1","explanation":"melt stacks columns into rows (wide→long); pivot does the reverse (Ch6).","id":"reshaping","options":["Long to wide","Wide to long (tidy) form","Numbers to text"],"prompt":"df.melt() turns a table from…"},{"answer":"0","explanation":"A scatter plots one variable against another to reveal a relationship; histograms show distributions, bars compare categories (Ch7, Ch8).","id":"chart-choice","options":["A scatter plot","A pie chart","A single bar"],"prompt":"Which chart best shows the relationship between two numeric variables?"},{"answer":"1","explanation":"A histogram bins one variable to show its distribution — centre, spread, and skew (Ch8).","id":"histogram","options":["The relationship between two columns","The distribution (shape) of one variable’s values","The exact value of every row"],"prompt":"A histogram shows…"},{"answer":"1","explanation":"A repeatable EDA starts with shape → types → missing → summaries before any deeper analysis (Ch9).","id":"eda-first-steps","options":["The colour of the plots","Shape, data types, and missing values","Nothing — go straight to modelling"],"prompt":"Early in an EDA, what do you check first?"},{"answer":"1","explanation":"Min-max scales to [0, 1]; standardization (z-score) gives mean 0 / std 1 (Ch10).","id":"scaling","options":["Mean 0 and standard deviation 1","The range 0 to 1","All zeros"],"prompt":"Min-max scaling transforms a column to…"},{"answer":"1","explanation":"Pin versions (requirements.txt), the data (vendored), and the seed, so the same inputs give the same result anywhere (Ch12).","id":"reproducibility","options":["Using the newest packages available","Pinning package versions, the exact data, and a fixed random seed","Running it on a faster computer"],"prompt":"What makes a data analysis reproducible?"},{"answer":"1","explanation":"Under-representation makes claims about that group unreliable — a core data-ethics caveat to record in a data note (Ch13).","id":"ethics-bias","options":["Nothing — sample size never matters","Conclusions about that group are weak or biased","The data is automatically wrong for everyone"],"prompt":"A group is badly under-represented in your dataset. What does that mean for conclusions about it?"}],"title":"M3 — module quiz"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m3-module-quiz","questions":[{"answer":1,"explanation":"Broadcasting applies one scalar across the whole array in a single vectorized operation — no per-element loop needed (Ch1).","id":"apply-vectorized-fix","options":["Loop over the array with `for` and add 50 to each element one at a time","`masses + 50` — broadcasting adds 50 to every element in one whole-array step","Convert the array to a Python list first, because NumPy cannot add a scalar"],"prompt":"Your field scale under-read every penguin by 50 g. `masses` is a NumPy array of all 344 body masses. What is the vectorized correction?"},{"answer":0,"explanation":"A boolean filter preserves the original labels; `.loc` matches labels while `.iloc` counts positions within the filtered frame (Ch3).","id":"filtered-frame-iloc","options":["Filtering keeps the original index labels, so `.loc[4]` finds the row labelled 4 while `.iloc[4]` takes the fifth kept row by position","They cannot differ — `.loc` and `.iloc` always agree","`.loc` only works on columns after a filter"],"prompt":"You run `adelie = df[df['species'] == 'Adelie']`. Why can `adelie.loc[4]` and `adelie.iloc[4]` return different rows?"},{"answer":1,"explanation":"Count the damage with `.isna().sum()` and look at *where* the gaps fall before dropping — in penguins the 11 missing `sex` rows split 6 Adelie / 5 Gentoo (Ch4).","id":"missing-before-drop","options":["Nothing — 5% is always safe to drop","How many rows you would lose and whether the gaps cluster in one group (for example one species)","Whether `fillna(0)` would run faster"],"prompt":"A new dataset arrives with 5% of its `sex` labels missing. What do you check before calling `dropna()` on that column?"},{"answer":1,"explanation":"The city column must be brought onto the orders first (merge on the shared key), then split-apply-combine per city (Ch5).","id":"merge-then-groupby","options":["`groupby('city')` on the orders table alone","`pd.merge` the two tables on `customer_id`, then `groupby('city')['order_value'].mean()`","`melt` the orders table, then `dropna()`"],"prompt":"Orders live in one table and customer cities in another; they share `customer_id`. You want the mean order value per city. Which sequence works?"},{"answer":1,"explanation":"Plotting a value over month wants long (tidy) form — one row per observation — and melt turns the month columns into rows (Ch6).","id":"wide-months-melt","options":["`pivot` — the table needs to get wider","`melt` — stack the month columns into (device, month, reading) rows","`dropna()` — remove the extra columns"],"prompt":"A sensor export has one column per month (`jan`, `feb`, `mar`, …) and one row per device. To plot reading-over-month for each device, which reshape do you reach for?"},{"answer":0,"explanation":"Two numeric variables against each other → scatter; the spread (distribution) of one variable → histogram (Ch7, Ch8).","id":"chart-for-question","options":["(a) a scatter plot, (b) a histogram","(a) a bar chart, (b) a scatter plot","(a) a histogram, (b) a bar chart"],"prompt":"You want to check (a) whether flipper length and body mass move together, and (b) how body mass is spread within one species. Which pair of charts?"},{"answer":1,"explanation":"Remove the characters that block conversion, then cast to float; only then do numeric operations mean anything (Ch14).","id":"price-strings-cleanup","options":["Call `.sum()` a second time","Strip the currency symbols and commas with `.str.replace(...)`, convert with `.astype(float)`, then total","Delete the column — text columns can never become numbers"],"prompt":"A scraped CSV's `price` column holds strings like '₹1,200', and `.sum()` glues the text together instead of adding. What is the fix from this module?"},{"answer":1,"explanation":"344 − 333 = 11 missing values in `sex` — exactly what the shape → types → missing → summaries order surfaces before you group by sex (Ch9).","id":"shape-vs-count-gap","options":["The table lost 11 rows while loading","11 rows have a missing `sex` value — note that before any summary that uses `sex`","The shape is wrong; trust the column instead"],"prompt":"In a fresh EDA, `df.shape` reports (344, 8), yet the `sex` column shows only 333 non-missing values. What did the recipe's missing-values step find?"},{"answer":0,"explanation":"Distance-style comparisons weight columns by their numeric size; bringing both to a common range (min-max or z-scores) lets each feature contribute fairly (Ch10).","id":"scale-before-distance","options":["Unscaled, body mass's much larger numbers dominate the distance and flipper length barely counts","Models refuse to run on unscaled columns","Scaling makes the measurements more accurate"],"prompt":"Flipper length runs about 172–231 mm while body mass runs 2700–6300 g. Why scale them before a model that compares rows by distance?"},{"answer":1,"explanation":"Out-of-order execution leaves definitions in memory that the saved cell order never recreates — the restart-and-run-all habit exposes it (Ch11).","id":"notebook-hidden-state","options":["The kernel restart deleted your data files","Hidden state: you ran cells out of order, and a later cell depended on one you had edited or removed","Notebooks cannot be rerun top-to-bottom"],"prompt":"Your notebook gives the right answer as you work, but after 'Restart kernel and run all' a cell fails with a NameError. What is the likely cause?"},{"answer":1,"explanation":"Same code + same data + same seed can still drift if library versions differ — pinning versions closes that gap (Ch12).","id":"pinned-versions-transfer","options":["A faster computer","Pinned package versions (a requirements.txt), alongside the fixed seed and the vendored data","A bigger dataset"],"prompt":"A teammate reruns your analysis on their machine with a newer pandas and gets different numbers. Which reproducibility ingredient was missing?"},{"answer":1,"explanation":"Record the group sizes and the caveat that claims about the smallest group are weaker — under-representation applied to your own headline (Ch13).","id":"small-group-caveat","options":["Nothing — 68 rows is plenty for any claim","That Chinstrap is under-represented, so conclusions about it rest on fewer observations","That the Chinstrap rows should be deleted"],"prompt":"Your EDA headline is a claim about Chinstrap penguins, which have 68 rows versus 152 Adelie and 124 Gentoo. What belongs in the data note?"}],"title":"M3 — module quiz"}</script></div>
 </section>
 <section id="capstone" class="level2">
 <h2 class="anchored" data-anchor-id="capstone">Capstone</h2>
-<p>Finish with the module project: <a href="capstone.md"><strong>End-to-end EDA</strong></a> — run a full exploratory data analysis on a <em>new</em> public dataset (a different one from the penguins you used here, to test transfer): load → clean → answer at least three questions with plots <strong>and</strong> numbers → write up findings, with an ethics note on the data’s source and license.</p>
+<p>Finish with the module project: <a href="../../modules/03-data/capstone.html"><strong>End-to-end EDA</strong></a> — run a full exploratory data analysis on a <em>new</em> public dataset (a different one from the penguins you used here, to test transfer): load → clean → answer at least three questions with plots <strong>and</strong> numbers → write up findings, with an ethics note on the data’s source and license.</p>
 
 
 </section>
@@ -922,6 +950,222 @@ ul.task-list li input[type="checkbox"] {
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 

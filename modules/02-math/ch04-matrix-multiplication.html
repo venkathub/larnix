@@ -77,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
 <link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
@@ -329,6 +329,10 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -418,6 +422,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -513,6 +523,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -622,6 +638,12 @@ window.Quarto = {
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -717,6 +739,12 @@ window.Quarto = {
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -773,6 +801,9 @@ window.Quarto = {
 </header>
 
 
+<div class="lx-chapter-meta">
+<p>⏱ ~16 min, reading + running the code  ·  Needs: M2 Ch3 — Matrices as transformations</p>
+</div>
 <p><span class="larnix-badge badge-difficulty badge-intermediate" role="img" aria-label="difficulty: Intermediate">Intermediate</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
 <section id="the-hook" class="level2">
 <h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
@@ -889,7 +920,7 @@ Each pair is multiplied — <code>row[0]*col[0]</code> and <code>row[1]*col[1]</
 </section>
 <section id="exercise-2-implement-8-min" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-2-implement-8-min">Exercise 2 — Implement (≈8 min) 🟡</h3>
-<p>Now build the full product. Write <code>matmul2(A, B)</code> for two 2x2 matrices, returning a 2x2 result where <code>result[i][j]</code> is the dot product of row <code>i</code> of <code>A</code> with column <code>j</code> of <code>B</code>. You may reuse a dot of a row and a column. Complete the marked lines.</p>
+<p>Now build the full product. Write the body of <code>matmul2(A, B)</code> for two 2x2 matrices, returning a 2x2 result where <code>result[i][j]</code> is the dot product of row <code>i</code> of <code>A</code> with column <code>j</code> of <code>B</code> — and <code>dot([a, b], [c, d])</code> is <code>a*c + b*d</code>. A tidy route: define a small <code>dot(row, col)</code> helper inside the function, pull out the two columns of <code>B</code>, then build the four entries. You write the whole body yourself.</p>
 <script type="exercise-setup-ex_matmul-contents">
 eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0bXVsIiwic2V0dXAiOnRydWV9LCJjb2RlIjoiZnJvbSBsaWIuZ3JhZGVyIGltcG9ydCBydW5fdGVzdHMifQ==
 </script>
@@ -898,14 +929,14 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0bXVsIiwic2V0
 
 </div>
 <script type="pyodide-6-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0bXVsIn0sImNvZGUiOiJkZWYgbWF0bXVsMihBLCBCKTpcbiAgICBcIlwiXCJNdWx0aXBseSB0d28gMngyIG1hdHJpY2VzOiByZXN1bHRbaV1bal0gPSByb3cgaSBvZiBBIMK3IGNvbHVtbiBqIG9mIEIuXCJcIlwiXG4gICAgZGVmIGRvdChyb3csIGNvbCk6XG4gICAgICAgIHJldHVybiByb3dbMF0gKiBjb2xbMF0gKyByb3dbMV0gKiBjb2xbMV1cblxuICAgIGNvbHMgPSBbW0JbMF1bMF0sIEJbMV1bMF1dLCBbQlswXVsxXSwgQlsxXVsxXV1dICAjIGNvbHVtbiAwIGFuZCBjb2x1bW4gMSBvZiBCXG4gICAgcmV0dXJuIFtcbiAgICAgICAgW2RvdChBWzBdLCBjb2xzWzBdKSwgX19fX10sICAjIFRPRE86IHJvdyAwIG9mIEEgd2l0aCBjb2x1bW4gMSBvZiBCXG4gICAgICAgIFtkb3QoQVsxXSwgY29sc1swXSksIGRvdChBWzFdLCBjb2xzWzFdKV0sXG4gICAgXVxuXG5ydW5fdGVzdHMoW1xuICAgIChcImlkZW50aXR5IGxlYXZlcyBCXCIsIG1hdG11bDIoW1sxLCAwXSwgWzAsIDFdXSwgW1syLCAzXSwgWzQsIDVdXSksIFtbMiwgM10sIFs0LCA1XV0pLFxuICAgIChcImRvdWJsZSB0aGVuIG9uZXNcIiwgbWF0bXVsMihbWzIsIDBdLCBbMCwgMl1dLCBbWzEsIDFdLCBbMSwgMV1dKSwgW1syLCAyXSwgWzIsIDJdXSksXG5dKSJ9
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfbWF0bXVsIn0sImNvZGUiOiJkZWYgbWF0bXVsMihBLCBCKTpcbiAgICBcIlwiXCJNdWx0aXBseSB0d28gMngyIG1hdHJpY2VzOiByZXN1bHRbaV1bal0gPSByb3cgaSBvZiBBIMK3IGNvbHVtbiBqIG9mIEIuXCJcIlwiXG4gICAgLi4uICAjIFRPRE86IHdyaXRlIHRoZSBib2R5IOKAlCBhIGRvdCBoZWxwZXIsIHRoZSB0d28gY29sdW1ucyBvZiBCLCB0aGVuIHRoZSBmb3VyIGVudHJpZXNcblxucnVuX3Rlc3RzKFtcbiAgICAoXCJpZGVudGl0eSBsZWF2ZXMgQlwiLCBtYXRtdWwyKFtbMSwgMF0sIFswLCAxXV0sIFtbMiwgM10sIFs0LCA1XV0pLCBbWzIsIDNdLCBbNCwgNV1dKSxcbiAgICAoXCJkb3VibGUgdGhlbiBvbmVzXCIsIG1hdG11bDIoW1syLCAwXSwgWzAsIDJdXSwgW1sxLCAxXSwgWzEsIDFdXSksIFtbMiwgMl0sIFsyLCAyXV0pLFxuXSkifQ==
 </script>
 </div>
 <details>
 <summary>
 If you’re stuck
 </summary>
-<code>cols[1]</code> is column 1 of <code>B</code>. The top-right entry is row 0 of <code>A</code> dotted with that column: <code>dot(A[0], cols[1])</code>. The other three entries are already filled in to match.
+Build it in three steps. First a helper: <code>def dot(row, col): return row[0] * col[0] + row[1] * col[1]</code>. Second, the columns of <code>B</code>: column 0 is <code>[B[0][0], B[1][0]]</code> and column 1 is <code>[B[0][1], B[1][1]]</code> (first index is the row, second the column). Third, return a list of two rows, where the entry in row <code>i</code>, column <code>j</code> is <code>dot(A[i], cols[j])</code> — four <code>dot</code> calls in all.
 </details>
 <details>
 <summary>
@@ -963,12 +994,12 @@ Here <code>A·B = [[2, 1], [1, 1]]</code> but <code>B·A = [[1, 1], [1, 2]]</cod
 </section>
 <section id="check-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-ch4-matmul","questions":[{"answer":"1","explanation":"A dot product multiplies matching pairs and adds: 13 + 24 = 3 + 8 = 11.","id":"row-dot-column","options":["4","11","21"],"prompt":"What is [1, 2] · [3, 4]?"},{"answer":"0","explanation":"Each entry C[i][j] is the dot product of row i of A with column j of B.","id":"entry-rule","options":["Row i of A dotted with column j of B","Row i of A added to row j of B","Column i of A times row j of B element by element, kept separate"],"prompt":"In the product C = A·B, which numbers make the entry in row i, column j?"},{"answer":"1","explanation":"A matrix product is the single matrix for doing one transformation and then the other.","id":"product-meaning","options":["Averaging the two transformations into a milder one","Composing them — doing one transformation and then the other","Undoing the first transformation with the second"],"prompt":"What does multiplying two transformation matrices represent?"},{"answer":"1","explanation":"Matrix multiplication is not commutative; doing the moves in a different order can give a different result.","id":"order-matters","options":["Yes, multiplication order never changes the result","No — the order of two transformations can change where points land","Only when both matrices are 2x2"],"prompt":"For matrices A and B, is A·B always equal to B·A?"}],"title":"Chapter 4 — quick check"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-ch4-matmul","questions":[{"answer":1,"explanation":"A dot product multiplies matching pairs and adds: 1*3 + 2*4 = 3 + 8 = 11.","id":"row-dot-column","options":["4","11","21"],"prompt":"What is [1, 2] · [3, 4]?"},{"answer":0,"explanation":"Each entry C[i][j] is the dot product of row i of A with column j of B.","id":"entry-rule","options":["Row i of A dotted with column j of B","Row i of A added to row j of B","Column i of A times row j of B element by element, kept separate"],"prompt":"In the product C = A·B, which numbers make the entry in row i, column j?"},{"answer":1,"explanation":"A matrix product is the single matrix for doing one transformation and then the other.","id":"product-meaning","options":["Averaging the two transformations into a milder one","Composing them — doing one transformation and then the other","Undoing the first transformation with the second"],"prompt":"What does multiplying two transformation matrices represent?"},{"answer":1,"explanation":"Matrix multiplication is not commutative; doing the moves in a different order can give a different result.","id":"order-matters","options":["Yes, multiplication order never changes the result","No — the order of two transformations can change where points land","Only when both matrices are 2x2"],"prompt":"For matrices A and B, is A·B always equal to B·A?"}],"title":"Chapter 4 — quick check"}</script></div>
 <hr>
 </section>
 <section id="where-this-fits-whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You can now read a matrix product two ways: mechanically, as rows dotted with columns, and meaningfully, as one transformation followed by another. That dot product at the heart of every entry is about to get its own spotlight. Next we look at <strong>dot products &amp; similarity</strong> (Ch5) — the same multiply-and-add, used to measure how alike two vectors are.</p>
+<p>You can now read a matrix product two ways: mechanically, as rows dotted with columns, and meaningfully, as one transformation followed by another. This is the Ch16 neuron scaled up: running a whole layer of neurons on an input is one matrix multiply, each output entry a row of weights dotted with <code>x</code>. That dot product at the heart of every entry is about to get its own spotlight. Next we look at <strong>dot products &amp; similarity</strong> (Ch5) — the same multiply-and-add, used to measure how alike two vectors are.</p>
 
 
 <script type="pyodide-data">
@@ -1149,6 +1180,222 @@ WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 

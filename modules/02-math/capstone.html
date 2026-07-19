@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>A little OOP – Larnix</title>
+<title>M2 Capstone — The math of one neuron – Larnix</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -80,10 +45,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
-<link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
-<script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
-<link href="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -110,8 +71,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script type="module" src="../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
-<link href="../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
 
 
 </head>
@@ -330,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/01-python/index.html">M1 — Python for AI</a></li><li class="breadcrumb-item"><a href="../../modules/01-python/ch09-a-little-oop.html">Ch9 — A little OOP</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/capstone.html">Capstone — The math of one neuron</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -462,7 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/01-python/ch09-a-little-oop.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../modules/01-python/ch09-a-little-oop.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch9 — A little OOP</span></a>
   </div>
 </li>
@@ -611,7 +570,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Capstone — The math of one neuron</span></a>
   </div>
 </li>
@@ -728,26 +687,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-hook" id="toc-the-hook" class="nav-link active" data-scroll-target="#the-hook">The hook</a></li>
-  <li><a href="#an-object-bundles-data-behaviour" id="toc-an-object-bundles-data-behaviour" class="nav-link" data-scroll-target="#an-object-bundles-data-behaviour">An object bundles data + behaviour</a></li>
-  <li><a href="#defining-a-class-with-__init__-and-methods" id="toc-defining-a-class-with-__init__-and-methods" class="nav-link" data-scroll-target="#defining-a-class-with-__init__-and-methods">Defining a class with <code>__init__</code> and methods</a>
-  <ul class="collapse">
-  <li><a href="#what-self-is" id="toc-what-self-is" class="nav-link" data-scroll-target="#what-self-is">What <code>self</code> is</a></li>
-  <li><a href="#a-default-method-argument" id="toc-a-default-method-argument" class="nav-link" data-scroll-target="#a-default-method-argument">A default method argument</a></li>
-  </ul></li>
-  <li><a href="#lets-build-it-worked-example" id="toc-lets-build-it-worked-example" class="nav-link" data-scroll-target="#lets-build-it-worked-example">Let’s build it (worked example)</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
-  <ul class="collapse">
-  <li><a href="#key-takeaways-1" id="toc-key-takeaways-1" class="nav-link" data-scroll-target="#key-takeaways-1">Key Takeaways</a></li>
-  </ul></li>
-  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a>
-  <ul class="collapse">
-  <li><a href="#exercise-1-guided-5-min" id="toc-exercise-1-guided-5-min" class="nav-link" data-scroll-target="#exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</a></li>
-  <li><a href="#exercise-2-implement-10-min" id="toc-exercise-2-implement-10-min" class="nav-link" data-scroll-target="#exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</a></li>
-  <li><a href="#exercise-3-stretch-optional-10-min" id="toc-exercise-3-stretch-optional-10-min" class="nav-link" data-scroll-target="#exercise-3-stretch-optional-10-min">Exercise 3 — Stretch (optional, ≈10 min) 🔴</a></li>
-  </ul></li>
-  <li><a href="#check-yourself" id="toc-check-yourself" class="nav-link" data-scroll-target="#check-yourself">Check yourself</a></li>
-  <li><a href="#where-this-fits-whats-next" id="toc-where-this-fits-whats-next" class="nav-link" data-scroll-target="#where-this-fits-whats-next">Where this fits / what’s next</a></li>
+  <li><a href="#the-brief" id="toc-the-brief" class="nav-link active" data-scroll-target="#the-brief">The brief</a></li>
+  <li><a href="#deliverables" id="toc-deliverables" class="nav-link" data-scroll-target="#deliverables">Deliverables</a></li>
+  <li><a href="#rubric" id="toc-rubric" class="nav-link" data-scroll-target="#rubric">Rubric</a></li>
+  <li><a href="#did-you-measure-it" id="toc-did-you-measure-it" class="nav-link" data-scroll-target="#did-you-measure-it">Did you measure it?</a></li>
+  <li><a href="#what-you-need-what-it-costs" id="toc-what-you-need-what-it-costs" class="nav-link" data-scroll-target="#what-you-need-what-it-costs">What you need &amp; what it costs</a></li>
   </ul>
 </nav>
     </div>
@@ -755,9 +699,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/01-python/index.html">M1 — Python for AI</a></li><li class="breadcrumb-item"><a href="../../modules/01-python/ch09-a-little-oop.html">Ch9 — A little OOP</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../modules/02-math/index.html">M2 — Math You Actually Need</a></li><li class="breadcrumb-item"><a href="../../modules/02-math/capstone.html">Capstone — The math of one neuron</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">A little OOP</h1>
+<h1 class="title">M2 Capstone — The math of one neuron</h1>
 </div>
 
 
@@ -774,228 +718,93 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="lx-chapter-meta">
-<p>⏱ ~18 min, reading + running the code  ·  Needs: M1 Ch3 — Functions · M1 Ch4 — Data structures</p>
-</div>
-<p><span class="larnix-badge badge-difficulty badge-beginner" role="img" aria-label="difficulty: Beginner">Beginner</span> <span class="larnix-badge badge-compute badge-browser" role="img" aria-label="compute: Browser">Browser</span> <span class="larnix-badge badge-status badge-stable" role="img" aria-label="status: Stable">Stable</span></p>
-<section id="the-hook" class="level2">
-<h2 class="anchored" data-anchor-id="the-hook">The hook</h2>
-<p>You’ve been using objects since Chapter 1. When you write <code>name.strip()</code> or <code>rows.append(row)</code>, that <code>name</code> and that <code>rows</code> are objects — each carries some <strong>data</strong> (the text, the list of items) and a set of <strong>behaviours</strong> that act on it (<code>.strip()</code>, <code>.append()</code>). The dot means “ask this object to do something with its own data”.</p>
-<p>A <strong>class</strong> lets you make your own such bundles. As you reach for libraries later (NumPy arrays, pandas DataFrames, model objects), you’ll meet classes constantly — this chapter is enough to read them with confidence. We’ll wrap one row of the habits data in a small <code>Day</code> object.</p>
 <blockquote class="blockquote">
-<p>You’ll need from before: defining functions with parameters and defaults (Ch3) and the dict/list way of holding a row of data (Ch4) — a class is a tidier home for that same data plus the functions that use it.</p>
+<p>Finalized with the M2 build (P1 §6.D). The full walkthrough and a working gradient check live in <a href="../../modules/02-math/ch16-the-math-of-one-neuron.html">Chapter 16 — The math of one neuron</a>; this capstone asks you to rebuild it <strong>with a required variation</strong>, so the work shows transfer rather than a copy. Runs in the browser, ₹0.</p>
 </blockquote>
-<hr>
-</section>
-<section id="an-object-bundles-data-behaviour" class="level2">
-<h2 class="anchored" data-anchor-id="an-object-bundles-data-behaviour">An object bundles data + behaviour</h2>
-<p>So far a day of habits data has lived as a dict: <code>{"date": "2026-01-02", "steps": 8200}</code>. That holds the data, but the logic that works on it (is this an active day?) floats around in separate functions. An <strong>object</strong> keeps both in one place: the values <em>and</em> the behaviour that belongs with them.</p>
-<p>A <strong>class</strong> is the blueprint; an <strong>instance</strong> is one object built from it. Calling the class — <code>Day(...)</code> — builds an instance, the same way <code>list()</code> builds a new list.</p>
-</section>
-<section id="defining-a-class-with-__init__-and-methods" class="level2">
-<h2 class="anchored" data-anchor-id="defining-a-class-with-__init__-and-methods">Defining a class with <code>__init__</code> and methods</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Day:</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""One day of habits data."""</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, date, steps):</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.date <span class="op">=</span> date</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.steps <span class="op">=</span> steps</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> is_active(<span class="va">self</span>, goal<span class="op">=</span><span class="dv">8000</span>):</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.steps <span class="op">&gt;=</span> goal</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="the-brief" class="level2">
+<h2 class="anchored" data-anchor-id="the-brief">The brief</h2>
+<p>Implement a single neuron’s <strong>forward pass</strong> and its <strong>gradient by hand</strong> in NumPy (no autograd), then <strong>verify your analytic gradient against a numeric finite-difference</strong> estimate. This is the whole module assembled into one moving part — the seed of backpropagation.</p>
+<p><strong>Required variation — pick ONE.</strong> Chapter 16 uses a sigmoid activation with the loss <code>(a − y)²</code>. Your capstone must change one of those two pieces and re-derive the affected chain-rule link yourself:</p>
 <ul>
-<li><strong><code>class Day:</code></strong> starts the blueprint. The triple-quoted line is its docstring.</li>
-<li><strong><code>__init__</code></strong> is the <em>constructor</em>: Python runs it once, automatically, when you create an instance. Its job is to store the starting <strong>attributes</strong> on the object.</li>
-<li><strong><code>is_active</code></strong> is a <strong>method</strong> — a function that belongs to the class.</li>
+<li><strong>Variation A — tanh activation.</strong> Replace the sigmoid with <code>a = tanh(z)</code> and derive <code>da/dz</code> for it yourself (state the formula in your notebook).</li>
+<li><strong>Variation B — half squared-error loss.</strong> Keep the sigmoid but use <code>L = ½·(a − y)²</code> and derive <code>dL/da</code> for it yourself (state the formula in your notebook).</li>
 </ul>
-<p>An <strong>attribute</strong> is data stored on the object (<code>self.date</code>, <code>self.steps</code>). A <strong>method</strong> is behaviour you call on it (<code>d.is_active()</code>).</p>
-<section id="what-self-is" class="level3">
-<h3 class="anchored" data-anchor-id="what-self-is">What <code>self</code> is</h3>
-<p>Every method’s first parameter is <strong><code>self</code></strong>: the particular instance the method was called on. When you write <code>d.is_active()</code>, Python passes <code>d</code> in as <code>self</code>, so <code>self.steps</code> reads <em>that</em> day’s steps. You never pass <code>self</code> yourself — the dot does it for you.</p>
+<p>A submission that reproduces Chapter 16’s sigmoid + <code>(a − y)²</code> neuron unchanged cannot score <em>Proficient</em> on Correctness or Understanding, even if the gradient check passes — the check would be verifying the chapter’s derivation, not yours.</p>
 </section>
-<section id="a-default-method-argument" class="level3">
-<h3 class="anchored" data-anchor-id="a-default-method-argument">A default method argument</h3>
-<p><code>is_active(self, goal=8000)</code> gives <code>goal</code> a <strong>default</strong> (Ch3, same idea). Call <code>d.is_active()</code> and it compares against 8000; call <code>d.is_active(5000)</code> to use your own goal for that one call.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>🧱 For Java developers
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><code>class</code> is your <code>class</code>; <code>__init__</code> is the constructor; <code>self</code> is <code>this</code> — except Python makes it the explicit first parameter of every method instead of an implicit keyword. Differences worth noting: there are <strong>no access modifiers</strong> (<code>public</code> / <code>private</code>) and <strong>no type declarations</strong> on attributes — you set <code>self.steps</code> and it exists. You also rarely write <strong>getters/setters</strong>; reading <code>d.steps</code> directly is normal and idiomatic, and a property can be added later without changing callers.</p>
-</div>
-</div>
-</div>
-<hr>
-</section>
-</section>
-<section id="lets-build-it-worked-example" class="level2">
-<h2 class="anchored" data-anchor-id="lets-build-it-worked-example">Let’s build it (worked example)</h2>
-<p>Build one <code>Day</code> from a habits row, then read its attribute and call its method. Press <strong>Run</strong>.</p>
-<div>
-<div id="pyodide-1" class="exercise-cell">
-
-</div>
-<script type="pyodide-1-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJBIHNtYWxsIGNsYXNzOiBjb25zdHJ1Y3QsIHJlYWQgYW4gYXR0cmlidXRlLCBjYWxsIGEgbWV0aG9kIiwiZWRpdCI6dHJ1ZSwiZXZhbCI6dHJ1ZX0sImNvZGUiOiJjbGFzcyBEYXk6XG4gICAgXCJcIlwiT25lIGRheSBvZiBoYWJpdHMgZGF0YS5cIlwiXCJcbiAgICBkZWYgX19pbml0X18oc2VsZiwgZGF0ZSwgc3RlcHMpOlxuICAgICAgICBzZWxmLmRhdGUgPSBkYXRlXG4gICAgICAgIHNlbGYuc3RlcHMgPSBzdGVwc1xuXG4gICAgZGVmIGlzX2FjdGl2ZShzZWxmLCBnb2FsPTgwMDApOlxuICAgICAgICByZXR1cm4gc2VsZi5zdGVwcyA+PSBnb2FsXG5cbmQgPSBEYXkoXCIyMDI2LTAxLTAyXCIsIDgyMDApXG5wcmludChkLmRhdGUsIFwiaGFkXCIsIGQuc3RlcHMsIFwic3RlcHM7IGFjdGl2ZT9cIiwgZC5pc19hY3RpdmUoKSkifQ==
-</script>
-</div>
-<p><code>Day("2026-01-02", 8200)</code> runs <code>__init__</code>, which stores the two attributes. Then <code>d.date</code> and <code>d.steps</code> read them back, and <code>d.is_active()</code> runs the method against the default goal of 8000 — <code>8200 &gt;= 8000</code> is <code>True</code>.</p>
-<div>
-<div id="pyodide-2" class="exercise-cell">
-
-</div>
-<script type="pyodide-2-contents">
-eyJhdHRyIjp7ImNhcHRpb24iOiJUaGUgc2FtZSBtZXRob2Qgd2l0aCBhIGN1c3RvbSBnb2FsLCBhY3Jvc3MgYSBmZXcgZGF5cyIsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGF5cyA9IFtEYXkoXCIyMDI2LTAxLTAyXCIsIDgyMDApLCBEYXkoXCIyMDI2LTAxLTAzXCIsIDUwMDApLCBEYXkoXCIyMDI2LTAxLTA0XCIsIDkxMDApXVxuXG5mb3IgZGF5IGluIGRheXM6XG4gICAgcHJpbnQoZGF5LmRhdGUsIFwiYWN0aXZlIHZzIDYwMDA/XCIsIGRheS5pc19hY3RpdmUoNjAwMCkpIn0=
-</script>
-</div>
-<p>Passing <code>6000</code> overrides the default for that call. Each <code>day</code> is its own instance with its own <code>self.steps</code>, so the same method gives a different answer per object.</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2">
-<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
-<section id="key-takeaways-1" class="level3 key-takeaways">
-<h3 class="anchored" data-anchor-id="key-takeaways-1">Key Takeaways</h3>
-<ol type="1">
-<li>An <strong>object</strong> bundles <strong>data</strong> (attributes) with <strong>behaviour</strong> (methods) — you’ve used this all along with strings and lists.</li>
-<li>A <strong>class</strong> is the blueprint; calling it (<code>Day(...)</code>) builds an <strong>instance</strong>, and <strong><code>__init__</code></strong> runs once to set that instance’s starting attributes.</li>
-<li><strong><code>self</code></strong> is the instance a method is acting on; <code>self.steps</code> reads that object’s own attribute. You read attributes and call methods with the dot: <code>d.steps</code>, <code>d.is_active()</code>.</li>
-<li>A method can take a <strong>default argument</strong> (<code>goal=8000</code>), used when the caller leaves it out.</li>
-</ol>
-</section>
-<hr>
-</section>
-<section id="practice" class="level2">
-<h2 class="anchored" data-anchor-id="practice">Practice</h2>
-<p>Each exercise is auto-graded by <code>run_tests</code>, loaded for you from <code>lib/grader.py</code>.</p>
-<section id="exercise-1-guided-5-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-guided-5-min">Exercise 1 — Guided (≈5 min) 🟢</h3>
-<p>Complete <code>__init__</code> so a <code>StepCounter</code> stores its step count as an attribute. Replace <code>____</code>, then press <strong>Run</strong>.</p>
-<script type="exercise-setup-ex_stepcounter-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfc3RlcGNvdW50ZXIiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiJmcm9tIGxpYi5ncmFkZXIgaW1wb3J0IHJ1bl90ZXN0cyJ9
-</script>
-<div>
-<div id="pyodide-4" class="exercise-cell">
-
-</div>
-<script type="pyodide-4-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfc3RlcGNvdW50ZXIifSwiY29kZSI6ImNsYXNzIFN0ZXBDb3VudGVyOlxuICAgIFwiXCJcIkhvbGRzIGEgc2luZ2xlIGRheSdzIHN0ZXAgY291bnQuXCJcIlwiXG4gICAgZGVmIF9faW5pdF9fKHNlbGYsIHN0ZXBzKTpcbiAgICAgICAgc2VsZi5zdGVwcyA9IF9fX18gICMgVE9ETzogc3RvcmUgdGhlIHN0ZXBzIGFyZ3VtZW50IG9uIHRoZSBpbnN0YW5jZVxuXG5ydW5fdGVzdHMoW1xuICAgIChcInN0b3JlcyB0aGUgY291bnRcIiwgU3RlcENvdW50ZXIoNzUwMCkuc3RlcHMsIDc1MDApLFxuICAgIChcInN0b3JlcyB6ZXJvXCIsIFN0ZXBDb3VudGVyKDApLnN0ZXBzLCAwKSxcbiAgICAoXCJzdG9yZXMgYW5vdGhlclwiLCBTdGVwQ291bnRlcigxMjAwMCkuc3RlcHMsIDEyMDAwKSxcbl0pIn0=
-</script>
-</div>
-<details>
-<summary>
-If you’re stuck
-</summary>
-<code>__init__</code> receives the value as the parameter <code>steps</code>. Assign that parameter to the attribute — the right-hand side is the parameter name itself.
-</details>
-<details>
-<summary>
-Show solution
-</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StepCounter:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Holds a single day's step count."""</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, steps):</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.steps <span class="op">=</span> steps</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>__init__</code> runs when you write <code>StepCounter(7500)</code>; assigning <code>self.steps = steps</code> copies the argument onto the instance, so <code>StepCounter(7500).steps</code> reads back <code>7500</code>.
-</details>
-</section>
-<section id="exercise-2-implement-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-implement-10-min">Exercise 2 — Implement (≈10 min) 🟡</h3>
-<p>Write the body of the <code>is_active</code> method so it returns <code>True</code> when the day’s steps reach the <code>goal</code>. The class and the method signature are given; the body is yours.</p>
-<script type="exercise-setup-ex_isactive-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNhY3RpdmUiLCJzZXR1cCI6dHJ1ZX0sImNvZGUiOiJmcm9tIGxpYi5ncmFkZXIgaW1wb3J0IHJ1bl90ZXN0cyJ9
-</script>
-<div>
-<div id="pyodide-6" class="exercise-cell">
-
-</div>
-<script type="pyodide-6-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfaXNhY3RpdmUifSwiY29kZSI6ImNsYXNzIERheTpcbiAgICBcIlwiXCJPbmUgZGF5IG9mIGhhYml0cyBkYXRhLCB3aXRoIGFuIGFjdGl2aXR5IGNoZWNrLlwiXCJcIlxuICAgIGRlZiBfX2luaXRfXyhzZWxmLCBkYXRlLCBzdGVwcyk6XG4gICAgICAgIHNlbGYuZGF0ZSA9IGRhdGVcbiAgICAgICAgc2VsZi5zdGVwcyA9IHN0ZXBzXG5cbiAgICBkZWYgaXNfYWN0aXZlKHNlbGYsIGdvYWw9ODAwMCk6XG4gICAgICAgIFwiXCJcIlJldHVybiBUcnVlIHdoZW4gdGhpcyBkYXkncyBzdGVwcyByZWFjaCB0aGUgZ29hbC5cIlwiXCJcbiAgICAgICAgLi4uICAjIFRPRE86IHdyaXRlIHRoZSBib2R5IOKAlCBjb21wYXJlIHRoaXMgZGF5J3Mgb3duIHN0ZXBzIGFnYWluc3QgdGhlIGdvYWxcblxucnVuX3Rlc3RzKFtcbiAgICAoXCI4MjAwIHJlYWNoZXMgZGVmYXVsdCBnb2FsXCIsIERheShcIjIwMjYtMDEtMDJcIiwgODIwMCkuaXNfYWN0aXZlKCksIFRydWUpLFxuICAgIChcIjUwMDAgbWlzc2VzIGRlZmF1bHQgZ29hbFwiLCBEYXkoXCIyMDI2LTAxLTAzXCIsIDUwMDApLmlzX2FjdGl2ZSgpLCBGYWxzZSksXG4gICAgKFwiY3VzdG9tIGdvYWwgaXMgbWV0XCIsIERheShcIjIwMjYtMDEtMDRcIiwgNjAwMCkuaXNfYWN0aXZlKDUwMDApLCBUcnVlKSxcbiAgICAoXCJjdXN0b20gZ29hbCBpcyBtaXNzZWRcIiwgRGF5KFwiMjAyNi0wMS0wNVwiLCA0MDAwKS5pc19hY3RpdmUoNTAwMCksIEZhbHNlKSxcbl0pIn0=
-</script>
-</div>
-<details>
-<summary>
-If you’re stuck
-</summary>
-Read this day’s steps with <code>self.steps</code>, then compare to <code>goal</code> with <code>&gt;=</code>. The method should return that comparison directly.
-</details>
-<details>
-<summary>
-Show solution
-</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Day:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""One day of habits data, with an activity check."""</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, date, steps):</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.date <span class="op">=</span> date</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.steps <span class="op">=</span> steps</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> is_active(<span class="va">self</span>, goal<span class="op">=</span><span class="dv">8000</span>):</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.steps <span class="op">&gt;=</span> goal</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>self.steps</code> is this instance’s own count; <code>self.steps &gt;= goal</code> is a boolean, so the method returns <code>True</code> or <code>False</code>. Leaving <code>goal</code> out uses the default <code>8000</code>.
-</details>
-</section>
-<section id="exercise-3-stretch-optional-10-min" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-stretch-optional-10-min">Exercise 3 — Stretch (optional, ≈10 min) 🔴</h3>
-<p>Open-ended, <strong>rubric-graded</strong> (not auto-checked). Design a small <code>Tally</code> class that adds up steps across several days: an <code>__init__</code> that starts the running total at <code>0</code>, an <code>add(self, steps)</code> method that adds to it, and a <code>total</code> attribute you can read. Build one and add a few values.</p>
-<p><strong>Rubric — a good answer:</strong></p>
+<section id="deliverables" class="level2">
+<h2 class="anchored" data-anchor-id="deliverables">Deliverables</h2>
 <ul>
-<li><code>__init__</code> sets a starting attribute (e.g.&nbsp;<code>self.total = 0</code>).</li>
-<li><code>add</code> updates <code>self.total</code> using the argument passed in.</li>
-<li>You create an instance, call <code>add</code> a couple of times, and read the <code>total</code> back.</li>
+<li>A runnable in-browser notebook that defines the <strong>varied</strong> neuron (weights, bias, activation), computes the forward output and a loss, and derives the gradient of the loss with respect to each parameter.</li>
+<li>The <strong>re-derived chain-rule link</strong> for your chosen variation, written out in a markdown cell (Variation A: the formula for <code>da/dz</code> of tanh; Variation B: the formula for <code>dL/da</code> of the half squared-error loss).</li>
+<li>A check that compares your analytic gradient to a numeric one <strong>for the varied neuron</strong>, and prints the <strong>maximum gradient error</strong>.</li>
 </ul>
+</section>
+<section id="rubric" class="level2">
+<h2 class="anchored" data-anchor-id="rubric">Rubric</h2>
+<p>Score each criterion 0–2; a “Proficient” capstone scores at the top of every row.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 23%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Criterion</th>
+<th>Not yet (0)</th>
+<th>Developing (1)</th>
+<th>Proficient (2)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Runs</strong></td>
+<td>Errors or does not run</td>
+<td>Runs with hand-holding</td>
+<td>Runs top-to-bottom, unaided</td>
+</tr>
+<tr class="even">
+<td><strong>Correctness</strong></td>
+<td>Gradient wrong</td>
+<td>Forward right, gradient off — or no variation (chapter’s neuron copied)</td>
+<td>Analytic gradient of the <strong>varied</strong> neuron matches numeric within tolerance</td>
+</tr>
+<tr class="odd">
+<td><strong>Understanding</strong></td>
+<td>No explanation</td>
+<td>Names the steps</td>
+<td>Explains each term (forward, loss, chain-rule gradient) <strong>and states the re-derived link for the chosen variation</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Measurement</strong></td>
+<td>No error reported</td>
+<td>Reports a value loosely</td>
+<td>Reports the max analytic-vs-numeric gradient error</td>
+</tr>
+</tbody>
+</table>
 <details>
 <summary>
-Show one possible answer
+Grader answer key — the re-derived links (hidden from learners)
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Tally:</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A running total of steps across days."""</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.total <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add(<span class="va">self</span>, steps):</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.total <span class="op">+=</span> steps</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> Tally()</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>t.add(<span class="dv">8200</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>t.add(<span class="dv">5000</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(t.total)   <span class="co"># 13200</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<code>__init__</code> starts <code>self.total</code> at <code>0</code>; each <code>add</code> call updates that one instance’s attribute, so after adding <code>8200</code> and <code>5000</code> the <code>total</code> reads <code>13200</code>.
+<ul>
+<li><strong>Variation A (tanh):</strong> <code>da/dz = 1 − tanh²(z) = 1 − a²</code>. The full gradient is <code>dL/dw_i = 2(a − y) · (1 − a²) · x_i</code> and <code>dL/db = 2(a − y) · (1 − a²)</code>. On the chapter’s worked input <code>x=[2,3], w=[0.5,-1.0], b=0.5, y=1.0</code>: <code>a = tanh(−1.5) ≈ −0.905148</code>, <code>loss ≈ 3.629590</code>, and the analytic-vs-numeric max gradient error is about <strong>7.65e-10</strong> (still well under <code>1e-6</code>).</li>
+<li><strong>Variation B (½ loss):</strong> <code>dL/da = a − y</code> (the ½ cancels the 2 from the power rule). The full gradient is <code>dL/dw_i = (a − y) · a(1 − a) · x_i</code> — exactly half of the chapter’s gradient at every parameter. On the chapter’s worked input the max gradient error is about <strong>1.63e-11</strong>.</li>
+</ul>
+Reject a “Variation B” submission whose gradients equal the chapter’s values unchanged — halving the loss must halve every gradient component.
 </details>
-<hr>
+<p><strong>Auto-check (finalized with M2):</strong> an assert that the analytic gradient matches the finite-difference gradient within a float tolerance. The same check works unchanged for either variation, because finite differences only need your <code>loss_at</code> function — for the chapter’s worked input, Variation A agrees to a <strong>maximum error of about 7.65e-10</strong> and Variation B to about <strong>1.63e-11</strong> (both well under any sensible <code>1e-6</code> tolerance). Reproduce a number of that order on your own input.</p>
 </section>
+<section id="did-you-measure-it" class="level2">
+<h2 class="anchored" data-anchor-id="did-you-measure-it">Did you measure it?</h2>
+<p>Report the <strong>maximum gradient error</strong> between your analytic and numeric gradients for the varied neuron. A capstone with no measured result cannot score above <em>Developing</em>. As a reference, Chapter 16’s original sigmoid + <code>(a − y)²</code> example reports <code>max error = 3.27e-11</code>; any correct implementation of either variation lands near <code>1e-9</code> or smaller.</p>
 </section>
-<section id="check-yourself" class="level2">
-<h2 class="anchored" data-anchor-id="check-yourself">Check yourself</h2>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m1-ch9-oop","questions":[{"answer":1,"explanation":"An object keeps related data and the functions that act on it together — like a string holding text plus methods such as .strip().","id":"object-bundles","options":["Only data, never behaviour","Data (attributes) and behaviour (methods) in one value","Two unrelated functions"],"prompt":"What does an object bundle together?"},{"answer":1,"explanation":"self is the specific object the method runs on, so self.steps reads that instance's own data.","id":"what-is-self","options":["The class itself, shared by every instance","The particular instance the method was called on","A required keyword that names the class"],"prompt":"Inside a method, what does `self` refer to?"},{"answer":1,"explanation":"__init__ runs at construction time and stores the starting attributes on self.","id":"init-role","options":["Every time any method is called, to reset the object","Once when you create an instance, to set up its starting attributes","Only when you print the object"],"prompt":"When does `__init__` run, and what is it for?"},{"answer":1,"explanation":"A default argument is used when the caller leaves it out, so is_active() compares against 8000.","id":"default-arg","options":["It raises an error because goal is missing","It uses the default value 8000","It uses 0"],"prompt":"Given `def is_active(self, goal=8000):`, what does `d.is_active()` use for `goal`?"}],"title":"Chapter 9 — quick check"}</script></div>
-<hr>
-</section>
-<section id="where-this-fits-whats-next" class="level2">
-<h2 class="anchored" data-anchor-id="where-this-fits-whats-next">Where this fits / what’s next</h2>
-<p>You can now read the classes that libraries hand you — construct one, read its attributes, call its methods — and write a small class of your own to keep data and behaviour together. Next chapter steps back to a skill that makes all of this readable to the next person (including future you): <strong>Clean, readable code</strong>.</p>
+<section id="what-you-need-what-it-costs" class="level2">
+<h2 class="anchored" data-anchor-id="what-you-need-what-it-costs">What you need &amp; what it costs</h2>
+<p>Runs in the browser via Pyodide (NumPy + Matplotlib are built in) — zero install, <strong>₹0</strong>.</p>
 
 
-<script type="pyodide-data">
-eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIl19fQ==
-</script>
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTYiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl82ID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgLy8gRGVmYXVsdCBleGVyY2lzZSBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKFxuICAgIHtcbiAgICAgIGlkOiBcInB5b2RpZGUtNi1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IocHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF9weW9kaWRlX3ZhbHVlXzYgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzYsIHt9KTtcbl9weW9kaWRlX2ZlZWRiYWNrXzYgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBQeW9kaWRlR3JhZGVyKF9weW9kaWRlX3ZhbHVlXzYuZXZhbHVhdG9yKTtcbiAgY29uc3QgZmVlZGJhY2sgPSBhd2FpdCBncmFkZXIuZ3JhZGVFeGVyY2lzZSgpO1xuICBpZiAoIWZlZWRiYWNrKSByZXR1cm4gZW1wdHlGZWVkYmFjaztcbiAgcmV0dXJuIGZlZWRiYWNrO1xufVxuIn0seyJjZWxsTmFtZSI6InB5b2RpZGUtNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3B5b2RpZGVfZWRpdG9yXzQgPSB7XG4gIGNvbnN0IHsgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwicHlvZGlkZS00LWNvbnRlbnRzXCIsXG4gICAgICBlbnZpcjogYGV4ZXJjaXNlLWVudi0ke2Jsb2NrLmF0dHIuZXhlcmNpc2V9YCxcbiAgICAgIGVycm9yOiBmYWxzZSxcbiAgICAgIGNhcHRpb246ICdFeGVyY2lzZScsXG4gICAgfSxcbiAgICBibG9jay5hdHRyXG4gICk7XG5cbiAgY29uc3QgZWRpdG9yID0gbmV3IFB5b2RpZGVFeGVyY2lzZUVkaXRvcihweW9kaWRlT2pzLnB5b2RpZGVQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG52aWV3b2YgX3B5b2RpZGVfdmFsdWVfNCA9IHB5b2RpZGVPanMucHJvY2VzcyhfcHlvZGlkZV9lZGl0b3JfNCwge30pO1xuX3B5b2RpZGVfZmVlZGJhY2tfNCA9IHtcbiAgY29uc3QgeyBQeW9kaWRlR3JhZGVyIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBlbXB0eUZlZWRiYWNrID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7XG5cbiAgY29uc3QgZ3JhZGVyID0gbmV3IFB5b2RpZGVHcmFkZXIoX3B5b2RpZGVfdmFsdWVfNC5ldmFsdWF0b3IpO1xuICBjb25zdCBmZWVkYmFjayA9IGF3YWl0IGdyYWRlci5ncmFkZUV4ZXJjaXNlKCk7XG4gIGlmICghZmVlZGJhY2spIHJldHVybiBlbXB0eUZlZWRiYWNrO1xuICByZXR1cm4gZmVlZGJhY2s7XG59XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMiA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8yID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfcHlvZGlkZV9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInB5b2RpZGUtMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGBweW9kaWRlLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgUHlvZGlkZUV4ZXJjaXNlRWRpdG9yKFxuICAgIHB5b2RpZGVPanMucHlvZGlkZVByb21pc2UsXG4gICAgYmxvY2suY29kZSxcbiAgICBvcHRpb25zXG4gICk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fcHlvZGlkZV92YWx1ZV8xID0gcHlvZGlkZU9qcy5wcm9jZXNzKF9weW9kaWRlX2VkaXRvcl8xLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoicHlvZGlkZS1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoicHlvZGlkZU9qcyA9IHtcbiAgY29uc3Qge1xuICAgIFB5b2RpZGVFdmFsdWF0b3IsXG4gICAgUHlvZGlkZUVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFB5dGhvbixcbiAgICBzdGFydFB5b2RpZGVXb3JrZXIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aCxcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIFB5b2RpZGUgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgbGV0IHB5b2RpZGVQcm9taXNlID0gKGFzeW5jICgpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIFB5b2RpZGVgO1xuICAgIGNvbnN0IHB5b2RpZGUgPSBhd2FpdCBzdGFydFB5b2RpZGVXb3JrZXIoZGF0YS5vcHRpb25zKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogbWljcm9waXBgO1xuICAgIGF3YWl0IHB5b2RpZGUubG9hZFBhY2thZ2UoXCJtaWNyb3BpcFwiKTtcbiAgICBjb25zdCBtaWNyb3BpcCA9IGF3YWl0IHB5b2RpZGUucHlpbXBvcnQoXCJtaWNyb3BpcFwiKTtcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiBtaWNyb3BpcC5pbnN0YWxsKHBrZyk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG4gICAgYXdhaXQgbWljcm9waXAuZGVzdHJveSgpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIHRyeSB7XG4gICAgICAgICAgYXdhaXQgcHlvZGlkZS5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICAgIGlmIChlLmVycm5vICE9PSAyMCkge1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHB5b2RpZGUuX21vZHVsZS5VVEY4VG9TdHJpbmcoZXJyb3JUZXh0UHRyKTtcbiAgICAgICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgcHlvZGlkZS5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBpZiAoZS5uYW1lICE9PSBcIkVycm5vRXJyb3JcIikgdGhyb3cgZTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0UHRyID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLl9zdHJlcnJvcihlLmVycm5vKTtcbiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3IgJHtlLmVycm5vfSBcIiR7ZXJyb3JUZXh0fVwiLmApO1xuICAgICAgfVxuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBQeW9kaWRlIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFB5dGhvbihweW9kaWRlKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiBweW9kaWRlO1xuICB9KSgpLmNhdGNoKChlcnIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnN0eWxlLmNvbG9yID0gXCJ2YXIoLS1leGVyY2lzZS1lZGl0b3ItaGwtZXIsICNBRDAwMDApXCI7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGVyci5tZXNzYWdlO1xuICAgIC8vaW5kaWNhdG9yQ29udGFpbmVyLnF1ZXJ5U2VsZWN0b3IoXCIuc3Bpbm5lci1ncm93XCIpLmNsYXNzTGlzdC5hZGQoXCJkLW5vbmVcIik7XG4gICAgdGhyb3cgZXJyO1xuICB9KTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHB5b2RpZGVQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBQeW9kaWRlRXZhbHVhdG9yKHB5b2RpZGUsIGNvbnRleHQpO1xuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHB5b2RpZGVQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICAgIHByb2Nlc3MsXG4gIH07XG59XG4ifV19
-</script>
-<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
-<div id="exercise-loading-status" class="d-flex gap-2">
-
-</div>
-<div class="spinner-grow spinner-grow-sm">
-
-</div>
-</div>
-<script type="vfs-file">
-WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
-</script>
 </section>
 
 </main> <!-- /main -->
@@ -1376,17 +1185,6 @@ WyIuLi8uLi9saWIvZ3JhZGVyLnB5Il0=
 })();
 </script>
 
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W119
-</script>
-<script type="module">
-if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../modules/01-python";
-window._ojs.paths.runtimeToRoot = "../..";
-window._ojs.paths.docToRoot = "../..";
-window._ojs.selfContained = false;
-window._ojs.runtime.interpretFromScriptTags();
-</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

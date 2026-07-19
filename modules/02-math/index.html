@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-d1edf84a64728ea91e0e795a7d107e27.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-0295d7def570ed93935d5c51c0fbd77e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-6c8ffe6be7f234de21e3737e7339ac08.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-eba7fd75e8de8fb3b3cb5a14747172b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.js"></script>
 <link href="../../site_libs/quarto-contrib/larnix-quiz-1.0.0/larnix-quiz.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -261,6 +261,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../curriculum.html"> 
+<span class="menu-text">Curriculum</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="../../modules/00-orientation/ch01-train-your-first-model.html" aria-current="page"> 
 <span class="menu-text">Start learning</span></a>
   </li>  
@@ -350,6 +354,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/00-orientation/ch06-how-this-school-works.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch6 — How this school works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/00-orientation/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Set up &amp; run</span></a>
   </div>
 </li>
       </ul>
@@ -445,6 +455,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/01-python/ch14-notebooks-ide-colab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Notebooks, the IDE &amp; Colab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/01-python/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — Data-cleaning notebook</span></a>
   </div>
 </li>
       </ul>
@@ -554,6 +570,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Ch16 — The math of one neuron</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/02-math/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — The math of one neuron</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -647,6 +669,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../../modules/03-data/ch14-messy-real-world-data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ch14 — Messy real-world data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../modules/03-data/capstone.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Capstone — End-to-end EDA</span></a>
   </div>
 </li>
       </ul>
@@ -762,11 +790,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="module-quiz" class="level2">
 <h2 class="anchored" data-anchor-id="module-quiz">Module quiz</h2>
 <p>When you’ve finished the chapters, test the whole module. Your score is saved in your browser.</p>
-<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-module-quiz","questions":[{"answer":"1","explanation":"A vector is an ordered list of numbers — coordinates of a point, or an arrow from the origin (Ch2).","id":"vector-as-point","options":["A single number","A list of numbers that names a point (or an arrow) in space","A square grid of numbers"],"prompt":"What is a vector, geometrically?"},{"answer":"1","explanation":"A matrix is a transformation: multiply a vector by it and the vector is rotated, scaled, or sheared (Ch3).","id":"matrix-transforms","options":["A way to store text","A transformation that moves and reshapes vectors","A single probability"],"prompt":"In this module, a matrix is best understood as…"},{"answer":"0","explanation":"The dot product is large and positive for aligned vectors, near zero for perpendicular ones, negative for opposing ones — a similarity score (Ch5).","id":"dot-product-similarity","options":["Large and positive","Near zero","Always one"],"prompt":"Two vectors point in nearly the same direction. Their dot product is…"},{"answer":"1","explanation":"Rows of the matrix dot the vector; a (2×3) matrix times a (3,) vector yields a (2,) vector (Ch4, Ch15).","id":"matmul-shape","options":["(3,)","(2,)","(2, 3)"],"prompt":"Multiplying a (2×3) matrix by a length-3 vector gives a result of shape…"},{"answer":"1","explanation":"The derivative is the slope: the rate at which the output responds to a small change in the input (Ch6).","id":"derivative-sensitivity","options":["The total area under a curve","How much the output changes when you nudge the input — its sensitivity","The average of two numbers"],"prompt":"A derivative measures…"},{"answer":"1","explanation":"The gradient points uphill (steepest increase); learning steps in the opposite direction to reduce the loss (Ch7).","id":"gradient-direction","options":["Steepest decrease of the loss","Steepest increase of the loss","No particular direction"],"prompt":"The gradient of a loss points in the direction of…"},{"answer":"1","explanation":"For nested functions, multiply the derivative of each link: dL/dx = dL/du · du/dx (Ch8).","id":"chain-rule","options":["Add two derivatives together","Find the derivative through a composition by multiplying the links","Avoid derivatives entirely"],"prompt":"The chain rule lets you…"},{"answer":"1","explanation":"Variance is the mean of the squared deviations from the mean; its square root is the standard deviation (Ch11).","id":"variance-meaning","options":["The largest minus the smallest value","The average squared distance of the values from their mean","How many values are positive"],"prompt":"Variance measures…"},{"answer":"1","explanation":"When prevalence is low, false positives from the large healthy group outnumber true positives — Bayes with the base rate (Ch12).","id":"bayes-base-rate","options":["Because the test is broken","Because the disease is rare, so most positives are false positives (the base rate matters)","Because positive always means negative"],"prompt":"A test for a rare disease comes back positive. Why might you still probably be healthy?"},{"answer":"1","explanation":"Correlation measures co-movement, not cause; a confounding variable can drive both (Ch13).","id":"correlation-causation","options":["Ice cream causes drownings","A confounder — summer heat — drives both; correlation is not causation","Drownings cause ice-cream sales"],"prompt":"Ice-cream sales and drownings rise together. The best explanation is…"},{"answer":"1","explanation":"Standard error = std / sqrt(n), so larger samples give a steadier, less uncertain estimate (Ch14).","id":"standard-error","options":["It grows with the sample","It shrinks — standard error is std / sqrt(n)","It stays the same"],"prompt":"How does the uncertainty of a sample mean (its standard error) change as the sample grows?"},{"answer":"0","explanation":"Multiply the links: dL/da = 2(a - y), da/dz = a(1 - a), dz/dw_i = x_i — verified by a numeric gradient check (Ch16).","id":"neuron-backward","options":["2(a - y) · a(1 - a) · x_i — the chain rule, link by link","Always equal to the input x_i","The loss divided by the weight"],"prompt":"For one neuron with squared-error loss and a sigmoid, the gradient of the loss with respect to a weight is…"}],"title":"M2 — module quiz"}</script></div>
+<div class="larnix-quiz" data-larnix-quiz=""><script type="application/json" class="larnix-quiz-data">{"id":"m2-module-quiz","questions":[{"answer":1,"explanation":"A vector of numbers names a point in space, so listeners become points and nearby points mean similar habits (Ch2).","id":"listeners-as-points","options":["Nothing — vectors only describe physical arrows like wind or force","Dana and Eli sit at nearby points in the same taste space, so their listening habits are similar","The two lists can't be compared until a matrix transforms them"],"prompt":"A music app stores each listener as [hours of pop, hours of jazz]. Dana is [8, 1] and Eli is [7, 2]. Read geometrically, what does that say?"},{"answer":0,"explanation":"[[2, 0], [0, 1]] sends [x, y] to [2x, y] — the horizontal stretch; [[1, 0], [0, 2]] would stretch y instead (Ch3).","id":"pick-the-stretch-matrix","options":["[[2, 0], [0, 1]]","[[1, 0], [0, 2]]","[[2, 2], [2, 2]]"],"prompt":"An image tool needs to double every point's x-coordinate and leave y alone. Which matrix does the job?"},{"answer":0,"explanation":"amir·bina = 12 beats amir·chen = 5 and bina·chen = 2 — the biggest dot product marks the most-aligned pair (Ch5).","id":"pick-the-similar-pair","options":["amir and bina","amir and chen","bina and chen"],"prompt":"Taste vectors: amir = [4, 0, 1], bina = [3, 1, 0], chen = [0, 2, 5]. Going by dot products, which pair shares the most taste?"},{"answer":2,"explanation":"Each matrix dots its rows with the incoming vector: A @ x is (2,), then B @ that is (4,) — the shape rule applied twice (Ch4, Ch15).","id":"chained-layer-shapes","options":["(2,)","(3,)","(4,)"],"prompt":"A length-3 input x passes through matrix A of shape (2, 3), and that result passes through matrix B of shape (4, 2). What shape is B @ (A @ x)?"},{"answer":1,"explanation":"The derivative is rise over run: 0.03 / 0.01 = 3, the output change per unit of input change (Ch6).","id":"read-a-loss-nudge","options":["0.03 — the size of the loss change","3 — the loss moves about 3 units per unit of weight (rise 0.03 over run 0.01)","0 — the loss barely moved"],"prompt":"Nudging a model's weight from 2.00 to 2.01 moves the loss from 5.00 to 5.03. The derivative of the loss with respect to that weight is roughly…"},{"answer":0,"explanation":"The update w − lr · grad steps against the gradient's sign; a negative gradient means downhill lies at larger w (Ch7).","id":"negative-gradient-step","options":["Increases it — the step is w − lr · (−4), and subtracting a negative moves the weight up","Decreases it — gradient descent always shrinks weights","Leaves it alone — only positive gradients trigger updates"],"prompt":"Partway through training, the gradient of the loss with respect to one weight is −4. What does a gradient-descent step do to that weight?"},{"answer":2,"explanation":"The chain rule multiplies the slope of every link in the composition: 2 · 3 · 0.5 = 3 (Ch8).","id":"three-link-chain","options":["5.5 — add the slopes","0.5 — only the last link matters","3 — multiply the links: 2 × 3 × 0.5"],"prompt":"A loss depends on a weight through three chained steps whose slopes are 2, 3, and 0.5. How sensitive is the loss to that weight?"},{"answer":1,"explanation":"Variance averages the squared deviations from the mean, so B's ±10 swings dwarf A's ±1 despite the identical centre (Ch11).","id":"two-thermometers","options":["Nothing — equal means make the datasets equivalent","B's variance is far larger (about 66.7 vs about 0.67): same centre, much wider spread","A's variance is larger because its values are closer together"],"prompt":"Two thermometers both average 20°. A's readings are [19, 20, 21]; B's are [10, 20, 30]. What does variance add to the story the mean misses?"},{"answer":1,"explanation":"Bayes with the base rate: true flags 0.01 × 0.99 = 0.0099, false flags 0.99 × 0.05 = 0.0495, so 0.0099 / 0.0594 ≈ 17% (Ch12).","id":"spam-flag-base-rate","options":["About 99% — that's the filter's catch rate","About 17% — false flags from the huge legitimate pile outnumber the true ones","About 5% — that's the false-positive rate"],"prompt":"A spam filter catches 99% of spam but wrongly flags 5% of legitimate mail, and only 1% of an inbox is spam. A message gets flagged. Roughly what is the chance it's really spam?"},{"answer":0,"explanation":"Correlation measures co-movement only; a third variable (engagement) can drive both, so acting on it as causal can fail (Ch13).","id":"dark-mode-workouts","options":["A likely confounder — highly engaged users both customize settings and work out more, so the correlation doesn't show dark mode causes workouts","Nothing — a strong correlation is sufficient grounds to act","The correlation must be negative for the plan to work"],"prompt":"Users who enable a fitness app's dark mode also finish more workouts, so the team plans to auto-enable dark mode to boost workouts. What's the flaw?"},{"answer":2,"explanation":"Standard error is std / sqrt(n): to halve it you must double sqrt(n), which means quadrupling n — 100 → 400 (Ch14).","id":"halve-the-standard-error","options":["About 200 — double the sample halves the error","About 150 — a modest bump is enough","About 400 — halving the error takes four times the sample, because of the sqrt(n) in std / sqrt(n)"],"prompt":"A survey of 100 people gives a standard error of 2.0 for the mean. Roughly how many people would you need to bring it down to 1.0?"},{"answer":1,"explanation":"With a = 0.9, y = 0: 2(a − y) = 1.8 and a(1 − a) = 0.09, both positive, times a positive x₁ gives a positive gradient — so the step w − lr · grad lowers w₁, pushing the output toward 0 (Ch16, Ch7).","id":"neuron-weight-update","options":["Increases it — a bigger weighted sum always lowers the loss","Decreases it — the gradient 2(a − y) · a(1 − a) · x₁ works out positive, and descent steps against it","Nothing — the gradient is zero whenever a is between 0 and 1"],"prompt":"A neuron outputs a = 0.9 for an example labeled y = 0, and the input x₁ on weight w₁ is positive. What does one gradient-descent step do to w₁?"}],"title":"M2 — module quiz"}</script></div>
 </section>
 <section id="capstone" class="level2">
 <h2 class="anchored" data-anchor-id="capstone">Capstone</h2>
-<p>Finish with the module project: <a href="capstone.md"><strong>The math of one neuron</strong></a> — implement a neuron’s forward pass and its gradient by hand in NumPy, then verify your analytic gradient against a numeric finite-difference estimate and report the maximum error.</p>
+<p>Finish with the module project: <a href="../../modules/02-math/capstone.html"><strong>The math of one neuron</strong></a> — implement a neuron’s forward pass and its gradient by hand in NumPy, then verify your analytic gradient against a numeric finite-difference estimate and report the maximum error.</p>
 
 
 </section>
@@ -930,6 +958,222 @@ ul.task-list li input[type="checkbox"] {
       if (patch() || ++tries >= MAX_TRIES) clearInterval(iv);
     }, POLL_MS);
   }
+})();
+</script>
+
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
 })();
 </script>
 
