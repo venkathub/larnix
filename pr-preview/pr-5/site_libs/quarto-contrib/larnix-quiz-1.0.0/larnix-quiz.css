@@ -1,0 +1,82 @@
+/* Larnix quiz engine styles. Uses theme-neutral colours that read on both the
+   light and dark themes. */
+
+.larnix-quiz {
+  margin: 1.5rem 0;
+}
+
+.larnix-quiz-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.larnix-quiz-q {
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem 0;
+}
+
+.larnix-quiz-prompt {
+  font-weight: 600;
+  font-size: 1rem;
+  width: auto;
+  padding: 0 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.larnix-quiz-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+.larnix-quiz-option input {
+  margin-top: 0.3rem;
+}
+
+.larnix-quiz-q.is-correct {
+  border-color: #16a34a;
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.larnix-quiz-q.is-incorrect {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.07);
+}
+
+.larnix-quiz-feedback {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.larnix-quiz-submit {
+  border: 1px solid #0b6e6e;
+  background: #0b6e6e;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.larnix-quiz-submit:hover {
+  filter: brightness(1.08);
+}
+
+.larnix-quiz-score {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+.larnix-quiz-prior {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.larnix-quiz-error {
+  color: #b91c1c;
+}
