@@ -40,7 +40,11 @@
      match-grader-to-type). *Rejected:* seeded-everywhere (GPU nondeterminism — cuDNN kernels,
      atomics, uncontrolled Colab driver/image drift — makes bit-exactness a lie; would flake);
      property-everywhere (throws away the browser tier's genuine determinism, the clearest
-     beginner feedback).
+     beginner feedback). *Implementation note (2026-07-19):* shipped in `lib/grader.py` as
+     check-**builders** `between`/`decreased`/`changed`/`grad_check` that return records
+     consumed by the existing `run_tests` (one pass/fail UX across both modes, mixable with
+     classic tuples) rather than standalone `assert_*` functions; seeded-mode conventions
+     documented in `lib/README.md`; 28 grader unit tests in CPython.
   3. **P2-D8 = A — colab companion notebooks are generated from the chapter `.qmd`.** Extend the
      twin pipeline (`make_colab.py`/`make_twin.py` sibling): tagged cells → companion `.ipynb`
      with standard header, pinned-setup cell, **embedded grader-bootstrap** (fetches
