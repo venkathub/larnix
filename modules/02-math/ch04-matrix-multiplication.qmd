@@ -11,7 +11,7 @@ learning_objectives:
   - "Explain why the order of two transformations can change the result"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -358,7 +358,9 @@ the other order land points differently, which is what "order matters" means.
 ## Where this fits / what's next
 
 You can now read a matrix product two ways: mechanically, as rows dotted with
-columns, and meaningfully, as one transformation followed by another. That dot
+columns, and meaningfully, as one transformation followed by another. This is the
+Ch16 neuron scaled up: running a whole layer of neurons on an input is one matrix
+multiply, each output entry a row of weights dotted with `x`. That dot
 product at the heart of every entry is about to get its own spotlight. Next we look
 at **dot products & similarity** (Ch5) — the same multiply-and-add, used to measure
 how alike two vectors are.

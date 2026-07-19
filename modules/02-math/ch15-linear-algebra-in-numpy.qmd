@@ -12,7 +12,7 @@ learning_objectives:
   - "Transpose with `.T` and apply a matrix to a vector"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -392,6 +392,8 @@ product flips the order of the factors. This identity is why you'll often see
 
 You've moved from pictures to running code: arrays for vectors and matrices,
 `.shape` to read them, `@` for dot products and matrix multiplies, and `.T` to flip
-rows and columns. These are the exact operations a model runs at every layer. Next
-you'll assemble them into a single artificial **neuron** — its forward pass written
+rows and columns. These are the exact operations a model runs at every layer — and
+they are the language the Ch16 neuron is written in: its forward pass is one line of
+this NumPy, `sigmoid(w @ x + b)`. Next
+you'll assemble them into a single artificial **neuron** — its forward pass
 written in the NumPy you practiced here.

@@ -11,7 +11,7 @@ learning_objectives:
   - "Show why a positive test for a rare disease is often a false alarm"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -342,7 +342,10 @@ real" — driven entirely by how common the disease is.
 ## Where this fits / what's next
 
 You've met the one rule that turns evidence into an updated belief — and seen why the
-base rate quietly controls the answer. This way of thinking, prior to posterior,
+base rate quietly controls the answer. Bayes is not a gear inside the Ch16 neuron —
+it is how you read a classifier like it honestly: a "0.9" output is only worth
+believing once you've weighed it against the base rate, as with the medical test.
+This way of thinking, prior to posterior,
 underpins spam filters, medical screening, and the probabilistic models later in the
 course. Next we'll keep building the statistical toolkit you'll carry into the
 machine-learning modules.

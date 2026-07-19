@@ -12,7 +12,7 @@ learning_objectives:
   - "Estimate the slope of a curve at a point with a small numeric (central-difference) step"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -270,7 +270,10 @@ def numeric_derivative(f, x, h=1e-5):
 
 The two sample points are `x - h` and `x + h`, a run of `2h` apart. For the line
 `2x + 1` the rise across that run is `2 * (2h)`, so the division returns `2.0`
-regardless of `h`. A constant function never rises, so its slope is `0.0`.
+regardless of `h` — *in exact arithmetic*. In floating point you'll actually see
+something like `1.9999999999242843`: equal to 2 up to float rounding, which is
+exactly why the grader compares your answer with a tolerance instead of demanding
+`== 2.0`. A constant function never rises, so its slope is `0.0`.
 </details>
 
 ### Exercise 3 — Stretch (optional, ≈8 min) 🔴
@@ -320,7 +323,9 @@ way it is on a straight line.
 
 You can now read a derivative two ways: as **sensitivity** (how hard the output reacts
 to a nudge) and as a **local slope** (rise over run, zoomed in). That single number
-tells a model how a change to one input would move its output. Next, in **Ch7 —
+tells a model how a change to one input would move its output. In the Ch16 neuron,
+this is precisely how learning starts: the derivative tells you how much the loss
+reacts when you nudge one weight. Next, in **Ch7 —
 Gradients**, we collect a derivative *for every input at once* into one vector, the
 **gradient**, that points in the direction of steepest change — the compass a model
 follows downhill when it learns.

@@ -12,7 +12,7 @@ learning_objectives:
   - "See why this multiplying-of-local-slopes is the engine of backpropagation"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -344,7 +344,9 @@ product really is the composition's sensitivity.
 You can now differentiate a **composition** by multiplying local slopes — the chain
 rule, `(f ∘ g)'(x) = f'(g(x)) * g'(x)`. Stacked across many steps, that single
 multiply *is* backpropagation: a nudge ripples through composed functions, scaled by
-each step's slope, so a network can trace its error back to every weight. That closes
+each step's slope, so a network can trace its error back to every weight. It is also
+the engine of the Ch16 neuron's backward pass: `dL/dw_i = dL/da · da/dz · dz/dw_i` is
+this chapter's rule, applied three links deep. That closes
 the calculus thread of this module. Next we switch gears to the third pillar —
 **Ch9 — Probability basics** — where we start reasoning about uncertain data: chance,
 events, and how likely things are.

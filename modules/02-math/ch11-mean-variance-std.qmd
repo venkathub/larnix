@@ -11,7 +11,7 @@ learning_objectives:
   - "Take the standard deviation as the square root of variance, putting spread back in the data's own units"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -342,6 +342,8 @@ centre of `4.0`. A larger standard deviation would mean the scores are more scat
 You can now boil any list of numbers down to three: the **mean** for its centre, the
 **variance** for how spread out it is, and the **standard deviation** for that spread in
 readable units. These show up everywhere in machine learning — for scaling features, spotting
-outliers, and describing how confident a model is. Next, in **Ch12 — Bayes, intuitively**, we
+outliers, and describing how confident a model is. Around the Ch16 neuron they play a
+supporting role: squared-error loss is built from the same squared-deviation idea as
+variance, and mean-and-spread is how you normalise the data a neuron trains on. Next, in **Ch12 — Bayes, intuitively**, we
 turn from summarising data to *updating beliefs*: how a new piece of evidence should change
 what you already thought was likely.

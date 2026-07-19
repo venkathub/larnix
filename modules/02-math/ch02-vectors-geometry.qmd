@@ -11,7 +11,7 @@ learning_objectives:
   - "Compute the length (magnitude) of a vector with sqrt(x*x + y*y)"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -333,6 +333,8 @@ its length by `k`.
 ## Where this fits / what's next
 
 A vector holds one piece of data as a point and an arrow, and you can add, scale, and
-measure it. Next we step up from a single arrow to whole **grids of numbers** —
+measure it. This is also your first brick of the Ch16 neuron: the inputs `x` it reads
+are exactly one of these vectors — a list of numbers treated as a single arrow.
+Next we step up from a single arrow to whole **grids of numbers** —
 **matrices as transformations**: how a table of numbers can move, rotate, and reshape
 the vectors from this chapter.

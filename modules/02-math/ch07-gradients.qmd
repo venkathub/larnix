@@ -11,7 +11,7 @@ learning_objectives:
   - "Trace why repeated downhill steps on f(x) = x^2 walk x toward its minimum at 0"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -360,7 +360,9 @@ settling. That is overshooting: the step size matters as much as the direction.
 ## Where this fits / what's next
 
 You now have the engine of learning: read the gradient, step the opposite way,
-repeat. On a one-input bowl that is the whole story. Real models, though, are deep
+repeat. For the Ch16 neuron, the gradient of the loss with respect to `w` and `b` is
+exactly the update direction — it says which way to nudge every weight at once to be
+less wrong. On a one-input bowl that is the whole story. Real models, though, are deep
 stacks of functions, and to get the gradient of the error with respect to a buried
 weight you need to chain slopes together through every layer. Next we meet exactly
 that tool — **the chain rule** (Ch8) — which turns a single derivative into the

@@ -11,7 +11,7 @@ learning_objectives:
   - "See a distribution by drawing many samples with a fixed seed and plotting a histogram"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -341,7 +341,9 @@ move, a different underlying shape — which is the point of a distribution.
 
 ## Where this fits / what's next
 
-You can now name the shape of randomness and reveal it by sampling. But a picture is
+You can now name the shape of randomness and reveal it by sampling. Distributions
+don't sit inside the Ch16 neuron itself — they describe the world around it: the
+data it trains on and the noise in that data both have shapes like these. But a picture is
 hard to compare or compute with — you want a few **numbers** that summarise a
 distribution: where its centre sits and how spread out it is. Next we meet exactly
 those — **mean, variance & standard deviation** (Ch11) — the handful of statistics

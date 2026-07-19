@@ -11,7 +11,7 @@ learning_objectives:
   - "Recognise the identity matrix as the move that leaves every point where it is"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -314,6 +314,8 @@ mirror.
 ## Where this fits / what's next
 
 You now see a matrix as a move: a recipe that takes a point and returns a moved point,
-stretching or flipping space. Next we ask what happens when you do **two** moves in a
+stretching or flipping space. That is another brick of the Ch16 neuron: each row of a
+matrix holds one neuron's weights, so a whole layer of neurons is one matrix acting on
+the input vector. Next we ask what happens when you do **two** moves in a
 row — stretch *then* rotate — which leads to **matrix multiplication, intuitively**
 (Ch4): combining two transformations into one.

@@ -11,7 +11,7 @@ learning_objectives:
   - "Spot a confounding variable behind a misleading correlation"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 14
 resources:
   - ../../lib/grader.py
@@ -353,4 +353,6 @@ You can now read an r as strength-and-direction, and you know its limit: a
 correlation is a clue about a relationship, never proof that one thing causes
 another. That caution is the backbone of honest data analysis — and it sets up the
 modelling work ahead, where we *fit* lines to data and have to keep asking what the
-numbers really mean. Next we turn correlation into a line you can draw and use.
+numbers really mean. The same caution applies to the Ch16 neuron: what it learns from
+data are correlations, so a trained model's patterns are clues about the world, not
+proof of cause. Next we turn correlation into a line you can draw and use.

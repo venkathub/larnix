@@ -11,7 +11,7 @@ learning_objectives:
   - "Use a dot product to measure similarity, like matching two people's movie tastes"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -354,6 +354,8 @@ the products pile up.
 
 You can now turn two vectors into a single similarity score: multiply the pairs, add
 them up, and read the sign. That score sits at the heart of recommenders, search,
-and every entry of a matrix product. Next we switch from linear algebra to calculus
+and every entry of a matrix product — and it *is* the core computation of the Ch16
+neuron, whose weighted sum `w · x` is this exact multiply-and-add between the
+weights and the input. Next we switch from linear algebra to calculus
 and meet **derivatives = sensitivity** (Ch6) — how much an output changes when you
 nudge an input, the idea that lets a model learn.

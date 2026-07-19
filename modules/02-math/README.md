@@ -21,14 +21,22 @@ By the end of M2 you can:
 
 ## Running example
 
-*"Assemble one neuron, piece by piece."* Each chapter adds a Lego brick that the
-final chapter snaps together. Recurring concrete examples: **movie taste as
-vectors** (similarity) and **"predict the tip from the bill"** (derivatives and
-gradients). All visuals via Matplotlib in the browser.
+*"Assemble one neuron, piece by piece."* The linear-algebra and calculus chapters
+(Ch2–Ch8, plus Ch15's NumPy) each build a part the final chapter snaps together —
+vectors, matrices, dot products, derivatives, gradients, the chain rule. The
+probability and statistics chapters (Ch9–Ch14) build a different kind of brick:
+the skills to read the neuron's outputs and its data honestly (outputs as
+probabilities, summary statistics, Bayes, correlation's limits, sampling
+uncertainty). Two concrete examples recur where they fit: **movie taste as
+vectors** in the similarity chapters (Ch2, Ch5) and **"predict the tip from the
+bill"** in Ch1 and the derivatives chapter (Ch6). All visuals via Matplotlib in
+the browser.
 
 ## Chapters
 
 🟢→🟡 · `browser` · `stable`. (Authored across P1; Ch10+Ch11 may merge — P1-D5.)
+Chapter tiers are 🟢/🟡 only; the 🔴 marker you'll meet inside chapters tags
+individual **stretch exercises**, not whole chapters.
 
 | # | Chapter | Tier |
 |---|---------|------|
@@ -51,7 +59,7 @@ gradients). All visuals via Matplotlib in the browser.
 
 ## Assessment
 
-- Per-chapter **quick check** (`quiz.yml`, 2–3 MCQ).
+- Per-chapter **quick check** (`quiz.yml`, 4 MCQ).
 - Cumulative **module quiz** (`module-quiz.yml`, ~8–12 MCQ) on the module landing.
 - **Capstone:** the math of one neuron — forward + backward by hand, verified
   against a numeric gradient — see [`capstone.md`](capstone.md).
