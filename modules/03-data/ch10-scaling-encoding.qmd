@@ -11,7 +11,7 @@ learning_objectives:
   - "One-hot encode a category with pd.get_dummies so a model can read it as numbers"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -408,5 +408,6 @@ You've previewed the two everyday moves of feature preparation: **scaling** nume
 columns (min-max or z-score) so none wins on size alone, and **one-hot encoding** a
 category so a model can read it as numbers. These are the bridge between a clean
 table and a model's input. The actual modelling — fitting a line or a classifier to
-prepared features and measuring how well it does — is where the next module picks
-up.
+prepared features and measuring how well it does — waits for Module 4. Before then,
+the module turns to how this work is organised: Chapter 11 weighs notebooks against
+scripts, so the analyses you write are as tidy as the tables they run on.

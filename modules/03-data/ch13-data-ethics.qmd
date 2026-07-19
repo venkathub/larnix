@@ -11,7 +11,7 @@ learning_objectives:
   - "Avoid storing or sharing personal data carelessly"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -381,5 +381,6 @@ You now have a one-minute habit to run on any dataset before you trust it: check
 provenance and license, count who is in it and who is thin, guard anyone's personal
 details, and write a three-line data note. This is a *preview* — Module 16 returns
 to responsible AI in depth, covering fairness metrics, dataset documentation, and
-model cards. For now, you close Module 3 able to not only read a table, but judge
-whether it deserves your trust.
+model cards. One chapter of Module 3 remains: Chapter 14 takes on messy, real-world
+data — the kind that arrives with mixed types, stray whitespace, and duplicates —
+before the capstone asks you to put the whole module to work.

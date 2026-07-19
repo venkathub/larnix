@@ -1,4 +1,6 @@
-# M3 Capstone — End-to-end EDA
+---
+title: "M3 Capstone — End-to-end EDA"
+---
 
 > Finalized with the M3 build (P1 §6.E). Open-ended and **rubric-graded** — you
 > bring your own dataset, so there is no single "right" answer to auto-check. Runs
@@ -11,6 +13,19 @@ Run a full exploratory data analysis on a **new public dataset** (a different on
 from the Palmer Penguins you used through the module — to test transfer): load it,
 clean it, answer **at least three questions** with plots **and** numbers, and write
 up your findings.
+
+Make the three questions worth asking. A question that a single method call answers
+is a *fact about the table*, not a question about the world, and it will not score
+well on **Insight**:
+
+- **Weak:** "How many rows does the dataset have?" — that is `df.shape`, a fact,
+  not a finding.
+- **Strong:** "Do heavier penguins have longer flippers, and does that differ by
+  species?" — a *relationship* you answer with a plot **and** a number, and whose
+  answer someone might actually care about.
+
+Aim for questions about relationships, group differences, or surprises — the kind
+Step 7 of the Chapter 9 recipe trains you to pose.
 
 ## Deliverables
 

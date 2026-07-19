@@ -12,7 +12,7 @@ learning_objectives:
   - "Back every claim with a number or a plot read straight from the data"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 20
 resources:
   - ../../lib/grader.py
@@ -114,8 +114,9 @@ df = load_csv("penguins")
 df.dtypes
 ```
 
-Reading the list: the four body measurements and `body_mass_g` are numeric (`float64`
-or `int64`), while `species`, `island`, and `sex` are `object` — text labels. That is
+Reading the list: the four body measurements — bill length, bill depth, flipper
+length, and body mass — are numeric (`float64` or `int64`), as is the `year` column
+(`int64`), while `species`, `island`, and `sex` are `object` — text labels. That is
 exactly what we'd expect, so nothing to fix here. The point of the step is that you
 *looked*: numeric columns are numeric, categorical columns are text. If `body_mass_g`
 had shown up as `object`, that would be a red flag to chase down before going further.
@@ -425,6 +426,7 @@ You now have a recipe you can run on any new table: size it up
 (shape, types, missing), summarise it, split it by a category, draw the pattern, and
 ask questions you can actually answer with evidence. That pass is the first thing a
 working data scientist does with a fresh dataset — and the habit of backing every claim
-with a number or a plot is what separates analysis from guesswork. This closes the data
-module; next you'll carry these tools into the modelling work, where understanding the
-data first is what keeps a model honest.
+with a number or a plot is what separates analysis from guesswork. There is more of the
+module to come: Chapter 10 looks at scaling and encoding — a first preview of how data
+gets prepared for models, where understanding the data first is what keeps a model
+honest.
