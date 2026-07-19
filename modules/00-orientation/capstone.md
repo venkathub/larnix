@@ -1,4 +1,6 @@
-# M0 Capstone — Set up & run
+---
+title: "M0 Capstone — Set up & run"
+---
 
 > The Module 0 project. It runs entirely in your browser, at **₹0**. Graded by the
 > rubric below; it must report **a number**.

@@ -1,83 +1,83 @@
 title: "M0 — module quiz"
 id: "m0-module-quiz"
 questions:
-  - id: what-is-a-model
-    prompt: "In machine learning, a model is best described as…"
+  - id: friend-hundred-percent
+    prompt: "A friend trains a classifier and celebrates: '100% accuracy — measured on the same examples it trained on!' What should you tell them?"
     options:
-      - "A spreadsheet that stores the training data"
-      - "A function learned from labelled examples that maps an input to a prediction"
-      - "The chart that displays an accuracy score"
-    answer: 1
-    explanation: "A model is the learned function; you fit it on examples, then call it to predict (Ch1)."
-  - id: test-set
-    prompt: "Why is accuracy measured on a separate test set rather than the training data?"
+      - "Perfect — the model is ready to use"
+      - "That number can't be computed on training data"
+      - "The number proves little: grade the model on held-out data it has never seen"
+    answer: 2
+    explanation: "Scoring on training data rewards memorising; only a held-out test set shows whether the model generalises (Ch1)."
+  - id: fit-vs-predict
+    prompt: "In a scikit-learn workflow, a teammate calls model.predict(X_test) and gets an error saying the model isn't ready. Which step did they skip?"
     options:
-      - "The test set is always larger than the training set"
-      - "A model can score well on examples it has seen yet fail on new ones"
-      - "scikit-learn refuses to predict on training data"
-    answer: 1
-    explanation: "Held-out data checks whether the model generalises rather than memorises (Ch1)."
-  - id: cost-of-m0-m10
-    prompt: "What does it cost to work through Modules 0–10?"
+      - "Fitting the model on the training data first"
+      - "Converting predictions to percentages"
+      - "Loading a bigger dataset"
+    answer: 0
+    explanation: "Predicting needs a trained model: fit on the training set first, then predict on new data (Ch1)."
+  - id: budget-worry
+    prompt: "Asha has a laptop, a browser, and no credit card. She wants to reach Module 8. What stops her?"
     options:
-      - "A monthly subscription"
-      - "₹0 — a browser, with free GPU tiers when needed"
-      - "One rented GPU per module"
+      - "Module 5 requires buying a GPU"
+      - "Nothing — everything through Module 10 runs in the browser or on free Colab/Kaggle tiers"
+      - "She must rent a GPU by the second from Module 3 onward"
     answer: 1
-    explanation: "Modules 0–10 run in the browser or on free Colab/Kaggle tiers (Ch2)."
-  - id: paid-fallback
-    prompt: "When a later lesson shows a paid API, what is guaranteed?"
+    explanation: "The ₹0 path covers Modules 0–10; free GPU tiers appear when needed and the only optional spend is the M11 capstone (Ch2)."
+  - id: key-wall
+    prompt: "Halfway through a later lesson, a page seems to demand a paid API key before you can continue. How should you read that?"
     options:
-      - "You must add a card to continue"
-      - "It is optional and paired with a free fallback (Ollama or a free tier)"
-      - "The lesson cannot be finished without paying"
+      - "As intended — some lessons genuinely require payment"
+      - "As a bug — every paid step here is optional and paired with a free fallback such as Ollama or a free tier"
+      - "As a sign you skipped a prerequisite chapter"
     answer: 1
-    explanation: "Paid steps are always optional with a free fallback; keys are never required to learn (Ch2)."
-  - id: rules-vs-learning
-    prompt: "What is the shift that powers modern AI?"
+    explanation: "Keys are never required to learn; if a page appears to demand one, that breaks the course's own free-fallback rule (Ch2)."
+  - id: cat-feature
+    prompt: "You must build a photo feature that finds every cat picture. Which approach uses the shift behind modern AI?"
     options:
-      - "Writing ever more detailed rules by hand"
-      - "Showing the computer examples and letting it learn the rule"
-      - "Running the same rules on faster hardware"
-    answer: 1
-    explanation: "Machine learning replaces hand-written rules with rules learned from examples (Ch3)."
-  - id: confidently-wrong
-    prompt: "Why can a trained model be 'confidently wrong'?"
+      - "Write if-then rules describing whiskers, fur, and pointy ears"
+      - "Run the hand-written rules on a faster computer"
+      - "Show a program many labelled cat / not-cat photos and let it work out the pattern"
+    answer: 2
+    explanation: "Machine learning learns the rule from labelled examples — nobody can hand-write every rule for what a cat looks like (Ch3)."
+  - id: skin-model-gap
+    prompt: "A skin-lesion model trained mostly on light-skin photos misdiagnoses darker skin — while reporting high confidence. Why does this happen?"
     options:
-      - "It always warns you when unsure"
-      - "Its behaviour is learned from data, so gaps or bias in the examples carry into the model"
-      - "Computers cannot do arithmetic reliably"
+      - "Models refuse to answer outside their training data"
+      - "Gaps in the training examples become gaps in the model, and it outputs answers with no sense of doubt"
+      - "The computer's arithmetic becomes unreliable on new inputs"
     answer: 1
-    explanation: "A model reflects its training data and outputs answers with no sense of doubt (Ch3)."
-  - id: nesting
-    prompt: "How do AI, ML, deep learning, and generative AI relate?"
+    explanation: "A model is only as good as its data, and it can be confidently wrong — biased or missing examples carry straight into its behaviour (Ch3)."
+  - id: fraud-detector-ring
+    prompt: "Your bank's fraud detector learned to flag unusual transactions from millions of labelled past transactions, but it is not a neural network. What is the innermost ring of the family tree it belongs to?"
     options:
-      - "They are four separate, unrelated fields"
-      - "GenAI ⊂ deep learning ⊂ machine learning ⊂ AI"
-      - "AI is a kind of generative AI"
-    answer: 1
-    explanation: "They nest: generative AI is a special case of deep learning, of ML, of AI (Ch4)."
-  - id: classify-vs-generate
-    prompt: "A model that writes a brand-new sentence is doing what?"
+      - "Machine learning — learned from examples, but not deep learning"
+      - "Generative AI — it produces new transactions"
+      - "Deep learning — everything learned is deep learning"
+    answer: 0
+    explanation: "It learned from data (so it's ML inside AI), but without many-layered neural networks it is neither DL nor GenAI — and it classifies rather than generates (Ch4)."
+  - id: spam-vs-chatbot
+    prompt: "Your email's spam filter and a chatbot are both 'AI'. Which pairing describes what each one produces?"
     options:
-      - "Classifying — picking a label from a fixed set"
-      - "Generating — producing new content not chosen from a list"
-      - "Nothing — models cannot produce sentences"
-    answer: 1
-    explanation: "Producing new content is generation; picking from fixed labels is classification (Ch4)."
-  - id: two-sparks
-    prompt: "Which two milestones most directly led to today's generative AI?"
+      - "Both generate new content"
+      - "The spam filter generates; the chatbot classifies"
+      - "The spam filter classifies (picks a label from fixed options); the chatbot generates (produces new text)"
+    answer: 2
+    explanation: "Spam/ham is a fixed label set — classification; writing a fresh reply is generation (Ch4)."
+  - id: hype-history
+    prompt: "A colleague says today's AI boom guarantees smooth progress from here. Which pattern from AI's history argues for more caution?"
     options:
-      - "Deep Blue (1997) and AlphaGo (2016)"
-      - "The 2012 deep-learning boom (AlexNet) and the 2017 transformer"
-      - "The Perceptron (1958) and the Turing test (1950)"
-    answer: 1
-    explanation: "AlexNet (2012) made deep learning mainstream and the transformer (2017) underlies modern language models (Ch5)."
-  - id: capstone-number
-    prompt: "What must every Larnix capstone include?"
+      - "Twice before, booms of promises ended in 'winters' when results fell short — after 1969, and again in the late 1980s when expert systems collapsed"
+      - "Progress since 1943 has been one straight climb"
+      - "AI research only began in 2012, so there is no history to learn from"
+    answer: 0
+    explanation: "The field's rhythm is hype, winter, then a breakthrough — the perceptron collapse after 1969 and the late-1980s expert-systems bust are the two winters (Ch5)."
+  - id: capstone-felt-better
+    prompt: "An M0 capstone note reads: 'I swapped in a different model and it felt more accurate.' Under the rubric, what is missing?"
     options:
-      - "At least 1000 words of writing"
-      - "A measured number — 'did you measure it?'"
-      - "A paid API call"
+      - "A longer written explanation"
+      - "The measured before-and-after accuracy numbers — 'did you measure it?'"
+      - "A paid API call to verify the result"
     answer: 1
-    explanation: "Every capstone reports a number; an unmeasured result cannot score well (Ch6)."
+    explanation: "Every Larnix capstone reports a number; 'felt more accurate' without a measured comparison cannot score above Developing (Ch6)."

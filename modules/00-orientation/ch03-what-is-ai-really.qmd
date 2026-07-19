@@ -12,7 +12,7 @@ learning_objectives:
   - "Recognise that a model is only as good as its data and can be confidently wrong"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -186,8 +186,13 @@ Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`
 
 ### Exercise 1 — Guided (≈5 min) 🟢
 
-Complete the marked line so `count_with_word` counts how many messages contain a
-given word. Replace `____`, then press **Run**.
+The counting loop is written for you. Complete the one marked line — the
+question the loop asks about each message — so `count_with_word` counts how many
+messages contain a given word. Replace `____`, then press **Run**.
+
+> 💡 You're not expected to understand the `def` and `for` syntax yet — Module 1
+> teaches it. Read the given code as "look at each message; when the answer is
+> yes, count it" and fill in only the marked line.
 
 ```{pyodide}
 #| setup: true
@@ -199,7 +204,11 @@ from lib.grader import run_tests
 #| exercise: ex_count
 def count_with_word(messages, word):
     """Count how many messages contain `word`."""
-    return sum(1 for m in messages if ____)  # TODO: is `word` inside message m?
+    count = 0
+    for m in messages:
+        if ____:  # TODO: is `word` inside the message m?
+            count = count + 1
+    return count
 
 run_tests([
     ("counts the matches", count_with_word(["win free money", "hello", "free lunch"], "free"), 2),
@@ -210,24 +219,33 @@ run_tests([
 <details><summary>If you're stuck</summary>
 
 You want the messages that *contain* the word. Python's `in` checks membership:
-`"free" in "free lunch"` is `True`.
+`"free" in "free lunch"` is `True`. So the question to ask about each message
+`m` is: `word in m`.
 </details>
 
 <details><summary>Show solution</summary>
 
 ```python
 def count_with_word(messages, word):
-    return sum(1 for m in messages if word in m)
+    count = 0
+    for m in messages:
+        if word in m:
+            count = count + 1
+    return count
 ```
 
-`word in m` is `True` when the message contains the word; summing those `True`s
-counts the matches.
+`word in m` is `True` when the message contains the word; the loop adds 1 to the
+count each time that happens.
 </details>
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `classify(message, spam_words)` — return `"spam"` if the message contains
-any spam word, otherwise `"ham"`. Complete the marked line.
+The checking loop is given: `classify(message, spam_words)` should return
+`"spam"` if the message contains any spam word, otherwise `"ham"`. Complete the
+marked line — a single quoted word.
+
+> 💡 The loop syntax is Module 1 material — copy the shape. The marked line runs
+> exactly when a spam word *was* found in the message.
 
 ```{pyodide}
 #| setup: true

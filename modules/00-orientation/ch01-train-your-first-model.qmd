@@ -10,7 +10,7 @@ learning_objectives:
   - "Read a basic accuracy number and say what it means"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-28"
+last_reviewed: "2026-07-19"
 est_minutes: 20
 # Single-source the auto-grader: quarto-live downloads this file into the Pyodide
 # VFS at startup, so chapters call run_tests() without pasting the helper (P1-D9 /
@@ -216,7 +216,12 @@ model = LogisticRegression(max_iter=200)
 ____  # TODO: train the model on X_train and y_train
 
 run_tests([
-    ("model predicts one label per test flower", len(model.predict(X_test)), len(y_test)),
+    ("the model has been trained (did you call model.fit?)",
+     hasattr(model, "classes_"), True),
+    ("the trained model names most unseen test flowers correctly",
+     hasattr(model, "classes_")
+     and float((model.predict(X_test) == y_test).mean()) > 0.7,
+     True),
 ])
 ```
 
@@ -227,7 +232,10 @@ model.fit(X_train, y_train)
 ```
 
 `fit` is the training step: it takes the inputs `X_train` and their known answers
-`y_train`. After it runs, `model.predict` works on new data.
+`y_train`. After it runs, `model.predict` works on new data. The first check
+verifies training happened at all (a fitted classifier gains a `classes_`
+attribute); the second verifies it trained on the *training* data — a correctly
+fitted model is right on well over 70% of the unseen test flowers.
 </details>
 
 ### Exercise 2 — Implement (≈10 min) 🟡
@@ -303,7 +311,7 @@ compare.
 
 ## Check yourself
 
-{{< quiz quiz.yml >}}
+{{< quiz quiz-ch01.yml >}}
 
 ---
 
