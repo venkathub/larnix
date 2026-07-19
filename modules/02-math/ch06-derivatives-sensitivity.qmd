@@ -233,7 +233,7 @@ For `(0,0)` to `(2,6)` the rise is `6` and the run is `2`, so the slope is `6 / 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now estimate a derivative at a point with the central difference. Write the body of
-`numeric_derivative(f, x, h=1e-5)` so it returns `(f(x+h) - f(x-h)) / (2h)`. We test
+`numeric_derivative(f, x, h=1e-5)` so it returns `(f(x+h) - f(x-h)) / (2h)`. You write the whole body yourself. We test
 it on **straight lines and a constant**, where the slope is exact.
 
 ```{pyodide}
@@ -246,7 +246,7 @@ from lib.grader import run_tests
 #| exercise: ex_numeric_derivative
 def numeric_derivative(f, x, h=1e-5):
     """Estimate f'(x) with a central difference: rise over run across 2h."""
-    return ____  # TODO: (f(x+h) - f(x-h)) divided by (2 * h)
+    ...  # TODO: write the body — the rise between x-h and x+h, divided by the run
 
 run_tests([
     ("slope of 2x+1 is 2", numeric_derivative(lambda x: 2 * x + 1, 5), 2.0),

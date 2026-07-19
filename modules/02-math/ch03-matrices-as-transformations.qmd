@@ -232,9 +232,10 @@ that is `[2*1 + 0*1, 0*1 + 3*1] = [2, 3]`.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-A horizontal stretch scales only the x-direction. Write `stretch_x(v, factor)` so it
-multiplies the x-component by `factor` and leaves the y-component alone — exactly what
-the diagonal matrix `[[factor, 0], [0, 1]]` would do. Complete the returned list.
+A horizontal stretch scales only the x-direction. Write the body of
+`stretch_x(v, factor)` so it multiplies the x-component by `factor` and leaves the
+y-component alone — exactly what the diagonal matrix `[[factor, 0], [0, 1]]` would do.
+You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -246,7 +247,7 @@ from lib.grader import run_tests
 #| exercise: ex_stretch
 def stretch_x(v, factor):
     """Stretch a 2-vector horizontally: scale x by factor, keep y."""
-    return ____  # TODO: [x times factor, y unchanged]
+    ...  # TODO: write the body — return a two-item list: x scaled, y unchanged
 
 run_tests([
     ("double width", stretch_x([3, 4], 2), [6, 4]),

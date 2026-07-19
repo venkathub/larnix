@@ -219,9 +219,9 @@ is `0.5`, and `3 / 6` is also `0.5` because three of the six faces are even.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `both_independent(p_a, p_b)` — the chance that two **independent** events both
-happen. For independent events you multiply their probabilities. Complete the marked
-line.
+Write the body of `both_independent(p_a, p_b)` — the chance that two **independent**
+events both happen. For independent events you multiply their probabilities. You
+write the whole body yourself — one `return` line is enough.
 
 ```{pyodide}
 #| setup: true
@@ -233,7 +233,7 @@ from lib.grader import run_tests
 #| exercise: ex_both
 def both_independent(p_a, p_b):
     """Chance that two independent events both happen."""
-    return ____  # TODO: the product of the two probabilities
+    ...  # TODO: write the body — combine the two probabilities the independent way
 
 run_tests([
     ("two heads in a row", both_independent(0.5, 0.5), 0.25),

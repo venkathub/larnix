@@ -255,9 +255,9 @@ does not move — the ball has reached flat ground.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now wire in the gradient for a specific bowl. For `f(x) = x^2` the gradient at `x`
-is `2*x`. Write `step_x_squared(x, lr)` that does **one** descent step on this bowl:
-compute the gradient `2*x`, then return `x - lr * (2 * x)`. Complete the marked
-line.
+is `2*x`. Write the body of `step_x_squared(x, lr)` so it does **one** descent step
+on this bowl: compute the gradient at `x`, then step against it with Exercise 1's
+rule. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -269,8 +269,7 @@ from lib.grader import run_tests
 #| exercise: ex_xsq
 def step_x_squared(x, lr):
     """One descent step on f(x) = x^2, whose gradient at x is 2*x."""
-    grad = ____  # TODO: the gradient of x^2 at x
-    return x - lr * grad
+    ...  # TODO: write the body — the gradient at x, then one step downhill against it
 
 run_tests([
     ("from 5, lr 0.1", step_x_squared(5, 0.1), 4.0),

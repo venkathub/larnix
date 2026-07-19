@@ -288,9 +288,10 @@ Python integer.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `matvec(M, v)` that applies matrix `M` to vector `v` and returns the result as
-a plain Python **list**. Convert both inputs with `np.array`, multiply with `@`, and
-turn the array back into a list with `.tolist()`. Complete the marked line.
+Write the body of `matvec(M, v)` so it applies matrix `M` to vector `v` and returns
+the result as a plain Python **list**. Convert both inputs with `np.array`, multiply
+with `@`, and turn the array back into a list with `.tolist()`. You write the whole
+body yourself — one `return` line is enough.
 
 ```{pyodide}
 #| setup: true
@@ -304,7 +305,7 @@ import numpy as np
 
 def matvec(M, v):
     """Apply matrix M to vector v; return a plain Python list."""
-    return ____  # TODO: (np.array(M) @ np.array(v)).tolist()
+    ...  # TODO: write the body — convert both inputs, apply M with @, hand back a list
 
 run_tests([
     ("identity keeps v", matvec([[1, 0], [0, 1]], [5, 7]), [5, 7]),

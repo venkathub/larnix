@@ -246,8 +246,9 @@ every value is the same, the mean is that value.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Now measure the spread. Write `variance(values)` — the average of the squared deviations from
-the mean. Compute the mean inside the function, then complete the marked line.
+Now measure the spread. Write the body of `variance(values)` — the average of the
+squared deviations from the mean. Three short lines: compute the mean, square each
+value's deviation `(v - m)`, and return the average of those squares.
 
 ```{pyodide}
 #| setup: true
@@ -259,9 +260,7 @@ from lib.grader import run_tests
 #| exercise: ex_variance
 def variance(values):
     """The average squared distance of the values from their mean."""
-    m = sum(values) / len(values)              # the mean
-    squared_deviations = [____ for v in values]  # TODO: square each (v - m)
-    return sum(squared_deviations) / len(values)
+    ...  # TODO: write the body — the mean, then the average of the squared deviations
 
 run_tests([
     ("variance of [2, 4, 6]", variance([2, 4, 6]), 8 / 3),
@@ -272,8 +271,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-Each value's deviation from the mean is `v - m`. Square it with `(v - m) ** 2`, so the list
-comprehension reads `[(v - m) ** 2 for v in values]`. The function then averages those squares.
+Step by step: first the mean, `m = sum(values) / len(values)` — Exercise 1's line.
+Each value's deviation from the mean is `v - m`; square it with `(v - m) ** 2`, so a
+list comprehension reads `[(v - m) ** 2 for v in values]`. Finish by averaging that
+list the same way you averaged `values`.
 </details>
 
 <details><summary>Show solution</summary>

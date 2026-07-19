@@ -253,9 +253,9 @@ blocks the signal — and a negative slope flips the sign, so `chain(-1, 4) = -4
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now use the chain rule on a real composition. For `y = (2x)²` the inner step is
-`u = 2x` (slope `2`) and the outer step is `u²` (slope `2u`), so
-`dydx = (2 * (2 * x)) * 2 = 8 * x`. Write the body of `dydx(x)`. Complete the marked
-line.
+`u = 2x` (slope `2`) and the outer step is `u²` (slope `2u`). Write the body of
+`dydx(x)` so it multiplies the outer slope by the inner slope. You write the whole
+body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -267,7 +267,7 @@ from lib.grader import run_tests
 #| exercise: ex_dydx
 def dydx(x):
     """Slope of y = (2x)^2 by the chain rule: outer slope (2u) times inner slope 2."""
-    return ____  # TODO: (2 * (2 * x)) * 2, which simplifies to 8 * x
+    ...  # TODO: write the body — outer slope at u = 2x, times the inner slope
 
 run_tests([
     ("slope at x=3", dydx(3), 24),

@@ -246,9 +246,10 @@ vectors never have a non-zero entry in the same slot.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now use the sign to answer a yes/no question: *do these two people share taste?*
-Write `aligned(a, b)` that returns `True` when the dot product is **positive** (the
-vectors point broadly the same way) and `False` otherwise. The dot is computed for
-you; complete the marked line.
+Write the body of `aligned(a, b)` so it returns `True` when the dot product is
+**positive** (the vectors point broadly the same way) and `False` otherwise. Two
+short lines are enough: compute the dot product (the worked example's
+`sum(x * y for x, y in zip(a, b))` pattern), then return the comparison.
 
 ```{pyodide}
 #| setup: true
@@ -260,8 +261,7 @@ from lib.grader import run_tests
 #| exercise: ex_aligned
 def aligned(a, b):
     """True when the dot product of a and b is positive, else False."""
-    dot = sum(x * y for x, y in zip(a, b))
-    return ____  # TODO: True only when dot is greater than 0
+    ...  # TODO: write the body — compute the dot product, then compare it to 0
 
 run_tests([
     ("shared taste", aligned([1, 2], [3, 4]), True),     # dot = 11
@@ -272,9 +272,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-You want `True` only when `dot` is strictly greater than zero. A comparison like
-`dot > 0` is itself a `True`/`False` value you can return directly. Note that a dot
-of exactly `0` is **not** greater than `0`, so it returns `False`.
+Step by step: first `dot = sum(x * y for x, y in zip(a, b))` — the same line the
+worked example's `dot` helper uses. Then return `dot > 0`: a comparison like that
+is itself a `True`/`False` value. Note that a dot of exactly `0` is **not**
+greater than `0`, so it returns `False`.
 </details>
 
 <details><summary>Show solution</summary>
