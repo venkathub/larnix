@@ -37,3 +37,21 @@ and the rendered-site link check (`.github/workflows/checks.yml`).
 
 Versions are exact-pinned in `package.json` + `package-lock.json` (repo
 convention: bump deliberately, log the bump).
+
+## Dependency layout (why "playwright" appears more than once)
+
+Only **one** Playwright is depended on directly. The similar names are two
+different things:
+
+- **`@playwright/test`** — the Playwright test runner (our one direct
+  Playwright dependency; drives all three spec files).
+- **`@axe-core/playwright`** — Deque's **axe accessibility engine** adapter
+  *for* Playwright (used by `a11y.spec.js`). It is named after what it plugs
+  into, not a second copy of Playwright.
+
+In `package-lock.json` you'll additionally see `playwright` and
+`playwright-core` — that's Playwright's own upstream package layering
+(runner → library → driver core), all resolving to the **same version** as
+`@playwright/test`; npm dedupes `playwright-core` so the axe adapter and the
+runner share one copy (`npm ls playwright-core` shows a single deduped entry).
+To upgrade, bump `@playwright/test` — the transitive pair follows in lockstep.
