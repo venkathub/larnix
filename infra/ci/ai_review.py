@@ -40,7 +40,14 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 MODELS_URL = "https://models.github.ai/inference/chat/completions"
 MODEL = "openai/gpt-4.1"  # GitHub Models free tier; bump deliberately (D0018)
 TEMPERATURE = 0.2
-MAX_DIFF_CHARS = 60_000  # keeps well inside context + free-tier request limits
+
+# GitHub Models' free tier enforces a hard request-size cap (observed live on
+# PR #5: HTTP 413 Payload Too Large at a 60k-char diff). The check therefore
+# shrinks the diff and retries on 413 rather than assuming one cap — the last,
+# smallest attempt still yields a useful architecture/summary-level review.
+DIFF_CAPS = [16_000, 8_000, 4_000]
+MAX_DIFF_CHARS = DIFF_CAPS[0]
+MAX_BODY_CHARS = 2_000  # PR descriptions count against the same request cap
 
 COMMENT_MARKER = "<!-- larnix-ai-review -->"
 
@@ -103,10 +110,12 @@ def clip_diff(diff: str, cap: int = MAX_DIFF_CHARS) -> tuple[str, bool]:
     ), True
 
 
-def build_messages(diff: str, pr_title: str, pr_body: str, rubric: str) -> list[dict]:
-    clipped, _ = clip_diff(diff)
+def build_messages(diff: str, pr_title: str, pr_body: str, rubric: str,
+                   cap: int = MAX_DIFF_CHARS) -> list[dict]:
+    clipped, _ = clip_diff(diff, cap)
+    body = (pr_body or "(none)")[:MAX_BODY_CHARS]
     user = (
-        f"PR title: {pr_title}\n\nPR description:\n{pr_body or '(none)'}\n\n"
+        f"PR title: {pr_title}\n\nPR description:\n{body}\n\n"
         f"Unified diff (generated files excluded):\n```diff\n{clipped}\n```"
     )
     return [
@@ -193,6 +202,30 @@ def upsert_sticky_comment(repo: str, pr_number: int, body: str, token: str) -> N
     print("ai-review: posted new comment")
 
 
+def review_with_retry(diff: str, token: str, pr_title: str, pr_body: str,
+                      rubric: str) -> tuple[str | None, int, Exception | None]:
+    """Call the model, shrinking the diff on 413 (free-tier request cap).
+
+    Returns (review, used_cap, last_error); review is None if every attempt
+    failed (the caller degrades to an advisory skip).
+    """
+    last_err: Exception | None = None
+    for cap in DIFF_CAPS:
+        messages = build_messages(diff, pr_title, pr_body, rubric, cap)
+        try:
+            return extract_review(call_model(messages, token)), cap, None
+        except urllib.error.HTTPError as e:
+            last_err = e
+            if e.code == 413:  # request too large — shrink and retry
+                print(f"ai-review: 413 at cap {cap} — retrying with a smaller diff")
+                continue
+            break
+        except (urllib.error.URLError, ValueError, TimeoutError) as e:
+            last_err = e
+            break
+    return None, DIFF_CAPS[-1], last_err
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--diff-file", help="unified diff to review (default: stdin)")
@@ -215,22 +248,20 @@ def main(argv: list[str]) -> int:
         return 0
 
     rubric = load_rubric()
-    _, truncated = clip_diff(diff)
-    messages = build_messages(
-        diff,
+    review, used_cap, last_err = review_with_retry(
+        diff, token,
         os.environ.get("PR_TITLE", "(unknown)"),
         os.environ.get("PR_BODY", ""),
         rubric,
     )
 
-    try:
-        review = extract_review(call_model(messages, token))
-    except (urllib.error.HTTPError, urllib.error.URLError, ValueError, TimeoutError) as e:
+    if review is None:
         # Advisory by design: fork PRs have no `models` permission, and rate
         # limits happen. Say so visibly; never fail the check for infra reasons.
-        print(f"ai-review: model call unavailable ({e}) — skipping (advisory)")
+        print(f"ai-review: model call unavailable ({last_err}) — skipping (advisory)")
         return 0
 
+    _, truncated = clip_diff(diff, used_cap)
     comment = render_comment(review, truncated=truncated)
     print(comment)
 

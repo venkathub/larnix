@@ -73,5 +73,66 @@ class CommentTests(unittest.TestCase):
         self.assertIn("truncated", ar.render_comment("r", truncated=True))
 
 
+class RetryLadderTests(unittest.TestCase):
+    """413 (request too large) shrinks the diff and retries — observed live on
+    PR #5 where the free tier rejected the first attempt."""
+
+    def _http_error(self, code):
+        import urllib.error
+        return urllib.error.HTTPError("url", code, "msg", None, None)
+
+    def test_413_retries_with_smaller_cap_then_succeeds(self):
+        calls = []
+
+        def fake_call(messages, token):
+            calls.append(len(messages[1]["content"]))
+            if len(calls) == 1:
+                raise self._http_error(413)
+            return {"choices": [{"message": {"content": "review"}}]}
+
+        orig = ar.call_model
+        ar.call_model = fake_call
+        try:
+            review, cap, err = ar.review_with_retry("x" * 100_000, "t", "T", "B", "R")
+        finally:
+            ar.call_model = orig
+        self.assertEqual(review, "review")
+        self.assertEqual(cap, ar.DIFF_CAPS[1])
+        self.assertIsNone(err)
+        self.assertEqual(len(calls), 2)
+        self.assertLess(calls[1], calls[0])  # second attempt really was smaller
+
+    def test_non_413_does_not_retry(self):
+        calls = []
+
+        def fake_call(messages, token):
+            calls.append(1)
+            raise self._http_error(429)
+
+        orig = ar.call_model
+        ar.call_model = fake_call
+        try:
+            review, _, err = ar.review_with_retry("d", "t", "T", "B", "R")
+        finally:
+            ar.call_model = orig
+        self.assertIsNone(review)
+        self.assertEqual(len(calls), 1)
+        self.assertIsNotNone(err)
+
+    def test_all_413_gives_none_with_error(self):
+        def fake_call(messages, token):
+            raise self._http_error(413)
+
+        orig = ar.call_model
+        ar.call_model = fake_call
+        try:
+            review, cap, err = ar.review_with_retry("d", "t", "T", "B", "R")
+        finally:
+            ar.call_model = orig
+        self.assertIsNone(review)
+        self.assertEqual(cap, ar.DIFF_CAPS[-1])
+        self.assertIsNotNone(err)
+
+
 if __name__ == "__main__":
     unittest.main()
