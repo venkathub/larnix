@@ -16,6 +16,7 @@ GitHub Actions workflows.
 | `review_cards_lint.py` | SR seeding (P0 task 13, P0-D3) | Validates the optional `review_cards:` front-matter block (Q/A pairs from Key Takeaways). |
 | `make_twin.py` | Twin drift (P1-D10 / D0016) | **Generates** each browser chapter's CI twin `.ipynb` from its `.qmd` (worked-example cells + a grader bootstrap + per-exercise `<details>` solution + asserts) and, in `--check` mode, fails if a committed twin drifts from source. |
 | `make_colab.py` | Companion drift (P2-D8 / D0020) | **Generates** each `compute: colab` chapter's learner-facing companion `<stem>-colab.ipynb` from its `.qmd` (header + badge, torch version-floor guard (P2-D11), `LARNIX_CI` parameters cell (P2-D9), grader bootstrap with inlined fallback, worked/exercise cells with `<details>` solutions and per-cell solution metadata) and, in `--check` mode, fails on drift. **Fail-closed:** missing/`LARNIX_CI`-less parameters cell, torch without `torch-floor:` front-matter, or a graded exercise without a solution are build errors. |
+| `colab_check.py` | Colab policy (P2 §5.3 / D0020) | Every `compute: colab` chapter must have (a) exactly one `{{< colab >}}` button pointing at its own existing companion, (b) a drift-free companion (delegates to `make_colab`), (c) the `LARNIX_CI` parameters cell **in the committed notebook**, (d) a torch version-floor guard when torch is used. Inverse rule: a non-colab chapter with a colab button fails (no Colab surface in browser modules). Fails closed. |
 
 ## Run locally
 

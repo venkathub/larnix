@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_make_colab test_assets_check test_chapter_structure_lint test_ai_review -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_make_colab test_colab_check test_assets_check test_chapter_structure_lint test_ai_review -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -63,6 +63,9 @@ jobs:
 
       - name: Colab companion drift check (P2-D8)
         run: python infra/ci/make_colab.py --check
+
+      - name: Colab policy gate (P2 §5.3 — button ↔ notebook ↔ params ↔ guard)
+        run: python infra/ci/colab_check.py
 
       - name: Dataset license ledger (R11 / P1-D8)
         run: python infra/ci/assets_check.py

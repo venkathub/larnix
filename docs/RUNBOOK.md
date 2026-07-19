@@ -125,15 +125,23 @@ Rules of the road:
 
 ## GPU notebook policy
 
-GPU work never runs on the builder's laptop and **never runs in CI** (there is no
-GPU runner). `colab`/`gpu` notebooks are executed manually on a free Colab/Kaggle
-GPU and the run is **recorded in the PR**. CI's R10 gate (`run_notebooks.py`)
-**skips** any notebook marked GPU/`colab` and runs only browser-twin + CPU
-notebooks.
+GPU work never runs on the builder's laptop and there is **no GPU runner in CI**.
+The colab tier has two notebook kinds with different CI behaviour (P2-D9,
+DECISIONS D0020):
 
-### How a notebook is marked "do not run in CI"
+- **Generated Colab companions** (`<stem>-colab.ipynb`, made by
+  `infra/ci/make_colab.py`; notebook metadata `larnix.generated_by`): CI's R10
+  gate **executes them CPU-scaled** — `LARNIX_CI=1`, solutions substituted,
+  rubric cells dropped, 90 s wall-clock budget. The **manual free-GPU run below
+  is still required per chapter** — CI proves the code path, the recorded run
+  proves the real-GPU/full-scale experience and calibrates grading thresholds.
+- **Hand-authored `colab`/`gpu` notebooks** (no `larnix.generated_by`): CI
+  skips them entirely; the recorded manual run is their only execution evidence
+  (the original D0012 policy).
 
-R10 skips a notebook if either is true:
+### How a hand-authored notebook is marked "do not run in CI"
+
+R10 skips a hand-authored notebook if either is true:
 
 - its Quarto front-matter has `compute: colab` or `compute: gpu`; or
 - its notebook metadata has `"larnix": {"compute": "colab"}` (or `"ci": false`).
@@ -142,10 +150,12 @@ The non-content example is `infra/fixtures/colab-fixture.ipynb`.
 
 ### Adding an "Open in Colab" button
 
-In the chapter `.qmd`, use the shortcode with the notebook's repo-relative path:
+In the chapter `.qmd`, use the shortcode with the notebook's repo-relative path
+(for a `compute: colab` chapter this must be its own generated companion — the
+`colab_check.py` gate enforces it):
 
 ```markdown
-{{</* colab modules/NN-slug/chapter.ipynb */>}}
+{{</* colab modules/NN-slug/chapter-colab.ipynb */>}}
 ```
 
 The repo + branch come from `_quarto.yml` (`larnix-colab-repo`,
@@ -154,15 +164,38 @@ vars — never hardcoded. Set them once the repo is published.
 
 ### Manual Colab-run record (required in the PR)
 
-For every `colab`/`gpu` notebook changed in a PR, paste into the PR description:
+For every `colab`/`gpu` notebook changed in a PR, paste the filled template into
+the PR description. A reviewer treats a missing or incomplete record as a
+failing check for that notebook.
 
-1. The Colab link used (from the button).
-2. The Colab runtime type (e.g. **T4 GPU**) and a one-line **cost** statement
-   (free tier, or the rented-GPU rate for M11).
-3. Confirmation it ran top-to-bottom, with the final cell's output (a screenshot
-   or pasted text) and the run date.
+```markdown
+#### Colab run — modules/NN-slug/chapter-colab.ipynb
+- Link: <the button URL used>
+- Runtime: <e.g. T4 GPU (free tier)> · Cost: ₹0
+- torch: <version printed by the guard cell> · Date: YYYY-MM-DD
+- Ran top-to-bottom: yes — wall time <m:ss>
+- Final metrics: <every number a property assert checks, e.g. test_acc=0.981,
+  final_loss=0.043 (from 2.31)>
+- Final cell output: <pasted text or screenshot>
+```
 
-A reviewer treats a missing record as a failing check for that notebook.
+**Threshold calibration (auto-graded training exercises only, P2-D7):** each
+property threshold is set from **≥3 recorded runs** with generous margin — add
+this table to the record:
+
+```markdown
+| Run | <metric 1, e.g. test_acc> | <metric 2, e.g. loss drop %> |
+|-----|---------------------------|-------------------------------|
+| 1   |                           |                               |
+| 2   |                           |                               |
+| 3   |                           |                               |
+Threshold chosen: <e.g. test_acc ≥ 0.95 (worst observed 0.978, margin ~0.03)>
+```
+
+The CPU-scaled `LARNIX_CI` branch of the parameters cell must also satisfy the
+same property asserts — CI executes the companion with the substituted
+solutions, so an uncalibrated CI branch fails the R10 gate (verified the hard
+way during P2 Task 3).
 
 ## Authoring at scale (P1 lesson, 2026-06-29)
 
