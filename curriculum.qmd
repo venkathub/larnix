@@ -1,0 +1,49 @@
+---
+title: "The full journey — 17 modules, zero to frontier"
+toc: false
+---
+
+::: {.lx-plain}
+
+Larnix is one continuous path: start knowing nothing, finish having pretrained
+and shipped your own small language model. Here is the whole map. **M0–M3 are
+live today** — about 50 chapters, every one runnable in your browser at ₹0 —
+and the rest unlock as the curriculum grows, in the order below.
+
+Tiers: 🟢 Beginner · 🟡 Intermediate · 🔴 Advanced. Compute: **browser** =
+runs on this page, nothing to install; **colab** = free cloud GPU notebooks;
+**gpu** = one optional, low-cost rented-GPU capstone (a free smaller-model
+path is included).
+
+| # | Module | Tier | Compute | You build |
+|---|--------|------|---------|-----------|
+| **M0** | [How to use this school / What is AI?](modules/00-orientation/index.qmd) · **live** | 🟢 | browser | Run your first pretrained model; confirm the ₹0 path |
+| **M1** | [Python for AI](modules/01-python/index.qmd) · **live** | 🟢 | browser | A data-cleaning notebook (auto-graded) |
+| **M2** | [Math You Actually Need](modules/02-math/index.qmd) · **live** | 🟢→🟡 | browser | The math of one neuron — forward + backward, by hand |
+| **M3** | [Data & Tooling](modules/03-data/index.qmd) · **live** | 🟢→🟡 | browser | A full EDA on a dataset you've never seen |
+| M4 | Classical Machine Learning | 🟡 | browser | An end-to-end tabular predictor + model card |
+| M5 | Deep Learning Foundations | 🟡 | colab | A neural net from scratch, then in PyTorch |
+| M6 | Specialized DL: Vision & Sequences | 🟡→🔴 | colab | An image classifier + a char-level sequence model |
+| M7 | NLP & the Transformer | 🔴 | colab | A small GPT, from scratch |
+| M8 | Large Language Models: adapt & evaluate | 🔴 | colab | A LoRA fine-tune with rigorous evals |
+| M9 | Reinforcement Learning & Reasoning Models | 🔴 | colab | A model post-trained to reason measurably better |
+| M10 | Generative AI: diffusion, multimodal, audio | 🔴 | colab | A text-to-image mini-app |
+| M11 | **Build Your Own LLM end-to-end** | 🔴 | gpu | Data → tokenizer → pretrain → post-train → quantize → serve |
+| M12 | AI Engineering: RAG, Agents & MCP | 🟡→🔴 | colab + browser | A production-style RAG + tool-using agent, with eval |
+| M13 | Production AI: MLOps & LLMOps | 🔴 | colab + browser | A deployed, monitored, cost-instrumented AI service |
+| M14 | Responsible AI: safety, security, ethics | 🟡→🔴 | browser | Red-team & harden your own app |
+| M15 | Applied ML electives | 🟡→🔴 | colab + browser | One elective (forecasting / recsys / speech / …) shipped |
+| M16 | Career & job-readiness | 🟢→🔴 | browser | A portfolio of deployed projects + mock-interview loop |
+
+Every module ends in a graded capstone, and a learner can complete **M0–M10 for
+₹0** — browser now, free Colab/Kaggle tiers later, free local models (Ollama)
+where a lesson touches an LLM API. The one optional spend in the whole
+curriculum is a few hundred rupees of by-the-second GPU rental for the M11
+pretraining capstone, and even that ships a smaller-model free path.
+
+Builders and contributors can see how this maps to build phases in the
+[public roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md).
+
+Ready? [Train your first model ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay}
+
+:::

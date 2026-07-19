@@ -44,6 +44,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: curriculum.qmd
+        text: Curriculum
       - href: modules/00-orientation/ch01-train-your-first-model.qmd
         text: Start learning
       - href: about.qmd

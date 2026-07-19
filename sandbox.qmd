@@ -2,6 +2,9 @@
 title: "Sandbox — in-browser Python (internal)"
 subtitle: "Not learner content. Proves quarto-live + Pyodide runs Python (incl. scikit-learn) in the browser."
 search: false
+# Internal fixture: keep out of search engines too (review 2026-07-19, U9).
+include-in-header:
+  text: '<meta name="robots" content="noindex">'
 format: live-html
 # `{pyodide}` cells run client-side in the browser, never at render time, so we
 # disable Quarto's render-time execution (no Python/Jupyter kernel needed to build).

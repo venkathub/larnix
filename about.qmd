@@ -39,11 +39,14 @@ are proud to show. In short: from curious beginner to someone who can build.
 
 ## Where it is today
 
-Larnix is being built in the open, and it is early. Right now the **platform** is
-complete and proven end to end on the first full chapter — *Train your first model,
-in your browser* — and new modules are being authored from there. You can start that
-chapter today, for free; follow the [roadmap](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md)
-to see what is coming next.
+Larnix is being built in the open. The **Foundations track is live**: Modules 0–3
+— about fifty chapters across orientation, Python, the math you actually need,
+and data & tooling — every one of them runnable in your browser at ₹0, each with
+auto-graded exercises, a quick-check quiz, and a rubric-graded module capstone.
+The platform behind it (in-browser Python, auto-graders, quizzes, CI that
+executes every chapter) is proven end to end. Next up: classical machine
+learning (M4) and the deep-learning track — see [the full journey](curriculum.qmd)
+for the whole 17-module map.
 
 If that mission speaks to you, the best first step is the smallest one:
 [train your first model](modules/00-orientation/ch01-train-your-first-model.qmd).
