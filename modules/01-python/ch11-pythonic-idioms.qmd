@@ -12,7 +12,7 @@ learning_objectives:
   - "Unpack tuples into named variables, including in a for loop"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -232,8 +232,8 @@ def mood_or_unknown(row):
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `pair_days(dates, steps)` so it returns a list of `(date, steps)` tuples,
-using `zip` to line the two lists up. Complete the marked line.
+Write the body of `pair_days(dates, steps)` so it returns a list of `(date, steps)`
+tuples, using `zip` to line the two lists up. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -245,7 +245,7 @@ from lib.grader import run_tests
 #| exercise: ex_pair
 def pair_days(dates, steps):
     """Pair each date with its step count into a list of (date, steps) tuples."""
-    return ____  # TODO: zip the two lists, then make a list of the pairs
+    ...  # TODO: write the body — zip the two lists and return the pairs as a list
 
 run_tests([
     ("pairs line up", pair_days(["a", "b"], [1, 2]), [("a", 1), ("b", 2)]),
@@ -255,8 +255,8 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-`zip(dates, steps)` yields the pairs lazily; wrap it in `list(...)` to return them
-as an actual list of tuples.
+`zip(dates, steps)` yields the pairs lazily; wrap it in `list(...)` and `return`
+that to hand back an actual list of tuples.
 </details>
 
 <details><summary>Show solution</summary>

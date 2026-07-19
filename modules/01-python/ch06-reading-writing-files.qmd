@@ -12,7 +12,7 @@ learning_objectives:
   - "Write a file in Pyodide's in-memory filesystem and read it back"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -238,8 +238,9 @@ def steps_as_int(row):
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `total_steps(rows)` — sum the steps across a list of dict rows, converting
-each from text to an `int`. Complete the marked line.
+Write the body of `total_steps(rows)` — sum the steps across a list of dict rows,
+converting each from text to an `int`. You write the whole body yourself: the
+running total, the loop, the conversion, and the `return`.
 
 ```{pyodide}
 #| setup: true
@@ -251,10 +252,7 @@ from lib.grader import run_tests
 #| exercise: ex_total
 def total_steps(rows):
     """Sum the steps across dict rows, converting each from text to int."""
-    total = 0
-    for row in rows:
-        total += ____  # TODO: this row's steps as an int
-    return total
+    ...  # TODO: write the body — a running total, a loop, int(...) each row's steps
 
 run_tests([
     ("sums the steps", total_steps([{"steps": "7500"}, {"steps": "8200"}]), 15700),
@@ -265,8 +263,9 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-Inside the loop you want this row's steps as a number — `int(row["steps"])` —
-added to the running `total`.
+This is the accumulator pattern from Chapter 2: start with `total = 0`, loop with
+`for row in rows:`, and inside the loop add this row's steps as a number —
+`total += int(row["steps"])`. Return `total` after the loop.
 </details>
 
 <details><summary>Show solution</summary>

@@ -11,7 +11,7 @@ learning_objectives:
   - "Reuse logic by calling functions instead of copying code"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -224,9 +224,10 @@ so it's `False` — a distinction that matters when you clean real data.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `clean_mood(text)` — tidy a mood label by removing surrounding spaces and
-lowercasing it, so `"  Good "`, `"good"`, and `"GOOD"` all become `"good"`. This is
-a real cleaning step for the habits data. Complete the marked line.
+Write the body of `clean_mood(text)` — tidy a mood label by removing surrounding
+spaces and lowercasing it, so `"  Good "`, `"good"`, and `"GOOD"` all become
+`"good"`. This is a real cleaning step for the habits data, and this time you write
+the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -238,7 +239,7 @@ from lib.grader import run_tests
 #| exercise: ex_mood
 def clean_mood(text):
     """Remove surrounding spaces from text and lowercase it."""
-    return ____  # TODO: strip the spaces, then lowercase
+    ...  # TODO: write the body — strip the spaces, lowercase, and return the result
 
 run_tests([
     ("trims and lowercases", clean_mood("  Good "), "good"),
@@ -250,7 +251,8 @@ run_tests([
 <details><summary>If you're stuck</summary>
 
 Two string methods, chained: `.strip()` removes the spaces, and `.lower()`
-lowercases. You can write them one after another: `text.strip().lower()`.
+lowercases. You can write them one after another — `text.strip().lower()` — and
+`return` that expression.
 </details>
 
 <details><summary>Show solution</summary>

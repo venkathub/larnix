@@ -12,7 +12,7 @@ learning_objectives:
   - "Recognise the common exception types and what each one usually means"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -249,10 +249,10 @@ exact text before the colon on a traceback's bottom line.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `failure_type(func)` that calls `func()` inside a `try`/`except`. If it
-raises, return the exception's **type name** (a string); if it doesn't raise,
-return `"no error"`. This reports the punchline a traceback would have shown.
-Complete the marked lines.
+Write the body of `failure_type(func)` — call `func()` inside a `try`/`except`. If
+it raises, return the exception's **type name** (a string); if it doesn't raise,
+return `"no error"`. This reports the punchline a traceback would have shown, and
+you write the whole `try`/`except` yourself.
 
 ```{pyodide}
 #| setup: true
@@ -264,11 +264,7 @@ from lib.grader import run_tests
 #| exercise: ex_failuretype
 def failure_type(func):
     """Call func(); return the raised exception's type name, or 'no error'."""
-    try:
-        func()
-    except Exception as e:
-        return ____  # TODO: the type name of the caught exception
-    return ____      # TODO: returned only if func() did not raise
+    ...  # TODO: write the body — try calling func(), catch any Exception as e, report its type name
 
 run_tests([
     ("bad int is ValueError", failure_type(lambda: int("x")), "ValueError"),
@@ -279,9 +275,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-In the `except`, you already named the exception `e`, so its type name is
-`type(e).__name__`. The final `return` runs only when no exception was raised —
-that's the `"no error"` case.
+Call `func()` inside a `try:`. Catch broadly with `except Exception as e:` — that
+names the caught exception `e`, so its type name is `type(e).__name__` — the same
+trick as Exercise 1's `error_type`. Put `return "no error"` after the whole
+`try`/`except`; it runs only when nothing was raised.
 </details>
 
 <details><summary>Show solution</summary>

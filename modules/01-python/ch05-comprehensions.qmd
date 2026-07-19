@@ -12,7 +12,7 @@ learning_objectives:
   - "Build a dict comprehension to map keys to values"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -208,8 +208,9 @@ def all_steps(days):
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `active_dates(days, goal)` — return a list of the **dates** of days whose
-steps reach `goal`, using a filtered comprehension. Complete the marked line.
+Write the body of `active_dates(days, goal)` — return a list of the **dates** of
+days whose steps reach `goal`, using a filtered comprehension. You write the whole
+comprehension yourself: the collected expression, the loop, and the filter.
 
 ```{pyodide}
 #| setup: true
@@ -221,7 +222,7 @@ from lib.grader import run_tests
 #| exercise: ex_activedates
 def active_dates(days, goal):
     """Return the dates of days whose steps are >= goal."""
-    return [____ for d in days if d["steps"] >= goal]  # TODO: each active day's date
+    ...  # TODO: write the body — return a comprehension that keeps each active day's date
 
 run_tests([
     ("keeps active dates", active_dates([{"date": "a", "steps": 7000}, {"date": "b", "steps": 8200}, {"date": "c", "steps": 9000}], 8000), ["b", "c"]),
@@ -231,8 +232,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-The filter (`if d["steps"] >= goal`) is already written; you only need the value to
-collect, which is the day's date: `d["date"]`.
+Follow the filtered-comprehension shape from the worked example:
+`[expression for d in days if condition]`. Here the condition is
+`d["steps"] >= goal`, and the value to collect is the day's date, `d["date"]`.
+Return the whole comprehension.
 </details>
 
 <details><summary>Show solution</summary>

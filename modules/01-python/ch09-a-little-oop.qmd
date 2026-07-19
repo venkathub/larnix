@@ -12,7 +12,7 @@ learning_objectives:
   - "Create an instance, read its attributes, and call its methods, including a method with a default argument"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -228,8 +228,8 @@ copies the argument onto the instance, so `StepCounter(7500).steps` reads back `
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Complete the `is_active` method so it returns `True` when the day's steps reach the
-`goal`. Fill in the marked line.
+Write the body of the `is_active` method so it returns `True` when the day's steps
+reach the `goal`. The class and the method signature are given; the body is yours.
 
 ```{pyodide}
 #| setup: true
@@ -246,7 +246,8 @@ class Day:
         self.steps = steps
 
     def is_active(self, goal=8000):
-        return ____  # TODO: True when this day's steps reach the goal
+        """Return True when this day's steps reach the goal."""
+        ...  # TODO: write the body — compare this day's own steps against the goal
 
 run_tests([
     ("8200 reaches default goal", Day("2026-01-02", 8200).is_active(), True),

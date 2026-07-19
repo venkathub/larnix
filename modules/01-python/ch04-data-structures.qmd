@@ -314,8 +314,9 @@ alternative to remembering a position.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `distinct_moods(days)` — return the **set** of distinct mood values across a
-list of day dicts. Complete the marked line.
+Write the body of `distinct_moods(days)` — return the **set** of distinct mood
+values across a list of day dicts. You write the whole body yourself: build the
+set, fill it from the loop, and return it.
 
 ```{pyodide}
 #| setup: true
@@ -327,10 +328,7 @@ from lib.grader import run_tests
 #| exercise: ex_moods
 def distinct_moods(days):
     """Return the set of distinct mood values across the day dicts."""
-    moods = set()
-    for d in days:
-        ____  # TODO: add this day's mood to the set
-    return moods
+    ...  # TODO: write the body — start an empty set, add each day's mood, return it
 
 run_tests([
     ("collects unique moods", distinct_moods([{"mood": "good"}, {"mood": "ok"}, {"mood": "good"}]), {"good", "ok"}),
@@ -341,8 +339,9 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-A set grows with `.add(...)`. Each day's mood is `d["mood"]`, so add that to
-`moods`. Duplicates are dropped automatically.
+Start with an empty set, `moods = set()`, then loop `for d in days:`. A set grows
+with `.add(...)` — each day's mood is `d["mood"]`, so add that to `moods`.
+Duplicates are dropped automatically. Return `moods` after the loop.
 </details>
 
 <details><summary>Show solution</summary>

@@ -242,9 +242,9 @@ exactly that and returns `None` instead of crashing.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `clean_steps(text)` — strip a comma, convert to an `int`, and fall back to
-`0` if it still can't be parsed. This is the robust version of the habits cleaner.
-Complete the marked line.
+Write the body of `clean_steps(text)` — strip a comma, convert to an `int`, and
+fall back to `0` if it still can't be parsed. This is the robust version of the
+habits cleaner, and you write the whole `try`/`except` body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -256,10 +256,7 @@ from lib.grader import run_tests
 #| exercise: ex_clean
 def clean_steps(text):
     """Steps as an int: strip a comma, and use 0 if it can't be parsed."""
-    try:
-        return int(text.replace(",", ""))
-    except ValueError:
-        return ____  # TODO: a safe fallback for unparsable input
+    ...  # TODO: write the body — try to convert the de-comma'd text, catch ValueError, return 0
 
 run_tests([
     ("plain number", clean_steps("8200"), 8200),
@@ -271,8 +268,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-The task says "fall back to `0`" — so when conversion fails, the `except` should
-return `0`.
+Shape it like `safe_int` from Exercise 1. In the `try`, remove the comma with
+`text.replace(",", "")` (from Chapter 1's cleaning stretch) and return the `int(...)`
+of that. `int()` raises `ValueError` on anything still unparsable — catch it with
+`except ValueError:` and return `0` there.
 </details>
 
 <details><summary>Show solution</summary>

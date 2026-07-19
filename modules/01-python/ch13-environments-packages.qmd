@@ -12,7 +12,7 @@ learning_objectives:
   - "Recognise pip and micropip as the tools that install packages"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -211,8 +211,9 @@ reads — exactly what a `requirements.txt` line looks like.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `parse_requirement(line)` — split a `requirements.txt` line like
-`"pandas==2.3.0"` into a `(name, version)` tuple. Complete the marked line.
+Write the body of `parse_requirement(line)` — split a `requirements.txt` line like
+`"pandas==2.3.0"` into a `(name, version)` tuple. You write the whole body
+yourself: the split and the return.
 
 ```{pyodide}
 #| setup: true
@@ -224,8 +225,7 @@ from lib.grader import run_tests
 #| exercise: ex_parse
 def parse_requirement(line):
     """Split 'name==version' into a (name, version) tuple."""
-    name, version = ____  # TODO: split line on "==" into two parts
-    return name, version
+    ...  # TODO: write the body — split the line on "==" and return the two parts
 
 run_tests([
     ("splits pandas", parse_requirement("pandas==2.3.0"), ("pandas", "2.3.0")),
@@ -235,8 +235,9 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-`"pandas==2.3.0".split("==")` returns the list `["pandas", "2.3.0"]`. Unpacking that
-into `name, version` gives you the two pieces.
+`"pandas==2.3.0".split("==")` returns the list `["pandas", "2.3.0"]`. Unpack that
+into two names — `name, version = line.split("==")` — and return
+`name, version` (that comma makes the tuple).
 </details>
 
 <details><summary>Show solution</summary>
