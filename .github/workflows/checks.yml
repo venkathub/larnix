@@ -164,3 +164,23 @@ jobs:
       # `exclude_path = ["_site"]` reduces this check to 0 links (verified).
       - name: Rendered-site internal link check
         run: lychee --config lychee-site.toml --offline --no-progress --root-dir "$(pwd)/_site" '_site/**/*.html'
+
+      # e2e smoke (review 2026-07-19, E1): the quiz engine, chapter progress,
+      # and one real in-browser Pyodide execution. Converts the previously
+      # manual "₹0 browser sweep" verification into a repeatable gate.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: infra/e2e/package-lock.json
+
+      - name: Install e2e deps
+        working-directory: infra/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Learner-path smoke tests (Playwright)
+        working-directory: infra/e2e
+        run: npm test
