@@ -134,6 +134,12 @@
      vendored **GloVe subset** (PDDL) for in-browser similarity. *Rejected:* one dataset for
      all three modules (can't carry regression/imbalance/images/sequences honestly); Kaggle
      competition data (licence friction, account requirement in `browser` chapters).
+     *Implementation note (2026-07-19):* vendored via seeded scripts in `infra/datasets/`
+     (byte-deterministic, `cmp`-verified). California Housing landed at **800 rows, 4-dp**
+     (~50 KB — "~1,000" trimmed to honour the P1-D8 cap, which takes precedence); GloVe at
+     **135 curated words × 50d, 3-dp** (~44 KB; fetched by HTTP-range extraction of the single
+     zip member, ~8 MB not 822 MB; build-time sanity: `king − man + woman → queen`). All P2
+     runtime-fetched assets + first pretrained-weights entry ledgered in `ASSETS.md`.
   3. **P2-D3 = A — full scalar micrograd, two chapters (M5 Ch8–9), then an MLP on it (Ch10).**
      ~150 lines of dependency-free Python, Pyodide-perfect; the learner owns backprop before
      PyTorch hides it, and `.backward()` stops being magic; gradient-check reuses the M2

@@ -76,5 +76,45 @@ class MainTests(unittest.TestCase):
         self.assertEqual(rc, 1)
 
 
+class P2ModuleCoverageTests(MainTests):
+    """P2 §5.3: the gate must cover `data/` in the M4–M6 module trees.
+
+    The glob is `modules/**/data/**`, so coverage is structural — these tests
+    pin it so a future glob change cannot silently drop the new modules.
+    """
+
+    def test_unledgered_m4_file_fails(self):
+        rc = self._run_in(
+            {"modules/04-classical-ml/data/rogue.csv": "x\n1\n"},
+            "nothing ledgered",
+        )
+        self.assertEqual(rc, 1)
+
+    def test_unledgered_m5_file_fails(self):
+        rc = self._run_in(
+            {"modules/05-deep-learning/data/rogue.bin": "x"},
+            "nothing ledgered",
+        )
+        self.assertEqual(rc, 1)
+
+    def test_unledgered_m6_file_fails(self):
+        rc = self._run_in(
+            {"modules/06-vision-sequences/data/rogue.csv": "x\n1\n"},
+            "nothing ledgered",
+        )
+        self.assertEqual(rc, 1)
+
+    def test_ledgered_p2_samples_pass(self):
+        rc = self._run_in(
+            {
+                "modules/04-classical-ml/data/california-housing-sample.csv": "x\n",
+                "modules/06-vision-sequences/data/glove-50d-sample.csv": "x\n",
+            },
+            "california-housing-sample.csv — public domain\n"
+            "glove-50d-sample.csv — PDDL\n",
+        )
+        self.assertEqual(rc, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
