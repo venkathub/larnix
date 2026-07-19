@@ -72,6 +72,14 @@
      calibrates P2-D7 thresholds. Accepted cost (confirmed): ~5–8 min CI wall-clock. *Rejected:*
      manual-only verification (a third of the phase never executed by CI — drift found only at
      quarterly refresh); GPU runners in CI (violates ₹0 build discipline).
+     *Implementation note (2026-07-19):* `run_notebooks.py` classifies notebooks by
+     `larnix.generated_by` — generated companions execute CPU-scaled (`LARNIX_CI=1` exported to
+     the kernel; `metadata.larnix.solution` substituted for exercise starters; rubric cells
+     dropped; wall-clock budget `LARNIX_NB_BUDGET_S` default 90 s, fail-closed with a
+     "shrink your parameters cell" message); hand-authored GPU notebooks keep the D0012 skip.
+     Pinned pair verified on python:3.12 with numpy 2.5.0: `torch==2.13.0+cpu`,
+     `torchvision==0.28.0+cpu` (official CPU index; Actions pip cache keyed on
+     `requirements-notebooks.txt`).
   5. **P2-D10 = A — Colab is the default one-click button; Kaggle documented once** (M5 Ch11) as
      the named alternate, per R13's don't-hard-couple rule. *Rejected:* dual buttons everywhere
      (2× manual-verification burden; brittle Kaggle deep-links); Kaggle-default (heavier

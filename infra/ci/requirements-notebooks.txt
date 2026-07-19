@@ -10,3 +10,13 @@ numpy==2.5.0
 scikit-learn==1.9.0
 pandas==3.0.4
 matplotlib==3.11.0
+
+# CPU-scaled colab-companion deps (P2-D9 / DECISIONS D0020): CI executes the
+# generated companions with exact-pinned CPU-only torch wheels from the official
+# CPU index (~200 MB-class vs ~800 MB+ CUDA; cached in Actions). Colab itself is
+# NOT pinned — companions carry a version-floor guard instead (P2-D11).
+# Pair verified together on python:3.12 with numpy 2.5.0 (backward + numpy
+# interop smoke), 2026-07-19.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0+cpu
+torchvision==0.28.0+cpu

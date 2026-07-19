@@ -70,6 +70,11 @@ jobs:
   notebooks:
     name: Notebook execution (R10)
     runs-on: ubuntu-latest
+    env:
+      # Companions run CPU-scaled (P2-D9). run_notebooks.py sets this itself for
+      # each companion kernel; the job-level export is belt-and-braces so any
+      # future step touching companions scales the same way.
+      LARNIX_CI: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,6 +83,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          # Cache the pip wheel cache — the pinned CPU-torch wheel is ~200 MB-class
+          # (the accepted P2-D9 cost); keyed on the notebooks requirements file.
+          cache: "pip"
+          cache-dependency-path: infra/ci/requirements-notebooks.txt
 
       - name: Install notebook deps
         run: pip install -r infra/ci/requirements-notebooks.txt

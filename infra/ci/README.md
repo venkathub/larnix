@@ -8,7 +8,7 @@ GitHub Actions workflows.
 |--------|------|----------------|
 | `frontmatter_lint.py` | Front-matter schema (P0 task 4) | The 10 required chapter fields, enum values, date format/non-future, types. |
 | `quiz_lint.py` | Quiz schema (P0 task 7) | `quiz.yml` structure: questions, prompts, ≥2 options, in-range integer `answer`, unique ids. |
-| `run_notebooks.py` | R10 — runs in CI (P0 task 8) | Executes `modules/**/*.ipynb` with `nbclient`; any cell error fails. **Skips** GPU/`colab` notebooks (front-matter `compute: colab\|gpu` or notebook metadata `larnix.compute`/`ci:false`) — those are manually Colab-verified (D0012). `fixtures/` holds pass/fail test notebooks. |
+| `run_notebooks.py` | R10 — runs in CI (P0 task 8; extended P2-D9) | Executes `modules/**/*.ipynb` with `nbclient`; any cell error fails. **Generated Colab companions** (notebook metadata `larnix.generated_by`) execute **CPU-scaled**: `LARNIX_CI=1` exported to the kernel, exercise starters replaced by their `metadata.larnix.solution`, rubric cells dropped, and a wall-clock budget enforced (`LARNIX_NB_BUDGET_S`, default 90 s — over-budget fails with a "shrink your parameters cell" message). Hand-authored GPU/`colab` notebooks (front-matter `compute: colab\|gpu` or `larnix.compute`/`ci:false`, no `generated_by`) are still **skipped** — manually Colab-verified (D0012). `fixtures/` holds pass/fail test notebooks. |
 | `a11y_check.py` | a11y — alt-text + contrast (P0 task 10, P0-D11) | Non-empty alt text on content images; WCAG AA contrast on declared theme colour pairs. Stdlib-only; deterministic (no browser). Full page-level axe/pa11y scanning is deferred. |
 | `currency_check.py` | R1 (P0 task 11) | `status: frontier` chapters must have `last_reviewed` within 90 days; `stable` exempt. |
 | `browser_import_lint.py` | R3 (P0 task 11; hardened P1-D7) | `compute: browser` chapters may import only Pyodide-safe packages (stdlib + curated allow-list incl. `lib`; known-unsafe denylist). Fail-closed: unknown imports fail. A pure-Python package installed at runtime must be declared with a `# micropip: <name>` annotation (which never overrides the known-unsafe denylist). |
@@ -40,7 +40,10 @@ python infra/ci/run_notebooks.py                          # execute modules/**/*
 ```
 
 Dependencies: `infra/ci/requirements.txt` (PyYAML) for the schema linters;
-`infra/ci/requirements-notebooks.txt` (nbclient, ipykernel) for R10.
+`infra/ci/requirements-notebooks.txt` (nbclient, ipykernel, the twin runtime
+deps, and — for the P2-D9 companion tier — **exact-pinned CPU-only
+torch/torchvision** from the official `download.pytorch.org/whl/cpu` index)
+for R10.
 
 ## Conventions
 
@@ -88,3 +91,11 @@ Dependencies: `infra/ci/requirements.txt` (PyYAML) for the schema linters;
   hardcoded). Note: the badge and raw URL point at the deploy branch, so they
   resolve **after merge** (same as the P0 shortcode, D0012); pre-merge
   verification is the recorded manual Colab run.
+- **R10 for `compute: colab` chapters (P2-D9):** CI executes each *generated*
+  companion **CPU-scaled** — `run_notebooks.py` exports `LARNIX_CI=1` (the
+  parameters cell switches to tiny epochs/subsets), substitutes each exercise's
+  `metadata.larnix.solution`, drops rubric cells, and fails if the notebook
+  exceeds the wall-clock budget (`LARNIX_NB_BUDGET_S`, default 90 s). This keeps
+  "everything runs" automated for the colab tier; the **recorded manual Colab
+  run per chapter (D0012) is still required** for the real-GPU/full-scale path
+  and calibrates the P2-D7 property thresholds.
