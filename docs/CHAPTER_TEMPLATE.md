@@ -67,8 +67,9 @@ est_minutes: 25                   # realistic time to read + run
     (`#| setup: true` / `#| exercise: <id>`) with `from lib.grader import run_tests`,
     and call run_tests([(label, got, expected), …]). See lib/README.md (P1-D9).
 
-  • End-of-chapter quiz: author quiz.yml beside the chapter, mount with
-    {{< quiz quiz.yml >}}.
+  • End-of-chapter quiz: author quiz-chNN.yml beside the chapter (top-level `id:`
+    required — it is the learner's localStorage score key), mount with
+    {{< quiz quiz-chNN.yml >}}.
 -->
 
 # <Chapter title>

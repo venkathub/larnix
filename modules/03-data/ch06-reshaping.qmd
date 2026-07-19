@@ -11,7 +11,7 @@ learning_objectives:
   - "Summarise repeated values into a wide grid with pivot_table and an aggregate"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -311,9 +311,10 @@ columns.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-After a `melt`, the original column names live in the `variable` column. Write
-`n_variables` to report how many **distinct** original columns there were — the
-number of unique values in `variable`. Complete the marked line.
+After a `melt`, the original column names live in the `variable` column. Write the
+body of `n_variables(data)` — melt the frame and report how many **distinct**
+original columns there were: the number of unique values in `variable`, as a plain
+`int`. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -327,7 +328,7 @@ import pandas as pd
 
 def n_variables(data):
     """Melt the data and count how many distinct original columns it had."""
-    return ____  # TODO: int(pd.DataFrame(data).melt()["variable"].nunique())
+    ...  # TODO: write the body — melt, select the "variable" column, count its unique values
 
 run_tests([
     ("three cols", n_variables({"a": [1], "b": [2], "c": [3]}), 3),

@@ -11,7 +11,7 @@ learning_objectives:
   - "See a distribution by drawing many samples with a fixed seed and plotting a histogram"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -236,9 +236,9 @@ These fractions are what let you compare histograms with different sample sizes.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 To build a histogram bar by hand, you count how many values land inside a bin's
-range. Write `in_range(values, low, high)` that returns how many entries of
-`values` fall within `[low, high]` **inclusive** of both ends. Use a loop or a sum
-with a condition. Complete the marked line.
+range. Write the body of `in_range(values, low, high)` so it returns how many
+entries of `values` fall within `[low, high]` **inclusive** of both ends. Use a
+loop (or a sum) with a condition — you write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -250,11 +250,7 @@ from lib.grader import run_tests
 #| exercise: ex_inrange
 def in_range(values, low, high):
     """Count how many values fall within [low, high], including both ends."""
-    count = 0
-    for v in values:
-        if ____:  # TODO: v is at least low AND at most high
-            count += 1
-    return count
+    ...  # TODO: write the body — start a counter, loop over values, count the ones inside
 
 run_tests([
     ("middle three", in_range([1, 2, 3, 4, 5], 2, 4), 3),
@@ -265,9 +261,11 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-A value is inside the bin when it is **at least** `low` and **at most** `high`.
-Python lets you chain that into one comparison: `low <= v <= high`. The `<=` on both
-sides makes the ends inclusive.
+Start with `count = 0`, loop with `for v in values:`, and add one to the counter
+when the value is inside the bin. A value is inside when it is **at least** `low`
+and **at most** `high` — Python lets you chain that into one comparison:
+`low <= v <= high`. The `<=` on both sides makes the ends inclusive. Return the
+counter at the end.
 </details>
 
 <details><summary>Show solution</summary>
@@ -341,7 +339,9 @@ move, a different underlying shape — which is the point of a distribution.
 
 ## Where this fits / what's next
 
-You can now name the shape of randomness and reveal it by sampling. But a picture is
+You can now name the shape of randomness and reveal it by sampling. Distributions
+don't sit inside the Ch16 neuron itself — they describe the world around it: the
+data it trains on and the noise in that data both have shapes like these. But a picture is
 hard to compare or compute with — you want a few **numbers** that summarise a
 distribution: where its centre sits and how spread out it is. Next we meet exactly
 those — **mean, variance & standard deviation** (Ch11) — the handful of statistics

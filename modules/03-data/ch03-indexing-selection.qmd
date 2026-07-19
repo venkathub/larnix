@@ -11,7 +11,7 @@ learning_objectives:
   - "Filter rows with a boolean mask"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -315,9 +315,10 @@ the count is `0`.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `count_above(data, col, threshold)`: build a DataFrame, then return how many
-rows have `col` **greater than** `threshold`. This is the boolean-mask pattern —
-compare a column, then count the `True` values. Complete the marked line.
+Write the body of `count_above(data, col, threshold)` — build a DataFrame, then
+return how many rows have `col` **greater than** `threshold`, as a plain `int`.
+This is the boolean-mask pattern — compare a column, then count the `True`
+values — and this time you write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -331,7 +332,7 @@ import pandas as pd
 
 def count_above(data, col, threshold):
     """Return the number of rows where data[col] exceeds threshold."""
-    return ____  # TODO: int((pd.DataFrame(data)[col] > threshold).sum())
+    ...  # TODO: write the body — build the frame, compare the column to threshold, count the Trues
 
 run_tests([
     ("two above 2", count_above({"x": [1, 2, 3, 4]}, "x", 2), 2),

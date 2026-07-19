@@ -132,6 +132,10 @@ Cross-cutting: accessibility (free-tier-first, ₹0 path), correctness review, d
       Colab/Kaggle buttons. The free-tier path for the module is confirmed.
 - [ ] Module README + docs/DECISIONS.md updated; STYLE_GUIDE adhered to (lint/prose checks pass).
 - [ ] Builds cleanly from a fresh clone; a preview deploy renders correctly.
+- [ ] **Every learner-facing link on the rendered preview is clicked/verified** (capstones,
+      quizzes, cross-references) — source-level checks cannot see a page the site never
+      renders (D0017); the CI render+link+e2e gates are green (the `Checks` workflow's
+      "Site renders + rendered links resolve" job is the machine half of this item).
 - [ ] A "5-minute learner walkthrough" path through the new content that I can click/run.
 - [ ] A resume-ready, quantified bullet drafted in docs/PORTFOLIO.md (e.g. "authored + auto-graded
       X chapters across Y modules; Z% of content runs in-browser at zero cost").

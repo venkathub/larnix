@@ -1,10 +1,22 @@
 -- Larnix `quiz` shortcode.
 --
--- Usage in a chapter:  {{< quiz quiz.yml >}}
+-- Usage in a chapter:  {{< quiz quiz-chNN.yml >}}
 --
 -- Reads the referenced YAML quiz file at render time, converts it to JSON, and
 -- embeds it in a mount <div> that the client-side engine (larnix-quiz.js) renders
 -- and scores. The quiz file is validated separately in CI by infra/ci/quiz_lint.py.
+--
+-- YAML parsing (review 2026-07-19 / D0017): quiz files are parsed with the
+-- vendored lua-tinyyaml (tinyyaml.lua, same parser quarto-live bundles) instead
+-- of the previous trick of round-tripping the YAML through Pandoc *markdown
+-- metadata*. The round-trip applied typographic transforms (smart quotes,
+-- em-dashes) to prompts/options and flattened any markdown via stringify;
+-- tinyyaml returns the strings exactly as authored and preserves ints/bools
+-- (`answer:`, `shuffle:`) natively.
+
+local tinyyaml = dofile(
+  pandoc.path.join({ pandoc.path.directory(PANDOC_SCRIPT_FILE), "tinyyaml.lua" })
+)
 
 -- Read the quiz file, trying the document's directory first, then the path as given.
 local function read_quiz_file(relpath)
@@ -26,50 +38,10 @@ local function read_quiz_file(relpath)
   return nil
 end
 
--- Recursively convert a Pandoc Meta value into plain Lua tables/strings/bools.
-local function meta_convert(v)
-  local lt = type(v)
-  if lt == "boolean" or lt == "number" or lt == "string" then
-    return v
-  end
-  if lt ~= "table" then
-    return tostring(v)
-  end
-  local pt = pandoc.utils.type(v)
-  if pt == "Inlines" or pt == "Blocks" then
-    return pandoc.utils.stringify(v)
-  end
-  -- Decide list vs. map.
-  local is_array = (pt == "List")
-  if not is_array then
-    is_array = true
-    for k in pairs(v) do
-      if type(k) ~= "number" then
-        is_array = false
-        break
-      end
-    end
-    if next(v) == nil then
-      is_array = false
-    end
-  end
-  local out = {}
-  if is_array then
-    for i, x in ipairs(v) do
-      out[i] = meta_convert(x)
-    end
-  else
-    for k, x in pairs(v) do
-      out[tostring(k)] = meta_convert(x)
-    end
-  end
-  return out
-end
-
 return {
   ["quiz"] = function(args, kwargs)
     if #args < 1 then
-      error("quiz: requires a quiz file path, e.g. {{< quiz quiz.yml >}}")
+      error("quiz: requires a quiz file path, e.g. {{< quiz quiz-ch01.yml >}}")
     end
     local relpath = pandoc.utils.stringify(args[1])
     local content = read_quiz_file(relpath)
@@ -77,9 +49,10 @@ return {
       error("quiz: could not read quiz file '" .. relpath .. "'")
     end
 
-    -- Parse the YAML by reading it as Pandoc markdown metadata.
-    local parsed = pandoc.read("---\n" .. content .. "\n---\n", "markdown")
-    local data = meta_convert(parsed.meta)
+    local ok, data = pcall(tinyyaml.parse, content)
+    if not ok or type(data) ~= "table" then
+      error("quiz: could not parse '" .. relpath .. "' as YAML: " .. tostring(data))
+    end
     local json = quarto.json.encode(data)
 
     -- Register the engine assets once (Quarto de-duplicates the dependency).

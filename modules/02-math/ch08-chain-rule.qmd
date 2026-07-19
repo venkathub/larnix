@@ -12,7 +12,7 @@ learning_objectives:
   - "See why this multiplying-of-local-slopes is the engine of backpropagation"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -253,9 +253,9 @@ blocks the signal — and a negative slope flips the sign, so `chain(-1, 4) = -4
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now use the chain rule on a real composition. For `y = (2x)²` the inner step is
-`u = 2x` (slope `2`) and the outer step is `u²` (slope `2u`), so
-`dydx = (2 * (2 * x)) * 2 = 8 * x`. Write the body of `dydx(x)`. Complete the marked
-line.
+`u = 2x` (slope `2`) and the outer step is `u²` (slope `2u`). Write the body of
+`dydx(x)` so it multiplies the outer slope by the inner slope. You write the whole
+body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -267,7 +267,7 @@ from lib.grader import run_tests
 #| exercise: ex_dydx
 def dydx(x):
     """Slope of y = (2x)^2 by the chain rule: outer slope (2u) times inner slope 2."""
-    return ____  # TODO: (2 * (2 * x)) * 2, which simplifies to 8 * x
+    ...  # TODO: write the body — outer slope at u = 2x, times the inner slope
 
 run_tests([
     ("slope at x=3", dydx(3), 24),
@@ -344,7 +344,9 @@ product really is the composition's sensitivity.
 You can now differentiate a **composition** by multiplying local slopes — the chain
 rule, `(f ∘ g)'(x) = f'(g(x)) * g'(x)`. Stacked across many steps, that single
 multiply *is* backpropagation: a nudge ripples through composed functions, scaled by
-each step's slope, so a network can trace its error back to every weight. That closes
+each step's slope, so a network can trace its error back to every weight. It is also
+the engine of the Ch16 neuron's backward pass: `dL/dw_i = dL/da · da/dz · dz/dw_i` is
+this chapter's rule, applied three links deep. That closes
 the calculus thread of this module. Next we switch gears to the third pillar —
 **Ch9 — Probability basics** — where we start reasoning about uncertain data: chance,
 events, and how likely things are.

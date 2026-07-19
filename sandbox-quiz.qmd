@@ -2,6 +2,9 @@
 title: "Sandbox — quiz engine (internal)"
 subtitle: "Not learner content. Proves the quiz.yml -> shortcode -> client-side scoring path."
 search: false
+# Internal fixture: keep out of search engines too (review 2026-07-19, U9).
+include-in-header:
+  text: '<meta name="robots" content="noindex">'
 ---
 
 ::: {.callout-warning}

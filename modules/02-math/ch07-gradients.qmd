@@ -11,7 +11,7 @@ learning_objectives:
   - "Trace why repeated downhill steps on f(x) = x^2 walk x toward its minimum at 0"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -255,9 +255,9 @@ does not move — the ball has reached flat ground.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now wire in the gradient for a specific bowl. For `f(x) = x^2` the gradient at `x`
-is `2*x`. Write `step_x_squared(x, lr)` that does **one** descent step on this bowl:
-compute the gradient `2*x`, then return `x - lr * (2 * x)`. Complete the marked
-line.
+is `2*x`. Write the body of `step_x_squared(x, lr)` so it does **one** descent step
+on this bowl: compute the gradient at `x`, then step against it with Exercise 1's
+rule. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -269,8 +269,7 @@ from lib.grader import run_tests
 #| exercise: ex_xsq
 def step_x_squared(x, lr):
     """One descent step on f(x) = x^2, whose gradient at x is 2*x."""
-    grad = ____  # TODO: the gradient of x^2 at x
-    return x - lr * grad
+    ...  # TODO: write the body — the gradient at x, then one step downhill against it
 
 run_tests([
     ("from 5, lr 0.1", step_x_squared(5, 0.1), 4.0),
@@ -360,7 +359,9 @@ settling. That is overshooting: the step size matters as much as the direction.
 ## Where this fits / what's next
 
 You now have the engine of learning: read the gradient, step the opposite way,
-repeat. On a one-input bowl that is the whole story. Real models, though, are deep
+repeat. For the Ch16 neuron, the gradient of the loss with respect to `w` and `b` is
+exactly the update direction — it says which way to nudge every weight at once to be
+less wrong. On a one-input bowl that is the whole story. Real models, though, are deep
 stacks of functions, and to get the gradient of the error with respect to a buried
 weight you need to chain slopes together through every layer. Next we meet exactly
 that tool — **the chain rule** (Ch8) — which turns a single derivative into the

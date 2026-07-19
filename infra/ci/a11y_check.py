@@ -74,9 +74,6 @@ THEME_PAIRS = [
     ("light: pill on amber card", "#7a5300", blend((255, 255, 255, 0.62), "#fdecbf")),
     ("light: primary button", "#ffffff", "#0b6e6e"),
     ("light: cta gradient end", "#ffffff", "#6d28d9"),
-    ("light: avatar coral", "#ffffff", "#c92a26"),
-    ("light: avatar violet", "#ffffff", "#6d28d9"),
-    ("light: avatar sky", "#ffffff", "#0369a1"),
     ("light: beginner badge", "#14532d", "#e6f4ea"),
     ("light: intermediate badge", "#6b3e09", "#fdf0d5"),
     ("light: advanced badge", "#7f1d1d", "#fde2e1"),
@@ -87,8 +84,9 @@ THEME_PAIRS = [
     ("light: frontier badge", "#8f1133", "#fff1f2"),
     ("light: Key Takeaways heading", "#0c5f57", "#d4f3ee"),
     ("light: primary link", "#0b6e6e", _LIGHT_BG),
-    ("light: nav text", "#2b2b3a", "#fffdfa"),
-    ("light: nav brand", "#0b6e6e", "#fffdfa"),
+    # Navbar is translucent (rgba(255,253,250,.82)) — flatten over the page bg.
+    ("light: nav text", "#2b2b3a", blend((255, 253, 250, 0.82), _LIGHT_BG)),
+    ("light: nav brand", "#0b6e6e", blend((255, 253, 250, 0.82), _LIGHT_BG)),
     ("light: details summary", "#0b6e6e", "#ffffff"),
     ("light: code label", "#5d5d70", "#ece4d8"),
     ("light: running label", "#0b6e6e", "#ece4d8"),
@@ -148,6 +146,113 @@ def check_contrast(min_ratio: float = AA_NORMAL) -> list[str]:
         if ratio < needed:
             failures.append(f"{name}: {fg} on {bg} = {ratio:.2f}:1 (needs >= {needed})")
     return failures
+
+
+# ── SCSS ↔ THEME_PAIRS sync (review 2026-07-19 / D0017 deferred item) ───────
+# THEME_PAIRS used to be mirrored from the SCSS by hand, with a "KEEP IN SYNC"
+# comment as the only guard — the review found 3 pairs for a component that no
+# longer existed. This check makes the drift mechanical, in both directions:
+#
+#   1. ORPHANS — every literal "#rrggbb" written in the THEME_PAIRS source block
+#      must still appear somewhere in the theme SCSS. A colour tweak that edits
+#      the SCSS but not this file now fails CI instead of silently gating
+#      against stale colours. (Computed `blend(...)` entries are built from
+#      literals that are themselves checked.)
+#   2. COVERAGE — every declared clay component pair (`--clay-<n>-bg`/`-tx`),
+#      Key-Takeaways pair (`--lx-kt-bg`/`--lx-kt-heading`), and light badge rule
+#      (`.badge-x { background: …; color: …; }`) in the SCSS must be gated by
+#      some THEME_PAIRS entry. A new themed component can't ship un-gated.
+
+THEME_SCSS_FILES = [
+    "theme/_larnix-components.scss",
+    "theme/larnix.scss",
+    "theme/larnix-dark.scss",
+]
+
+_HEX_RE = re.compile(r"#[0-9a-fA-F]{6}\b")
+_CLAY_RE = re.compile(r"--clay-([a-z]+)-(bg|tx):\s*(#[0-9a-fA-F]{6})")
+_KT_RE = re.compile(r"--lx-kt-(bg|heading):\s*(#[0-9a-fA-F]{6})")
+_BADGE_RE = re.compile(
+    r"\.badge-([a-z]+)\s*\{\s*background:\s*(#[0-9a-fA-F]{6});\s*color:\s*(#[0-9a-fA-F]{6})"
+)
+
+
+def _pairs_source_hexes(source: str) -> set[str]:
+    """Literal hex colours written inside the THEME_PAIRS block of this file."""
+    start = source.index("THEME_PAIRS = [")
+    end = source.index("\n]", start)
+    return {h.lower() for h in _HEX_RE.findall(source[start:end])}
+
+
+def _gated_combos() -> set[tuple[str, str]]:
+    """(fg, bg) combinations covered by THEME_PAIRS, lowercased."""
+    return {(p[1].lower(), p[2].lower()) for p in THEME_PAIRS}
+
+
+def check_scss_sync(scss_text: str, pairs_source: str) -> list[str]:
+    failures: list[str] = []
+    scss_hexes = {h.lower() for h in _HEX_RE.findall(scss_text)}
+
+    # 1. Orphaned pair colours (pair references a colour the theme dropped).
+    for h in sorted(_pairs_source_hexes(pairs_source)):
+        if h not in scss_hexes:
+            failures.append(
+                f"THEME_PAIRS colour {h} no longer appears in the theme SCSS — "
+                f"stale pair (update or remove it)"
+            )
+
+    # 2. Un-gated declared component pairs.
+    gated = _gated_combos()
+
+    clay: dict[str, dict[str, str]] = {}
+    for name, kind, hexv in _CLAY_RE.findall(scss_text):
+        clay.setdefault(name, {})[kind] = hexv.lower()
+    for name, d in sorted(clay.items()):
+        if "bg" in d and "tx" in d and (d["tx"], d["bg"]) not in gated:
+            failures.append(
+                f"clay pair '{name}' ({d['tx']} on {d['bg']}) declared in SCSS "
+                f"but not contrast-gated — add it to THEME_PAIRS"
+            )
+
+    kt: dict[str, str] = {}
+    kt_missing = []
+    for kind, hexv in _KT_RE.findall(scss_text):
+        # KT pairs repeat per theme block; pair each bg with the next heading.
+        if kind == "bg":
+            kt["bg"] = hexv.lower()
+        elif "bg" in kt:
+            if (hexv.lower(), kt["bg"]) not in gated:
+                kt_missing.append((hexv.lower(), kt["bg"]))
+            kt = {}
+    for fg, bg in kt_missing:
+        failures.append(
+            f"Key Takeaways pair ({fg} on {bg}) declared in SCSS but not "
+            f"contrast-gated — add it to THEME_PAIRS"
+        )
+
+    for name, bg, fg in _BADGE_RE.findall(scss_text):
+        if (fg.lower(), bg.lower()) not in gated:
+            failures.append(
+                f"badge '{name}' ({fg} on {bg}) declared in SCSS but not "
+                f"contrast-gated — add it to THEME_PAIRS"
+            )
+
+    return failures
+
+
+def run_scss_sync(scss_files: list[str] | None = None) -> list[str]:
+    texts = []
+    for path in scss_files or THEME_SCSS_FILES:
+        try:
+            with open(path, encoding="utf-8") as fh:
+                texts.append(fh.read())
+        except OSError:
+            pass  # theme file layout may differ under test fixtures
+    if not texts:
+        return ["no theme SCSS files found — SCSS/pairs sync could not run"]
+    with open(__file__, encoding="utf-8") as fh:
+        pairs_source = fh.read()
+    return check_scss_sync("\n".join(texts), pairs_source)
 
 
 # ── alt-text ────────────────────────────────────────────────────────────────
@@ -217,16 +322,20 @@ def main(argv: list[str]) -> int:
     paths = _collect(argv)
 
     contrast_failures = check_contrast()
+    sync_failures = run_scss_sync()
     alt_failures = check_alt_text(paths)
 
     print(f"Contrast: checked {len(THEME_PAIRS)} theme pairs.")
     for f in contrast_failures:
         print(f"  FAIL {f}")
+    print("SCSS/pairs sync: checked orphans + clay/KT/badge coverage.")
+    for f in sync_failures:
+        print(f"  FAIL {f}")
     print(f"Alt-text: scanned {len(paths)} content file(s).")
     for f in alt_failures:
         print(f"  FAIL {f}")
 
-    total = len(contrast_failures) + len(alt_failures)
+    total = len(contrast_failures) + len(sync_failures) + len(alt_failures)
     if total:
         print(f"\na11y check failed: {total} issue(s)")
         return 1

@@ -12,7 +12,7 @@ learning_objectives:
   - "Use a set to collect distinct values"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -106,6 +106,32 @@ moods                            # {"good", "ok"}
 | a fixed group, or to return several values | `tuple` |
 | the unique values, or fast membership tests | `set` |
 
+### A short decision guide
+
+The table is the summary; here is the thinking behind it. When you're holding
+some data and wondering where to put it, ask three questions in order:
+
+1. **Will I look values up by *name*?** If each item has named parts — a date, a
+   step count, a mood — you have a *record*, and a record is a `dict`. This is
+   the question that matters most in data work, because almost every "row" of a
+   dataset is a record. If the answer is yes but the record will *never* change
+   and has an obvious fixed order (a coordinate pair, a width-and-height), a
+   `tuple` is the leaner choice.
+2. **Do I care about order and repeats?** A diary of days must keep its order,
+   and two days can have the same step count — that's a `list`. If order is
+   meaningless and repeats should collapse — "which distinct moods appeared this
+   month?" — that's a `set`.
+3. **Will the collection grow as the program runs?** Growing collections are
+   `list`s (with `append`) or `dict`s/`set`s (with assignment or `add`). If the
+   group is fixed at birth — like the pair of numbers a function returns — reach
+   for a `tuple` and let its immutability document that nothing will change.
+
+In practice the containers nest: the habits dataset is naturally a **list of
+dicts** — an ordered sequence of days, each day a record with named fields. You
+will see that exact shape again in Chapter 6, when the CSV reader hands you the
+real file in this form, and later in every DataFrame of M2, which is this idea
+industrialised.
+
 ::: {.callout-note collapse="true"}
 ## 🧱 For Java developers
 
@@ -152,6 +178,77 @@ location = (12.97, 77.59)
 print("Latitude:", location[0], "| Longitude:", location[1])
 print("A tuple has", len(location), "fixed values that can't be reassigned.")
 ```
+
+### Looking up a day: list scan vs dict lookup
+
+One more contrast worth seeing in code. Suppose you want the steps for
+`"2026-01-03"`. With a list of dicts you have to **scan** — walk the rows until
+one matches. But if lookups by date are what you'll do all day, you can reshape
+the data once into a **dict keyed by date**, and then every lookup is a single
+step. Press **Run**.
+
+```{pyodide}
+#| caption: "Scan a list, or index a dict — same data, two shapes"
+days = [
+    {"date": "2026-01-01", "steps": 7500},
+    {"date": "2026-01-02", "steps": 8200},
+    {"date": "2026-01-03", "steps": 9100},
+]
+
+# Shape 1: a list — find a date by scanning every row
+found = None
+for d in days:
+    if d["date"] == "2026-01-03":
+        found = d["steps"]
+print("Found by scanning the list:", found)
+
+# Shape 2: a dict keyed by date — one direct lookup, no loop
+steps_by_date = {}
+for d in days:
+    steps_by_date[d["date"]] = d["steps"]
+print("Found by dict lookup:", steps_by_date["2026-01-03"])
+```
+
+Both print `9100`, but the *cost* differs: the scan touches every row (on 10,000
+days, up to 10,000 checks), while the dict jumps straight to the key — one step,
+however large the dataset. The list keeps the diary order; the dict makes lookups
+instant. Choosing a container is really choosing **which operation you want to be
+easy** — and it's normal to keep both shapes of the same data, as we did here.
+
+### Common beginner mistakes
+
+Two container habits bite almost every newcomer; meet them here rather than in a
+confusing bug later.
+
+**Mutating a list while looping over it.** Removing items from the very list you
+are iterating makes Python's internal position counter skip elements — some rows
+never get inspected, silently:
+
+```python
+steps = [7500, 0, 0, 8200]
+for s in steps:
+    if s == 0:
+        steps.remove(s)   # BAD: skips the second 0
+# steps is now [7500, 0, 8200] — one zero survived!
+```
+
+The fix is to build a **new** list of the rows you keep (a pattern Chapter 5's
+comprehensions make one line): loop over the original, append the keepers.
+
+**Reading a key that might not exist.** `day["sleep_hours"]` raises a `KeyError`
+if that field is absent — one missing field crashes the whole run. When absence is
+a real possibility (and in messy data it always is), use `.get`, which returns
+`None` — or a default you choose — instead of raising:
+
+```python
+day = {"date": "2026-01-03", "steps": 9100}
+day.get("sleep_hours")        # None — no crash
+day.get("sleep_hours", 0.0)   # 0.0 — your chosen default
+```
+
+You'll use exactly this in Exercise 3, where `.get` gives a mood's count a default
+of `0` the first time it appears — and again in Chapter 7, where handling missing
+data properly becomes the whole topic.
 
 ---
 
@@ -217,8 +314,9 @@ alternative to remembering a position.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `distinct_moods(days)` — return the **set** of distinct mood values across a
-list of day dicts. Complete the marked line.
+Write the body of `distinct_moods(days)` — return the **set** of distinct mood
+values across a list of day dicts. You write the whole body yourself: build the
+set, fill it from the loop, and return it.
 
 ```{pyodide}
 #| setup: true
@@ -230,10 +328,7 @@ from lib.grader import run_tests
 #| exercise: ex_moods
 def distinct_moods(days):
     """Return the set of distinct mood values across the day dicts."""
-    moods = set()
-    for d in days:
-        ____  # TODO: add this day's mood to the set
-    return moods
+    ...  # TODO: write the body — start an empty set, add each day's mood, return it
 
 run_tests([
     ("collects unique moods", distinct_moods([{"mood": "good"}, {"mood": "ok"}, {"mood": "good"}]), {"good", "ok"}),
@@ -244,8 +339,9 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-A set grows with `.add(...)`. Each day's mood is `d["mood"]`, so add that to
-`moods`. Duplicates are dropped automatically.
+Start with an empty set, `moods = set()`, then loop `for d in days:`. A set grows
+with `.add(...)` — each day's mood is `d["mood"]`, so add that to `moods`.
+Duplicates are dropped automatically. Return `moods` after the loop.
 </details>
 
 <details><summary>Show solution</summary>

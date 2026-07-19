@@ -37,6 +37,9 @@ _PYODIDE_CELL = re.compile(r"^`{3,}\{pyodide\}", re.MULTILINE)
 _HIDDEN_SOLUTION = re.compile(r"<details\b", re.IGNORECASE)
 _LIVE_HTML = re.compile(r"live-html", re.MULTILINE)
 _EXEC_DISABLED = re.compile(r"enabled:\s*false", re.MULTILINE)
+# {{< badge difficulty=beginner >}} — captured kind + value (review 2026-07-19:
+# badges are hand-authored, so they could silently disagree with front-matter).
+_BADGE = re.compile(r"\{\{<\s*badge\s+(difficulty|compute|status)=([\w-]+)\s*>\}\}")
 
 # (label, compiled-regex, fix-hint) for each required pillar.
 PILLARS = [
@@ -78,11 +81,42 @@ def check_text(text: str) -> list[str]:
     return problems
 
 
+def check_badges(text: str, fm: dict) -> list[str]:
+    """Badge↔front-matter drift (review 2026-07-19, finding U8).
+
+    The visible `{{< badge … >}}` row is hand-authored while front-matter is the
+    CI-validated truth, so a chapter could say `difficulty: advanced` in YAML yet
+    render a Beginner badge and nothing would notice. Every declared badge must
+    match its front-matter field, and the three standard badges must be present.
+    """
+    problems = []
+    found: dict[str, list[str]] = {}
+    for kind, value in _BADGE.findall(text):
+        found.setdefault(kind, []).append(value)
+    for kind in ("difficulty", "compute", "status"):
+        declared = str(fm.get(kind, "")).strip().lower()
+        values = [v.lower() for v in found.get(kind, [])]
+        if not values:
+            problems.append(
+                f"missing {{{{< badge {kind}=… >}}}} — chapters show all three "
+                f"badges (difficulty/compute/status)")
+        else:
+            for v in values:
+                if v != declared:
+                    problems.append(
+                        f"badge {kind}={v} disagrees with front-matter "
+                        f"{kind}: {declared!r} — the badge row must match the "
+                        f"validated metadata")
+    return problems
+
+
 def check_file(path: str) -> list[str]:
     if not is_chapter(path):
         return []
     with open(path, encoding="utf-8") as fh:
-        return check_text(fh.read())
+        text = fh.read()
+    fm = extract_frontmatter(path)
+    return check_text(text) + check_badges(text, fm if isinstance(fm, dict) else {})
 
 
 def _collect(args: list[str]) -> list[str]:

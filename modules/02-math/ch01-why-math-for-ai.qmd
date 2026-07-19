@@ -11,7 +11,7 @@ learning_objectives:
   - "Set fear aside: you'll build intuition with pictures before symbols"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 12
 resources:
   - ../../lib/grader.py
@@ -185,9 +185,9 @@ tip doubles too.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-To measure how well a line fits, you compare predictions to reality. Write
-`abs_error(predicted, actual)` — the size of the gap, always positive. Complete the
-marked line.
+To measure how well a line fits, you compare predictions to reality. Write the body
+of `abs_error(predicted, actual)` — the size of the gap between a prediction and the
+real value, always positive. This time you write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -199,7 +199,7 @@ from lib.grader import run_tests
 #| exercise: ex_error
 def abs_error(predicted, actual):
     """The absolute gap between a prediction and the real value."""
-    return ____  # TODO: the size of (predicted - actual), never negative
+    ...  # TODO: write the body — compute the gap, then return its size (never negative)
 
 run_tests([
     ("over by 2", abs_error(10, 8), 2),

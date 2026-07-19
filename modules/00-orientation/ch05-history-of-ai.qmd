@@ -12,7 +12,7 @@ learning_objectives:
   - "Connect the 2012 deep-learning boom and the 2017 transformer to today's generative AI"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -71,11 +71,17 @@ Dartmouth College gave the field its name: *artificial intelligence*. Then, in
 1958, Frank Rosenblatt built the **Perceptron** — a machine that *learned* to tell
 patterns apart from examples. Optimism ran high.
 
-**Act 2 — The first winter (1969–1980s).** In 1969, Marvin Minsky and Seymour
-Papert proved that a single-layer perceptron could not learn even simple patterns
-(famously, the "exclusive-or"). The limitation was real, the disappointment
-sharp, and funding collapsed. This was the first **AI winter** — a recurring
-pattern where hype outruns results and the money leaves.
+**Act 2 — The first winter, a thaw, and a second winter (1969–1980s).** In 1969,
+Marvin Minsky and Seymour Papert proved that a single-layer perceptron could not
+learn even simple patterns (famously, the "exclusive-or"). The limitation was
+real, the disappointment sharp, and funding collapsed. This was the first **AI
+winter** — a recurring pattern where hype outruns results and the money leaves.
+The 1980s brought a partial thaw: **expert systems** — programs stuffed with
+thousands of hand-written if-then rules collected from human specialists —
+became a genuine commercial boom. But they were brittle, expensive to maintain,
+and impossible to scale beyond their rule books, and when the promised payoff
+failed to arrive, the market collapsed in the late 1980s. Funding dried up
+again: the **second AI winter**.
 
 **Act 3 — Learning returns (1986–2010).** In 1986, a method called
 **backpropagation** (popularised by Rumelhart, Hinton, and Williams in *Nature*)
@@ -97,9 +103,12 @@ researchers at Google published **"Attention Is All You Need,"** introducing the
 **transformer** — the architecture behind nearly every modern language model. Scaled
 up on enormous text, transformers became **foundation models**: trained once, then
 adapted to countless tasks. GPT-3 (2020) showed how capable they were; **ChatGPT**
-(2022) put one in everyone's hands. The current frontier extends this with models
-trained to *generate images and audio*, and **reasoning models** trained to work
-through problems step by step.
+(2022) put one in everyone's hands. In 2023, GPT-4-class models became
+**multimodal** — foundation models that read images as well as text — and 2024
+brought the first **reasoning models** (the o1 class): models trained to "think
+before answering," working through a problem step by step instead of replying in
+one pass. Since then the frontier has kept extending along both lines — richer
+generation (images, audio, video) and deeper reasoning.
 
 > 🔬 Going deeper (optional): notice the rhythm — an idea, a wave of hype, a winter,
 > then a breakthrough that makes the old promise real. Today's excitement is the
@@ -127,6 +136,8 @@ timeline = [
     (2017, "The transformer: 'Attention Is All You Need'"),
     (2020, "GPT-3 shows the power of scale"),
     (2022, "ChatGPT reaches the public"),
+    (2023, "GPT-4: multimodal foundation models"),
+    (2024, "First reasoning models (o1-class): models that 'think before answering'"),
 ]
 
 for year, event in timeline:
@@ -167,8 +178,13 @@ We'll reuse the `timeline` data from the worked example.
 
 ### Exercise 1 — Guided (≈5 min) 🟢
 
-Complete the marked line so `event_year` returns the year a named event happened
-(or `None` if it isn't in the timeline). Replace `____`, then press **Run**.
+The searching loop is written for you. Complete the one marked line so
+`event_year` returns the year a named event happened (or `None` if it isn't in
+the timeline). Replace `____`, then press **Run**.
+
+> 💡 You're not expected to understand the loop syntax yet — Module 1 teaches
+> it. Read `for year, event in timeline` as "for each (year, event) pair in the
+> list," and fill in only the marked line.
 
 ```{pyodide}
 #| setup: true
@@ -224,10 +240,15 @@ When the event matches, return its `year`; if the loop finishes with no match, t
 event isn't in the timeline, so return `None`.
 </details>
 
-### Exercise 2 — Implement (≈10 min) 🟡
+### Exercise 2 — Ask the era-finder (≈10 min) 🟡
 
-Write `events_in_era(timeline, start, end)` — return the list of event *names*
-whose year is between `start` and `end`, inclusive. Complete the marked line.
+`events_in_era(timeline, start, end)` is written for you — it collects the names
+of events whose year falls between `start` and `end`, inclusive. Read it, then
+complete the marked line: **call** it to pull out the milestones of the
+deep-learning decade, 2010 to 2019.
+
+> 💡 The condition `start <= year <= end` is Module 1 material — read it as "the
+> year is between start and end." You fill in only the one marked line.
 
 ```{pyodide}
 #| setup: true
@@ -237,6 +258,7 @@ from lib.grader import run_tests
 
 ```{pyodide}
 #| exercise: ex_era
+# Given code — read it, don't change it.
 timeline = [
     (1958, "Perceptron"),
     (1986, "Backpropagation"),
@@ -249,12 +271,14 @@ def events_in_era(timeline, start, end):
     """Return event names with start <= year <= end, in timeline order."""
     names = []
     for year, event in timeline:
-        if ____:  # TODO: is this year inside the era?
+        if start <= year <= end:
             names.append(event)
     return names
 
+deep_learning_decade = ____  # TODO: call events_in_era with timeline, 2010, and 2019
+
 run_tests([
-    ("the deep-learning decade", events_in_era(timeline, 2010, 2019), ["AlexNet", "Transformer"]),
+    ("the deep-learning decade", deep_learning_decade, ["AlexNet", "Transformer"]),
     ("a single year", events_in_era(timeline, 2022, 2022), ["ChatGPT"]),
     ("an empty era", events_in_era(timeline, 1990, 2000), []),
 ])
@@ -262,9 +286,9 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-"Between `start` and `end`, inclusive" is two comparisons joined with `and`:
-the year is at least `start` *and* at most `end`. Python lets you chain them:
-`start <= year <= end`.
+A call is the function's name with its inputs in parentheses, in order: the
+`timeline` list, then the first year of the era, then the last —
+three inputs, separated by commas.
 </details>
 
 <details><summary>Show solution</summary>
@@ -284,10 +308,12 @@ def events_in_era(timeline, start, end):
         if start <= year <= end:
             names.append(event)
     return names
+
+deep_learning_decade = events_in_era(timeline, 2010, 2019)
 ```
 
-`start <= year <= end` is `True` only for years inside the era, so only those
-event names are collected — in the order they appear in the timeline.
+`events_in_era(timeline, 2010, 2019)` keeps only the events whose year is inside
+the era — AlexNet (2012) and the transformer (2017), in timeline order.
 </details>
 
 ### Exercise 3 — Stretch (optional, ≈10 min) 🔴

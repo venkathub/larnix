@@ -12,7 +12,7 @@ learning_objectives:
   - "Name the three things to pin for reproducibility: package versions, the data, and the seed"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -204,9 +204,10 @@ call — which is why the two `first_draw(42)` results are equal.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `is_reproducible(seed)` — return `True` if two separately seeded generators
-produce the **same** five numbers (they always should, with the same seed). Complete
-the marked lines.
+Write the body of `is_reproducible(seed)` — return `True` if two separately seeded
+generators produce the **same** five numbers (they always should, with the same
+seed). You write the whole body yourself: draw five integers from two generators
+seeded identically, then compare them.
 
 ```{pyodide}
 #| setup: true
@@ -220,9 +221,7 @@ import numpy as np
 
 def is_reproducible(seed):
     """True if two generators seeded the same way give the same 5 numbers."""
-    a = np.random.default_rng(seed).integers(0, 100, size=5)
-    b = ____  # TODO: a second generator seeded the same way, same 5 numbers
-    return list(a) == list(b)
+    ...  # TODO: write the body — seed two generators the same way, draw 5 integers from each, compare as lists
 
 run_tests([
     ("seed 42", is_reproducible(42), True),

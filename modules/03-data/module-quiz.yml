@@ -1,99 +1,99 @@
 title: "M3 — module quiz"
 id: "m3-module-quiz"
 questions:
-  - id: vectorization
-    prompt: "Why prefer a NumPy vectorized operation over a Python loop for numeric work?"
+  - id: apply-vectorized-fix
+    prompt: "Your field scale under-read every penguin by 50 g. `masses` is a NumPy array of all 344 body masses. What is the vectorized correction?"
     options:
-      - "It is shorter and runs as one fast whole-array operation"
-      - "Loops cannot do arithmetic"
-      - "NumPy is the only way to add numbers"
+      - "Loop over the array with `for` and add 50 to each element one at a time"
+      - "`masses + 50` — broadcasting adds 50 to every element in one whole-array step"
+      - "Convert the array to a Python list first, because NumPy cannot add a scalar"
+    answer: 1
+    explanation: "Broadcasting applies one scalar across the whole array in a single vectorized operation — no per-element loop needed (Ch1)."
+  - id: filtered-frame-iloc
+    prompt: "You run `adelie = df[df['species'] == 'Adelie']`. Why can `adelie.loc[4]` and `adelie.iloc[4]` return different rows?"
+    options:
+      - "Filtering keeps the original index labels, so `.loc[4]` finds the row labelled 4 while `.iloc[4]` takes the fifth kept row by position"
+      - "They cannot differ — `.loc` and `.iloc` always agree"
+      - "`.loc` only works on columns after a filter"
     answer: 0
-    explanation: "Vectorized operations apply to the whole array at once — clearer and much faster than a per-element loop (Ch1)."
-  - id: series-vs-frame
-    prompt: "What is the difference between a Series and a DataFrame?"
+    explanation: "A boolean filter preserves the original labels; `.loc` matches labels while `.iloc` counts positions within the filtered frame (Ch3)."
+  - id: missing-before-drop
+    prompt: "A new dataset arrives with 5% of its `sex` labels missing. What do you check before calling `dropna()` on that column?"
     options:
-      - "A Series is a table; a DataFrame is one column"
-      - "A Series is one labelled column; a DataFrame is a table of columns"
-      - "They are the same thing"
+      - "Nothing — 5% is always safe to drop"
+      - "How many rows you would lose and whether the gaps cluster in one group (for example one species)"
+      - "Whether `fillna(0)` would run faster"
     answer: 1
-    explanation: "A Series is a single labelled 1-D column; a DataFrame is a table made of aligned Series (Ch2)."
-  - id: loc-iloc
-    prompt: "How do `.loc` and `.iloc` differ?"
+    explanation: "Count the damage with `.isna().sum()` and look at *where* the gaps fall before dropping — in penguins the 11 missing `sex` rows split 6 Adelie / 5 Gentoo (Ch4)."
+  - id: merge-then-groupby
+    prompt: "Orders live in one table and customer cities in another; they share `customer_id`. You want the mean order value per city. Which sequence works?"
     options:
-      - "`.loc` selects by label; `.iloc` selects by integer position"
-      - "`.loc` is for columns only; `.iloc` is for rows only"
-      - "They are interchangeable"
+      - "`groupby('city')` on the orders table alone"
+      - "`pd.merge` the two tables on `customer_id`, then `groupby('city')['order_value'].mean()`"
+      - "`melt` the orders table, then `dropna()`"
+    answer: 1
+    explanation: "The city column must be brought onto the orders first (merge on the shared key), then split-apply-combine per city (Ch5)."
+  - id: wide-months-melt
+    prompt: "A sensor export has one column per month (`jan`, `feb`, `mar`, …) and one row per device. To plot reading-over-month for each device, which reshape do you reach for?"
+    options:
+      - "`pivot` — the table needs to get wider"
+      - "`melt` — stack the month columns into (device, month, reading) rows"
+      - "`dropna()` — remove the extra columns"
+    answer: 1
+    explanation: "Plotting a value over month wants long (tidy) form — one row per observation — and melt turns the month columns into rows (Ch6)."
+  - id: chart-for-question
+    prompt: "You want to check (a) whether flipper length and body mass move together, and (b) how body mass is spread within one species. Which pair of charts?"
+    options:
+      - "(a) a scatter plot, (b) a histogram"
+      - "(a) a bar chart, (b) a scatter plot"
+      - "(a) a histogram, (b) a bar chart"
     answer: 0
-    explanation: "`.loc` indexes by label, `.iloc` by integer position (Ch3)."
-  - id: missing-data
-    prompt: "`df.isna().sum()` tells you…"
+    explanation: "Two numeric variables against each other → scatter; the spread (distribution) of one variable → histogram (Ch7, Ch8)."
+  - id: price-strings-cleanup
+    prompt: "A scraped CSV's `price` column holds strings like '₹1,200', and `.sum()` glues the text together instead of adding. What is the fix from this module?"
     options:
-      - "The total of all numbers in the table"
-      - "How many missing (NaN) values are in each column"
-      - "How many rows there are"
+      - "Call `.sum()` a second time"
+      - "Strip the currency symbols and commas with `.str.replace(...)`, convert with `.astype(float)`, then total"
+      - "Delete the column — text columns can never become numbers"
     answer: 1
-    explanation: "`.isna()` flags missing cells; `.sum()` counts them per column — the first step before dropna/fillna (Ch4)."
-  - id: groupby
-    prompt: "What does `df.groupby('species')['body_mass_g'].mean()` compute?"
+    explanation: "Remove the characters that block conversion, then cast to float; only then do numeric operations mean anything (Ch14)."
+  - id: shape-vs-count-gap
+    prompt: "In a fresh EDA, `df.shape` reports (344, 8), yet the `sex` column shows only 333 non-missing values. What did the recipe's missing-values step find?"
     options:
-      - "One overall mean body mass"
-      - "The mean body mass within each species (split-apply-combine)"
-      - "The number of species"
+      - "The table lost 11 rows while loading"
+      - "11 rows have a missing `sex` value — note that before any summary that uses `sex`"
+      - "The shape is wrong; trust the column instead"
     answer: 1
-    explanation: "groupby splits rows by the key, applies the aggregate per group, and combines the results (Ch5)."
-  - id: reshaping
-    prompt: "`df.melt()` turns a table from…"
+    explanation: "344 − 333 = 11 missing values in `sex` — exactly what the shape → types → missing → summaries order surfaces before you group by sex (Ch9)."
+  - id: scale-before-distance
+    prompt: "Flipper length runs about 172–231 mm while body mass runs 2700–6300 g. Why scale them before a model that compares rows by distance?"
     options:
-      - "Long to wide"
-      - "Wide to long (tidy) form"
-      - "Numbers to text"
-    answer: 1
-    explanation: "melt stacks columns into rows (wide→long); pivot does the reverse (Ch6)."
-  - id: chart-choice
-    prompt: "Which chart best shows the relationship between two numeric variables?"
-    options:
-      - "A scatter plot"
-      - "A pie chart"
-      - "A single bar"
+      - "Unscaled, body mass's much larger numbers dominate the distance and flipper length barely counts"
+      - "Models refuse to run on unscaled columns"
+      - "Scaling makes the measurements more accurate"
     answer: 0
-    explanation: "A scatter plots one variable against another to reveal a relationship; histograms show distributions, bars compare categories (Ch7, Ch8)."
-  - id: histogram
-    prompt: "A histogram shows…"
+    explanation: "Distance-style comparisons weight columns by their numeric size; bringing both to a common range (min-max or z-scores) lets each feature contribute fairly (Ch10)."
+  - id: notebook-hidden-state
+    prompt: "Your notebook gives the right answer as you work, but after 'Restart kernel and run all' a cell fails with a NameError. What is the likely cause?"
     options:
-      - "The relationship between two columns"
-      - "The distribution (shape) of one variable's values"
-      - "The exact value of every row"
+      - "The kernel restart deleted your data files"
+      - "Hidden state: you ran cells out of order, and a later cell depended on one you had edited or removed"
+      - "Notebooks cannot be rerun top-to-bottom"
     answer: 1
-    explanation: "A histogram bins one variable to show its distribution — centre, spread, and skew (Ch8)."
-  - id: eda-first-steps
-    prompt: "Early in an EDA, what do you check first?"
+    explanation: "Out-of-order execution leaves definitions in memory that the saved cell order never recreates — the restart-and-run-all habit exposes it (Ch11)."
+  - id: pinned-versions-transfer
+    prompt: "A teammate reruns your analysis on their machine with a newer pandas and gets different numbers. Which reproducibility ingredient was missing?"
     options:
-      - "The colour of the plots"
-      - "Shape, data types, and missing values"
-      - "Nothing — go straight to modelling"
+      - "A faster computer"
+      - "Pinned package versions (a requirements.txt), alongside the fixed seed and the vendored data"
+      - "A bigger dataset"
     answer: 1
-    explanation: "A repeatable EDA starts with shape → types → missing → summaries before any deeper analysis (Ch9)."
-  - id: scaling
-    prompt: "Min-max scaling transforms a column to…"
+    explanation: "Same code + same data + same seed can still drift if library versions differ — pinning versions closes that gap (Ch12)."
+  - id: small-group-caveat
+    prompt: "Your EDA headline is a claim about Chinstrap penguins, which have 68 rows versus 152 Adelie and 124 Gentoo. What belongs in the data note?"
     options:
-      - "Mean 0 and standard deviation 1"
-      - "The range 0 to 1"
-      - "All zeros"
+      - "Nothing — 68 rows is plenty for any claim"
+      - "That Chinstrap is under-represented, so conclusions about it rest on fewer observations"
+      - "That the Chinstrap rows should be deleted"
     answer: 1
-    explanation: "Min-max scales to [0, 1]; standardization (z-score) gives mean 0 / std 1 (Ch10)."
-  - id: reproducibility
-    prompt: "What makes a data analysis reproducible?"
-    options:
-      - "Using the newest packages available"
-      - "Pinning package versions, the exact data, and a fixed random seed"
-      - "Running it on a faster computer"
-    answer: 1
-    explanation: "Pin versions (requirements.txt), the data (vendored), and the seed, so the same inputs give the same result anywhere (Ch12)."
-  - id: ethics-bias
-    prompt: "A group is badly under-represented in your dataset. What does that mean for conclusions about it?"
-    options:
-      - "Nothing — sample size never matters"
-      - "Conclusions about that group are weak or biased"
-      - "The data is automatically wrong for everyone"
-    answer: 1
-    explanation: "Under-representation makes claims about that group unreliable — a core data-ethics caveat to record in a data note (Ch13)."
+    explanation: "Record the group sizes and the caveat that claims about the smallest group are weaker — under-representation applied to your own headline (Ch13)."

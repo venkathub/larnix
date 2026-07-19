@@ -38,47 +38,53 @@ class ValidateQuizTests(unittest.TestCase):
     def test_valid(self):
         self.assertEqual(ql.validate_quiz(VALID), [])
 
+    def test_id_required(self):
+        data = dict(VALID)
+        del data["id"]
+        errs = ql.validate_quiz(data)
+        self.assertTrue(any("id is required" in e for e in errs))
+
     def test_not_mapping(self):
         self.assertTrue(ql.validate_quiz([1, 2, 3]))
 
     def test_questions_required_nonempty(self):
-        self.assertTrue(any("questions" in e for e in ql.validate_quiz({"questions": []})))
+        self.assertTrue(any("questions" in e for e in ql.validate_quiz({"id": "t", "questions": []})))
         self.assertTrue(any("questions" in e for e in ql.validate_quiz({"title": "x"})))
 
     def test_prompt_required(self):
-        errs = ql.validate_quiz({"questions": [q(prompt="")]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(prompt="")]})
         self.assertTrue(any("prompt" in e for e in errs))
 
     def test_options_min_two(self):
-        errs = ql.validate_quiz({"questions": [q(options=["only one"])]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(options=["only one"])]})
         self.assertTrue(any("at least 2" in e for e in errs))
 
     def test_option_nonempty(self):
-        errs = ql.validate_quiz({"questions": [q(options=["a", ""])]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(options=["a", ""])]})
         self.assertTrue(any("non-empty string" in e for e in errs))
 
     def test_answer_must_be_int(self):
-        errs = ql.validate_quiz({"questions": [q(answer="1")]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(answer="1")]})
         self.assertTrue(any("answer must be an integer" in e for e in errs))
 
     def test_answer_bool_rejected(self):
-        errs = ql.validate_quiz({"questions": [q(answer=True)]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(answer=True)]})
         self.assertTrue(any("answer must be an integer" in e for e in errs))
 
     def test_answer_out_of_range(self):
-        errs = ql.validate_quiz({"questions": [q(options=["a", "b"], answer=2)]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(options=["a", "b"], answer=2)]})
         self.assertTrue(any("out of range" in e for e in errs))
 
     def test_duplicate_question_id(self):
         errs = ql.validate_quiz(
-            {"questions": [q(id="dup"), q(id="dup")]}
+            {"id": "t", "questions": [q(id="dup"), q(id="dup")]}
         )
         self.assertTrue(any("duplicate id" in e for e in errs))
 
     def test_explanation_optional_but_typed(self):
-        errs = ql.validate_quiz({"questions": [q(explanation="")]})
+        errs = ql.validate_quiz({"id": "t", "questions": [q(explanation="")]})
         self.assertTrue(any("explanation" in e for e in errs))
-        self.assertEqual(ql.validate_quiz({"questions": [q()]}), [])
+        self.assertEqual(ql.validate_quiz({"id": "t", "questions": [q()]}), [])
 
 
 class ModuleQuizTests(unittest.TestCase):
@@ -91,21 +97,21 @@ class ModuleQuizTests(unittest.TestCase):
 
     def test_module_quiz_uses_same_schema(self):
         # A module quiz is valid under the shared schema.
-        data = {"title": "M0 quiz", "questions": [q(id=f"x{i}") for i in range(10)]}
+        data = {"title": "M0 quiz", "id": "m0-quiz", "questions": [q(id=f"x{i}") for i in range(10)]}
         self.assertEqual(ql.validate_quiz(data), [])
 
     def test_size_note_for_short_module_quiz(self):
-        data = {"questions": [q(id=f"x{i}") for i in range(3)]}
+        data = {"id": "t", "questions": [q(id=f"x{i}") for i in range(3)]}
         notes = ql.quiz_notes("modules/00/module-quiz.yml", data)
         self.assertTrue(any("convention is" in n for n in notes))
 
     def test_no_size_note_in_band(self):
-        data = {"questions": [q(id=f"x{i}") for i in range(10)]}
+        data = {"id": "t", "questions": [q(id=f"x{i}") for i in range(10)]}
         self.assertEqual(ql.quiz_notes("modules/00/module-quiz.yml", data), [])
 
     def test_no_size_note_for_chapter_quiz(self):
         # A 3-question per-chapter quick check is fine — the band only applies to module quizzes.
-        data = {"questions": [q(id=f"x{i}") for i in range(3)]}
+        data = {"id": "t", "questions": [q(id=f"x{i}") for i in range(3)]}
         self.assertEqual(ql.quiz_notes("modules/00/quiz.yml", data), [])
 
 

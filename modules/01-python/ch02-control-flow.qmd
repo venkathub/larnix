@@ -11,7 +11,7 @@ learning_objectives:
   - "Combine a loop and a condition to count or filter rows of data"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -241,8 +241,9 @@ otherwise it falls through to `"low"`.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `count_active(days, goal)` — loop over the `(date, steps)` days and count how
-many reach `goal`. Complete the marked line.
+Write the body of `count_active(days, goal)` — loop over the `(date, steps)` days
+and count how many reach `goal`. This time you write the whole body yourself: the
+counter, the loop, the check, and the `return`.
 
 ```{pyodide}
 #| setup: true
@@ -254,11 +255,7 @@ from lib.grader import run_tests
 #| exercise: ex_count
 def count_active(days, goal):
     """Count how many (date, steps) days have steps >= goal."""
-    count = 0
-    for date, steps in days:
-        if steps >= goal:
-            ____  # TODO: count this active day
-    return count
+    ...  # TODO: write the body — a counter, a loop over the days, an if, a return
 
 run_tests([
     ("two active", count_active([("a", 7000), ("b", 8200), ("c", 9000)], 8000), 2),
@@ -269,8 +266,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-You're using the accumulator pattern from the worked example: when a day is active,
-increase the counter by one with `count += 1`.
+This is the accumulator pattern from the worked example, step by step: start with
+`count = 0`; loop with `for date, steps in days:`; inside the loop, when
+`steps >= goal`, increase the counter with `count += 1`; after the loop, return
+`count`.
 </details>
 
 <details><summary>Show solution</summary>

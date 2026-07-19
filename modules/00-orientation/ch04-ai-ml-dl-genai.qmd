@@ -12,7 +12,7 @@ learning_objectives:
   - "Tell apart a model that classifies from one that generates"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 20
 resources:
   - ../../lib/grader.py
@@ -155,18 +155,27 @@ never in the corpus. That is the essence of "generative." Swap the toy chain for
 deep neural network trained on much of the internet, and you have a modern language
 model. Same shape, vastly more scale.
 
+> One honest footnote: tiny generators like this word-chain exist *outside* deep
+> learning — people built them decades before neural networks worked well — so
+> the neat nesting AI ⊃ ML ⊃ DL ⊃ GenAI is a simplification; it describes the
+> modern, deep-learning-based generative AI this course is about.
+
 ---
 
-## Feel it: real generative-adjacent AI, in your browser
+## Feel it: a real deep-learning model, in your browser
 
 The toy above is readable but tiny. Here is a **real neural network** — the kind
 behind deep learning — running entirely in your browser, no Python and no server.
-Type a sentence and it judges the sentiment. The first click downloads a small
-model (it needs the internet once); after that it runs offline.
+To be precise about the split you learned above: this model is a **classifier**,
+not a generator — it picks a label (positive or negative) for your sentence.
+Generation models run in the browser the same way; they are the same kind of
+network, only much bigger. Type a sentence and it judges the sentiment. The
+first click downloads a small model (it needs the internet once); after that it
+runs offline.
 
 ```{=html}
 <div class="larnix-genai-demo" style="border:1px solid var(--bs-border-color,#bbb);border-radius:8px;padding:1rem;margin:1rem 0;">
-  <p style="margin-top:0;"><strong>Sentiment demo</strong> — a deep-learning model judging your text. This is a taste, not a graded exercise.</p>
+  <p style="margin-top:0;"><strong>Sentiment demo</strong> — a deep-learning classifier judging your text. This is a taste, not a graded exercise.</p>
   <label for="genai-input" style="display:block;font-weight:600;margin-bottom:.25rem;">Your sentence</label>
   <textarea id="genai-input" rows="2" style="width:100%;box-sizing:border-box;">This course is free and I learned a lot.</textarea>
   <button id="genai-run" type="button" class="btn btn-primary" style="margin-top:.5rem;">Analyse sentiment</button>
@@ -274,11 +283,16 @@ def parent(node):
 is `None` without a special case.
 </details>
 
-### Exercise 2 — Implement (≈10 min) 🟡
+### Exercise 2 — Ask the ring-walker (≈10 min) 🟡
 
-Write `is_kind_of(node, ancestor)` — `True` if `ancestor` is `node` itself or any
-ring outside it. This is the "is GenAI a kind of AI?" question. Complete the line
-that steps outward.
+`is_kind_of(node, ancestor)` is written for you — it answers "is this ring a
+kind of that one?" by stepping outward, ring by ring. Read it, then complete the
+marked line: **call** `is_kind_of` to ask whether `"GenAI"` is a kind of
+`"AI"` — the same shape as `parent("ML")` in Exercise 1.
+
+> 💡 The `while` loop inside is Module 1 material — you're not expected to
+> understand it yet. Read it as "step outward until you hit the ancestor or run
+> out of rings," and fill in only the marked line.
 
 ```{pyodide}
 #| setup: true
@@ -288,6 +302,7 @@ from lib.grader import run_tests
 
 ```{pyodide}
 #| exercise: ex_iskind
+# Given code — read it, don't change it.
 parent_of = {"ML": "AI", "DL": "ML", "GenAI": "DL"}
 
 def is_kind_of(node, ancestor):
@@ -295,11 +310,13 @@ def is_kind_of(node, ancestor):
     while node is not None:
         if node == ancestor:
             return True
-        node = ____  # TODO: step out to the parent ring
+        node = parent_of.get(node)
     return False
 
+genai_is_ai = ____  # TODO: call is_kind_of with "GenAI" and "AI"
+
 run_tests([
-    ("GenAI is a kind of AI", is_kind_of("GenAI", "AI"), True),
+    ("GenAI is a kind of AI", genai_is_ai, True),
     ("DL is a kind of ML", is_kind_of("DL", "ML"), True),
     ("a ring is a kind of itself", is_kind_of("ML", "ML"), True),
     ("AI is not a kind of GenAI", is_kind_of("AI", "GenAI"), False),
@@ -308,8 +325,8 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-Each turn of the loop should move one ring outward. You already wrote the function
-that finds the ring outside a node in Exercise 1 — use the same `parent_of.get`.
+A call is the function's name with its inputs in parentheses, in order:
+first the inner ring, then the candidate ancestor. Both are strings in quotes.
 </details>
 
 <details><summary>Show solution</summary>
@@ -323,10 +340,14 @@ def is_kind_of(node, ancestor):
             return True
         node = parent_of.get(node)
     return False
+
+genai_is_ai = is_kind_of("GenAI", "AI")
 ```
 
-The loop walks outward — GenAI → DL → ML → AI — returning `True` if it ever lands
-on `ancestor`, and stopping at `None` (past the outermost ring) otherwise.
+`is_kind_of("GenAI", "AI")` walks outward — GenAI → DL → ML → AI — and lands on
+`"AI"`, so it returns `True`: a chatbot really is AI, three rings deep. Asking
+the other way round, `is_kind_of("AI", "GenAI")`, walks past the outermost ring
+and returns `False`.
 </details>
 
 ### Exercise 3 — Stretch (optional, ≈10 min) 🔴

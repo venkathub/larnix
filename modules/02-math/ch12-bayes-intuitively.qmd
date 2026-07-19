@@ -11,7 +11,7 @@ learning_objectives:
   - "Show why a positive test for a rare disease is often a false alarm"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -254,8 +254,10 @@ equal (50 and 50), the share is exactly half.
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Now compute the posterior straight from the three inputs, without counting people.
-Write `bayes(prevalence, sensitivity, false_positive_rate)` using Bayes' rule with
-the spelled-out denominator (true positives plus false positives).
+Write the body of `bayes(prevalence, sensitivity, false_positive_rate)` using
+Bayes' rule with the spelled-out denominator (true positives plus false positives),
+exactly as in "The same thing, in symbols" above. You write the whole body
+yourself: the true-positive share, the false-positive share, then the division.
 
 ```{pyodide}
 #| setup: true
@@ -267,9 +269,7 @@ from lib.grader import run_tests
 #| exercise: ex_bayes
 def bayes(prevalence, sensitivity, false_positive_rate):
     """P(sick | positive) from the base rate, sensitivity, and false-positive rate."""
-    true_pos = prevalence * sensitivity
-    false_pos = (1 - prevalence) * false_positive_rate
-    return ____  # TODO: true_pos divided by (true_pos + false_pos)
+    ...  # TODO: write the body — the two positive shares, then true over (true + false)
 
 run_tests([
     ("rare disease", round(bayes(0.01, 0.99, 0.05), 4), 0.1667),
@@ -279,9 +279,12 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-You already have the two pieces: `true_pos` is the true-positive share and
-`false_pos` is the false-positive share. The posterior is the true positives divided
-by *all* positives — the same `true / (true + false)` pattern as Exercise 1.
+Translate the spelled-out denominator into code, one share at a time. The
+true-positive share is the sick share times the chance they test positive:
+`true_pos = prevalence * sensitivity`. The false-positive share is the healthy
+share times the false-alarm rate: `false_pos = (1 - prevalence) * false_positive_rate`.
+The posterior is the true positives divided by *all* positives — the same
+`true / (true + false)` pattern as Exercise 1.
 </details>
 
 <details><summary>Show solution</summary>
@@ -342,7 +345,10 @@ real" — driven entirely by how common the disease is.
 ## Where this fits / what's next
 
 You've met the one rule that turns evidence into an updated belief — and seen why the
-base rate quietly controls the answer. This way of thinking, prior to posterior,
+base rate quietly controls the answer. Bayes is not a gear inside the Ch16 neuron —
+it is how you read a classifier like it honestly: a "0.9" output is only worth
+believing once you've weighed it against the base rate, as with the medical test.
+This way of thinking, prior to posterior,
 underpins spam filters, medical screening, and the probabilistic models later in the
 course. Next we'll keep building the statistical toolkit you'll carry into the
 machine-learning modules.

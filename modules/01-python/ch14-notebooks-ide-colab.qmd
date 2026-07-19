@@ -12,7 +12,7 @@ learning_objectives:
   - "Pick the right place for a task: quick learning, a real project, or work that needs a GPU"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 14
 resources:
   - ../../lib/grader.py
@@ -242,9 +242,10 @@ otherwise it falls through to the in-browser, ₹0 option.
 
 ### Exercise 2 — Implement (≈10 min) 🟡
 
-Write `recommend(needs_gpu, real_project)` using `if`/`elif`/`else`: GPU work wins
-first, then a real project, otherwise the in-browser notebook. Complete the marked
-lines.
+Write the body of `recommend(needs_gpu, real_project)` using `if`/`elif`/`else`,
+returning exactly these strings: GPU work wins first (`"Colab or Kaggle"`), then a
+real project (`"local IDE"`), otherwise the everyday case (`"in-browser notebook"`).
+You write the whole chain of branches yourself.
 
 ```{pyodide}
 #| setup: true
@@ -256,12 +257,7 @@ from lib.grader import run_tests
 #| exercise: ex_recommend
 def recommend(needs_gpu, real_project):
     """Recommend a place: GPU work first, then a real project, else learning."""
-    if needs_gpu:
-        return "Colab or Kaggle"
-    elif real_project:
-        return ____   # TODO: the home of a real multi-file project
-    else:
-        return ____   # TODO: the place for quick learning
+    ...  # TODO: write the body — if/elif/else returning the three strings, GPU checked first
 
 run_tests([
     ("gpu wins", recommend(True, True), "Colab or Kaggle"),
@@ -272,9 +268,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-The `elif` branch handles a real project — that's the `"local IDE"`. The final
-`else` is the everyday case, `"in-browser notebook"`. Note `needs_gpu` is checked
-first, so a GPU task never reaches the other branches.
+Three branches, checked top to bottom (Chapter 2's `if`/`elif`/`else`): `if
+needs_gpu:` return `"Colab or Kaggle"`; `elif real_project:` return `"local IDE"`;
+`else:` return `"in-browser notebook"`. Because `needs_gpu` is checked first, a GPU
+task never reaches the other branches.
 </details>
 
 <details><summary>Show solution</summary>

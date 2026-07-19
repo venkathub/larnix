@@ -1,91 +1,99 @@
 title: "M1 — module quiz"
 id: "m1-module-quiz"
 questions:
-  - id: dynamic-typing
-    prompt: "Why is `steps = 7500` enough in Python, with no type declared?"
+  - id: string-concat-trap
+    prompt: "Your cleaning script runs `\"7500\" + \"100\"` on two values read straight from habits.csv. What comes back?"
     options:
-      - "Python has no types"
-      - "The type is inferred from the value — dynamic typing"
-      - "The type must be declared on the line above"
-    answer: 1
-    explanation: "Python infers a value's type from what you assign (Ch1)."
-  - id: file-values-strings
-    prompt: "A value read from a CSV is `7500`. What is it, before you convert it?"
-    options:
-      - "An int"
-      - "A string"
-      - "A float"
-    answer: 1
-    explanation: "CSV fields arrive as strings; convert with int()/float() before maths (Ch1, Ch6)."
-  - id: accumulator
-    prompt: "To count active days in a loop, you would…"
-    options:
-      - "Set count = 0 before the loop and do count += 1 when a day is active"
-      - "Use a while loop that never ends"
-      - "Print each day and hope"
-    answer: 0
-    explanation: "The accumulator pattern: start at 0, add 1 when the condition holds (Ch2)."
-  - id: function-return
-    prompt: "What does a function with no `return` give back?"
+      - "7600, because Python adds numbers automatically"
+      - "An error — you can't use + on strings"
+      - "The string '7500100' — + glues text together"
+    answer: 2
+    explanation: "CSV values arrive as strings, and + concatenates strings; convert with int() before arithmetic (Ch1, Ch6)."
+  - id: loop-count-predict
+    prompt: "You run `count = 0`, then `for s in [8200, 4100, 9300]:` with `if s >= 9000: count += 1` inside. What is `count` after the loop?"
     options:
       - "0"
-      - "None"
-      - "An error"
+      - "1"
+      - "3"
     answer: 1
-    explanation: "A function with no return returns None (Ch3)."
-  - id: dict-record
-    prompt: "Which structure best models one row of data with named fields?"
+    explanation: "Only 9300 reaches 9000, so the accumulator adds 1 exactly once (Ch2)."
+  - id: structure-for-counts
+    prompt: "You want to record how many days had each mood label, and look a count up by its label (e.g. for 'good'). Which structure fits?"
     options:
-      - "A list, read by position"
-      - "A dict, read by key like row['steps']"
-      - "A set"
-    answer: 1
-    explanation: "A dict maps field names to values (Ch4)."
-  - id: comprehension
-    prompt: "What does `[d['steps'] for d in days]` produce?"
+      - "A list of counts, one per day"
+      - "A set of the labels"
+      - "A dict mapping each mood label to its count"
+    answer: 2
+    explanation: "Looking a value up by name is what a dict does — counts['good'] reads the count for that label (Ch4)."
+  - id: comprehension-predict
+    prompt: "What does `[s for s in [7500, 8200, 4100] if s < 8000]` build?"
     options:
-      - "A dict of steps"
-      - "A list of each day's steps"
-      - "A single number"
-    answer: 1
-    explanation: "A list comprehension maps the expression over the collection (Ch5)."
-  - id: dictreader
-    prompt: "What does csv.DictReader give for each row?"
-    options:
-      - "A list of values"
-      - "A dict keyed by the column headers"
-      - "A single string"
-    answer: 1
-    explanation: "DictReader maps each header to its value (Ch6)."
-  - id: try-except
-    prompt: "What is the point of try/except?"
-    options:
-      - "To run risky code and recover if it raises an error, instead of crashing"
-      - "To make code faster"
-      - "To declare types"
+      - "[7500, 4100]"
+      - "[8200]"
+      - "[True, False, True]"
     answer: 0
-    explanation: "try holds risky code; except recovers from the error (Ch7)."
-  - id: traceback
-    prompt: "Which line of a traceback do you read first?"
+    explanation: "The trailing if keeps only values under 8000, and the expression collects the values themselves (Ch5)."
+  - id: dictreader-sum-bug
+    prompt: "Summing steps straight from csv.DictReader rows with `total += row['steps']` raises a TypeError. Why?"
     options:
-      - "The first line"
-      - "The last line — it holds the ExceptionType and message"
-      - "The middle line"
-    answer: 1
-    explanation: "Read bottom-up; the last line names the error (Ch8)."
-  - id: vectorized
-    prompt: "In NumPy, what does `steps >= 8000` give for an array `steps`?"
+      - "DictReader rows are lists, so you can't read them by key"
+      - "The file must be re-opened for every row"
+      - "Every DictReader value is a string — it needs int(row['steps']) first"
+    answer: 2
+    explanation: "DictReader keys each row by the headers, but the values stay strings; convert before arithmetic (Ch6, Ch1)."
+  - id: except-choice
+    prompt: "Your cleaner converts steps text with int(), and some habits rows are blank ('') . Which except line recovers from those without hiding unrelated bugs?"
     options:
-      - "A single True or False for the whole array"
-      - "A boolean array, one True/False per element"
-      - "An error"
-    answer: 1
-    explanation: "Vectorized comparison applies to every element at once (Ch12)."
-  - id: pin-version
-    prompt: "What does a requirements line `pandas==2.3.0` do?"
+      - "except ValueError:"
+      - "except:"
+      - "except KeyError:"
+    answer: 0
+    explanation: "int('') raises ValueError; catching that narrowest type handles the blanks while other bugs still surface (Ch7)."
+  - id: traceback-diagnose
+    prompt: "A run over habits rows dies with a traceback ending `KeyError: 'stpes'`. What actually went wrong?"
     options:
-      - "Installs the newest pandas"
-      - "Pins an exact version for reproducibility"
-      - "Deletes pandas"
+      - "A steps value could not be converted to a number"
+      - "The code asked the row dict for a misspelled key — 'stpes' instead of 'steps'"
+      - "A list index was out of range"
     answer: 1
-    explanation: "== pins an exact version so every machine matches (Ch13)."
+    explanation: "Read the bottom line first: KeyError names the missing dict key, and the typo inside it is the bug (Ch8)."
+  - id: self-reads-instance
+    prompt: "A `Day` class stores steps in `__init__` and `is_active` compares `self.steps` to a goal. What does `Day('2026-07-01', 9500).is_active()` compare against the goal?"
+    options:
+      - "The steps of every Day instance created so far"
+      - "The goal itself, 8000"
+      - "9500 — the steps stored on that particular instance"
+    answer: 2
+    explanation: "self is the specific instance the method was called on, so self.steps reads that Day's own 9500 (Ch9)."
+  - id: repeated-cleanup-fix
+    prompt: "The same three-line strip-the-comma-and-convert cleanup appears in four places in your habits script. What is the clean-code fix?"
+    options:
+      - "Move it into one well-named function and call it in all four places"
+      - "Add the same comment above each copy"
+      - "Shorten the variable names so each copy takes less space"
+    answer: 0
+    explanation: "DRY: shared logic lives in one function, so a fix lands once instead of four times (Ch10)."
+  - id: zip-uneven-lists
+    prompt: "Your `dates` list has 7 entries but `steps` only has 5. How many pairs does `list(zip(dates, steps))` produce?"
+    options:
+      - "7, padding the missing steps with None"
+      - "5 — zip stops at the shorter list"
+      - "None — it raises a ValueError"
+    answer: 1
+    explanation: "zip pairs items until the shortest input runs out; the two extra dates are dropped (Ch11)."
+  - id: mask-count-predict
+    prompt: "With `steps = np.array([7500, 8200, 9100])`, what does `int((steps >= 8000).sum())` evaluate to?"
+    options:
+      - "2"
+      - "True"
+      - "array([False, True, True])"
+    answer: 0
+    explanation: "The mask is [False, True, True]; .sum() counts the Trues as 2, and int(...) makes it a plain integer (Ch12)."
+  - id: unpinned-drift
+    prompt: "A teammate runs your habits project and sees different pandas behaviour than you do. Your requirements.txt lists only `pandas`. What is the fix?"
+    options:
+      - "Delete requirements.txt — it is causing the difference"
+      - "Pin the exact version, e.g. pandas==2.3.0, so both machines install the same one"
+      - "Ask the teammate to reinstall Python"
+    answer: 1
+    explanation: "An unpinned requirement installs whatever is newest that day; == pins one exact, reproducible version (Ch13)."

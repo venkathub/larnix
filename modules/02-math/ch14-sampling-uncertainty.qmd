@@ -11,7 +11,7 @@ learning_objectives:
   - "Use the standard error to express uncertainty, and know it shrinks as the sample grows"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -257,10 +257,10 @@ population mean.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Now measure the uncertainty. Write `standard_error(sample)` that returns the
-population standard deviation of the sample divided by the square root of its size —
-the formula `std / sqrt(n)`. Use `np.std` (its default `ddof=0` gives the population
-standard deviation) and `np.sqrt`. Complete the marked line.
+Now measure the uncertainty. Write the body of `standard_error(sample)` so it
+returns the population standard deviation of the sample divided by the square root
+of its size — the formula `std / sqrt(n)`. Use `np.std` (its default `ddof=0` gives
+the population standard deviation) and `np.sqrt`. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -274,7 +274,7 @@ import numpy as np
 
 def standard_error(sample):
     """The standard error of the mean: std / sqrt(n)."""
-    return ____  # TODO: np.std(sample) divided by the square root of len(sample)
+    ...  # TODO: write the body — the sample's std, divided by the square root of its size
 
 run_tests([
     ("spread sample", round(standard_error([2, 4, 6, 8]), 4), 1.118),
@@ -358,7 +358,10 @@ concrete.
 ## Where this fits / what's next
 
 You can now turn a sample into an estimate *and* state how uncertain that estimate is —
-the standard error, shrinking as the square root of the sample size. That is the last
+the standard error, shrinking as the square root of the sample size. This lens matters
+for the Ch16 neuron too, from the outside: its training data is a sample, and any
+accuracy number you quote for it carries the same sampling uncertainty as any other
+estimate. That is the last
 statistics idea this module needs. Next, M2 closes by putting the pieces together: we
 leave probability behind and head into the **NumPy linear algebra** that assembles
 everything you've built into a single working **neuron**.

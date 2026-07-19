@@ -1,0 +1,19 @@
+# lychee config for the RENDERED-site link check (Checks → render job).
+#
+# The main `lychee.toml` checks *source* files and deliberately excludes
+# `_site/` — which is exactly why a source-level check can never catch a
+# "page links a file the site doesn't render" bug (the capstone.md raw-text
+# regression, review 2026-07-19). This config is passed explicitly to the
+# post-render job, which runs `--offline` over `_site/**/*.html`: only
+# internal file links are verified here; external URLs stay the source job's
+# responsibility.
+#
+# NOTE: without an explicit --config, lychee auto-loads ./lychee.toml, whose
+# `exclude_path = ["_site"]` silently reduces the rendered check to 0 links —
+# verified locally before wiring this job.
+
+# Quarto emits a few schemeless/dynamic hrefs that are not file links.
+exclude = [
+  "^https?://",   # external — covered by the source-level lychee job
+  "^mailto:",
+]

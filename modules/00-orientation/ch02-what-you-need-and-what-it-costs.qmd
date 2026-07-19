@@ -11,7 +11,7 @@ learning_objectives:
   - "Know that any paid step is optional and always has a free fallback"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -190,8 +190,14 @@ Each exercise is auto-graded by `run_tests`, loaded for you from `lib/grader.py`
 
 ### Exercise 1 — Guided (≈5 min) 🟢
 
-Complete the marked line so `total_cost` adds up the cost of every tool. Replace
-`____`, then press **Run**.
+The function `total_cost` is written for you — it adds up the cost of every tool
+in a list. Your task is the last line: **call** `total_cost` on the `toolkit`
+list, the way Chapter 1 called `model.fit(X_train, y_train)`. Replace `____`,
+then press **Run**.
+
+> 💡 You're not expected to understand the `def` and `for` syntax inside
+> `total_cost` yet — Module 1 teaches it. Read it as "start at 0, add each
+> tool's cost" and fill in only the marked line.
 
 ```{pyodide}
 #| setup: true
@@ -201,31 +207,56 @@ from lib.grader import run_tests
 
 ```{pyodide}
 #| exercise: ex_total
+# Given code — read it, don't change it.
 def total_cost(tools):
-    """Sum the cost of each (name, cost) tool."""
-    return sum(____ for name, cost in tools)  # TODO: add up each tool's cost
+    """Add up the cost of each (name, cost) tool."""
+    total = 0
+    for name, cost in tools:
+        total = total + cost
+    return total
+
+toolkit = [
+    ("Browser + Pyodide", 0),
+    ("Google Colab (free)", 0),
+    ("Kaggle (free)", 0),
+]
+
+my_bill = ____  # TODO: call total_cost on the toolkit list
 
 run_tests([
-    ("the free toolkit costs nothing", total_cost([("Browser", 0), ("Colab", 0)]), 0),
+    ("the free toolkit costs nothing", my_bill, 0),
     ("adds up real costs", total_cost([("a", 10), ("b", 5)]), 15),
 ])
 ```
 
 <details><summary>If you're stuck</summary>
 
-Each item is a pair `(name, cost)`. The loop already unpacks it into `name` and
-`cost` — you need only the value being summed.
+Calling a function means writing its name with the input in parentheses —
+Chapter 1's `model.fit(X_train, y_train)` had two inputs; here there is one:
+the `toolkit` list.
 </details>
 
 <details><summary>Show solution</summary>
 
 ```python
 def total_cost(tools):
-    return sum(cost for name, cost in tools)
+    """Add up the cost of each (name, cost) tool."""
+    total = 0
+    for name, cost in tools:
+        total = total + cost
+    return total
+
+toolkit = [
+    ("Browser + Pyodide", 0),
+    ("Google Colab (free)", 0),
+    ("Kaggle (free)", 0),
+]
+
+my_bill = total_cost(toolkit)
 ```
 
-`cost` is the number in each `(name, cost)` pair; `sum(...)` adds them. A toolkit
-of all zeros totals `0`.
+`total_cost(toolkit)` runs the given function on the list of tools and hands back
+the total. A toolkit of all zeros totals `0` — the whole point of this chapter.
 </details>
 
 ### Exercise 2 — Implement (≈10 min) 🟡

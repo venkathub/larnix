@@ -11,7 +11,7 @@ learning_objectives:
   - "Spot a confounding variable behind a misleading correlation"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 14
 resources:
   - ../../lib/grader.py
@@ -259,8 +259,9 @@ x is from its mean" times "how far y is from its mean". When x and y tend to be
 above (or below) their means together, the products are positive and covariance is
 positive; when one is high while the other is low, the products are negative.
 
-Write `covariance(x, y)` for the **population** covariance:
-`mean of (x − mean(x)) * (y − mean(y))`. Complete the marked line.
+Write the body of `covariance(x, y)` for the **population** covariance:
+`mean of (x − mean(x)) * (y − mean(y))`. Three short lines: convert each list with
+`np.array`, then return the mean of the product of the two deviations.
 
 ```{pyodide}
 #| setup: true
@@ -274,9 +275,7 @@ import numpy as np
 
 def covariance(x, y):
     """Population covariance: the mean of the product of the two deviations."""
-    x = np.array(x)
-    y = np.array(y)
-    return ____  # TODO: mean of (x - mean(x)) * (y - mean(y))
+    ...  # TODO: write the body — convert to arrays, then average the deviation products
 
 run_tests([
     ("rises together", round(covariance([1, 2, 3, 4], [1, 2, 3, 4]), 4), 1.25),
@@ -286,9 +285,10 @@ run_tests([
 
 <details><summary>If you're stuck</summary>
 
-Build it in pieces: `np.mean(x)` is the mean of x. The deviations are
+Build it in pieces. Start with `x = np.array(x)` and `y = np.array(y)` so the
+subtraction works element-wise. `np.mean(x)` is the mean of x. The deviations are
 `x - np.mean(x)` and `y - np.mean(y)`. Multiply the two deviation arrays
-element-wise, then take `np.mean(...)` of the result.
+element-wise, then take `np.mean(...)` of the result and return it.
 </details>
 
 <details><summary>Show solution</summary>
@@ -353,4 +353,6 @@ You can now read an r as strength-and-direction, and you know its limit: a
 correlation is a clue about a relationship, never proof that one thing causes
 another. That caution is the backbone of honest data analysis — and it sets up the
 modelling work ahead, where we *fit* lines to data and have to keep asking what the
-numbers really mean. Next we turn correlation into a line you can draw and use.
+numbers really mean. The same caution applies to the Ch16 neuron: what it learns from
+data are correlations, so a trained model's patterns are clues about the world, not
+proof of cause. Next we turn correlation into a line you can draw and use.

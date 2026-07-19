@@ -12,7 +12,7 @@ learning_objectives:
   - "Aggregate and filter arrays with reductions and boolean masks"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -303,9 +303,9 @@ the expected values.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `count_above` so it reports how many elements of `arr` are strictly greater
-than `threshold`, as a plain `int`. Build a boolean mask and sum it. Complete the
-marked line.
+Write the body of `count_above(arr, threshold)` — report how many elements of
+`arr` are strictly greater than `threshold`, as a plain `int`. This time you write
+the whole body yourself: build the boolean mask, sum it, and convert the result.
 
 ```{pyodide}
 #| setup: true
@@ -317,7 +317,7 @@ from lib.grader import run_tests
 #| exercise: ex_count
 def count_above(arr, threshold):
     """Count how many elements of arr exceed threshold, as a plain int."""
-    return ____  # TODO: mask with > threshold, sum the True values, wrap in int(...)
+    ...  # TODO: write the body — mask with > threshold, sum the True values, return a plain int
 
 run_tests([
     ("three above 3", count_above([1, 5, 3, 8, 2, 4], 3), 3),

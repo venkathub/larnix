@@ -13,7 +13,7 @@ learning_objectives:
   - "Confirm those gradients are right by checking them against a numeric finite-difference estimate"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 22
 resources:
   - ../../lib/grader.py
@@ -291,8 +291,10 @@ Large positive `z` drives it toward 1; large negative `z` toward 0.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Now the whole forward pass. Write `neuron_forward(x, w, b)` that returns the
-activation `σ(w · x + b)`. Use NumPy for the dot product. Complete the marked line.
+Now the whole forward pass. Write the body of `neuron_forward(x, w, b)` so it
+returns the activation `σ(w · x + b)`, where σ is the sigmoid
+`1 / (1 + e^(−z))` from the worked example. Use NumPy for the dot product. Two
+lines: the weighted sum `z`, then the squashed activation.
 
 ```{pyodide}
 #| setup: true
@@ -306,8 +308,7 @@ import numpy as np
 
 def neuron_forward(x, w, b):
     """Forward pass: weighted sum plus bias, then a sigmoid."""
-    z = ____  # TODO: dot product of w and x, plus the bias b
-    return 1.0 / (1.0 + np.exp(-z))
+    ...  # TODO: write the body — z = w·x + b, then return the sigmoid of z
 
 run_tests([
     ("our worked example", round(float(neuron_forward([2, 3], [0.5, -1.0], 0.5)), 4), 0.1824),
@@ -318,7 +319,8 @@ run_tests([
 <details><summary>If you're stuck</summary>
 
 The weighted sum is the dot product of `w` and `x` plus the bias. With NumPy arrays
-that's `np.array(w) @ np.array(x) + b`.
+that's `z = np.array(w) @ np.array(x) + b`. Then return the sigmoid of `z` — the
+same line the worked example uses: `1.0 / (1.0 + np.exp(-z))`.
 </details>
 
 <details><summary>Show solution</summary>

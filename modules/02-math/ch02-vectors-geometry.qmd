@@ -11,7 +11,7 @@ learning_objectives:
   - "Compute the length (magnitude) of a vector with sqrt(x*x + y*y)"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -240,9 +240,10 @@ the tip-to-tail picture in numbers.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `magnitude(v)` — the length of a 2D vector as a **float**, using
+Write the body of `magnitude(v)` — the length of a 2D vector as a **float**, using
 `sqrt(v[0]^2 + v[1]^2)`. In Python, raising to the `0.5` power takes a square root, so
-write the expression with `** 0.5`. Complete the marked line.
+write the expression with `** 0.5`. You write the whole body yourself — one `return`
+line is enough.
 
 ```{pyodide}
 #| setup: true
@@ -254,7 +255,7 @@ from lib.grader import run_tests
 #| exercise: ex_magnitude
 def magnitude(v):
     """Return the length of [x, y] as sqrt(x*x + y*y)."""
-    return ____  # TODO: (v[0]*v[0] + v[1]*v[1]) ** 0.5
+    ...  # TODO: write the body — square each component, add them, raise the sum to 0.5
 
 run_tests([
     ("length of [3,4]", magnitude([3, 4]), 5.0),
@@ -333,6 +334,8 @@ its length by `k`.
 ## Where this fits / what's next
 
 A vector holds one piece of data as a point and an arrow, and you can add, scale, and
-measure it. Next we step up from a single arrow to whole **grids of numbers** —
+measure it. This is also your first brick of the Ch16 neuron: the inputs `x` it reads
+are exactly one of these vectors — a list of numbers treated as a single arrow.
+Next we step up from a single arrow to whole **grids of numbers** —
 **matrices as transformations**: how a table of numbers can move, rotate, and reshape
 the vectors from this chapter.

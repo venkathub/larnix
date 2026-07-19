@@ -11,7 +11,7 @@ learning_objectives:
   - "Consolidate categories that mean the same thing into one label"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -276,9 +276,9 @@ does to a whole column, one value at a time.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `to_number(s)` that turns a price string into a `float`. Strip a leading
-currency symbol (handle both `₹` and `$`) and any thousands commas, then convert
-what's left. Complete the marked line.
+Write the body of `to_number(s)` — turn a price string into a `float`. Strip a
+leading currency symbol (handle both `₹` and `$`) and any thousands commas, then
+convert what's left. You write the whole body yourself.
 
 ```{pyodide}
 #| setup: true
@@ -290,7 +290,7 @@ from lib.grader import run_tests
 #| exercise: ex_to_number
 def to_number(s):
     """Strip a currency symbol and thousands commas, then return a float."""
-    return ____  # TODO: float(s.replace("₹", "").replace("$", "").replace(",", ""))
+    ...  # TODO: write the body — strip ₹, $, and commas, then convert what's left to a float
 
 run_tests([
     ("rupees", to_number("₹1,200"), 1200.0),
@@ -374,6 +374,10 @@ category, counted once.
 Real datasets rarely arrive tidy. With Chapter 4's missing-value and type tools and
 this chapter's string toolkit, you can take a column written by many hands —
 inconsistent case, stray spaces, currency symbols, abbreviations — and turn it into
-clean text and real numbers your analysis can trust. Next we move from cleaning
-single columns to combining whole tables: joining datasets together and grouping
-rows to summarise them.
+clean text and real numbers your analysis can trust. That completes Module 3: you
+can now load and shape arrays and tables (NumPy, pandas), select, clean, join, and
+reshape data, chart it and read the charts, run a full EDA pass, prepare features,
+organise your work reproducibly, and judge whether a dataset deserves your trust.
+The capstone puts all of it to the test — a complete EDA on a dataset you haven't
+seen before. After that, Module 4 begins the modelling itself, where the tables you
+can now prepare become the input a model learns from.

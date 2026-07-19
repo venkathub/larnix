@@ -11,7 +11,7 @@ learning_objectives:
   - "Combine two tables on a shared key column with merge"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 18
 resources:
   - ../../lib/grader.py
@@ -324,9 +324,10 @@ each group (the `a` rows total `1 + 2 = 3`, the `b` row totals `10`), and
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Now the same shape, but report **means rounded to two decimals**. Write
-`group_means(data, key, val)`: group by `key` and return a dict of the per-group
-mean of `val`, each value rounded to 2 places. Complete the marked line.
+Now the same shape, but report **means rounded to two decimals**. Write the body
+of `group_means(data, key, val)` — group by `key` and return a dict of the
+per-group mean of `val`, each value rounded to 2 places. You write the whole body
+yourself.
 
 ```{pyodide}
 #| setup: true
@@ -340,7 +341,7 @@ import pandas as pd
 
 def group_means(data, key, val):
     """Return a dict of per-group means of val, rounded to 2 decimals."""
-    return ____  # TODO: pd.DataFrame(data).groupby(key)[val].mean().round(2).to_dict()
+    ...  # TODO: write the body — group by key, average val, round to 2, return as a dict
 
 run_tests([("mean by group", group_means({"g": ["a", "a", "b"], "v": [2, 4, 10]}, "g", "v"), {"a": 3.0, "b": 10.0})])
 ```

@@ -2,6 +2,9 @@
 title: "Sandbox — Open in Colab button (internal)"
 subtitle: "Not learner content. Proves the colab shortcode + the GPU-notebook CI policy."
 search: false
+# Internal fixture: keep out of search engines too (review 2026-07-19, U9).
+include-in-header:
+  text: '<meta name="robots" content="noindex">'
 ---
 
 ::: {.callout-warning}

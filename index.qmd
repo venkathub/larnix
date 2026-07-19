@@ -23,7 +23,7 @@ maths-degree required.
 
 ::: {.lx-cta .lx-reveal .lx-reveal-4}
 [Train your first model ▸](modules/00-orientation/ch01-train-your-first-model.qmd){.btn-clay}
-[See the full journey](https://github.com/venkathub/larnix/blob/main/docs/ROADMAP.md){.btn-clay .btn-clay--ghost}
+[See the full journey](curriculum.qmd){.btn-clay .btn-clay--ghost}
 :::
 :::
 

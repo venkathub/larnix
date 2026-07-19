@@ -28,7 +28,7 @@ jobs:
 
       - name: Unit tests (schema linters)
         working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check test_chapter_structure_lint -v
+        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check test_chapter_structure_lint test_ai_review -v
 
       - name: Unit tests (grader)
         working-directory: lib
@@ -117,7 +117,8 @@ jobs:
           npm install -g markdownlint-cli2@0.18.1
 
       - name: Vale (tone / banned words)
-        run: vale --glob='!**/_extensions/**' . modules
+        # `.` already includes modules/ — listing it twice double-scanned every chapter.
+        run: vale --glob='!**/_extensions/**' .
 
       - name: markdownlint
         run: markdownlint-cli2
@@ -127,3 +128,59 @@ jobs:
 
       - name: Link check (lychee)
         run: lychee --config lychee.toml --no-progress 'docs/**/*.md' '*.qmd' 'modules/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md
+
+  # Render gate + rendered-site link check (added 2026-07-19, P0/P1 review).
+  # Why: rendering previously happened only in pr-preview/publish, so a
+  # render-breaking change could merge if branch protection required only
+  # `Checks`; and source-level lychee cannot see broken *rendered* paths (the
+  # capstone.md-served-as-raw-text bug shipped exactly this way — module pages
+  # linked a file the site never rendered, and every source link resolved).
+  render:
+    name: Site renders + rendered links resolve
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.8.27"
+
+      - name: Render site
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          path: "."
+
+      - name: Install lychee (pinned)
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
+            | sudo tar xz -C /usr/local/bin lychee
+
+      # --offline: only file/anchor links inside _site are checked here —
+      # external URLs are already covered by the source-level lychee job above.
+      # --config is explicit: without it lychee auto-loads ./lychee.toml, whose
+      # `exclude_path = ["_site"]` reduces this check to 0 links (verified).
+      - name: Rendered-site internal link check
+        run: lychee --config lychee-site.toml --offline --no-progress --root-dir "$(pwd)/_site" '_site/**/*.html'
+
+      # e2e smoke (review 2026-07-19, E1): the quiz engine, chapter progress,
+      # and one real in-browser Pyodide execution. Converts the previously
+      # manual "₹0 browser sweep" verification into a repeatable gate.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: infra/e2e/package-lock.json
+
+      - name: Install e2e deps
+        working-directory: infra/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Learner-path smoke tests (Playwright)
+        working-directory: infra/e2e
+        run: npm test

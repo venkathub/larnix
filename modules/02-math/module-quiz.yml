@@ -1,99 +1,99 @@
 title: "M2 — module quiz"
 id: "m2-module-quiz"
 questions:
-  - id: vector-as-point
-    prompt: "What is a vector, geometrically?"
+  - id: listeners-as-points
+    prompt: "A music app stores each listener as [hours of pop, hours of jazz]. Dana is [8, 1] and Eli is [7, 2]. Read geometrically, what does that say?"
     options:
-      - "A single number"
-      - "A list of numbers that names a point (or an arrow) in space"
-      - "A square grid of numbers"
+      - "Nothing — vectors only describe physical arrows like wind or force"
+      - "Dana and Eli sit at nearby points in the same taste space, so their listening habits are similar"
+      - "The two lists can't be compared until a matrix transforms them"
     answer: 1
-    explanation: "A vector is an ordered list of numbers — coordinates of a point, or an arrow from the origin (Ch2)."
-  - id: matrix-transforms
-    prompt: "In this module, a matrix is best understood as…"
+    explanation: "A vector of numbers names a point in space, so listeners become points and nearby points mean similar habits (Ch2)."
+  - id: pick-the-stretch-matrix
+    prompt: "An image tool needs to double every point's x-coordinate and leave y alone. Which matrix does the job?"
     options:
-      - "A way to store text"
-      - "A transformation that moves and reshapes vectors"
-      - "A single probability"
-    answer: 1
-    explanation: "A matrix is a transformation: multiply a vector by it and the vector is rotated, scaled, or sheared (Ch3)."
-  - id: dot-product-similarity
-    prompt: "Two vectors point in nearly the same direction. Their dot product is…"
-    options:
-      - "Large and positive"
-      - "Near zero"
-      - "Always one"
+      - "[[2, 0], [0, 1]]"
+      - "[[1, 0], [0, 2]]"
+      - "[[2, 2], [2, 2]]"
     answer: 0
-    explanation: "The dot product is large and positive for aligned vectors, near zero for perpendicular ones, negative for opposing ones — a similarity score (Ch5)."
-  - id: matmul-shape
-    prompt: "Multiplying a (2×3) matrix by a length-3 vector gives a result of shape…"
+    explanation: "[[2, 0], [0, 1]] sends [x, y] to [2x, y] — the horizontal stretch; [[1, 0], [0, 2]] would stretch y instead (Ch3)."
+  - id: pick-the-similar-pair
+    prompt: "Taste vectors: amir = [4, 0, 1], bina = [3, 1, 0], chen = [0, 2, 5]. Going by dot products, which pair shares the most taste?"
     options:
-      - "(3,)"
+      - "amir and bina"
+      - "amir and chen"
+      - "bina and chen"
+    answer: 0
+    explanation: "amir·bina = 12 beats amir·chen = 5 and bina·chen = 2 — the biggest dot product marks the most-aligned pair (Ch5)."
+  - id: chained-layer-shapes
+    prompt: "A length-3 input x passes through matrix A of shape (2, 3), and that result passes through matrix B of shape (4, 2). What shape is B @ (A @ x)?"
+    options:
       - "(2,)"
-      - "(2, 3)"
-    answer: 1
-    explanation: "Rows of the matrix dot the vector; a (2×3) matrix times a (3,) vector yields a (2,) vector (Ch4, Ch15)."
-  - id: derivative-sensitivity
-    prompt: "A derivative measures…"
+      - "(3,)"
+      - "(4,)"
+    answer: 2
+    explanation: "Each matrix dots its rows with the incoming vector: A @ x is (2,), then B @ that is (4,) — the shape rule applied twice (Ch4, Ch15)."
+  - id: read-a-loss-nudge
+    prompt: "Nudging a model's weight from 2.00 to 2.01 moves the loss from 5.00 to 5.03. The derivative of the loss with respect to that weight is roughly…"
     options:
-      - "The total area under a curve"
-      - "How much the output changes when you nudge the input — its sensitivity"
-      - "The average of two numbers"
+      - "0.03 — the size of the loss change"
+      - "3 — the loss moves about 3 units per unit of weight (rise 0.03 over run 0.01)"
+      - "0 — the loss barely moved"
     answer: 1
-    explanation: "The derivative is the slope: the rate at which the output responds to a small change in the input (Ch6)."
-  - id: gradient-direction
-    prompt: "The gradient of a loss points in the direction of…"
+    explanation: "The derivative is rise over run: 0.03 / 0.01 = 3, the output change per unit of input change (Ch6)."
+  - id: negative-gradient-step
+    prompt: "Partway through training, the gradient of the loss with respect to one weight is −4. What does a gradient-descent step do to that weight?"
     options:
-      - "Steepest decrease of the loss"
-      - "Steepest increase of the loss"
-      - "No particular direction"
-    answer: 1
-    explanation: "The gradient points uphill (steepest increase); learning steps in the opposite direction to reduce the loss (Ch7)."
-  - id: chain-rule
-    prompt: "The chain rule lets you…"
-    options:
-      - "Add two derivatives together"
-      - "Find the derivative through a composition by multiplying the links"
-      - "Avoid derivatives entirely"
-    answer: 1
-    explanation: "For nested functions, multiply the derivative of each link: dL/dx = dL/du · du/dx (Ch8)."
-  - id: variance-meaning
-    prompt: "Variance measures…"
-    options:
-      - "The largest minus the smallest value"
-      - "The average squared distance of the values from their mean"
-      - "How many values are positive"
-    answer: 1
-    explanation: "Variance is the mean of the squared deviations from the mean; its square root is the standard deviation (Ch11)."
-  - id: bayes-base-rate
-    prompt: "A test for a rare disease comes back positive. Why might you still probably be healthy?"
-    options:
-      - "Because the test is broken"
-      - "Because the disease is rare, so most positives are false positives (the base rate matters)"
-      - "Because positive always means negative"
-    answer: 1
-    explanation: "When prevalence is low, false positives from the large healthy group outnumber true positives — Bayes with the base rate (Ch12)."
-  - id: correlation-causation
-    prompt: "Ice-cream sales and drownings rise together. The best explanation is…"
-    options:
-      - "Ice cream causes drownings"
-      - "A confounder — summer heat — drives both; correlation is not causation"
-      - "Drownings cause ice-cream sales"
-    answer: 1
-    explanation: "Correlation measures co-movement, not cause; a confounding variable can drive both (Ch13)."
-  - id: standard-error
-    prompt: "How does the uncertainty of a sample mean (its standard error) change as the sample grows?"
-    options:
-      - "It grows with the sample"
-      - "It shrinks — standard error is std / sqrt(n)"
-      - "It stays the same"
-    answer: 1
-    explanation: "Standard error = std / sqrt(n), so larger samples give a steadier, less uncertain estimate (Ch14)."
-  - id: neuron-backward
-    prompt: "For one neuron with squared-error loss and a sigmoid, the gradient of the loss with respect to a weight is…"
-    options:
-      - "2(a - y) · a(1 - a) · x_i — the chain rule, link by link"
-      - "Always equal to the input x_i"
-      - "The loss divided by the weight"
+      - "Increases it — the step is w − lr · (−4), and subtracting a negative moves the weight up"
+      - "Decreases it — gradient descent always shrinks weights"
+      - "Leaves it alone — only positive gradients trigger updates"
     answer: 0
-    explanation: "Multiply the links: dL/da = 2(a - y), da/dz = a(1 - a), dz/dw_i = x_i — verified by a numeric gradient check (Ch16)."
+    explanation: "The update w − lr · grad steps against the gradient's sign; a negative gradient means downhill lies at larger w (Ch7)."
+  - id: three-link-chain
+    prompt: "A loss depends on a weight through three chained steps whose slopes are 2, 3, and 0.5. How sensitive is the loss to that weight?"
+    options:
+      - "5.5 — add the slopes"
+      - "0.5 — only the last link matters"
+      - "3 — multiply the links: 2 × 3 × 0.5"
+    answer: 2
+    explanation: "The chain rule multiplies the slope of every link in the composition: 2 · 3 · 0.5 = 3 (Ch8)."
+  - id: two-thermometers
+    prompt: "Two thermometers both average 20°. A's readings are [19, 20, 21]; B's are [10, 20, 30]. What does variance add to the story the mean misses?"
+    options:
+      - "Nothing — equal means make the datasets equivalent"
+      - "B's variance is far larger (about 66.7 vs about 0.67): same centre, much wider spread"
+      - "A's variance is larger because its values are closer together"
+    answer: 1
+    explanation: "Variance averages the squared deviations from the mean, so B's ±10 swings dwarf A's ±1 despite the identical centre (Ch11)."
+  - id: spam-flag-base-rate
+    prompt: "A spam filter catches 99% of spam but wrongly flags 5% of legitimate mail, and only 1% of an inbox is spam. A message gets flagged. Roughly what is the chance it's really spam?"
+    options:
+      - "About 99% — that's the filter's catch rate"
+      - "About 17% — false flags from the huge legitimate pile outnumber the true ones"
+      - "About 5% — that's the false-positive rate"
+    answer: 1
+    explanation: "Bayes with the base rate: true flags 0.01 × 0.99 = 0.0099, false flags 0.99 × 0.05 = 0.0495, so 0.0099 / 0.0594 ≈ 17% (Ch12)."
+  - id: dark-mode-workouts
+    prompt: "Users who enable a fitness app's dark mode also finish more workouts, so the team plans to auto-enable dark mode to boost workouts. What's the flaw?"
+    options:
+      - "A likely confounder — highly engaged users both customize settings and work out more, so the correlation doesn't show dark mode causes workouts"
+      - "Nothing — a strong correlation is sufficient grounds to act"
+      - "The correlation must be negative for the plan to work"
+    answer: 0
+    explanation: "Correlation measures co-movement only; a third variable (engagement) can drive both, so acting on it as causal can fail (Ch13)."
+  - id: halve-the-standard-error
+    prompt: "A survey of 100 people gives a standard error of 2.0 for the mean. Roughly how many people would you need to bring it down to 1.0?"
+    options:
+      - "About 200 — double the sample halves the error"
+      - "About 150 — a modest bump is enough"
+      - "About 400 — halving the error takes four times the sample, because of the sqrt(n) in std / sqrt(n)"
+    answer: 2
+    explanation: "Standard error is std / sqrt(n): to halve it you must double sqrt(n), which means quadrupling n — 100 → 400 (Ch14)."
+  - id: neuron-weight-update
+    prompt: "A neuron outputs a = 0.9 for an example labeled y = 0, and the input x₁ on weight w₁ is positive. What does one gradient-descent step do to w₁?"
+    options:
+      - "Increases it — a bigger weighted sum always lowers the loss"
+      - "Decreases it — the gradient 2(a − y) · a(1 − a) · x₁ works out positive, and descent steps against it"
+      - "Nothing — the gradient is zero whenever a is between 0 and 1"
+    answer: 1
+    explanation: "With a = 0.9, y = 0: 2(a − y) = 1.8 and a(1 − a) = 0.09, both positive, times a positive x₁ gives a positive gradient — so the step w − lr · grad lowers w₁, pushing the output toward 0 (Ch16, Ch7)."

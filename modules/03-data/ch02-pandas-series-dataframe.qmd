@@ -11,7 +11,7 @@ learning_objectives:
   - "Load a CSV and inspect it with .shape, .head, .columns, and .describe"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 16
 resources:
   - ../../lib/grader.py
@@ -318,8 +318,10 @@ value, and `int(...)` returns it as a plain Python integer.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Build a DataFrame from a dictionary, select one column by name, and return the
-**rounded mean** of that column. Complete the marked line.
+Write the body of `column_mean(data, col)` — build a DataFrame from the
+dictionary, select the column by name, and return its **rounded mean** (two
+decimal places, as a plain `float`). This time you write the whole body yourself:
+the construction, the selection, and the rounding.
 
 ```{pyodide}
 #| setup: true
@@ -333,7 +335,7 @@ import pandas as pd
 
 def column_mean(data, col):
     """Build a DataFrame from a dict and return the rounded mean of one column."""
-    return ____  # TODO: round(float(pd.DataFrame(data)[col].mean()), 2)
+    ...  # TODO: write the body — build the frame, select the column, average it, round to 2 places
 
 run_tests([
     ("mean of a", column_mean({"a": [1, 2, 3], "b": [4, 5, 6]}, "a"), 2.0),

@@ -7,6 +7,11 @@ project:
   render:
     - "*.qmd"
     - "modules/**/*.qmd"
+    # Capstones are learner-facing pages, not repo docs: without this entry
+    # Quarto serves them as raw text/markdown (verified live, review 2026-07-19)
+    # and every module index links to them — a broken learner path. Each
+    # capstone.md carries a front-matter title so it renders as a titled page.
+    - "modules/**/capstone.md"
 
 # "Open in Colab" target — set at publish time (never hardcoded in the shortcode).
 # Override per-environment with LARNIX_COLAB_REPO / LARNIX_COLAB_BRANCH.
@@ -18,6 +23,12 @@ larnix-colab-branch: "main"
 # executes notebooks explicitly; the R10 gate owns "everything runs".
 execute:
   freeze: auto
+
+# Project-wide filters. chapter-meta renders the "⏱ ~N min · Needs: …" strip
+# from each chapter's CI-validated front-matter (review 2026-07-19, U8) — it
+# no-ops on pages without `compute:` (landing pages, capstones, sandboxes).
+filters:
+  - larnix/chapter-meta
 
 website:
   title: "Larnix"
@@ -33,6 +44,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: curriculum.qmd
+        text: Curriculum
       - href: modules/00-orientation/ch01-train-your-first-model.qmd
         text: Start learning
       - href: about.qmd
@@ -60,6 +73,8 @@ website:
             href: modules/00-orientation/ch05-history-of-ai.qmd
           - text: "Ch6 — How this school works"
             href: modules/00-orientation/ch06-how-this-school-works.qmd
+          - text: "Capstone — Set up & run"
+            href: modules/00-orientation/capstone.md
       - section: "M1 — Python for AI"
         href: modules/01-python/index.qmd
         contents:
@@ -91,6 +106,8 @@ website:
             href: modules/01-python/ch13-environments-packages.qmd
           - text: "Ch14 — Notebooks, the IDE & Colab"
             href: modules/01-python/ch14-notebooks-ide-colab.qmd
+          - text: "Capstone — Data-cleaning notebook"
+            href: modules/01-python/capstone.md
       - section: "M2 — Math You Actually Need"
         href: modules/02-math/index.qmd
         contents:
@@ -126,6 +143,8 @@ website:
             href: modules/02-math/ch15-linear-algebra-in-numpy.qmd
           - text: "Ch16 — The math of one neuron"
             href: modules/02-math/ch16-the-math-of-one-neuron.qmd
+          - text: "Capstone — The math of one neuron"
+            href: modules/02-math/capstone.md
       - section: "M3 — Data & Tooling"
         href: modules/03-data/index.qmd
         contents:
@@ -157,6 +176,8 @@ website:
             href: modules/03-data/ch13-data-ethics.qmd
           - text: "Ch14 — Messy real-world data"
             href: modules/03-data/ch14-messy-real-world-data.qmd
+          - text: "Capstone — End-to-end EDA"
+            href: modules/03-data/capstone.md
   page-footer:
     center: "Larnix — free, open-access AI/ML education. Built docs-as-code."
 

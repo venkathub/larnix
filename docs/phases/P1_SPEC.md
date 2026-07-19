@@ -1,7 +1,17 @@
 # P1_SPEC — Foundations track (M0–M3)
 
 > **Phase:** P1 — *Foundations track* (per `ROADMAP.md §3 P1`).
-> **Status:** ✅ **COMPLETE (2026-06-29).** All of §6 (Tasks 1–67) delivered: shared tooling +
+> **Status:** ✅ **COMPLETE (2026-06-29).**
+> **Post-completion review addendum (2026-07-19).** An independent review
+> (`docs/phases/P1_REVIEW.md`, decisions `D0017`) re-verified this phase. Content
+> correctness held (all recomputed numbers/quiz keys correct). **One evidence claim
+> below was found wrong in learner-facing effect:** the "4 rubric-graded capstones"
+> existed and were link-checked at source level, but the deployed site served them
+> as raw markdown (not rendered pages) — the render list excluded `capstone.md`.
+> Fixed, plus render/link/e2e CI gates so the class of bug cannot recur. Several
+> content findings (M0 exercise sequencing, M3 transitions, M1 capstone alignment,
+> M2 thread/capstone transfer) were also fixed; see the review ledger.
+> **Original close evidence (2026-06-29):** All of §6 (Tasks 1–67) delivered: shared tooling +
 > **50 chapters across M0–M3**, 4 module quizzes, 4 rubric-graded capstones, all gates green.
 > Every §7 Definition-of-Done item is satisfied (see §7). Closed on branch
 > `feat/p1-foundations-spec`. *(Spec approved 2026-06-28; all P1 decisions confirmed at their

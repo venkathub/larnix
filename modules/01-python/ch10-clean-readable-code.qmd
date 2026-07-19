@@ -11,7 +11,7 @@ learning_objectives:
   - "Write WHY-comments and reuse a function instead of repeating logic (DRY)"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -262,9 +262,10 @@ number `8000` no longer floats unexplained inside the comparison.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write one small, well-named function: `average_steps(day_steps)` returns the mean of
-a list of step counts. Guard the empty case so it returns `0` instead of dividing by
-zero. Complete the marked line.
+Write the body of one small, well-named function: `average_steps(day_steps)`
+returns the mean of a list of step counts. Guard the empty case so it returns `0`
+instead of dividing by zero. You write the whole body yourself: the guard and the
+mean.
 
 ```{pyodide}
 #| setup: true
@@ -276,9 +277,7 @@ from lib.grader import run_tests
 #| exercise: ex_avg
 def average_steps(day_steps):
     """Mean of a list of step counts; 0 when the list is empty."""
-    if ____:            # TODO: handle the empty list before dividing
-        return 0
-    return sum(day_steps) / len(day_steps)
+    ...  # TODO: write the body — guard the empty list, then return sum / count
 
 run_tests([
     ("mean of two days", average_steps([8000, 9000]), 8500),
@@ -289,7 +288,8 @@ run_tests([
 <details><summary>If you're stuck</summary>
 
 An empty list has length `0`, and `sum([]) / len([])` would divide by zero. Test
-for the empty list first — `not day_steps` is `True` when the list is empty.
+for the empty list first — `if not day_steps: return 0` — and then return the mean
+as `sum(day_steps) / len(day_steps)`.
 </details>
 
 <details><summary>Show solution</summary>

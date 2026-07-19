@@ -5,6 +5,149 @@
 
 ---
 
+## D0018 — AI review on every PR: Copilot steering + a GitHub-Models advisory check
+
+- **Date:** 2026-07-19
+- **Status:** Accepted
+- **Context.** The P0/P1 review (D0017) was a one-off, human-driven pass that caught what green
+  deterministic gates could not (pedagogy regressions, honesty gaps, sequencing bugs). We want a
+  standing, per-PR version of that "AI-engineer expert + tutor" perspective — without pretending an
+  LLM can be a deterministic gate.
+- **Options considered.**
+  - **(A, chosen) Two layers sharing one rubric.** (1) Steering files for **GitHub Copilot code
+    review** (`.github/copilot-instructions.md` repo-wide + path-scoped
+    `.github/instructions/modules.instructions.md` for `modules/**`) — native PR reviews when
+    Copilot is available. (2) An in-repo **`AI review` workflow check** calling **GitHub Models**
+    (`models: read` + the Actions `GITHUB_TOKEN`; free tier — no API keys, keeps the ₹0/no-secrets
+    discipline in CI) that embeds the *same* rubric files and posts one sticky PR comment.
+    Mechanisms web-verified current 2026-07-19 (GitHub docs: Copilot custom-instruction files incl.
+    path-scoped `*.instructions.md`; Models-in-Actions quickstart with `models: read` +
+    `https://models.github.ai/inference/chat/completions`).
+  - (B) Copilot code review only. *Rejected as sole layer:* needs a subscription + an
+    admin-UI ruleset (not committable); nothing would exist in-repo as an actual PR check.
+  - (C) Anthropic/OpenAI API in Actions with a secret. *Rejected:* introduces a paid key + secret
+    into a repo whose discipline is env-var-free ₹0 CI; GitHub Models does the job keyless.
+  - (D) Make the AI review a required/blocking check. *Rejected on principle:* LLM judgment is
+    nondeterministic and gameable; only deterministic gates (`checks.yml`) gate merges. The AI
+    review is **advisory by design** — it exits 0 on fork PRs (no `models` permission on the
+    read-only token), rate limits, and API errors, with a visible notice.
+- **Design details.** Logic lives in `infra/ci/ai_review.py` (P0-D10 convention: script + unit
+  tests — 10 in `test_ai_review.py`, no network in tests). Single source of truth: the script
+  embeds the same two rubric files Copilot reads, so editing the rubric updates both layers.
+  Reviewed diff excludes generated/vendored noise (`modules/**/*.ipynb` twins, lockfiles,
+  `_extensions/r-wasm/**`); diffs over 60k chars are truncated **visibly** (the model is told the
+  tail was not reviewed). Sticky comment (marker `<!-- larnix-ai-review -->`) is updated in place,
+  not re-posted. Model `openai/gpt-4.1` at temperature 0.2 — bump deliberately and log it here.
+- **One-time manual step (documented in `RUNBOOK.md → AI review`):** auto-requesting Copilot
+  review needs a branch ruleset toggled in the admin UI and a Copilot subscription; until then
+  Copilot is requested manually per PR. The Models-based check needs nothing.
+- **Consequences.** Every PR gets a tutor-voiced, severity-tagged (`[blocking]`/`[should-fix]`/
+  `[consider]`) review comment at ₹0; the rubric is versioned and reviewable like code. Honest
+  limits: first live Models call happens on the PR itself (unit tests cover the pure paths only);
+  advisory findings are signals for the human, never a merge gate.
+
+---
+
+## D0017 — P0/P1 post-completion review: gates extended, learner UX fixed, conventions hardened
+
+- **Date:** 2026-07-19
+- **Status:** Accepted
+- **Context.** An independent post-completion review of P0+P1 (AI-engineer/tutor lens; full
+  findings→fixes ledger in `docs/phases/P1_REVIEW.md`) found that while all content-correctness
+  claims held under re-verification (every recomputed number in M2/M3 checked out; all sampled quiz
+  keys correct), several learner-facing and process gaps had shipped **despite** green gates —
+  because the gates validated *sources*, not the *rendered product* or the *browser runtime*.
+- **Decisions.**
+  1. **Capstones are rendered pages.** `modules/**/capstone.md` joins the Quarto `render:` list
+     (each carries a front-matter title; sidebar entries added). *The bug:* the deployed site served
+     capstones as raw `text/markdown` while every module index linked to them — source-level lychee
+     could never see it. *Rejected:* converting to `.qmd` (more churn; `.md` renders fine).
+  2. **The `Checks` workflow gains a `render` job**: `quarto render` on every PR + a rendered-site
+     internal link check (`lychee --offline` over `_site/`, dedicated `lychee-site.toml` because the
+     default config's `exclude_path: _site` silently reduces the check to 0 links) + the new e2e
+     smoke tests. Rendering was previously only exercised in preview/publish, post-merge.
+  3. **Playwright e2e smoke gate** (`infra/e2e/`, exact-pinned): quiz engine scoring/persistence/
+     attempt-locking, chapter progress, and one real in-browser Pyodide execution. Replaces the
+     one-time manual "₹0 browser sweep" as the standing evidence for the ₹0 promise.
+     *Rejected:* full per-chapter browser sweeps in CI (minutes × 50 pages; the smoke covers the
+     shared machinery, R10 twins cover per-chapter code).
+  4. **Chapter progress MVP now, not P6.** "Mark chapter complete" + sidebar ticks + real module
+     progress bars, all `localStorage` (`larnix-progress:v1`), UI states device-locality honestly.
+     The `.lx-progress` CSS that had shipped as a dead 22%-hard-coded demo is now the live
+     component. Certification/SR remain P6; this closes the "returning learner has no orientation"
+     gap only.
+  5. **Runtime failure is a visible state.** A watchdog surfaces a dismissible retry/keep-waiting
+     alert when the Pyodide runtime isn't ready after 45 s (offline/blocked-CDN was previously a
+     silent hang). Uses the CI-checked clay-coral contrast pair.
+  6. **Metadata is learner-facing.** A project-wide Lua filter (`larnix/chapter-meta`) renders
+     `est_minutes` + `prereqs` on every chapter; a badge-drift check in
+     `chapter_structure_lint.py` fails any hand-written badge that disagrees with front-matter.
+  7. **Quiz conventions hardened**: `id:` is now required by `quiz_lint` (it's the storage key;
+     the fallback orphaned scores on rename); the schema's `shuffle:` flag is implemented in the
+     engine (was validated but ignored); graded attempts lock with an explicit *Try again*.
+  8. **Content conventions adopted for all future phases** (STYLE_GUIDE/AUTHORING_CHECKLIST
+     updated): Exercise 2 must be a genuine implement-from-spec (not a second one-blank);
+     module quizzes ask transfer questions, never verbatim chapter-quiz reuse; closing
+     transitions must hand off to the *actual* next chapter (re-checked after any reorder);
+     early-module exercises may not require syntax a later module teaches; capstone briefs,
+     rubrics, and walkthroughs must agree (and walkthrough numbers are recomputed against the
+     vendored data); capstones must force transfer (M2's now requires a re-derived variation).
+  9. **DoD extended** (CLAUDE.md): every learner-facing link on the rendered preview must be
+     clicked/verified — the capstone bug shipped through a DoD that never left the source tree.
+- **Deferred, with rationale (honest):** *(status updated same-day — see the completion
+  addendum below; every item here was subsequently completed or conclusively resolved.)*
+  - **E5 (50× duplicated `live-html` front-matter → per-module `_metadata.yml`).** Verified by
+    experiment: chapter output is byte-identical, **but** directory metadata leaks live-runtime
+    assets onto `index.qmd`/`capstone.md` in the same directory. Needs per-file format overrides
+    or a layout change; parked rather than forced (risk > benefit this session).
+  - **quarto-live upstream commit hash**: the vendored `0.1.3-dev` snapshot predates this review
+    and its exact upstream commit was **not recorded at vendor time — unknown, not reconstructed**.
+    Policy adopted: any future vendor/update records the upstream commit hash here.
+  - SCSS→`a11y_check` auto-parse (pairs stay manually mirrored; 3 dead avatar pairs removed);
+    quiz.lua's Pandoc-metadata YAML round-trip (tinyyaml swap); axe/pa11y DOM audit; mobile
+    check; fleet-wide Ex2 rewrite beyond the exemplar chapters (M1 Ch1/Ch12) — tracked in
+    `docs/phases/P1_REVIEW.md §Deferred`.
+- **Consequences.** CI wall-clock grows (~+4–6 min for render+e2e on PRs); in exchange the two
+  learner-critical runtime paths and the rendered product are regression-guarded, and the review's
+  content conventions are written into the standing docs that P2+ inherit.
+- **Completion addendum (2026-07-19, same branch).** All deferred items were subsequently
+  completed or conclusively resolved:
+  1. **Fleet Ex2 rewrite — DONE.** All 42 remaining M1–M3 chapters converted to genuine
+     write-the-body implements (M1: 12, zero exceptions; M2: 16, zero exceptions, solutions
+     byte-identical; M3: 14, two documented partial scaffolds — ch07's `Counter` import and
+     ch10's float-array line stay given, with rationale). **M0 is exempt by design** (its
+     learners don't know Python yet — codified in STYLE_GUIDE §6). Known follow-up: M2 ch16's
+     *Exercise 3* (`dL_dz`) is a second auto-graded one-blank outside the Ex2 convention's scope.
+  2. **M1–M3 module-quiz audits — DONE.** All three were near-total verbatim reuse (M1: 11/11,
+     M2: 12/12, M3: 12/12); every question rewritten as a computed-and-verified transfer/
+     application item.
+  3. **quarto-live vendor hash — RECONSTRUCTED, not guessed.** The vendored tree is
+     byte-identical (`diff -r` = 0 lines) to upstream commit
+     `d1459f7968efca5ccdb3cb8a993a399ec6d3e102` (2026-05-22, "Update webR to v0.6.0");
+     neighbouring commits differ by 42–60 lines, so the match is unique. Recorded in
+     `_extensions/r-wasm/VENDOR.md` with the update policy.
+  4. **SCSS→a11y sync — DONE** (`a11y_check.py`): orphan detection (every THEME_PAIRS hex must
+     still exist in the SCSS) + coverage (every declared clay/KT/badge pair must be gated).
+     First run caught the nav pairs approximating the translucent navbar; now `blend()`-computed.
+  5. **axe DOM audit — DONE** (e2e, WCAG A/AA, serious+critical gating, advisory logged;
+     `.exercise-editor` internals excluded as third-party). First run caught Quarto's gray
+     last-breadcrumb link (4.0:1) and color-only prose links; both fixed in the theme.
+  6. **Mobile check — DONE** (e2e, 375 px: overflow + quiz + mark-complete on four page types).
+     First run caught a 157 px overflow on the curriculum page — root cause: auto inline margins
+     disable grid-item stretch, so `width: auto` fell back to fit-content of the wide table.
+     Fixed with `width: 100%` on the full-bleed rule + mobile table scroll + grid `min-width: 0`.
+  7. **quiz.lua tinyyaml — DONE.** Pandoc-metadata round-trip (smart-quote/em-dash transforms,
+     markdown flattening) replaced by vendored lua-tinyyaml; parity verified — all 55 quiz files
+     parse semantically identical to PyYAML (0 mismatches).
+  8. **E5 `_metadata.yml` — REJECTED with evidence, closed.** Two strategies tested by full
+     render: (a) plain directory metadata → chapter HTML byte-identical **but** live-runtime
+     assets leak onto index/capstone pages; (b) adding explicit `format: html` to index/capstone
+     → Quarto treats them as multi-format docs and the render **fails** (output-rename error).
+     The 50× duplicated block stays, documented as the accepted cost of D0013's root-project
+     layout; revisit only if Quarto grows per-directory format scoping.
+
+---
+
 ## D0016 — P1 technical decisions (env-chapter proxy, plotting, datasets, grader, twins, quizzes)
 
 - **Date:** 2026-06-28

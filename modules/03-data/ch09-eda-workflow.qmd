@@ -12,7 +12,7 @@ learning_objectives:
   - "Back every claim with a number or a plot read straight from the data"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 20
 resources:
   - ../../lib/grader.py
@@ -114,8 +114,9 @@ df = load_csv("penguins")
 df.dtypes
 ```
 
-Reading the list: the four body measurements and `body_mass_g` are numeric (`float64`
-or `int64`), while `species`, `island`, and `sex` are `object` — text labels. That is
+Reading the list: the four body measurements — bill length, bill depth, flipper
+length, and body mass — are numeric (`float64` or `int64`), as is the `year` column
+(`int64`), while `species`, `island`, and `sex` are `object` — text labels. That is
 exactly what we'd expect, so nothing to fix here. The point of the step is that you
 *looked*: numeric columns are numeric, categorical columns are text. If `body_mass_g`
 had shown up as `object`, that would be a red flag to chase down before going further.
@@ -314,9 +315,10 @@ three keys of two values each is `(2, 3)`. `.shape` reports `(rows, columns)`, a
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Step 4 is *summaries*. Write `summary(data, col)` that returns a small dict
-`{"mean": .., "min": .., "max": ..}` for one column — the mean rounded to 2 decimals,
-the min and max as plain ints. Complete the marked line.
+Step 4 is *summaries*. Write the body of `summary(data, col)` — return a small dict
+`{"mean": .., "min": .., "max": ..}` for one column: the mean rounded to 2 decimals,
+the min and max as plain ints. You write the whole body yourself — build the frame,
+select the column, compute the three numbers.
 
 ```{pyodide}
 #| setup: true
@@ -330,9 +332,7 @@ import pandas as pd
 
 def summary(data, col):
     """Return {'mean', 'min', 'max'} for one column; mean rounded to 2 decimals."""
-    df = pd.DataFrame(data)
-    s = df[col]
-    return ____  # TODO: {"mean": round(float(s.mean()), 2), "min": int(s.min()), "max": int(s.max())}
+    ...  # TODO: write the body — build the frame, select the column, return the three summaries
 
 run_tests([
     ("col a", summary({"a": [1, 2, 3, 4]}, "a"), {"mean": 2.5, "min": 1, "max": 4}),
@@ -425,6 +425,7 @@ You now have a recipe you can run on any new table: size it up
 (shape, types, missing), summarise it, split it by a category, draw the pattern, and
 ask questions you can actually answer with evidence. That pass is the first thing a
 working data scientist does with a fresh dataset — and the habit of backing every claim
-with a number or a plot is what separates analysis from guesswork. This closes the data
-module; next you'll carry these tools into the modelling work, where understanding the
-data first is what keeps a model honest.
+with a number or a plot is what separates analysis from guesswork. There is more of the
+module to come: Chapter 10 looks at scaling and encoding — a first preview of how data
+gets prepared for models, where understanding the data first is what keeps a model
+honest.

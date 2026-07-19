@@ -26,7 +26,8 @@ capstone deliberately uses a *different* public dataset to test transfer.
 
 ## Chapters
 
-🟢→🟡 · `browser` · `stable`.
+🟢→🟡 · `browser` · `stable`. (🔴 also appears inside chapters on optional
+*stretch* exercises — that is an exercise-level tier, not a chapter tier.)
 
 | # | Chapter | Tier |
 |---|---------|------|
@@ -47,7 +48,7 @@ capstone deliberately uses a *different* public dataset to test transfer.
 
 ## Assessment
 
-- Per-chapter **quick check** (`quiz.yml`, 2–3 MCQ).
+- Per-chapter **quick check** (`quiz.yml`, 4 MCQ).
 - Cumulative **module quiz** (`module-quiz.yml`, ~8–12 MCQ) on the module landing.
 - **Capstone:** an end-to-end EDA on a *new* public dataset — see
   [`capstone.md`](capstone.md).

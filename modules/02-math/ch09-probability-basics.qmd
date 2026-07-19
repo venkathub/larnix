@@ -11,7 +11,7 @@ learning_objectives:
   - "Multiply probabilities for two independent events to get the chance of both"
 compute: "browser"
 status: "stable"
-last_reviewed: "2026-06-29"
+last_reviewed: "2026-07-19"
 est_minutes: 15
 resources:
   - ../../lib/grader.py
@@ -219,9 +219,9 @@ is `0.5`, and `3 / 6` is also `0.5` because three of the six faces are even.
 
 ### Exercise 2 — Implement (≈8 min) 🟡
 
-Write `both_independent(p_a, p_b)` — the chance that two **independent** events both
-happen. For independent events you multiply their probabilities. Complete the marked
-line.
+Write the body of `both_independent(p_a, p_b)` — the chance that two **independent**
+events both happen. For independent events you multiply their probabilities. You
+write the whole body yourself — one `return` line is enough.
 
 ```{pyodide}
 #| setup: true
@@ -233,7 +233,7 @@ from lib.grader import run_tests
 #| exercise: ex_both
 def both_independent(p_a, p_b):
     """Chance that two independent events both happen."""
-    return ____  # TODO: the product of the two probabilities
+    ...  # TODO: write the body — combine the two probabilities the independent way
 
 run_tests([
     ("two heads in a row", both_independent(0.5, 0.5), 0.25),
@@ -308,6 +308,8 @@ asking for one more independent thing to also go your way.
 ## Where this fits / what's next
 
 You can now put a number on "how likely", and combine independent events by
-multiplying. Next we zoom out from single events to the whole **shape** of the
+multiplying. This is not a part inside the Ch16 neuron, but it is how you *read* one:
+its sigmoid output lands between 0 and 1, and that value is interpreted as a
+probability. Next we zoom out from single events to the whole **shape** of the
 possibilities — **distributions**: how probability spreads across all the outcomes
 at once, and what an "average" outcome means.

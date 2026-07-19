@@ -159,3 +159,219 @@
 })();
 </script>
 
+<script>
+/* Larnix runtime watchdog (review 2026-07-19, finding U3):
+   the Pyodide runtime + wheels download from a CDN. On an offline, blocked, or
+   very slow network the Run buttons previously never became usable and NO error
+   was ever shown — the ₹0 audience on flaky mobile data would read the page as
+   broken. This watchdog watches pages that contain live cells and, if the
+   runtime still isn't ready after a generous window, shows a dismissible,
+   honest alert with a Retry (reload) and a Keep-waiting path. It never
+   interferes with a load that eventually succeeds — the banner self-removes. */
+(function () {
+  var FIRST_WAIT_MS = 45000;   // generous: first load legitimately downloads tens of MB
+  var EXTEND_MS = 60000;       // "keep waiting" grants another minute
+  var POLL_MS = 1000;
+
+  function hasLiveCells() {
+    return !!document.querySelector(".exercise-editor, .exercise-cell");
+  }
+
+  function runtimeReady() {
+    // Ready = the quarto-live runtime object exists AND its global boot
+    // indicator (visible only during the initial Pyodide download) is gone.
+    if (!window._exercise_ojs_runtime) return false;
+    var boot = document.getElementById("exercise-loading-indicator");
+    return !boot || boot.classList.contains("d-none");
+  }
+
+  function buildBanner(onRetry, onWait) {
+    var wrap = document.createElement("div");
+    wrap.className = "lx-runtime-alert";
+    wrap.setAttribute("role", "alert");
+
+    var msg = document.createElement("p");
+    msg.className = "lx-runtime-alert-msg";
+    msg.textContent =
+      "The in-browser Python runtime hasn't loaded yet. It downloads once from a " +
+      "CDN (a few tens of MB), so a slow, offline, or blocked network can stall it. " +
+      "Your reading progress is safe — only the Run buttons are affected.";
+    wrap.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "lx-runtime-alert-actions";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "lx-runtime-alert-btn lx-runtime-alert-btn--retry";
+    retry.textContent = "Reload and retry";
+    retry.addEventListener("click", onRetry);
+    var wait = document.createElement("button");
+    wait.type = "button";
+    wait.className = "lx-runtime-alert-btn";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", onWait);
+    actions.appendChild(retry);
+    actions.appendChild(wait);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function start() {
+    if (!hasLiveCells()) return;
+    var banner = null;
+    var deadline = Date.now() + FIRST_WAIT_MS;
+
+    var iv = setInterval(function () {
+      if (runtimeReady()) {
+        clearInterval(iv);
+        if (banner) { banner.remove(); banner = null; }
+        return;
+      }
+      if (!banner && Date.now() > deadline) {
+        banner = buildBanner(
+          function () { location.reload(); },
+          function () {
+            deadline = Date.now() + EXTEND_MS;
+            if (banner) { banner.remove(); banner = null; }
+          }
+        );
+        document.body.appendChild(banner);
+      }
+    }, POLL_MS);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
+</script>
+
+<script>
+/* Larnix chapter progress (review 2026-07-19, finding U1 — MVP):
+   localStorage previously held only quiz scores; a learner returning on day 3
+   had no "where was I?". This adds, with zero backend:
+     1. a "Mark chapter complete" toggle at the end of every chapter/capstone;
+     2. ✓ ticks on completed items in the sidebar (every page);
+     3. a real progress bar + count on each module landing page (replacing the
+        .lx-progress component that previously existed only as demo CSS).
+   Progress is device-local (localStorage) and the UI says so — honestly. */
+(function () {
+  var KEY = "larnix-progress:v1";
+  // /modules/<module>/<chNN-slug|capstone>.html → "<module>/<page>"
+  var PAGE_RE = /\/modules\/([^\/]+)\/((?:ch\d[^\/]*|capstone))\.html$/;
+  var INDEX_RE = /\/modules\/([^\/]+)\/(?:index\.html)?$/;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function save(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+  }
+  function idFromPath(path) {
+    var m = PAGE_RE.exec(path);
+    return m ? m[1] + "/" + m[2] : null;
+  }
+
+  function moduleLinks(moduleSlug) {
+    // The floating sidebar lists every chapter + capstone on every page — use
+    // it as the single source of the module's page list (no duplicated data).
+    var anchors = document.querySelectorAll(
+      '#quarto-sidebar a.sidebar-link[href*="/modules/' + moduleSlug + '/"]'
+    );
+    return Array.prototype.filter.call(anchors, function (a) {
+      return PAGE_RE.test(new URL(a.href, location.href).pathname);
+    });
+  }
+
+  function markSidebar(map) {
+    document.querySelectorAll('#quarto-sidebar a.sidebar-link').forEach(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      if (!id || !map[id] || !map[id].done) return;
+      if (a.querySelector(".lx-done-tick")) return;
+      a.classList.add("lx-done");
+      var tick = document.createElement("span");
+      tick.className = "lx-done-tick";
+      tick.setAttribute("aria-hidden", "true");
+      tick.textContent = " ✓";
+      var sr = document.createElement("span");
+      sr.className = "visually-hidden";
+      sr.textContent = " (completed)";
+      a.appendChild(tick);
+      a.appendChild(sr);
+    });
+  }
+
+  function chapterControl(map, pageId) {
+    var host = document.getElementById("quarto-document-content") ||
+               document.querySelector("main.content");
+    if (!host) return;
+
+    var box = document.createElement("div");
+    box.className = "lx-complete";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lx-complete-btn";
+    var note = document.createElement("p");
+    note.className = "lx-complete-note";
+    note.textContent = "Progress is saved in this browser only — clearing site data or switching devices resets it.";
+
+    function paint() {
+      var done = map[pageId] && map[pageId].done;
+      btn.classList.toggle("is-done", !!done);
+      btn.textContent = done ? "✓ Chapter complete — tap to undo" : "Mark chapter complete";
+      btn.setAttribute("aria-pressed", done ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      if (map[pageId] && map[pageId].done) delete map[pageId];
+      else map[pageId] = { done: true, at: new Date().toISOString() };
+      save(map);
+      paint();
+    });
+    paint();
+    box.appendChild(btn);
+    box.appendChild(note);
+    host.appendChild(box);
+  }
+
+  function moduleProgress(map, moduleSlug) {
+    var links = moduleLinks(moduleSlug);
+    if (!links.length) return;
+    var total = links.length;
+    var done = links.filter(function (a) {
+      var id = idFromPath(new URL(a.href, location.href).pathname);
+      return id && map[id] && map[id].done;
+    }).length;
+
+    var header = document.getElementById("title-block-header");
+    if (!header) return;
+    var wrap = document.createElement("div");
+    wrap.className = "lx-progress lx-progress--live";
+    var track = document.createElement("div");
+    track.className = "lx-track";
+    var fill = document.createElement("div");
+    fill.className = "lx-fill";
+    fill.style.width = Math.round((done / total) * 100) + "%";
+    track.appendChild(fill);
+    var label = document.createElement("span");
+    label.className = "lx-progress-label";
+    label.textContent = done + " of " + total + " complete" +
+      (done === 0 ? " — finish a chapter and mark it done to track it here" : "");
+    wrap.appendChild(track);
+    wrap.appendChild(label);
+    header.insertAdjacentElement("afterend", wrap);
+  }
+
+  function run() {
+    var map = load();
+    markSidebar(map);
+    var pageId = idFromPath(location.pathname);
+    if (pageId) chapterControl(map, pageId);
+    var idx = INDEX_RE.exec(location.pathname);
+    if (idx) moduleProgress(map, idx[1]);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
+</script>
+
