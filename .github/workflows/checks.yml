@@ -117,7 +117,8 @@ jobs:
           npm install -g markdownlint-cli2@0.18.1
 
       - name: Vale (tone / banned words)
-        run: vale --glob='!**/_extensions/**' . modules
+        # `.` already includes modules/ — listing it twice double-scanned every chapter.
+        run: vale --glob='!**/_extensions/**' .
 
       - name: markdownlint
         run: markdownlint-cli2
@@ -127,3 +128,39 @@ jobs:
 
       - name: Link check (lychee)
         run: lychee --config lychee.toml --no-progress 'docs/**/*.md' '*.qmd' 'modules/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md
+
+  # Render gate + rendered-site link check (added 2026-07-19, P0/P1 review).
+  # Why: rendering previously happened only in pr-preview/publish, so a
+  # render-breaking change could merge if branch protection required only
+  # `Checks`; and source-level lychee cannot see broken *rendered* paths (the
+  # capstone.md-served-as-raw-text bug shipped exactly this way — module pages
+  # linked a file the site never rendered, and every source link resolved).
+  render:
+    name: Site renders + rendered links resolve
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.8.27"
+
+      - name: Render site
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          path: "."
+
+      - name: Install lychee (pinned)
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
+            | sudo tar xz -C /usr/local/bin lychee
+
+      # --offline: only file/anchor links inside _site are checked here —
+      # external URLs are already covered by the source-level lychee job above.
+      # --config is explicit: without it lychee auto-loads ./lychee.toml, whose
+      # `exclude_path = ["_site"]` reduces this check to 0 links (verified).
+      - name: Rendered-site internal link check
+        run: lychee --config lychee-site.toml --offline --no-progress --root-dir "$(pwd)/_site" '_site/**/*.html'
