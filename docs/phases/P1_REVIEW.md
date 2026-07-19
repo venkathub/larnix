@@ -72,17 +72,31 @@
    be rendered (or consciously excluded); anything hand-duplicated from
    front-matter gets a drift lint.
 
-## Deferred (tracked, not forgotten — see D0017 for rationale)
+## Deferred — ALL COMPLETED OR CONCLUSIVELY RESOLVED (same day, same branch)
 
-- [ ] E5: per-module `_metadata.yml` for the shared `live-html` block (blocked by
-      directory-metadata leaking live-runtime assets onto index/capstone pages).
-- [ ] Fleet-wide Ex2 rewrite beyond the exemplar chapters (apply convention #2
-      opportunistically as chapters are touched; required for all new P2+ chapters).
-- [ ] quarto-live vendor hash unknown for the current snapshot; record on next
-      vendor update.
-- [ ] `a11y_check` pairs auto-parsed from SCSS; axe/pa11y DOM audit; mobile
-      viewport check.
-- [ ] quiz.lua YAML via vendored tinyyaml (drop the Pandoc-metadata round-trip
-      and its smart-quote transforms).
-- [ ] Module-quiz transfer rewrite for M1–M3 (M0 done; M1–M3 quizzes are less
-      duplicative but should be audited against convention #4).
+> Every item below was closed in the second pass on this branch; details and
+> evidence in `DECISIONS.md D0017 → Completion addendum`. Summary:
+
+- [x] **Fleet-wide Ex2 rewrite** — all 42 remaining M1–M3 chapters converted
+      (M3 has two documented partial scaffolds; M0 exempt by design — no Python
+      yet; STYLE_GUIDE §6 codifies both). Known follow-up: M2 ch16 Exercise 3
+      is a second auto-graded one-blank outside the Ex2 convention.
+- [x] **M1–M3 module-quiz transfer audits** — all three were near-total
+      verbatim reuse (11/11, 12/12, 12/12); fully rewritten and answer-verified.
+- [x] **quarto-live vendor hash** — reconstructed by tree-hashing against
+      upstream history: byte-identical to `d1459f79` (unique match); recorded
+      in `_extensions/r-wasm/VENDOR.md` with an update policy.
+- [x] **SCSS→a11y auto-sync** — orphan + coverage checks in `a11y_check.py`
+      (caught a real stale approximation on first run).
+- [x] **axe DOM audit** — in e2e, gating serious/critical WCAG A/AA (caught
+      Quarto's low-contrast breadcrumb + color-only prose links; both fixed).
+- [x] **Mobile viewport check** — in e2e at 375 px (caught a 157 px curriculum
+      overflow; root-caused to auto-margins disabling grid stretch; fixed).
+- [x] **quiz.lua via tinyyaml** — done; 55/55 quiz files parse identical to
+      PyYAML; smart-quote transforms gone.
+- [x] **E5 per-module `_metadata.yml`** — *closed as rejected, with evidence*:
+      directory metadata leaks live-runtime assets onto index/capstone pages,
+      and the explicit-`format: html` counter-measure makes Quarto treat those
+      docs as multi-format and the render fails outright. The duplicated
+      front-matter block is the accepted, documented cost of the root-project
+      layout (D0013); revisit only if Quarto adds per-directory format scoping.

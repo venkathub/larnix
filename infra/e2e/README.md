@@ -1,16 +1,22 @@
 # Larnix e2e smoke tests
 
-Browser-level smoke tests for the two paths a learner actually depends on —
-paths no Python unit test can cover (review 2026-07-19, finding E1):
+Browser-level tests for what no Python unit test can cover (review 2026-07-19,
+finding E1 + the D0017 deferred items):
 
-1. **Quiz engine** (`_extensions/larnix/quiz/resources/larnix-quiz.js`) —
-   renders, scores, persists best score to `localStorage`, locks a graded
-   attempt, offers *Try again*.
-2. **Chapter progress** (`theme/_after-body.html`) — *Mark chapter complete*
-   persists; the module landing page's progress bar and sidebar ticks reflect it.
-3. **Live Pyodide cell** — a worked cell on M0 Ch1 really executes Python in
-   the browser (the ₹0 promise). This test hits the Pyodide CDN and is the
-   slow one (~20 s warm, minutes cold).
+1. **Quiz engine** (`smoke.spec.js`) — renders, scores, persists best score to
+   `localStorage`, locks a graded attempt, offers *Try again*.
+2. **Chapter progress** (`smoke.spec.js`) — *Mark chapter complete* persists;
+   the module landing page's progress bar and sidebar ticks reflect it.
+3. **Live Pyodide cell** (`smoke.spec.js`) — a worked cell on M0 Ch1 really
+   executes Python in the browser (the ₹0 promise). Hits the Pyodide CDN;
+   the slow one (~20 s warm, minutes cold).
+4. **axe DOM audit** (`a11y.spec.js`) — WCAG A/AA scan of the five key page
+   types; **serious + critical violations fail the build**, lesser findings are
+   logged as advisories. Live editors (third-party CodeMirror internals) are
+   excluded with rationale in the spec.
+5. **Mobile viewport** (`mobile.spec.js`) — 375 px: no horizontal overflow on
+   landing/chapter/module/curriculum, and the quiz + mark-complete controls
+   stay usable.
 
 ## Run locally
 

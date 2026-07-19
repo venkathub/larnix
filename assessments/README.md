@@ -37,9 +37,10 @@ so always escape literal examples.)
 
 ### How it works
 
-- `_extensions/larnix/quiz/quiz.lua` — shortcode: reads `quiz.yml` at render,
-  converts it to JSON (via Pandoc), embeds it in a mount `<div>`, and registers
-  the engine assets once.
+- `_extensions/larnix/quiz/quiz.lua` — shortcode: reads the quiz YAML at render
+  via the vendored `tinyyaml.lua` (strings exactly as authored — no Pandoc
+  smart-quote round-trip; ints/bools native), embeds it as JSON in a mount
+  `<div>`, and registers the engine assets once.
 - `_extensions/larnix/quiz/resources/larnix-quiz.{js,css}` — the client-side
   engine: renders MCQs (optionally shuffling option order per `shuffle:`), scores
   on submit, shows correct/incorrect + explanations, locks the graded attempt

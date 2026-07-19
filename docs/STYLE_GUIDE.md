@@ -71,7 +71,9 @@ Each chapter ships 2–4 exercises that progress in difficulty:
 2. **Implement-this-function** — a clear spec + an auto-grader (assert-based unit tests). (Core practice.)
    **This must be a genuine implement** (review 2026-07-19, `D0017`): the learner writes the whole
    function body from a docstring/spec against visible tests — a second one-blank fill-in does
-   **not** qualify as this rung. (Exemplars: M1 Ch1 `met_goal`, M1 Ch12 `count_active`.)
+   **not** qualify as this rung. Applied fleet-wide across M1–M3 (2026-07-19). **M0 is exempt by
+   design:** orientation learners don't know Python yet, so M0 exercises stay guided single-call
+   blanks (see the "no syntax before its chapter" rule below).
 3. **Open-ended mini-task** — a small problem with multiple valid solutions, graded by rubric or by a looser check. (Stretch.)
 
 Rules:

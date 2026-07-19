@@ -51,7 +51,8 @@
      vendored data); capstones must force transfer (M2's now requires a re-derived variation).
   9. **DoD extended** (CLAUDE.md): every learner-facing link on the rendered preview must be
      clicked/verified — the capstone bug shipped through a DoD that never left the source tree.
-- **Deferred, with rationale (honest):**
+- **Deferred, with rationale (honest):** *(status updated same-day — see the completion
+  addendum below; every item here was subsequently completed or conclusively resolved.)*
   - **E5 (50× duplicated `live-html` front-matter → per-module `_metadata.yml`).** Verified by
     experiment: chapter output is byte-identical, **but** directory metadata leaks live-runtime
     assets onto `index.qmd`/`capstone.md` in the same directory. Needs per-file format overrides
@@ -66,6 +67,41 @@
 - **Consequences.** CI wall-clock grows (~+4–6 min for render+e2e on PRs); in exchange the two
   learner-critical runtime paths and the rendered product are regression-guarded, and the review's
   content conventions are written into the standing docs that P2+ inherit.
+- **Completion addendum (2026-07-19, same branch).** All deferred items were subsequently
+  completed or conclusively resolved:
+  1. **Fleet Ex2 rewrite — DONE.** All 42 remaining M1–M3 chapters converted to genuine
+     write-the-body implements (M1: 12, zero exceptions; M2: 16, zero exceptions, solutions
+     byte-identical; M3: 14, two documented partial scaffolds — ch07's `Counter` import and
+     ch10's float-array line stay given, with rationale). **M0 is exempt by design** (its
+     learners don't know Python yet — codified in STYLE_GUIDE §6). Known follow-up: M2 ch16's
+     *Exercise 3* (`dL_dz`) is a second auto-graded one-blank outside the Ex2 convention's scope.
+  2. **M1–M3 module-quiz audits — DONE.** All three were near-total verbatim reuse (M1: 11/11,
+     M2: 12/12, M3: 12/12); every question rewritten as a computed-and-verified transfer/
+     application item.
+  3. **quarto-live vendor hash — RECONSTRUCTED, not guessed.** The vendored tree is
+     byte-identical (`diff -r` = 0 lines) to upstream commit
+     `d1459f7968efca5ccdb3cb8a993a399ec6d3e102` (2026-05-22, "Update webR to v0.6.0");
+     neighbouring commits differ by 42–60 lines, so the match is unique. Recorded in
+     `_extensions/r-wasm/VENDOR.md` with the update policy.
+  4. **SCSS→a11y sync — DONE** (`a11y_check.py`): orphan detection (every THEME_PAIRS hex must
+     still exist in the SCSS) + coverage (every declared clay/KT/badge pair must be gated).
+     First run caught the nav pairs approximating the translucent navbar; now `blend()`-computed.
+  5. **axe DOM audit — DONE** (e2e, WCAG A/AA, serious+critical gating, advisory logged;
+     `.exercise-editor` internals excluded as third-party). First run caught Quarto's gray
+     last-breadcrumb link (4.0:1) and color-only prose links; both fixed in the theme.
+  6. **Mobile check — DONE** (e2e, 375 px: overflow + quiz + mark-complete on four page types).
+     First run caught a 157 px overflow on the curriculum page — root cause: auto inline margins
+     disable grid-item stretch, so `width: auto` fell back to fit-content of the wide table.
+     Fixed with `width: 100%` on the full-bleed rule + mobile table scroll + grid `min-width: 0`.
+  7. **quiz.lua tinyyaml — DONE.** Pandoc-metadata round-trip (smart-quote/em-dash transforms,
+     markdown flattening) replaced by vendored lua-tinyyaml; parity verified — all 55 quiz files
+     parse semantically identical to PyYAML (0 mismatches).
+  8. **E5 `_metadata.yml` — REJECTED with evidence, closed.** Two strategies tested by full
+     render: (a) plain directory metadata → chapter HTML byte-identical **but** live-runtime
+     assets leak onto index/capstone pages; (b) adding explicit `format: html` to index/capstone
+     → Quarto treats them as multi-format docs and the render **fails** (output-rename error).
+     The 50× duplicated block stays, documented as the accepted cost of D0013's root-project
+     layout; revisit only if Quarto grows per-directory format scoping.
 
 ---
 
