@@ -2,5 +2,6 @@
 # Skip vendored, generated, and binary-ish files; lint our own prose + code.
 skip = .git,*.woff2,fonts/LICENSE,*_extensions/r-wasm/*,*/_site/*,*.min.js,*.min.css,*.lock,*/fixtures/*,*/.quarto/*,*/node_modules/*,package-lock.json,*/test-results/*,*/playwright-report/*
 # Allow-list: valid terms codespell mistakes for typos (domain acronyms/names).
-ignore-words-list = sme,larnix,pyodide,ans
+# P2 additions (spec §5.2 — ML vocabulary): fpr/tpr (false/true-positive rate).
+ignore-words-list = sme,larnix,pyodide,ans,fpr,tpr
 quiet-level = 3

@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m4-ch06-classification-metrics"
+questions:
+  - id: fraud-accuracy-transfer
+    prompt: "Your fraud model shows 99.2% accuracy. What do you check first?"
+    options:
+      - "Whether a bigger model could reach 99.5%"
+      - "The fraud rate — if only ~1% of transactions are fraud, always-say-legit scores ~99%, so check recall on the fraud class"
+      - "Nothing; 99.2% is an excellent score in any setting"
+    answer: 1
+    explanation: "On heavily imbalanced problems the lazy baseline scores the majority share. The first question is what that baseline is — then whether the model actually catches fraud, which recall and the confusion matrix reveal and accuracy hides."
+  - id: read-matrix-cell
+    prompt: "In sklearn's confusion_matrix output for labels [0, 1], what is the bottom-left cell?"
+    options:
+      - "False negatives — real positives (row 1) that were predicted negative (column 0)"
+      - "False positives — false alarms raised on real negatives"
+      - "True negatives — real negatives correctly rejected"
+    answer: 0
+    explanation: "Rows are true labels, columns are predictions, negatives first. Bottom row = truly positive; left column = predicted negative — so bottom-left counts the missed positives."
+  - id: precision-vs-recall-words
+    prompt: "A detector has precision 0.90 and recall 0.40. What does that mean in words?"
+    options:
+      - "It catches 90% of the real positives but 60% of its alarms are false"
+      - "When it raises an alarm it is right 9 times in 10, but it finds only 4 of every 10 real positives"
+      - "It is 90% accurate on positives and 40% accurate on negatives"
+    answer: 1
+    explanation: "Precision judges the alarms (TP/(TP+FP) = 0.90: trustworthy when it speaks); recall judges the coverage (TP/(TP+FN) = 0.40: it misses most real cases). A high-precision, low-recall model is a cautious one."
+  - id: auc-half
+    prompt: "A model's ROC-AUC on held-out data is 0.5. What does that tell you?"
+    options:
+      - "The model is right half the time, which beats most baselines"
+      - "The model's threshold is set too high and should be lowered"
+      - "Its scores rank a random positive above a random negative no better than a coin flip — the ranking carries no signal"
+    answer: 2
+    explanation: "AUC is the probability that a random positive outranks a random negative. 0.5 is the diagonal — the ranking is uninformative at every threshold, so no policy choice can rescue it."

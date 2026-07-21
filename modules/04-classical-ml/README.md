@@ -10,7 +10,8 @@ built-in, P2-D6).
 > [Ch2 — Linear regression](ch02-linear-regression.qmd) ·
 > [Ch3 — Cost functions & gradient descent](ch03-cost-gradient-descent.qmd) ·
 > [Ch4 — Generalization: splits & CV](ch04-generalization-splits-cv.qmd) ·
-> [Ch5 — Logistic regression](ch05-logistic-regression.qmd)
+> [Ch5 — Logistic regression](ch05-logistic-regression.qmd) ·
+> [Ch6 — Classification metrics](ch06-classification-metrics.qmd)
 
 ## Prerequisites
 

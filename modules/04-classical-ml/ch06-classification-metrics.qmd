@@ -1,0 +1,446 @@
+---
+title: "Classification metrics"
+module: "M4 — Classical Machine Learning"
+chapter: 6
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch5 — Logistic regression"
+learning_objectives:
+  - "Explain why accuracy misleads on imbalanced problems, using a lazy baseline"
+  - "Read a confusion matrix cell by cell and compute precision, recall, and F1 from it"
+  - "Choose between precision and recall for a stated cost of mistakes, and read ROC-AUC as a threshold-free summary"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: confusion-matrix-cells
+    q: "Name the four cells of a binary confusion matrix."
+    a: "True positives (real positives called positive), false positives (false alarms), false negatives (missed positives), true negatives (real negatives called negative). sklearn lays them out with true labels as rows, predictions as columns, negatives first."
+  - id: precision-vs-recall
+    q: "What questions do precision and recall answer?"
+    a: "Precision = TP/(TP+FP): when the model cries positive, how often is it right? Recall = TP/(TP+FN): of the real positives, how many did it catch? Raising the threshold trades recall away for precision."
+  - id: accuracy-imbalance-lie
+    q: "Why can high accuracy mean nothing on an imbalanced problem?"
+    a: "When one class dominates, always predicting the majority scores its share — 80% on 80/20 data, 99% on 99/1 — while detecting nothing. Compare against that lazy baseline, and judge the minority class with precision/recall."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+The field station wants a **Chinstrap detector**. Chinstraps are the rare
+ones — 68 birds out of 342, about one in five. A colleague trains a model,
+runs the Chapter 4 ritual, and reports proudly: *"86% accurate on held-out
+penguins."*
+
+Before you congratulate them, meet a rival model. It contains no learning at
+all — its entire code is `return "not a Chinstrap"`. On the same held-out
+penguins it scores **80%**, because 80% of penguins genuinely aren't
+Chinstraps. Six points behind the trained model, zero effort, and it will
+never find a single Chinstrap as long as it lives.
+
+Accuracy answered *"how often is the model right?"* — but on a lopsided
+problem that's the wrong question, because being right is cheap when one
+answer dominates. This chapter builds the instrument panel that asks the
+right ones: the **confusion matrix**, **precision**, **recall**, **F1**, and
+**ROC-AUC**.
+
+> You'll need from before: `predict_proba`, thresholds, and the split ritual
+> (Ch5, Ch4).
+
+---
+
+## The lazy baseline, measured
+
+Set up the detector problem — Chinstrap vs everyone else, all three species
+in play — and grade the do-nothing rival first:
+
+```{pyodide}
+#| caption: "80% accurate, learned nothing: the bar every detector must clear"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm", "bill_depth_mm"])
+y = (df["species"] == "Chinstrap").astype(int)
+X = df[["bill_length_mm", "bill_depth_mm"]]
+print(f"penguins: {len(y)}, Chinstraps: {y.sum()} ({y.mean():.0%})")
+
+Xtr, Xte, ytr, yte = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+
+lazy = [0] * len(yte)                    # "not a Chinstrap", always
+print(f"lazy accuracy:  {accuracy_score(yte, lazy):.3f}")
+
+clf = LogisticRegression(max_iter=1000).fit(Xtr, ytr)
+pred = clf.predict(Xte)
+print(f"model accuracy: {accuracy_score(yte, pred):.3f}")
+```
+
+`0.802` for free versus `0.860` for the real model. The trained model *is*
+better — but accuracy compresses everything it does into one number that a
+know-nothing rival nearly matches. (Chapter 15 deals with training on
+lopsided data; today is about *measuring* on it.) To see what the model
+actually does, break its answers into four piles.
+
+## The confusion matrix
+
+Every prediction lands in one of four cells, depending on what the model said
+and what was true:
+
+|  | called "Chinstrap" | called "other" |
+|---|---|---|
+| **really Chinstrap** | ✅ true positive (TP) | ❌ false negative (FN) — *a missed Chinstrap* |
+| **really other** | ❌ false positive (FP) — *a false alarm* | ✅ true negative (TN) |
+
+```{pyodide}
+#| caption: "The four piles, counted on the held-out penguins"
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(yte, pred)
+print(cm)
+tn, fp, fn, tp = cm.ravel()
+print(f"\nTN={tn}  FP={fp}  FN={fn}  TP={tp}")
+```
+
+One convention to burn in now, because everyone misreads it once: sklearn
+puts **true labels on rows, predictions on columns, negatives first**. So the
+top-left `63` is true negatives, and the bottom-right `11` is true positives.
+Read our matrix as a story: of 17 real Chinstraps the model caught 11 and
+**missed 6**; it also raised **6 false alarms**. Accuracy's `0.860` hid both
+sixes.
+
+## Precision and recall
+
+Two stakeholder questions, straight from the matrix:
+
+- **Precision** — *when the model cries "Chinstrap", how often is it right?*
+  $\text{precision} = \frac{TP}{TP + FP}$
+- **Recall** — *of the real Chinstraps, how many did it catch?*
+  $\text{recall} = \frac{TP}{TP + FN}$
+
+```{pyodide}
+#| caption: "Computed from the four cells by hand — then sklearn agrees"
+from sklearn.metrics import precision_score, recall_score
+
+print(f"precision by hand: {tp / (tp + fp):.3f}")
+print(f"recall by hand:    {tp / (tp + fn):.3f}")
+print(f"sklearn:           {precision_score(yte, pred):.3f}, "
+      f"{recall_score(yte, pred):.3f}")
+```
+
+Both come out `0.647` here — a coincidence of this split (FP and FN happen
+to tie at 6), and a useful one: it shows the two metrics measure *different
+things* that merely share a value today. The lazy rival makes the difference
+vivid: its precision is undefined (it never cries Chinstrap) and its recall
+is **0.000** — the number that exposes it, which accuracy never did.
+
+## The trade-off, and F1
+
+Chapter 5 ended on "the threshold is policy". Here is the policy's price
+list — the same model's probabilities, cut at five different bars:
+
+```{pyodide}
+#| caption: "Raise the bar: precision climbs, recall pays"
+probs = clf.predict_proba(Xte)[:, 1]
+
+print("threshold  precision  recall")
+for t in (0.2, 0.35, 0.5, 0.65, 0.8):
+    p = (probs >= t).astype(int)
+    prec = precision_score(yte, p, zero_division=0)
+    rec = recall_score(yte, p)
+    print(f"   {t:.2f}      {prec:.3f}    {rec:.3f}")
+```
+
+A clean seesaw: at `0.2` the model catches 82% of Chinstraps but is wrong in
+over half its alarms; at `0.8` its alarms are 91% trustworthy but it finds
+barely half the birds. Neither end is "correct" — it depends on which
+mistake costs more.
+
+When one summary number is required, **F1** is the harmonic mean of the
+pair — the harmonic part matters because it punishes lopsidedness (a model
+with precision 1.0 and recall 0.02 gets F1 ≈ 0.04, not the flattering
+average 0.51):
+
+$$F_1 = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}$$
+
+```{pyodide}
+#| caption: "F1: one number when you must, honest about weak links"
+from sklearn.metrics import f1_score
+
+print(f"F1 at threshold 0.5: {f1_score(yte, pred):.3f}")
+```
+
+One honesty note: F1 weighs the two mistakes equally. If your problem
+doesn't — a missed tumour is not one false alarm's worth of bad — then F1 is
+the wrong summary and you should report the pair.
+
+## ROC-AUC: judging the ranker, not the policy
+
+Every metric so far judged the model *after* a threshold chopped its
+probabilities. **ROC-AUC** judges the probabilities themselves: sweep the
+threshold from strict to lenient, plot the true-positive rate against the
+false-positive rate at every setting, and measure the area under that curve.
+
+```{pyodide}
+#| caption: "The ROC curve: every threshold's trade-off in one picture"
+#| fig-alt: "ROC curve with false-positive rate on the x-axis and true-positive rate on the y-axis, both 0 to 1. The model's curve rises steeply toward the top-left before flattening, enclosing an area of 0.891. A dashed diagonal line from bottom-left to top-right marks the 0.5 area of a random-guess ranker."
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score, roc_curve
+
+fpr, tpr, _ = roc_curve(yte, probs)
+auc = roc_auc_score(yte, probs)
+
+fig, ax = plt.subplots(figsize=(4.2, 3.6))
+ax.plot(fpr, tpr, label=f"our model (AUC = {auc:.3f})")
+ax.plot([0, 1], [0, 1], ls="--", lw=1, label="random guessing (AUC = 0.5)")
+ax.set_xlabel("false-positive rate")
+ax.set_ylabel("true-positive rate")
+ax.legend(loc="lower right")
+plt.show()
+```
+
+AUC has a lovely plain-language reading: **the probability that a randomly
+chosen Chinstrap gets a higher score than a randomly chosen non-Chinstrap.**
+Our `0.891` says the model ranks penguins well even though no single
+threshold is perfect; `0.5` is the coin-flip floor (the diagonal), and the
+lazy rival — which gives every bird the same score — sits exactly on it.
+Because AUC ignores the threshold, it's the fair way to compare *models*
+before choosing a *policy*.
+
+## The one-call summary
+
+`classification_report` prints the panel per class — worth reading once,
+slowly:
+
+```{pyodide}
+#| caption: "The whole instrument panel in one call"
+from sklearn.metrics import classification_report
+
+print(classification_report(yte, pred, target_names=["other", "Chinstrap"]))
+```
+
+The `support` column (69 vs 17) is the imbalance staring back at you, and
+the per-class rows show what the single `0.86` accuracy averaged away: the
+majority class at `0.91`, the class we actually care about at `0.65`.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Accuracy lies under imbalance**: always-say-no scored 0.802 on our
+   80/20 problem. Always compare against the lazy baseline.
+2. The **confusion matrix** splits predictions into TP/FP/FN/TN — in
+   sklearn: true labels as rows, predictions as columns, negatives first.
+3. **Precision** = TP/(TP+FP) ("when it cries positive, is it right?");
+   **recall** = TP/(TP+FN) ("did it catch the real ones?"). The threshold
+   trades one for the other.
+4. **F1** is their harmonic mean — a fair single number when both mistakes
+   cost alike, the wrong one when they don't.
+5. **ROC-AUC** judges the probability ranking across all thresholds:
+   0.5 = coin-flip, our detector = 0.891. Compare models with AUC, then
+   choose a threshold as policy.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same inputs, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Count the four piles yourself. Complete `count_cells` so it tallies the
+confusion-matrix cells from two 0/1 lists (1 = positive class). Replace the
+`____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_cells
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_cells
+def count_cells(y_true, y_pred):
+    """Return (tp, fp, fn, tn) counted from two equal-length 0/1 lists."""
+    tp = sum(1 for t, p in zip(y_true, y_pred) if t == 1 and p == 1)
+    fp = sum(1 for t, p in zip(y_true, y_pred) if ____)  # TODO: false alarm
+    fn = sum(1 for t, p in zip(y_true, y_pred) if ____)  # TODO: missed positive
+    tn = sum(1 for t, p in zip(y_true, y_pred) if t == 0 and p == 0)
+    return tp, fp, fn, tn
+
+run_tests([
+    ("all four piles", count_cells([1, 1, 0, 0, 1, 0], [1, 0, 1, 0, 1, 0]),
+     (2, 1, 1, 2)),
+    ("no false alarms", count_cells([1, 0, 0], [1, 0, 0]), (1, 0, 0, 2)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+A false positive is a false alarm: truth 0, prediction 1 — `t == 0 and
+p == 1`. A false negative is a miss: truth 1, prediction 0.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def count_cells(y_true, y_pred):
+    tp = sum(1 for t, p in zip(y_true, y_pred) if t == 1 and p == 1)
+    fp = sum(1 for t, p in zip(y_true, y_pred) if t == 0 and p == 1)
+    fn = sum(1 for t, p in zip(y_true, y_pred) if t == 1 and p == 0)
+    tn = sum(1 for t, p in zip(y_true, y_pred) if t == 0 and p == 0)
+    return tp, fp, fn, tn
+```
+
+Each prediction lands in exactly one pile, decided by the (truth,
+prediction) pair — the same four cells sklearn's `confusion_matrix` counts.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the metrics from their formulas, edge cases included:
+
+- `precision_recall(tp, fp, fn)` → the tuple `(precision, recall)`. **Edge
+  convention:** if a denominator is zero (the model never cried positive, or
+  there were no real positives), that metric is `0.0`.
+- `f1(precision, recall)` → the harmonic mean; `0.0` if both inputs are zero.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_metrics
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_metrics
+def precision_recall(tp, fp, fn):
+    """Return (precision, recall) with the 0.0 convention for empty denominators."""
+    ...  # TODO
+
+def f1(precision, recall):
+    """Harmonic mean of precision and recall; 0.0 when both are zero."""
+    ...  # TODO
+
+run_tests([
+    ("chapter's matrix", precision_recall(11, 6, 6), (11 / 17, 11 / 17)),
+    ("perfect detector", precision_recall(10, 0, 0), (1.0, 1.0)),
+    ("lazy baseline", precision_recall(0, 0, 17), (0.0, 0.0)),
+    ("f1 of the chapter's pair", round(f1(11 / 17, 11 / 17), 3), 0.647),
+    ("f1 punishes lopsidedness", round(f1(1.0, 0.02), 3), 0.039),
+    ("f1 of nothing", f1(0.0, 0.0), 0.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+Precision divides `tp` by `tp + fp`; recall by `tp + fn` — guard each with
+an `if` on the denominator. F1 is `2 * p * r / (p + r)`, guarded when
+`p + r` is zero.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def precision_recall(tp, fp, fn):
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    return precision, recall
+
+def f1(precision, recall):
+    if precision + recall == 0:
+        return 0.0
+    return 2 * precision * recall / (precision + recall)
+```
+
+The lazy-baseline case is the chapter in miniature: `precision_recall(0, 0,
+17)` returns `(0.0, 0.0)` — the do-nothing model finally gets the score it
+deserves, from the metrics built to ask the right questions.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Rebuild Chapter 5's
+flipper-length model as a **Gentoo detector** (Adelie+Chinstrap vs Gentoo,
+`test_size=0.25, random_state=42, stratify=y`) and evaluate it with the full
+panel: confusion matrix, precision, recall, F1, AUC. Then answer: *the
+station manager's nightmare is a missed Gentoo. Which single metric do you
+put at the top of your report, and what does its value commit you to?*
+
+**Rubric — a good answer:**
+
+- Builds the binary target over all three species and evaluates on held-out
+  data only.
+- Reports the matrix and at least precision, recall, and AUC.
+- Names **recall** (of the Gentoo class) as the headline metric for a
+  missed-positive-costs-most stakeholder, and reads its value as a concrete
+  commitment ("we catch N of every 100 real Gentoos").
+
+<details><summary>Show one possible answer</summary>
+
+```python
+yg = (df["species"] == "Gentoo").astype(int)
+Xg = df[["flipper_length_mm"]].dropna()
+yg = yg[Xg.index]
+a, b, c, d = train_test_split(Xg, yg, test_size=0.25,
+                              random_state=42, stratify=yg)
+g = LogisticRegression().fit(a, c)
+gp = g.predict(b)
+print(confusion_matrix(d, gp))
+print("recall:", recall_score(d, gp).round(3),
+      "precision:", precision_score(d, gp).round(3),
+      "AUC:", roc_auc_score(d, g.predict_proba(b)[:, 1]).round(3))
+```
+
+With misses costliest, recall leads the report — and if it isn't high
+enough, Chapter 5's move applies: lower the threshold and pay in false
+alarms, with this chapter's sweep showing the exact price.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The instrument panel is installed: lazy baseline first, confusion matrix for
+the story, precision/recall for the stakes, F1 when one number is demanded,
+AUC to compare models before policy. It gets used in every classification
+chapter from here to the capstone. Next, a different failure mode entirely —
+models that score brilliantly on training data and fall apart on the exam:
+**overfitting, and the regularization leash that restrains it.**
