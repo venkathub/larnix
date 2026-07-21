@@ -1,0 +1,434 @@
+---
+title: "Bias–variance"
+module: "M4 — Classical Machine Learning"
+chapter: 8
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch7 — Overfitting & regularization"
+learning_objectives:
+  - "Explain bias and variance with the panel-of-appraisers picture: consistently wrong vs scattered"
+  - "Implement bias² and variance from predictions across refits and verify they add up"
+  - "Read the U-curve and use the train/validation proxy when ground truth is unknown"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: bias-variance-defs
+    q: "In the panel-of-appraisers picture, what are bias and variance?"
+    a: "Train many copies of the model on different random datasets. Bias: their average prediction misses the truth — consistently wrong in the same direction (too rigid). Variance: their predictions scatter widely depending on which data each saw (too flexible)."
+  - id: the-u-curve
+    q: "What does the test-error U-curve show as capacity grows?"
+    a: "Total error falls at first (bias shrinking dominates), bottoms out at the sweet spot, then rises (variance growth dominates). Underfitting lives on the left, overfitting on the right; every capacity knob — degree, alpha, depth, k — traces some version of it."
+  - id: proxy-without-truth
+    q: "You can't measure bias/variance without knowing the truth. What is the working proxy?"
+    a: "The train/validation pattern: both errors high and close = high bias (add capacity). Low train error but much worse validation error, unstable across folds = high variance (reduce capacity, regularize, or get more data). More data helps variance, not bias."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 7 gave you two diseases with two treatments: underfitting (add
+capacity) and overfitting (leash it). They look like opposites. They aren't —
+they are the two ends of **one tradeoff**, and there's a single picture that
+holds both.
+
+Here's the thought experiment. Hire a *panel* of appraiser-interns, and train
+each on a **different** random stack of 30 sold houses. Now ask every one of
+them to price the same house.
+
+- The **rigid** interns (straight-line thinkers) barely care which stack they
+  studied — their answers cluster tightly. But the whole cluster sits *off
+  the true price*, in the same direction, every time. Consistently,
+  confidently wrong: that is **bias**.
+- The **flexible** interns (degree-12 thinkers) each fitted their own stack's
+  coffee stains — their answers are scattered all over. On *average* they're
+  near the truth, but any individual one might be wildly off: that is
+  **variance**.
+
+Total error is bias plus variance plus the noise nobody can remove. This
+chapter makes the picture real: we'll train twenty models per family, watch
+the two failure styles appear, *measure* them, and draw the U-curve that the
+rest of the module (and half of M5) keeps pointing back to.
+
+> You'll need from before: capacity and the leash (Ch7), and the train/test
+> gap diagnostic (Ch4).
+
+---
+
+## A truth we're allowed to know
+
+To *measure* "how far from the truth", we need to know the truth — a luxury
+real data never grants. So for once we manufacture the world ourselves: the
+true pattern is a sine wave, and every dataset is 30 noisy samples of it.
+(This is the honest reason textbooks use synthetic data here; we return to
+real houses before the end.)
+
+```{pyodide}
+#| caption: "Twenty rigid fits vs twenty flexible fits of the same truth"
+#| fig-alt: "Two side-by-side plots of the same dashed sine-wave truth on x from 0 to 1. Left, labelled degree 1: twenty straight fitted lines lie in a tight bundle that cuts across the sine wave, missing its peaks and troughs the same way every time. Right, labelled degree 12: twenty wiggly fitted curves scatter widely around the sine wave, especially near the edges, each one different from the next."
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+
+def truth(x):
+    return np.sin(2 * np.pi * x)
+
+grid = np.linspace(0, 1, 101)
+rng = np.random.default_rng(0)          # seeded: same panels every run
+
+def train_panel(degree, n_sets=20, n_points=30):
+    """Fit `n_sets` models of one family, each on its own noisy dataset."""
+    curves = []
+    for _ in range(n_sets):
+        x = rng.uniform(0, 1, n_points)
+        y = truth(x) + rng.normal(0, 0.3, n_points)
+        pf = PolynomialFeatures(degree=degree, include_bias=False)
+        m = LinearRegression().fit(pf.fit_transform(x.reshape(-1, 1)), y)
+        curves.append(m.predict(pf.transform(grid.reshape(-1, 1))))
+    return np.array(curves)
+
+panel1, panel12 = train_panel(1), train_panel(12)
+
+fig, axes = plt.subplots(1, 2, figsize=(7.6, 3), sharey=True)
+for ax, curves, degree in [(axes[0], panel1, 1), (axes[1], panel12, 12)]:
+    for c in curves:
+        ax.plot(grid, c, lw=0.6, alpha=0.5)
+    ax.plot(grid, truth(grid), "k--", lw=1.5, label="the truth")
+    ax.set_ylim(-2, 2)
+    ax.set_title(f"degree {degree}")
+    ax.set_xlabel("x")
+axes[0].legend(fontsize=8)
+plt.show()
+```
+
+The hook's picture, in the flesh. The rigid panel agrees with itself and
+misses the wave the same way every time. The flexible panel dances around
+the truth — no two members alike.
+
+## Putting numbers on the two failures
+
+Formalize what your eyes did a moment ago, at every grid point:
+
+- **bias²** — take the panel's *average* curve; how far is it from the
+  truth? (squared, averaged over the grid)
+- **variance** — how much do panel members *disagree with their own
+  average*? (their spread, averaged over the grid)
+
+```{pyodide}
+#| caption: "Bias falls, variance explodes — the seesaw, measured"
+for degree, curves in [(1, panel1), (12, panel12)]:
+    mean_curve = curves.mean(axis=0)
+    bias2 = ((mean_curve - truth(grid)) ** 2).mean()
+    var = curves.var(axis=0).mean()
+    print(f"degree {degree:2}:  bias² {bias2:.3f}   variance {var:.3f}   "
+          f"sum {bias2 + var:.3f}")
+```
+
+The seesaw in two rows: raising capacity bought bias down (`0.207 → 0.066`)
+by paying variance up thirty-five-fold (`0.022 → 0.784`). And the *sum* —
+the expected squared error against the truth — got **worse** (`0.230 →
+0.850`): degree 12 traded a small consistent miss for enormous scatter, and
+lost. Neither number is "the" villain; their **sum** is what a prediction
+actually suffers.
+
+## The U-curve, drawn live
+
+Sweep every capacity from 1 to 12, average each family's true test error
+over twenty refits, and the module's most reused picture appears:
+
+```{pyodide}
+#| caption: "The U: bias falling meets variance rising"
+#| fig-alt: "Line chart with polynomial degree 1 to 12 on the x-axis and mean squared test error on a log-scaled y-axis. The curve starts around 0.21 at degree 1, drops steeply to its minimum of about 0.02 at degree 3, stays low through degree 6, then climbs steadily to about 0.3 at degree 12. Text labels mark the left region underfitting, the bottom the sweet spot, and the right region overfitting."
+xprobe = np.linspace(0.01, 0.99, 200)
+
+mean_errs = []
+degrees = range(1, 13)
+for degree in degrees:
+    rng_u = np.random.default_rng(100)  # each family gets identical datasets
+    errs = []
+    for _ in range(20):
+        x = rng_u.uniform(0, 1, 30)
+        y = truth(x) + rng_u.normal(0, 0.3, 30)
+        pf = PolynomialFeatures(degree=degree, include_bias=False)
+        m = LinearRegression().fit(pf.fit_transform(x.reshape(-1, 1)), y)
+        pred = m.predict(pf.transform(xprobe.reshape(-1, 1)))
+        errs.append(((pred - truth(xprobe)) ** 2).mean())
+    mean_errs.append(np.mean(errs))
+    print(f"degree {degree:2}: mean test error {np.mean(errs):.3f}")
+
+fig, ax = plt.subplots(figsize=(5.2, 3.2))
+ax.plot(list(degrees), mean_errs, marker="o")
+ax.set_yscale("log")
+ax.set_xlabel("polynomial degree (capacity)")
+ax.set_ylabel("mean squared test error")
+ax.annotate("underfitting", (1.1, 0.16))
+ax.annotate("sweet spot", (2.8, 0.012))
+ax.annotate("overfitting", (9.3, 0.25))
+plt.show()
+```
+
+Down, bottom, up. The left slope is bias dying as capacity grows; the right
+slope is variance taking over; the bottom — degree 3 here, error `0.018` —
+is where their sum is smallest. Chapter 7's housing data only ever showed
+you the right-hand slope (its truth was nearly straight, so there was no
+left slope to descend); the sine wave has real curvature, and the full U
+appears.
+
+And this curve is not about polynomials. **Every capacity knob traces its
+own U**: Chapter 7's α (read right-to-left — big α is the rigid end), tree
+depth in Chapter 10, the number of neighbours k in Chapter 9. Different
+dials, same tradeoff.
+
+## In the wild: no truth, a working proxy
+
+Real problems don't hand you `truth(x)`, so bias and variance can't be
+computed outright. But they leave fingerprints in numbers you *do* have —
+train error, validation error, and how validation behaves across CV folds:
+
+```{pyodide}
+#| caption: "The field guide, as a table"
+rows = [
+    ("train high, validation high & close", "high bias (underfit)",
+     "more capacity / better features"),
+    ("train low, validation much worse", "high variance (overfit)",
+     "leash it, shrink capacity, or more data"),
+    ("validation swings across CV folds", "variance showing itself",
+     "same levers as above"),
+    ("both low, small gap", "near the sweet spot", "ship it; tune gently"),
+]
+print(f"{'symptom':38} {'diagnosis':26} lever")
+print("-" * 92)
+for symptom, diagnosis, lever in rows:
+    print(f"{symptom:38} {diagnosis:26} {lever}")
+```
+
+One more asymmetry worth memorizing: **more data fights variance, not
+bias.** Extra examples calm a scattered panel (each member sees a fuller
+picture), but a straight-line thinker stays a straight-line thinker no
+matter how many houses you show it — fixing bias needs a better model, not
+a bigger stack.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Bias** = the panel's average prediction misses the truth (rigid,
+   consistently wrong). **Variance** = panel members scatter around their
+   own average (flexible, data-sensitive).
+2. Expected error decomposes: **bias² + variance + irreducible noise** —
+   our panels' sums (`0.230` vs `0.850`) are what predictions actually
+   suffer.
+3. Capacity moves the two in **opposite directions**; total error traces a
+   **U-curve** with underfitting on the left, overfitting on the right, and
+   a sweet spot at the bottom (degree 3, error `0.018`, on our sine).
+4. Every capacity dial — degree, α, tree depth, k — **traces its own U**.
+5. Without ground truth, diagnose by proxy: **high/close errors = bias;
+   low-train/poor-validation (and fold-swings) = variance. More data helps
+   variance only.**
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: seeds are fixed, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Build a five-member panel on *real* houses: each member fits a line on its
+own random 30-house sample, and we watch the learned slopes scatter — real
+variance, no synthetic truth needed. Replace the `____`s, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_panel
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.linear_model import LinearRegression
+
+homes = load_csv("california-housing-sample")
+```
+
+```{pyodide}
+#| exercise: ex_panel
+slopes = []
+for seed in range(5):
+    stack = homes.sample(n=30, random_state=____)   # TODO: this member's own stack
+    m = LinearRegression().fit(stack[["MedInc"]], ____)  # TODO: its target
+    slopes.append(round(float(m.coef_[0]), 3))
+
+run_tests([
+    ("five members, five slopes", slopes, [0.321, 0.387, 0.525, 0.503, 0.461]),
+    ("the scatter is real", round(max(slopes) - min(slopes), 3), 0.204),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Each panel member's stack is `homes.sample(n=30, random_state=seed)` — the
+loop variable makes each draw different — and the target is
+`stack["MedHouseVal"]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from lib.data import load_csv
+from sklearn.linear_model import LinearRegression
+
+homes = load_csv("california-housing-sample")
+slopes = []
+for seed in range(5):
+    stack = homes.sample(n=30, random_state=seed)
+    m = LinearRegression().fit(stack[["MedInc"]], stack["MedHouseVal"])
+    slopes.append(round(float(m.coef_[0]), 3))
+```
+
+Five different stacks, slopes from 0.321 to 0.525 — a 60% swing on a mere
+two-knob model, from data luck alone. The full-data fit (Ch2's 0.432) sits
+near their middle: more data per member is exactly what calms this scatter.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the decomposition from its definitions. Given `preds` — one
+prediction per panel member, all for the same input — and the true value:
+
+- `bias_squared(preds, truth)` — the panel's mean prediction, minus truth,
+  squared.
+- `variance(preds)` — mean squared distance of members from their own mean.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_decomp
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_decomp
+def bias_squared(preds, truth):
+    """(mean prediction − truth)²"""
+    ...  # TODO
+
+def variance(preds):
+    """Mean squared distance of predictions from their own mean."""
+    ...  # TODO
+
+run_tests([
+    ("bias²: panel centred at 2.0, truth 3.0",
+     bias_squared([2.0, 2.4, 1.6, 2.0], 3.0), 1.0),
+    ("variance of that panel", variance([2.0, 2.4, 1.6, 2.0]), 0.08),
+    ("a rigid panel has no variance", variance([2.5, 2.5, 2.5]), 0.0),
+    ("an unbiased panel has no bias", bias_squared([2.0, 4.0], 3.0), 0.0),
+    ("decomposition adds up: bias² + var = mean sq. error",
+     bias_squared([2.0, 2.4, 1.6, 2.0], 3.0) + variance([2.0, 2.4, 1.6, 2.0]),
+     sum((p - 3.0) ** 2 for p in [2.0, 2.4, 1.6, 2.0]) / 4),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+Compute `mean_pred = sum(preds) / len(preds)` in both. Bias² is
+`(mean_pred - truth) ** 2`; variance averages `(p - mean_pred) ** 2` over
+the members.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def bias_squared(preds, truth):
+    mean_pred = sum(preds) / len(preds)
+    return (mean_pred - truth) ** 2
+
+def variance(preds):
+    mean_pred = sum(preds) / len(preds)
+    return sum((p - mean_pred) ** 2 for p in preds) / len(preds)
+```
+
+The last assert is the theorem of the chapter, verified on four numbers:
+the panel's average squared error *is exactly* bias² plus variance. (With
+noisy truth a third term joins — the noise's own variance — which no model
+can remove.)
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Pick a degree the chapter
+didn't feature — say 3 or 6 — run `train_panel(degree)` from the worked
+example, compute its bias² and variance the way the chapter did, and place
+it on the map in one sentence: which corner does it live in, and does its
+sum beat degree 1's `0.230`?
+
+**Rubric — a good answer:**
+
+- Reuses `train_panel` and computes both quantities against `truth(grid)`.
+- Reports bias², variance, and their sum.
+- The sentence places the family correctly (degree 3 ≈ low bias *and* low
+  variance — the sweet spot; degree 6 starts paying variance) and compares
+  the sum honestly.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+panel3 = train_panel(3)
+mean_curve = panel3.mean(axis=0)
+b2 = ((mean_curve - truth(grid)) ** 2).mean()
+var = panel3.var(axis=0).mean()
+print(f"degree 3: bias² {b2:.3f}, variance {var:.3f}, sum {b2 + var:.3f}")
+```
+
+Degree 3 typically lands near bias² ≈ 0.01 and variance ≈ 0.03 — both small
+at once, which is what the bottom of the U feels like from inside.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch08.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now own the module's unifying picture: every model family lives
+somewhere on the bias–variance map, every capacity dial slides it along the
+U, and every train/validation pair you read from here on is a bias-or-
+variance diagnosis in disguise. The next chapters put new dots on that map,
+starting with a model that has no training step at all — **k-nearest
+neighbours**, where the capacity dial is literally "how many neighbours do
+you ask".

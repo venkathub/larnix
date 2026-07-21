@@ -30,7 +30,7 @@ classification — so every new algorithm lands on familiar ground.
 | 5 | [Logistic regression](ch05-logistic-regression.qmd) | 🟡 |
 | 6 | [Classification metrics](ch06-classification-metrics.qmd) | 🟡 |
 | 7 | [Overfitting & regularization](ch07-overfitting-regularization.qmd) | 🟡 |
-| 8 | Bias–variance | 🟡 |
+| 8 | [Bias–variance](ch08-bias-variance.qmd) | 🟡 |
 | 9 | K-nearest neighbours | 🟡 |
 | 10 | Decision trees | 🟡 |
 | 11 | Random forests & ensembles | 🟡 |

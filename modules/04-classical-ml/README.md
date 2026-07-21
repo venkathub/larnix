@@ -12,7 +12,8 @@ built-in, P2-D6).
 > [Ch4 — Generalization: splits & CV](ch04-generalization-splits-cv.qmd) ·
 > [Ch5 — Logistic regression](ch05-logistic-regression.qmd) ·
 > [Ch6 — Classification metrics](ch06-classification-metrics.qmd) ·
-> [Ch7 — Overfitting & regularization](ch07-overfitting-regularization.qmd)
+> [Ch7 — Overfitting & regularization](ch07-overfitting-regularization.qmd) ·
+> [Ch8 — Bias–variance](ch08-bias-variance.qmd)
 
 ## Prerequisites
 

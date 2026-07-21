@@ -1,0 +1,35 @@
+title: "Chapter 8 — quick check"
+id: "m4-ch08-bias-variance"
+questions:
+  - id: symptom-to-name
+    prompt: "Twenty copies of a model, each trained on different data, all make nearly the same prediction — and it is consistently too low. What is this?"
+    options:
+      - "High variance — the copies depend too much on their data"
+      - "High bias — the family is too rigid, missing the truth the same way every time"
+      - "Irreducible noise — no model could do better"
+    answer: 1
+    explanation: "Agreement across retrains means low variance; the shared systematic miss is bias. A too-rigid family cannot represent the pattern, so every copy fails identically."
+  - id: u-curve-axis
+    prompt: "On the U-curve of test error, what varies along the x-axis?"
+    options:
+      - "The size of the training set"
+      - "The number of cross-validation folds"
+      - "Model capacity — polynomial degree, 1/alpha, tree depth, k, and other flexibility dials"
+    answer: 2
+    explanation: "The U traces test error as capacity grows: bias shrinking dominates the falling left side, variance growth the rising right side. Each capacity knob draws its own version of the same curve."
+  - id: more-data-asymmetry
+    prompt: "Why does collecting more training data help a high-variance model but barely help a high-bias one?"
+    options:
+      - "More data smooths out each copy's dependence on its particular sample, but a too-rigid family still cannot represent the pattern"
+      - "More data always reduces both bias and variance equally"
+      - "Bias can only be fixed by collecting cleaner labels, never more rows"
+    answer: 0
+    explanation: "Variance is sensitivity to which sample you got — bigger samples calm it. Bias is a limitation of the model family itself; a straight-line thinker with a million houses is still a straight-line thinker."
+  - id: cv-folds-transfer
+    prompt: "Model A's CV fold errors: [0.31, 0.90, 0.45, 1.20, 0.38]. Model B's: [0.61, 0.63, 0.60, 0.62, 0.64]. Diagnose each."
+    options:
+      - "A is high-bias (raise capacity); B is high-variance (regularize)"
+      - "A is high-variance (its performance swings with the data — leash or simplify); B looks high-bias (steady but mediocre — add capacity or features)"
+      - "Both are at the sweet spot; pick either"
+    answer: 1
+    explanation: "Wild swings across folds are variance showing itself — A's fate depends on which rows it got. B is stable but stuck: the consistent, mediocre signature of bias. The levers point in opposite directions."
