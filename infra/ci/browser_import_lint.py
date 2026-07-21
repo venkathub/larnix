@@ -41,13 +41,20 @@ PYODIDE_SAFE = {
     "statsmodels", "networkx", "joblib", "threadpoolctl", "micropip",
     "pyodide", "js", "dateutil", "pytz", "six", "regex", "requests",  # pyodide ships a patched requests
     "lib",  # Larnix in-repo shared helpers (e.g. lib.grader), loaded into the VFS via `resources:` (P1-D9)
+    # P2-D6 (DECISIONS D0020, verified 2026-07-19): xgboost 2.1.4 and
+    # lightgbm 4.6.0 are BUILT-IN packages of Pyodide 0.28.1 — the exact
+    # version our vendored quarto-live pins (live.lua → cdn .../v0.28.1/).
+    # The earlier KNOWN_UNSAFE entries for them were stale. Note: the wheel
+    # downloads from the Pyodide CDN on first use, so chapters using them
+    # carry a "needs internet for this cell" note (P1-D7 honesty rule).
+    "xgboost", "lightgbm",
 }
 # Known-unsafe heavyweights — fail with a pointed message.
 KNOWN_UNSAFE = {
     "torch": "PyTorch", "tensorflow": "TensorFlow", "transformers": "HF Transformers",
     "jax": "JAX", "jaxlib": "JAX", "keras": "Keras", "accelerate": "accelerate",
     "vllm": "vLLM", "tokenizers": "HF tokenizers", "datasets": "HF datasets",
-    "sentencepiece": "sentencepiece", "xgboost": "XGBoost", "lightgbm": "LightGBM",
+    "sentencepiece": "sentencepiece",
 }
 
 _STDLIB = set(getattr(sys, "stdlib_module_names", set()))

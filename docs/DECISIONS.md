@@ -27,7 +27,11 @@
      (same honesty rule as P1-D7's Seaborn); the CI twin pins `xgboost==2.1.4` under CPython.
      *Rejected:* the draft's sklearn+Colab-companion split (now needless complexity; would put
      the first Colab touchpoint before M5 Ch11 teaches it); skipping XGBoost (PLAN names it; the
-     tabular workhorse employers expect).
+     tabular workhorse employers expect). *Implementation note (2026-07-21, with M4 Ch12):*
+     `browser_import_lint.py` allow-list corrected (xgboost/lightgbm in `PYODIDE_SAFE`, torch
+     still `KNOWN_UNSAFE`; tests added both ways); `requirements-notebooks.txt` pins
+     `xgboost==2.1.4` so the Ch12 twin executes the exact browser version; the chapter carries
+     the "needs internet for this cell" callout on the import cell.
   2. **P2-D7 = A — two explicit auto-grading modes, chosen by compute tier.**
      **Seeded-deterministic** for `browser`/CPU-twin exercises (all seeds pinned; existing `tol`
      asserts; same-seed-same-result proven by the CI twin) and **property-based** for

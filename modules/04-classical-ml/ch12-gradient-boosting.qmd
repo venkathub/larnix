@@ -1,0 +1,427 @@
+---
+title: "Gradient boosting (+ XGBoost)"
+module: "M4 — Classical Machine Learning"
+chapter: 12
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch11 — Random forests & ensembles"
+  - "M4 Ch3 — Cost functions & gradient descent"
+learning_objectives:
+  - "Explain boosting: each tree trains on the residuals the team still gets wrong"
+  - "Implement one boosting round and the boosted prediction sum from spec"
+  - "Run sklearn's HistGradientBoosting and real XGBoost in the browser, and compare them honestly against the module's benchmarks"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 25
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - scikit-learn
+    - xgboost
+review_cards:
+  - id: boosting-one-line
+    q: "How does gradient boosting differ from a random forest?"
+    a: "A forest grows independent trees in parallel and votes. Boosting grows trees in sequence: each new tree is trained on the residuals — the errors the team so far still makes — and its prediction is added (scaled by a learning rate). Specialists in what's still wrong, not peers."
+  - id: lr-rounds-interaction
+    q: "How do learning rate and number of rounds interact in boosting?"
+    a: "Each round adds learning_rate × new tree's correction. Smaller steps need more rounds to travel the same distance but usually generalize better; the pair is tuned together, and early stopping on validation error picks the round count in practice."
+  - id: boosting-can-overfit
+    q: "Why can more boosting rounds overfit when more forest trees cannot?"
+    a: "Forest trees vote independently — averaging more of them only steadies the result. Boosting rounds chase the remaining residuals ever harder, so with enough rounds the ensemble can fit noise (train error can reach ~0). Modern libraries counter with built-in regularization and early stopping."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A forest's hundred trees are *peers*: grown in parallel, blind to one
+another, each repeating the others' mistakes as often as fixing them. The
+intern's sharper idea: grow the team **in sequence**, and give each new
+member one job — *fix what the team so far still gets wrong.*
+
+Tree 1 prices houses crudely. Tree 2 doesn't price houses at all: it is
+trained to predict **tree 1's leftover errors**. Tree 3 studies what's left
+after that. Add their contributions up and the team's error shrinks round by
+round — a bureaucracy of specialists in "what we still get wrong".
+
+That's **gradient boosting**, and the name is earned: adding a small
+correction toward the remaining error is Chapter 3's downhill step, taken in
+*trees* instead of numbers. It is also, in its modern forms — sklearn's
+`HistGradientBoosting` and **XGBoost** — the workhorse of tabular machine
+learning, the model you will meet in production systems and job interviews
+alike. And thanks to Pyodide shipping XGBoost, all of it runs right here in
+your browser.
+
+> You'll need from before: forests and their limits (Ch11), the downhill
+> walk and learning rate (Ch3), residual thinking (a prediction's leftover
+> error).
+
+---
+
+## Boosting by hand, five rounds
+
+The algorithm in fifteen honest lines: start from the dumbest prediction
+(the mean — Chapter 1's first learner), then repeatedly fit a *stumpy* tree
+to the residuals and add a fraction of its correction:
+
+```{pyodide}
+#| caption: "Each round trains on what is still wrong — watch the leftover shrink"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_absolute_error
+import numpy as np
+
+homes = load_csv("california-housing-sample")
+feats = ["MedInc", "HouseAge", "AveRooms", "AveBedrms",
+         "Population", "AveOccup", "Latitude", "Longitude"]
+X, y = homes[feats], homes["MedHouseVal"]
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=42)
+
+lr = 0.5                                   # how much of each fix we accept
+pred_tr = np.full(len(ytr), ytr.mean())    # round 0: predict the mean
+pred_te = np.full(len(yte), ytr.mean())
+print(f"round 0 (the mean): train MAE {mean_absolute_error(ytr, pred_tr):.3f}"
+      f"   test MAE {mean_absolute_error(yte, pred_te):.3f}")
+
+for rnd in range(1, 6):
+    residuals = ytr - pred_tr              # what the team still gets wrong
+    fixer = DecisionTreeRegressor(max_depth=2, random_state=0)
+    fixer.fit(Xtr, residuals)              # the new tree studies ONLY that
+    pred_tr = pred_tr + lr * fixer.predict(Xtr)
+    pred_te = pred_te + lr * fixer.predict(Xte)
+    print(f"round {rnd}:            train MAE "
+          f"{mean_absolute_error(ytr, pred_tr):.3f}   test MAE "
+          f"{mean_absolute_error(yte, pred_te):.3f}")
+```
+
+From `0.926` to `0.603` held-out in five rounds of *depth-2 stumps* — trees
+so weak that alone each is nearly useless. That's boosting's signature move:
+**many weak learners, each aimed at the current residual, sum to a strong
+one.** Note both Chapter 3 ideas on stage: the residual is the (negative)
+gradient of squared error, and `lr` is the same step-size dial with the same
+two bad ends.
+
+## The production version: HistGradientBoosting
+
+sklearn's modern boosted trees run hundreds of rounds of this loop with
+clever histogram tricks. Against the module's standing benchmarks:
+
+```{pyodide}
+#| caption: "The boosted team joins the leaderboard"
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import HistGradientBoostingRegressor
+
+scores = -cross_val_score(HistGradientBoostingRegressor(random_state=0),
+                          X, y, cv=5, scoring="neg_mean_absolute_error")
+print(f"boosted CV MAE: {scores.mean():.3f} ± {scores.std():.3f}")
+print("forest (Ch11):  0.532 ± 0.050")
+print("linear (Ch4):   0.558 ± 0.031")
+```
+
+`0.531 ± 0.032` — and Chapter 4's rule reads this table for you: on 800
+rows, boosted trees, the forest, and even the humble line are **within each
+other's spreads**. No winner declared here. Boosting's reputation was earned
+on bigger, messier tables where its edge is real and repeatable — the
+capstone's dataset gives it that room. Honest scores today, reputation on
+credit.
+
+Its dials, though, are old friends worth meeting now — `learning_rate`
+(Ch3), `max_depth` per tree (Ch10), and `max_iter`, the number of rounds.
+Watch what rounds do:
+
+```{pyodide}
+#| caption: "Rounds buy training perfection; test error tells its own story"
+print("max_iter   train MAE   test MAE")
+for iters in (10, 50, 100, 300, 1000):
+    m = HistGradientBoostingRegressor(max_iter=iters,
+                                      random_state=0).fit(Xtr, ytr)
+    print(f"  {iters:4}      {mean_absolute_error(ytr, m.predict(Xtr)):.3f}"
+          f"      {mean_absolute_error(yte, m.predict(Xte)):.3f}")
+```
+
+Two things to read. Train MAE marches to `0.001` — one thousand rounds of
+residual-chasing can memorize this dataset outright, which is the crucial
+difference from a forest: **more boosting rounds are more capacity**, not
+more steadying. And yet test MAE holds flat at `0.444` instead of turning
+upward — the library's built-in leashes (Ch7's L2 is in there, plus
+tree-size limits) are holding the line on this small, clean dataset. Don't
+let the calm fool you: on noisier data that test column bends up, which is
+why every boosting library ships **early stopping** — halt when *validation*
+error stops improving, the Ch4 ritual built into the training loop.
+
+## Real XGBoost, in your browser
+
+**XGBoost** is the library that made boosting famous — regularization
+written directly into its objective, engineered for speed, and a fixture of
+industry tabular ML for a decade.
+
+::: {.callout-note}
+### This cell downloads a package (the one M4 cell that needs internet)
+
+`xgboost` is a built-in Pyodide package, but the wheel (~a few MB) arrives
+from the Pyodide CDN the first time you import it. Every other cell in M4
+runs fully offline; this one needs a connection on first run.
+:::
+
+```{pyodide}
+#| caption: "The industry workhorse, running client-side"
+import xgboost as xgb
+
+print(f"xgboost {xgb.__version__}, in the browser\n")
+
+xgb_scores = -cross_val_score(
+    xgb.XGBRegressor(random_state=0, verbosity=0),
+    X, y, cv=5, scoring="neg_mean_absolute_error")
+print(f"XGBoost CV MAE (default dials): {xgb_scores.mean():.3f} "
+      f"± {xgb_scores.std():.3f}")
+```
+
+Same interface — `fit`, `predict`, the whole sklearn ritual — and default
+dials land at `0.547 ± 0.050`: inside the pack again on this small table
+(defaults are a starting point, not a verdict; XGBoost expects tuning).
+What you're buying with XGBoost over sklearn's version, stated plainly:
+built-in L1/L2 regularization on the trees themselves, serious speed at
+scale, missing-value handling, and the ecosystem inertia of being the
+default answer to "what do we throw at tabular data first?"
+
+One cameo to complete the picture — the same machine classifies:
+
+```{pyodide}
+#| caption: "Boosted classification: penguins, one more time"
+from sklearn.metrics import accuracy_score
+
+pg = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+yp = pg["species"].map({"Adelie": 0, "Chinstrap": 1, "Gentoo": 2})
+pf = ["flipper_length_mm", "bill_length_mm"]
+ptr, pte, ltr, lte = train_test_split(pg[pf], yp, test_size=0.25,
+                                      random_state=42, stratify=yp)
+
+clf = xgb.XGBClassifier(random_state=0, verbosity=0).fit(ptr, ltr)
+print(f"held-out accuracy: {accuracy_score(lte, clf.predict(pte)):.3f}")
+```
+
+`0.988` — one bird missed. Forests forgive rough handling; boosting rewards
+care: it has more dials and more capacity, so it pairs best with the
+validation discipline this module has drilled since Chapter 4.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Boosting grows specialists in sequence**: each tree trains on the
+   residuals the team still makes; predictions are the lr-scaled sum. Five
+   depth-2 stumps took the housing MAE 0.926 → 0.603.
+2. The name is literal: the residual is squared error's (negative)
+   **gradient**, and each round is a Ch3 downhill step taken as a tree.
+3. **Rounds are capacity** (train MAE → 0.001 at 1000 rounds) — unlike
+   forest trees, more rounds *can* overfit; early stopping on validation
+   error is the standard brake.
+4. On our 800 rows, boosted trees (`0.531`), the forest (`0.532`), and the
+   line (`0.558`) sit **within each other's spreads** — boosting's fame was
+   earned on bigger tables (the capstone's, for instance).
+5. **XGBoost runs in the browser** (Pyodide built-in; the wheel downloads
+   on first import) — same fit/predict ritual, regularized objective,
+   industry default for tabular data.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same seeds, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+One boosting round, by hand, on four tiny houses. Fill the two lines that
+make boosting boosting. Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_round
+from lib.grader import run_tests
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_absolute_error
+import numpy as np
+
+xs = [[1.0], [2.0], [3.0], [4.0]]
+ys = np.array([1.0, 2.0, 2.0, 3.0])
+```
+
+```{pyodide}
+#| exercise: ex_round
+base = np.full(4, ys.mean())          # round 0: predict the mean (2.0)
+residuals = ____                      # TODO: what the team still gets wrong
+fixer = DecisionTreeRegressor(max_depth=1, random_state=0).fit(xs, residuals)
+boosted = base + ____ * fixer.predict(xs)   # TODO: accept half of each fix (lr=0.5)
+
+run_tests([
+    ("first house corrected downward", round(float(boosted[0]), 3), 1.5),
+    ("round-1 MAE", round(float(mean_absolute_error(ys, boosted)), 4), 0.4167),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The residuals are `ys - base` — truth minus current prediction. The
+boosted prediction accepts `0.5 * fixer.predict(xs)` on top of `base`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_absolute_error
+import numpy as np
+
+xs = [[1.0], [2.0], [3.0], [4.0]]
+ys = np.array([1.0, 2.0, 2.0, 3.0])
+
+base = np.full(4, ys.mean())
+residuals = ys - base
+fixer = DecisionTreeRegressor(max_depth=1, random_state=0).fit(xs, residuals)
+boosted = base + 0.5 * fixer.predict(xs)
+```
+
+The mean alone has MAE 0.5; one accepted fix cuts it to 0.4167 — and the
+first house, which the mean overpriced, got corrected *downward*, because
+the fixer studied the error, not the price.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the boosted predictor's arithmetic from spec:
+
+- `residuals(y_true, y_pred)` — element-wise `truth − prediction`, as a
+  list.
+- `boost_predict(tree_preds, lr)` — `tree_preds` is a list of prediction
+  lists, one per tree (all the same length). Return the element-wise sum of
+  `lr × each tree's prediction` — the boosted ensemble's output.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_boost
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_boost
+def residuals(y_true, y_pred):
+    """Element-wise truth minus prediction."""
+    ...  # TODO
+
+def boost_predict(tree_preds, lr):
+    """Element-wise sum of lr-scaled tree predictions."""
+    ...  # TODO
+
+run_tests([
+    ("what's still wrong", residuals([3.0, 1.0], [2.5, 1.5]), [0.5, -0.5]),
+    ("perfect team, no residuals", residuals([2.0, 2.0], [2.0, 2.0]),
+     [0.0, 0.0]),
+    ("three fixes, summed and scaled",
+     boost_predict([[1.0, 2.0], [0.5, -0.5], [0.2, 0.2]], 0.1),
+     [0.17, 0.17]),
+    ("lr of 1 accepts fixes whole",
+     boost_predict([[1.0], [2.0]], 1.0), [3.0]),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`residuals` is one comprehension over `zip`. For `boost_predict`, walk the
+positions with `zip(*tree_preds)` and sum `lr * p` across each column.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def residuals(y_true, y_pred):
+    return [t - p for t, p in zip(y_true, y_pred)]
+
+def boost_predict(tree_preds, lr):
+    return [sum(lr * p for p in column) for column in zip(*tree_preds)]
+```
+
+Those two functions *are* gradient boosting's inference and its training
+signal: the library's sophistication lives in how each tree is grown, not
+in this arithmetic — which you now own.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Explore the boosting
+dials' interaction: fit `HistGradientBoostingRegressor` for every pair of
+`learning_rate ∈ {0.02, 0.1, 0.5}` × `max_iter ∈ {20, 100, 500}` on the
+chapter's split, print a 3×3 grid of test MAE, and answer in one sentence:
+what does a small learning rate demand in exchange for its stability?
+
+**Rubric — a good answer:**
+
+- Produces the full 3×3 grid of held-out MAE with `random_state=0`.
+- Notices the diagonal structure: small lr + few rounds underfits badly;
+  small lr + many rounds catches up.
+- The sentence states the trade: smaller steps need more rounds to travel
+  the same distance — the pair is tuned together, not separately.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for lrate in (0.02, 0.1, 0.5):
+    row = []
+    for iters in (20, 100, 500):
+        m = HistGradientBoostingRegressor(
+            learning_rate=lrate, max_iter=iters,
+            random_state=0).fit(Xtr, ytr)
+        row.append(f"{mean_absolute_error(yte, m.predict(Xte)):.3f}")
+    print(f"lr={lrate:<5} " + "  ".join(row))
+```
+
+lr=0.02 with 20 rounds barely leaves the mean; give it 500 rounds and it
+matches the bolder settings — the walker with small steps arrives too, it
+needs more of them.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch12.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've completed the tree-ensemble arc: one readable tree, a crowd that
+votes away variance, and a sequence of specialists that boosts error down —
+with XGBoost, the tabular workhorse, running in your browser. The next two
+chapters round out the classical toolbox with two very different
+inventions: a model that draws **the widest possible street** between
+classes — the support vector machine — and after it, Bayes' rule reborn as
+a classifier.

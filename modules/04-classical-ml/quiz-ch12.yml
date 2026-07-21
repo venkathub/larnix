@@ -1,0 +1,35 @@
+title: "Chapter 12 — quick check"
+id: "m4-ch12-gradient-boosting"
+questions:
+  - id: boosting-vs-bagging
+    prompt: "What is the core difference between a random forest and gradient boosting?"
+    options:
+      - "Forests use deep trees; boosting is only allowed one tree"
+      - "Forests grow independent trees in parallel and vote; boosting grows trees in sequence, each trained on the errors the ensemble still makes"
+      - "Forests work on classification only; boosting on regression only"
+    answer: 1
+    explanation: "Bagging engineers independent disagreement and averages it. Boosting builds a chain of specialists: every new tree studies the current residuals, and its scaled correction is added to the running prediction. Both handle both task types."
+  - id: what-round-trains-on
+    prompt: "In round 7 of gradient boosting for regression, what does the new tree fit?"
+    options:
+      - "The residuals — the difference between the truth and the ensemble's rounds-1-to-6 prediction"
+      - "The original target values, like every other round"
+      - "A bootstrap sample of the original target"
+    answer: 0
+    explanation: "Each round's tree studies what is still wrong, not the target itself. For squared error those residuals are exactly the negative gradient — hence the name, and the Chapter 3 connection."
+  - id: rounds-vs-trees
+    prompt: "Why can raising max_iter (boosting rounds) overfit, when raising a forest's n_estimators cannot?"
+    options:
+      - "Boosting rounds run faster, so more of them fit in before validation"
+      - "Forests use out-of-bag rows to prevent overfitting automatically"
+      - "Forest trees are independent, so more of them only steadies the vote; each boosting round adds capacity by chasing the remaining residuals harder"
+    answer: 2
+    explanation: "Averaging more independent voters converges; it cannot memorize more. A boosting chain keeps attacking what's left — with enough rounds it can fit noise (our train MAE reached 0.001), which is why early stopping on validation error is standard."
+  - id: overfit-knob-transfer
+    prompt: "Your boosted model shows train MAE 0.05 and validation MAE 0.61, drifting worse each round. What is the first move?"
+    options:
+      - "Add more rounds so training error reaches zero"
+      - "Stop earlier / fewer rounds (or a smaller learning rate) — the classic boosting overfit calls for less capacity, chosen by validation error"
+      - "Switch the metric from MAE to RMSE"
+    answer: 1
+    explanation: "A collapsing train error with a worsening validation error is Chapter 7's gap, produced by too many residual-chasing rounds. Early stopping — halting when validation error stops improving — is the built-in remedy every boosting library offers."

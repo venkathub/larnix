@@ -20,3 +20,8 @@ matplotlib==3.11.0
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.13.0+cpu
 torchvision==0.28.0+cpu
+
+# M4 Ch12's twin runs real XGBoost under CPython, exact-pinned to the version
+# Pyodide 0.28.1 ships in the browser (P2-D6 / DECISIONS D0020) — so the twin
+# executes the same library version the learner runs.
+xgboost==2.1.4

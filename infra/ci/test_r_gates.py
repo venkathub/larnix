@@ -55,6 +55,17 @@ class BrowserImportTests(unittest.TestCase):
         problems = r3.check_imports({"torch"})
         self.assertTrue(problems and "torch" in problems[0])
 
+    def test_xgboost_lightgbm_are_pyodide_builtins(self):
+        # P2-D6 (D0020): xgboost/lightgbm are Pyodide 0.28.1 built-ins — the
+        # old KNOWN_UNSAFE entries were stale. They must pass browser lint...
+        self.assertEqual(r3.check_imports({"xgboost", "lightgbm"}), [])
+
+    def test_torch_stays_unsafe_after_p2d6(self):
+        # ...while torch (no Pyodide build, verified) must still fail.
+        self.assertTrue(r3.check_imports({"torch"}))
+        self.assertNotIn("xgboost", r3.KNOWN_UNSAFE)
+        self.assertIn("torch", r3.KNOWN_UNSAFE)
+
     def test_unknown_flagged(self):
         problems = r3.check_imports({"some_random_pkg"})
         self.assertTrue(problems and "allow-list" in problems[0])
