@@ -1,0 +1,396 @@
+---
+title: "Linear regression"
+module: "M4 — Classical Machine Learning"
+chapter: 2
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch1 — What is learning?"
+  - "M3 Ch7 — Plotting with Matplotlib"
+learning_objectives:
+  - "Explain what LinearRegression().fit() learns: one weight per feature plus an intercept"
+  - "Implement the closed-form slope and intercept for a one-feature line and verify them against sklearn"
+  - "Fit, predict, and measure MAE with one feature and with many, and say why the numbers are not yet trustworthy"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 20
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: what-fit-learns
+    q: "What does LinearRegression().fit(X, y) actually learn?"
+    a: "One weight (coefficient) per feature plus one intercept — the numbers of the line/plane that best fits the examples. Prediction is then weights · features + intercept."
+  - id: closed-form-slope
+    q: "For one feature, how is the best-fit slope computed from the data?"
+    a: "w = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)² — how x and y vary together, divided by how x varies alone; the intercept is b = ȳ − w·x̄ so the line passes through the point of means."
+  - id: training-set-caveat
+    q: "Why is an MAE measured on the training data not yet trustworthy?"
+    a: "The model is being graded on the same examples it learned from — the intern marking their own homework. A fair score needs houses the model never saw; Chapter 4's train/test split fixes this."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 1's best learner sorted neighbourhoods into three income buckets and
+missed by $75k on average. But look at what the buckets claim: every "mid"
+neighbourhood — income 2.5 or 4.4 — gets the *same* predicted price, and then
+the prediction leaps at an arbitrary boundary. Prices don't jump at bucket
+edges. They slide.
+
+So the intern's next idea is the oldest model in statistics: draw one **smooth
+line** through the data. "Every extra unit of income adds a fixed amount to
+the price." Two numbers describe that rule — the slope and where the line
+starts — and, as always in this module, the data will fill them in.
+
+This chapter is also your first meeting with **scikit-learn**, the library
+that runs classical ML in practice. You'll fit its line, then compute the same
+line yourself from a formula, and watch the two agree to the last digit.
+
+> You'll need from before: the features/target vocabulary and `mae` from Ch1,
+> and basic Matplotlib from M3 Ch7.
+
+---
+
+## See the line before you fit it
+
+Plot income against price and the pattern is hard to miss:
+
+```{pyodide}
+#| caption: "Income vs price — 800 neighbourhoods, one dot each"
+#| fig-alt: "Scatter plot with median income on the x-axis from about 0 to 12 and median house value on the y-axis from about 0.3 to 5. The dots form a broad upward-sloping cloud: higher-income neighbourhoods tend to have higher prices, with plenty of spread and a visible ceiling where values cap at 5."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+homes = load_csv("california-housing-sample")
+prices = homes["MedHouseVal"]
+
+fig, ax = plt.subplots(figsize=(5, 3.2))
+ax.scatter(homes["MedInc"], prices, s=8, alpha=0.4)
+ax.set_xlabel("median income ($10k units)")
+ax.set_ylabel("median house value ($100k units)")
+plt.show()
+```
+
+An upward-sloping cloud. No three-step staircase would honour it — but a line
+through the middle might. (That flat row of dots along the top is real, by the
+way: the 1990 survey capped values at $500k, so everything pricier reads
+exactly `5.0`. Data honesty, again.)
+
+## The model: two numbers make a rule
+
+A line as a pricing rule looks like this:
+
+$$\text{price} = w \cdot \text{income} + b$$
+
+- **w** (the *weight*, or slope): how much the predicted price rises per unit
+  of income.
+- **b** (the *intercept*): the predicted price when income is zero — where the
+  line starts.
+
+That's the model's **shape**, chosen by us. Learning means picking the `w` and
+`b` that make the line miss the examples as little as possible. In Chapter 1
+you hand-tuned exactly these kinds of numbers and it was slow; here an
+algorithm computes them outright.
+
+## fit and predict
+
+scikit-learn's whole interface fits in two verbs. `fit(X, y)` learns the
+numbers from examples; `predict(X)` applies the learned rule to new inputs.
+
+```{pyodide}
+#| caption: "The first fit of the module: two numbers, learned from 800 examples"
+from sklearn.linear_model import LinearRegression
+
+X = homes[["MedInc"]]          # features: a table with one column
+model = LinearRegression()
+model.fit(X, prices)
+
+print(f"learned weight w:    {model.coef_[0]:.3f}")
+print(f"learned intercept b: {model.intercept_:.3f}")
+```
+
+The data chose `w ≈ 0.432` and `b ≈ 0.410`: each extra $10k of median income
+adds about $43k to the predicted price, starting from a floor of about $41k.
+Predicting is the formula at work:
+
+```{pyodide}
+#| caption: "predict = the line, applied"
+import pandas as pd
+
+new_homes = pd.DataFrame({"MedInc": [3.0, 8.0]})
+print(model.predict(new_homes).round(3))
+print("by hand:", round(0.432 * 3.0 + 0.410, 3), "and",
+      round(0.432 * 8.0 + 0.410, 3))
+```
+
+`1.705` and `3.864` — the same numbers the formula gives (up to rounding).
+There is no mystery inside `predict`: it multiplies and adds.
+
+## How good is the line?
+
+Judge it the way Chapter 1 taught: mean absolute error. Once with the `mae`
+you wrote yourself, once with sklearn's version — they had better agree.
+
+```{pyodide}
+#| caption: "Your Ch1 metric and sklearn's, on the same predictions"
+from sklearn.metrics import mean_absolute_error
+
+predictions = model.predict(X)
+
+gaps = [abs(t - p) for t, p in zip(prices, predictions)]
+print(f"mae, written by you:  {sum(gaps) / len(gaps):.3f}")
+print(f"sklearn's version:    {mean_absolute_error(prices, predictions):.3f}")
+```
+
+`0.654` — and identical both ways, which is the point: sklearn's functions are
+not sealed boxes; they compute things you can write yourself. And the score
+beats everything from Chapter 1: hand rules (1.094), the mean learner
+(0.938), the bucket learner (0.750). One smooth line, learned from data,
+wins.
+
+::: {.callout-warning}
+### The intern is marking their own homework
+
+Every MAE on this page is measured on the *same 800 houses the model learned
+from*. That is like grading the intern on the exact stack of sold houses they
+studied — it can only flatter the model, and you cannot yet tell whether it
+found a pattern or memorized the answers. Treat `0.654` as *unverified*.
+Chapter 4 introduces the fix — the train/test split — and from then on the
+module never grades on training data again.
+:::
+
+## More features, same idea
+
+Nothing about the line stops at one feature. With eight, the model learns
+eight weights and one intercept — price = w₁·income + w₂·age + … + b — a line
+generalized to eight dimensions.
+
+```{pyodide}
+#| caption: "Eight features, eight learned weights — the miss shrinks again"
+features = ["MedInc", "HouseAge", "AveRooms", "AveBedrms",
+            "Population", "AveOccup", "Latitude", "Longitude"]
+
+model8 = LinearRegression()
+model8.fit(homes[features], prices)
+
+pred8 = model8.predict(homes[features])
+print(f"MAE with 8 features: {mean_absolute_error(prices, pred8):.3f}\n")
+for name, w in zip(features, model8.coef_):
+    print(f"  {name:11} {w:+.3f}")
+```
+
+The MAE drops to `0.531` — more information, better predictions (same
+training-data caveat). One honest warning about that weight table: read it
+loosely. Features overlap (rooms and bedrooms travel together), which can push
+individual weights in surprising directions — `AveRooms` negative while
+`AveBedrms` is strongly positive, for instance. Weights are the model's
+internal bookkeeping, not a clean ranking of what matters; Chapter 16 returns
+to this properly.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Linear regression** models the target as a weighted sum of features plus
+   an intercept: price = w·income + b (one weight per feature).
+2. **`fit(X, y)` learns the numbers; `predict(X)` applies them.** That pair of
+   verbs is the whole scikit-learn interface, reused by every model to come.
+3. For one feature the best-fit line has a **closed form**:
+   w = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)², b = ȳ − w·x̄ — you can compute what `fit`
+   computes.
+4. The line's training MAE (`0.654`) beat every Chapter 1 learner — but a
+   score measured **on the training data is unverified** until Chapter 4's
+   split.
+5. Learned **weights are not a ranking of importance** — overlapping features
+   can distort them.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same inputs, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Study hours vs exam score, four examples that sit on a perfect line. Fit the
+model so the asserts can read the learned numbers. Replace `____`, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_fit
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_fit
+from sklearn.linear_model import LinearRegression
+
+X = [[1.0], [2.0], [3.0], [4.0]]   # hours studied
+y = [3.0, 5.0, 7.0, 9.0]           # exam score: exactly 2*hours + 1
+model = LinearRegression()
+____  # TODO: learn the line from X and y
+
+run_tests([
+    ("slope", round(float(model.coef_[0]), 1), 2.0),
+    ("intercept", round(float(model.intercept_), 1), 1.0),
+    ("predict 5 hours", round(float(model.predict([[5.0]])[0]), 1), 11.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The verb that learns is `fit`, and it takes the features and the target:
+`model.fit(X, y)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from sklearn.linear_model import LinearRegression
+
+X = [[1.0], [2.0], [3.0], [4.0]]
+y = [3.0, 5.0, 7.0, 9.0]
+model = LinearRegression()
+model.fit(X, y)
+```
+
+The data lies exactly on y = 2x + 1, so the learned slope and intercept are
+2.0 and 1.0, and predicting 5 hours gives 11.0 — the line, applied.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Now build what `fit` computes. Write `fit_line(xs, ys)` — plain Python lists,
+no libraries — returning the tuple `(w, b)` from the closed form:
+
+- x̄ and ȳ are the means of `xs` and `ys`;
+- `w = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²`
+- `b = ȳ − w·x̄`
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_fitline
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_fitline
+def fit_line(xs, ys):
+    """Return (w, b) for the least-squares line through (xs, ys)."""
+    ...  # TODO: implement the closed form
+
+run_tests([
+    ("slope (noisy line)",
+     fit_line([1.0, 2.0, 3.0, 4.0, 5.0], [2.0, 2.5, 4.0, 4.5, 6.0])[0], 1.0),
+    ("intercept (noisy line)",
+     fit_line([1.0, 2.0, 3.0, 4.0, 5.0], [2.0, 2.5, 4.0, 4.5, 6.0])[1], 0.8),
+    ("slope (perfect line)",
+     fit_line([1.0, 2.0, 3.0, 4.0], [3.0, 5.0, 7.0, 9.0])[0], 2.0),
+    ("intercept (perfect line)",
+     fit_line([1.0, 2.0, 3.0, 4.0], [3.0, 5.0, 7.0, 9.0])[1], 1.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+Compute the means first. Then build the numerator `sum((x - xbar) * (y -
+ybar) …)` and the denominator `sum((x - xbar) ** 2 …)` with `zip(xs, ys)`,
+divide for `w`, and finish with `b = ybar - w * xbar`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def fit_line(xs, ys):
+    xbar = sum(xs) / len(xs)
+    ybar = sum(ys) / len(ys)
+    num = sum((x - xbar) * (y - ybar) for x, y in zip(xs, ys))
+    den = sum((x - xbar) ** 2 for x in xs)
+    w = num / den
+    return w, ybar - w * xbar
+```
+
+The numerator asks "how do x and y vary *together*?", the denominator "how
+does x vary alone?" — their ratio is the slope, and the intercept pins the
+line through the point of means. Feed the noisy fixture to sklearn and it
+returns the same `w = 1.0`, `b = 0.8`: `fit` runs this formula's
+generalization, nothing more.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Pick any **two** features
+from the table (say, `MedInc` and `HouseAge` — or surprise yourself), fit a
+`LinearRegression` on them, and compute the training MAE. Compare it with the
+one-feature `0.654` and the eight-feature `0.531`, and write one sentence on
+what your pair's result suggests.
+
+**Rubric — a good answer:**
+
+- Fits on exactly two feature columns from `homes`.
+- Computes MAE with `mean_absolute_error` on the model's own predictions.
+- Places the result correctly between (or beyond) the chapter's two
+  reference numbers.
+- The sentence draws a fair conclusion — e.g. which feature seems to carry
+  the signal — without over-claiming from training-data scores.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+pair = ["MedInc", "AveRooms"]
+model2 = LinearRegression().fit(homes[pair], prices)
+mae2 = mean_absolute_error(prices, model2.predict(homes[pair]))
+print(f"MAE with {pair}: {mae2:.3f}")
+```
+
+Most pairs land between 0.654 and 0.531 — income carries most of the signal,
+and each extra feature buys a smaller improvement. Remember these are still
+training-set scores; the honest comparison arrives with Chapter 4's split.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You fitted the module's first real model, read the two numbers it learned,
+computed those numbers yourself from the closed form, and beat every Chapter 1
+learner — with an asterisk the size of the chapter: all scores were measured
+on training data. Before fixing that, one more question deserves an answer:
+*how* does a machine find the best numbers when no tidy formula exists? Next
+chapter: **cost functions and gradient descent** — the downhill walk that
+powers most of modern ML.

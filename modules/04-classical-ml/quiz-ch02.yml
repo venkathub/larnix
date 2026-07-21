@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m4-ch02-linear-regression"
+questions:
+  - id: what-fit-learns
+    prompt: "After model.fit(X, y) on five feature columns, what has the LinearRegression model learned?"
+    options:
+      - "Five weights and one intercept — the numbers of its weighted-sum rule"
+      - "A copy of the training table to look answers up in"
+      - "The single feature that best predicts the target"
+    answer: 0
+    explanation: "Linear regression's rule is a weighted sum: one coefficient per feature plus one intercept. fit chooses those numbers so the rule misses the training examples as little as possible."
+  - id: read-a-coefficient
+    prompt: "A house-price model learns weight 0.43 for income (in $100k-price / $10k-income units). What does that number mean?"
+    options:
+      - "43% of neighbourhoods have above-average income"
+      - "Each extra $10k of median income raises the predicted price by about $43k"
+      - "Income predicts price correctly 43% of the time"
+    answer: 1
+    explanation: "A weight is a slope: the change in the prediction per unit change of that feature, holding the others fixed. 0.43 price-units per income-unit is ≈ $43k per $10k of income."
+  - id: predict-mechanics
+    prompt: "A fitted one-feature model has w = 2.0 and b = 1.0. What does model.predict([[4.0]]) return?"
+    options:
+      - "8.0, because the intercept only matters during fit"
+      - "9.0, because predict computes w·x + b = 2·4 + 1"
+      - "It depends on the training data predict was given"
+    answer: 1
+    explanation: "predict is the learned formula applied to the input: 2.0 × 4.0 + 1.0 = 9.0. All the learning happened in fit; predict multiplies and adds."
+  - id: training-score-transfer
+    prompt: "A colleague reports: 'My model's MAE is 0.2 — measured on the data it was trained on.' What is the fair response?"
+    options:
+      - "The score proves the model has found the true pattern"
+      - "The score is meaningless because MAE only works on test data"
+      - "The score is unverified — it may reflect memorization, and needs data the model never saw"
+    answer: 2
+    explanation: "Training-set scores can only flatter the model: memorizing the examples produces a great score and a useless model. MAE itself is fine — but a trustworthy version needs held-out data, which Chapter 4's split provides."
