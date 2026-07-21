@@ -1,0 +1,35 @@
+title: "Chapter 10 — quick check"
+id: "m4-ch10-decision-trees"
+questions:
+  - id: gini-meaning
+    prompt: "A candidate split produces one group with Gini 0.0 and another with Gini 0.5. What does that mean?"
+    options:
+      - "The first group is a pure single class; the second is a maximally mixed 50/50 binary group"
+      - "The first group is empty; the second contains all the data"
+      - "The split is invalid because the two sides disagree"
+    answer: 0
+    explanation: "Gini is the chance two random members differ in label: 0 means everyone matches (pure), 0.5 is the worst a two-class group can be. The split's overall score is the size-weighted average of the sides."
+  - id: why-no-scaling
+    prompt: "Why do decision trees not need feature scaling, when KNN does?"
+    options:
+      - "Trees internally standardize every feature before splitting"
+      - "A tree's questions compare one feature against a threshold in that feature's own units — no cross-feature distance is ever computed"
+      - "Trees ignore numeric features and only use categories"
+    answer: 1
+    explanation: "KNN adds gaps across features into one distance, so units fight each other. A tree asks 'flipper ≤ 206.5 mm?' — the threshold lives in the same units as the feature, so rescaling changes nothing."
+  - id: full-depth-diagnosis
+    prompt: "An unlimited-depth tree reaches train accuracy 1.000 with 26 leaves for 256 examples. In Chapter 7/8 terms, what is this?"
+    options:
+      - "High bias — the tree is too rigid to fit the data"
+      - "The sweet spot — perfect training accuracy is the goal"
+      - "High variance / overfitting — the tree grew private leaves for individual quirks, memorizing the sample"
+    answer: 2
+    explanation: "Perfect training recall via a leaf-per-oddity is the parrot again: capacity spent on noise. Depth (or min_samples_leaf) is the brake, chosen by validation — where the shallower tree actually scored better."
+  - id: read-a-tree-transfer
+    prompt: "A tree reads: 'flipper ≤ 206.5 → bill ≤ 43.35 → Adelie; bill > 43.35 → Chinstrap'. A penguin has flipper 195 mm and bill 47 mm. What does the tree say?"
+    options:
+      - "Adelie, because its flipper is short"
+      - "Chinstrap — short flipper takes the first branch, then the 47 mm bill exceeds 43.35"
+      - "Gentoo, because both measurements are large"
+    answer: 1
+    explanation: "Follow the path: 195 ≤ 206.5 goes left; then 47 > 43.35 takes the Chinstrap leaf. Reading a prediction is walking the flowchart — the tree's whole charm."

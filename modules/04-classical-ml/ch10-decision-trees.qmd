@@ -1,0 +1,435 @@
+---
+title: "Decision trees"
+module: "M4 — Classical Machine Learning"
+chapter: 10
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch6 — Classification metrics"
+  - "M4 Ch8 — Bias–variance"
+learning_objectives:
+  - "Explain how a tree picks its questions: Gini impurity and the weighted-impurity drop"
+  - "Implement gini and split_score and verify them against the chapter's real splits"
+  - "Read a fitted tree as if/else rules and use depth as the capacity dial"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: how-splits-chosen
+    q: "How does a decision tree choose its next question?"
+    a: "It tries candidate questions (feature ≤ threshold), scores each by the weighted Gini impurity of the two groups it produces, and keeps the question that lowers impurity most. Gini 0 = a pure group; 0.5 = a 50/50 binary mix."
+  - id: depth-as-capacity
+    q: "What role does max_depth play in a decision tree?"
+    a: "It is the tree's capacity dial. Shallow trees underfit (few questions, high bias); unlimited depth grows a leaf per quirk until train accuracy hits 1.0 — memorization. Choose depth (or min_samples_leaf) by validation, like every other dial."
+  - id: tree-interpretability
+    q: "What is the decision tree's standout practical property?"
+    a: "You can print the whole model as readable if/else rules (export_text) and follow any single prediction question by question — useful for model cards and stakeholder trust. Also: splits compare one feature to a threshold, so trees need no feature scaling."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+The intern invents a game: guess the species in as few questions as
+possible. *"Flipper longer than 207 mm?"* — yes? Almost certainly a Gentoo.
+No? *"Bill longer than 43 mm?"* — yes points to Chinstrap, no to Adelie.
+Two questions, most penguins named.
+
+A **decision tree** is that game, played by a machine that *chooses the
+questions itself*. It is the first model in the module whose entire
+reasoning you can print and read aloud — no weights, no geometry, a
+flowchart. Which leaves exactly two mysteries: how does it decide which
+question is *good*? And what stops it asking questions until every single
+penguin has a private leaf of its own? (You already know that disease's
+name.)
+
+> You'll need from before: accuracy and the split ritual (Ch6, Ch4), the
+> capacity dials and their U (Ch7–8).
+
+---
+
+## What makes a question good? Purity.
+
+A question is good if the groups it creates are *unmixed*. The standard
+mixedness score is **Gini impurity**: the chance that two randomly drawn
+members of a group have different labels.
+
+$$\text{gini} = 1 - \sum_c p_c^2$$
+
+A pure group scores **0** (any two draws match); a 50/50 binary mix scores
+**0.5**. Score a question by the **weighted average impurity of its two
+sides** — lower is better. Let the machine's judgement race yours on three
+candidate first questions:
+
+```{pyodide}
+#| caption: "Three candidate questions, scored: the machine's taste in questions is computable"
+from lib.data import load_csv
+from collections import Counter
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+y = df["species"]
+
+def gini(labels):
+    n = len(labels)
+    return 1 - sum((c / n) ** 2 for c in Counter(labels).values())
+
+print(f"whole colony (3 species mixed): gini = {gini(y.tolist()):.3f}\n")
+
+candidates = [("bill_length_mm", 43.0),
+              ("bill_depth_mm", 17.0),
+              ("flipper_length_mm", 207.0)]
+for col, thr in candidates:
+    left = y[df[col] <= thr].tolist()
+    right = y[df[col] > thr].tolist()
+    score = (len(left) * gini(left) + len(right) * gini(right)) / len(y)
+    print(f"{col} <= {thr}:")
+    print(f"   left  {len(left):3} birds, gini {gini(left):.3f}   "
+          f"right {len(right):3} birds, gini {gini(right):.3f}   "
+          f"-> weighted {score:.3f}")
+```
+
+The colony starts at `0.636`. The flipper question is the machine's pick
+(weighted `0.305`), a whisker ahead of the bill question (`0.337`); the
+bill-*depth* question (`0.404`) is clearly worse — its two sides stay
+muddled. That's the entire training algorithm: **try every feature at every
+sensible threshold, keep the question with the lowest weighted impurity,
+recurse on each side.**
+
+## Fit one, then read it
+
+```{pyodide}
+#| caption: "A model you can read out loud"
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.metrics import accuracy_score
+
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], y, test_size=0.25, random_state=42, stratify=y)
+
+tree = DecisionTreeClassifier(max_depth=2, random_state=0).fit(Xtr, ytr)
+print(export_text(tree, feature_names=feats))
+print(f"held-out accuracy: {accuracy_score(yte, tree.predict(Xte)):.3f}")
+```
+
+Read it — it's the intern's game, learned from data: flipper over 206.5 mm
+and a long-ish bill → Gentoo; short flipper, then the bill sorts Adelie
+from Chinstrap. Three questions, `0.977` on held-out birds, and **every
+prediction traceable question by question**. That readability is the tree's
+professional superpower — when Chapter 20's model card asks "what does your
+model actually do?", a tree can answer verbatim. (One quiet upgrade worth
+noticing: all three species at once. Trees do multiclass natively — no
+one-vs-rest scaffolding.)
+
+And a contrast with Chapter 9 worth making explicit — **no scaling
+anywhere**:
+
+```{pyodide}
+#| caption: "Trees don't care about units — a threshold question is scale-proof"
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler().fit(Xtr)
+scaled_tree = DecisionTreeClassifier(max_depth=2, random_state=0).fit(
+    sc.transform(Xtr), ytr)
+print(f"raw features:    {accuracy_score(yte, tree.predict(Xte)):.3f}")
+print(f"scaled features: "
+      f"{accuracy_score(yte, scaled_tree.predict(sc.transform(Xte))):.3f}")
+```
+
+Identical. "Is flipper ≤ 206.5?" asks the same thing in millimetres or in
+standard deviations — a threshold moves with its feature's units. KNN's
+hostage crisis cannot happen here.
+
+## Depth: the fourth capacity dial
+
+What stops the questions? By default — nothing. Sweep `max_depth`:
+
+```{pyodide}
+#| caption: "The familiar shape: depth buys training perfection, then charges the test set"
+print("depth      train acc   test acc")
+for depth in (1, 2, 3, 5, None):
+    t = DecisionTreeClassifier(max_depth=depth, random_state=0).fit(Xtr, ytr)
+    tr_acc = accuracy_score(ytr, t.predict(Xtr))
+    te_acc = accuracy_score(yte, t.predict(Xte))
+    print(f"{str(depth):5}       {tr_acc:.3f}      {te_acc:.3f}")
+
+full = DecisionTreeClassifier(random_state=0).fit(Xtr, ytr)
+print(f"\nunlimited tree: depth {full.get_depth()}, "
+      f"{full.get_n_leaves()} leaves for 256 training birds")
+```
+
+Depth 1 underfits (one question can't separate three species — `0.802`).
+Depth 2–3 is the sweet spot. Unlimited depth reaches train `1.000` — the
+parrot's fourth costume — by growing **26 leaves**, many of them private
+rooms for individual odd birds, and the test score pays (`0.953`). Same U,
+new dial; `min_samples_leaf` (refuse leaves smaller than n birds) is the
+other brake, and real deployments set one or both.
+
+A bonus readout, with a caution attached:
+
+```{pyodide}
+#| caption: "Which questions carried the model"
+for name, imp in zip(feats, tree.feature_importances_):
+    print(f"{name:20} {imp:.3f}")
+```
+
+`feature_importances_` shares out credit for the impurity drops (here:
+flipper did most of the work). Read it as *what this tree used*, not what
+causes species — importances inherit the tree's choices, not biology's, and
+features with many possible thresholds get flattered. Chapter 16 returns to
+feature-credit honestly.
+
+## The crack in the flowchart
+
+One last experiment, and it opens the next chapter. Fit the same depth-2
+tree on two different 100-bird samples of the colony and look at the **first
+question** each one chooses:
+
+```{pyodide}
+#| caption: "Different sample, different first question — a tree changes its mind easily"
+print(f"full training set root: flipper_length_mm <= 206.50")
+for seed in (0, 1):
+    s = df.sample(n=100, random_state=seed)
+    t = DecisionTreeClassifier(max_depth=2, random_state=0).fit(
+        s[feats], s["species"])
+    root = feats[t.tree_.feature[0]]
+    print(f"100-bird sample {seed} root:   {root} <= "
+          f"{t.tree_.threshold[0]:.2f}")
+```
+
+The full data asks about flippers first; both samples ask about bills. The
+flipper and bill questions were nearly tied back in our purity race
+(`0.305` vs `0.337`) — so a little data luck flips the winner, and because
+every later question lives *downstream* of the first, the whole flowchart
+reshuffles. In Chapter 8's language: a single tree is a **high-variance**
+learner — confident, readable, and easily swayed by its sample.
+
+Which raises the intern's best idea yet: if one tree is opinionated and
+unstable… *what if we grew a hundred of them and let them vote?* That's
+Chapter 11.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A decision tree is **twenty questions, learned**: try candidate
+   threshold questions, keep the one with the lowest **weighted Gini
+   impurity**, recurse.
+2. **Gini** = 1 − Σp²: 0 for a pure group, 0.5 for a 50/50 binary mix; the
+   colony started at 0.636 and the best first question cut it to 0.305.
+3. Trees are **readable** (`export_text` prints the model as rules — a
+   model-card superpower) and **scale-proof** (threshold questions carry
+   their units).
+4. **Depth is the capacity dial**: depth 1 underfits (0.802), unlimited
+   depth memorizes (train 1.000, 26 leaves) — brake with `max_depth` /
+   `min_samples_leaf`, chosen by validation.
+5. A lone tree is **high-variance**: resample the data and even its first
+   question changes — the fact that motivates forests.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Fit the chapter's readable tree yourself. Replace the `____`s, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_tree
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], df["species"], test_size=0.25, random_state=42,
+    stratify=df["species"])
+```
+
+```{pyodide}
+#| exercise: ex_tree
+model = DecisionTreeClassifier(max_depth=____, random_state=0)  # TODO: two questions deep
+model.fit(____, ____)                                           # TODO: training rows only
+
+run_tests([
+    ("held-out accuracy", round(
+        accuracy_score(yte, model.predict(Xte)), 3), 0.977),
+    ("the root question is about flippers",
+     feats[model.tree_.feature[0]], "flipper_length_mm"),
+    ("at the learned threshold", round(
+        float(model.tree_.threshold[0]), 2), 206.5),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`max_depth=2` allows two ranks of questions; fitting follows the standard
+ritual — `model.fit(Xtr, ytr)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = DecisionTreeClassifier(max_depth=2, random_state=0)
+model.fit(Xtr, ytr)
+```
+
+The asserts read the model's own anatomy: `tree_.feature[0]` is the root's
+chosen column and `tree_.threshold[0]` its cut — the machine independently
+discovered the intern's "flipper first, around 207" strategy.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build the tree's judgement from the formulas:
+
+- `gini(labels)` — 1 minus the sum of squared class proportions, for any
+  list of labels.
+- `split_score(left_labels, right_labels)` — the weighted average of the
+  two sides' impurities (weights = group sizes). Lower = a better question.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_gini
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_gini
+from collections import Counter
+
+def gini(labels):
+    """1 - sum of squared class proportions."""
+    ...  # TODO
+
+def split_score(left_labels, right_labels):
+    """Size-weighted average impurity of a split's two sides."""
+    ...  # TODO
+
+run_tests([
+    ("a pure group", gini(["A", "A", "A", "A"]), 0.0),
+    ("a 50/50 mix", gini(["A", "B", "A", "B"]), 0.5),
+    ("two thirds / one third", round(gini(["A", "A", "B"]), 4), 0.4444),
+    ("a perfect split scores 0",
+     split_score(["A", "A", "A"], ["B", "B"]), 0.0),
+    ("the chapter's fixture", round(
+     split_score(["A"] * 5, ["B", "B", "B", "A", "A"]), 4), 0.24),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`gini`: count labels with `Counter`, sum `(count / n) ** 2` over the
+classes, subtract from 1. `split_score`: `(len(left) * gini(left) +
+len(right) * gini(right)) / (len(left) + len(right))`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from collections import Counter
+
+def gini(labels):
+    n = len(labels)
+    return 1 - sum((c / n) ** 2 for c in Counter(labels).values())
+
+def split_score(left_labels, right_labels):
+    n = len(left_labels) + len(right_labels)
+    return (len(left_labels) * gini(left_labels)
+            + len(right_labels) * gini(right_labels)) / n
+```
+
+In the last fixture the pure left side contributes zero and the muddled
+right side (gini 0.48) is diluted by its weight — `0.24` overall. Training
+a tree is nothing but calling your `split_score` on every candidate
+question and keeping the minimum, floor by floor.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Sweep
+`max_depth ∈ {1, 2, 3, 4, 6, None}` on the chapter's split and print
+train/test accuracy. Name the depth you'd ship in one sentence using the
+U-vocabulary — then print your chosen tree with `export_text` and translate
+its most-travelled path into one plain-English sentence.
+
+**Rubric — a good answer:**
+
+- Tabulates both accuracies across the sweep; identifies depth 1 as the
+  bias end and `None` (train 1.000) as the variance end.
+- Chooses depth 2–3 with a validation-based reason.
+- The translated path is faithful — e.g. "a penguin with flippers at most
+  206.5 mm and a bill at most 43.35 mm is called Adelie."
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from sklearn.tree import export_text
+for depth in (1, 2, 3, 4, 6, None):
+    t = DecisionTreeClassifier(max_depth=depth, random_state=0).fit(Xtr, ytr)
+    print(f"depth {str(depth):4}: train "
+          f"{accuracy_score(ytr, t.predict(Xtr)):.3f}  test "
+          f"{accuracy_score(yte, t.predict(Xte)):.3f}")
+best = DecisionTreeClassifier(max_depth=2, random_state=0).fit(Xtr, ytr)
+print(export_text(best, feature_names=feats))
+```
+
+Depth 2 sits at the U's floor here — and its busiest path reads: short
+flipper, short bill, call it Adelie. A model you can say in a sentence is a
+model you can defend in a meeting.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch10.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The tree gave you a model that explains itself: questions chosen by
+measurable purity, capacity throttled by depth, predictions you can follow
+with a finger. Its weakness is the one you measured — resample the data and
+the flowchart reshuffles. Next chapter, the fix that turned trees into one
+of the strongest tools in tabular ML: grow a whole **forest** of
+deliberately different trees and let the crowd vote.
