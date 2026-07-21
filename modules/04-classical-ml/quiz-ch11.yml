@@ -1,0 +1,35 @@
+title: "Chapter 11 — quick check"
+id: "m4-ch11-random-forests"
+questions:
+  - id: clones-cancel-nothing
+    prompt: "Why would a 'forest' of 100 trees trained identically on the same data be pointless?"
+    options:
+      - "It would run 100 times slower and overfit 100 times harder"
+      - "The trees would be clones with identical errors — a vote among copies of one opinion cancels nothing"
+      - "sklearn refuses to train more than one tree on the same data"
+    answer: 1
+    explanation: "Averaging reduces variance only to the extent the voters err differently. Identical trees err identically, so the ensemble is one tree with extra steps — hence the two disagreement engines: bootstrap samples and feature rationing."
+  - id: oob-rows
+    prompt: "What are a tree's out-of-bag rows?"
+    options:
+      - "The ~37% of rows its bootstrap sample never drew — unseen data that can grade this tree honestly"
+      - "The rows the tree misclassified during training"
+      - "Rows deleted from the dataset for having missing values"
+    answer: 0
+    explanation: "Sampling n rows with replacement leaves about 37% out per tree. Each row is out-of-bag for roughly a third of the forest, and those trees' votes on it form the OOB score — free validation, though the sealed test set still has the last word."
+  - id: forest-on-map
+    prompt: "On the bias–variance map, what does bagging full-depth trees do?"
+    options:
+      - "Reduces bias sharply while leaving variance unchanged"
+      - "Reduces both bias and variance to zero given enough trees"
+      - "Keeps the trees' low bias and averages away much of their variance"
+    answer: 2
+    explanation: "The ensemble inherits its members' bias — averaging identicaly-shaped wrongness doesn't fix it — but their data-dependent wobbles point in different directions and cancel. That's why bagging suits high-variance learners like deep trees."
+  - id: same-root-transfer
+    prompt: "You inspect your forest and all 100 trees ask the same first question. Which ingredient was most likely left out?"
+    options:
+      - "n_estimators — the forest needs more trees"
+      - "Feature randomness (max_features) — without benching the dominant feature at random, every tree leans on it the same way"
+      - "The out-of-bag score was not enabled"
+    answer: 1
+    explanation: "Bootstrap samples alone still contain the dominant feature, so every tree opens with it and the crowd stays correlated. Rationing features per split forces some trees to find second opinions — the 'random' in random forest."

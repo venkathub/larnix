@@ -33,7 +33,7 @@ classification — so every new algorithm lands on familiar ground.
 | 8 | [Bias–variance](ch08-bias-variance.qmd) | 🟡 |
 | 9 | [K-nearest neighbours](ch09-knn.qmd) | 🟡 |
 | 10 | [Decision trees](ch10-decision-trees.qmd) | 🟡 |
-| 11 | Random forests & ensembles | 🟡 |
+| 11 | [Random forests & ensembles](ch11-random-forests.qmd) | 🟡 |
 | 12 | Gradient boosting (+ XGBoost) | 🟡 |
 | 13 | Support vector machines | 🟡 |
 | 14 | Naive Bayes | 🟡 |

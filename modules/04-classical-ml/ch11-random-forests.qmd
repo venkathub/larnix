@@ -1,0 +1,458 @@
+---
+title: "Random forests & ensembles"
+module: "M4 — Classical Machine Learning"
+chapter: 11
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch10 — Decision trees"
+  - "M4 Ch8 — Bias–variance"
+learning_objectives:
+  - "Explain bagging: bootstrap samples, and why a forest needs engineered disagreement"
+  - "Implement bootstrap sampling and majority voting from spec"
+  - "Measure what the crowd buys (lower variance) and what it costs (readability)"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: bagging-one-line
+    q: "What is bagging?"
+    a: "Bootstrap aggregating: train each model on a bootstrap sample (drawn with replacement, same size as the data — about 63% unique rows), then aggregate predictions by vote (classification) or average (regression). The resampling makes the models disagree; the aggregation cancels their individual wobbles."
+  - id: why-feature-randomness
+    q: "Why does a random forest also randomize features at each split, on top of bagging?"
+    a: "Bootstrap samples still share the dominant features, so bagged trees stay correlated — near-clones whose errors don't cancel. Limiting each split to a random subset of features (max_features) forces genuinely different trees, and averaging only helps to the extent the voters think differently."
+  - id: ensemble-trade
+    q: "What does a forest trade away for its accuracy and stability?"
+    a: "Interpretability and speed: one readable flowchart becomes a hundred unreadable ones (feature importances remain, path-reading does not), and predictions cost ~n_estimators tree traversals. n_estimators itself is a 'more is safer, but slower' knob — not a capacity dial with an overfitting end."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 10 ended on a measured embarrassment: reshuffle the data and a
+decision tree changes even its *first question*. One tree is an opinionated
+expert — sharp, readable, and easily swayed.
+
+The intern's fix is older than machine learning: don't ask one expert.
+**Ask a crowd and let them vote.** Individual wobbles point in different
+directions; averaged, they cancel — Chapter 8's variance, killed by
+committee.
+
+But there's a catch, and the catch *is* the chapter: a hundred trees grown
+on the same data are a hundred copies of **one** opinion — a crowd of
+clones cancels nothing. Everything clever about a **random forest** is a
+scheme for making its trees *disagree*: once by resampling the data, once
+by rationing the features. Engineered disagreement, then a vote.
+
+> You'll need from before: trees and their instability (Ch10), variance
+> (Ch8), and the split ritual (Ch4).
+
+---
+
+## Disagreement, source #1: the bootstrap
+
+Give each tree its own version of history: a **bootstrap sample** — draw
+342 rows from the 342-row colony *with replacement*, so some birds appear
+twice and others not at all.
+
+```{pyodide}
+#| caption: "One bootstrap sample: same size, different colony"
+from lib.data import load_csv
+from collections import Counter
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+n = len(df)
+
+rng = np.random.default_rng(0)
+sample_idx = rng.integers(0, n, n)          # n draws, with replacement
+counts = Counter(sample_idx.tolist())
+
+unique = len(counts)
+repeats = sum(1 for c in counts.values() if c >= 2)
+print(f"colony size: {n}")
+print(f"unique birds drawn:   {unique}  ({unique / n:.0%})")
+print(f"birds drawn 2+ times: {repeats}")
+print(f"birds left out:       {n - unique}")
+```
+
+About **64% unique** — the bootstrap's signature (mathematically it hovers
+near 63% for any large n). Ninety-two birds got extra weight; **122 were
+never seen at all**. Remember those left-out birds: each tree accidentally
+reserves its own mini test set, a free gift we collect later in the
+chapter.
+
+Now grow five trees, each on its own bootstrap, and look at the very thing
+that embarrassed Chapter 10:
+
+```{pyodide}
+#| caption: "Five histories, five first questions — instability, now on purpose"
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], df["species"], test_size=0.25, random_state=42,
+    stratify=df["species"])
+
+probe = Xte.iloc[[0]]   # one held-out bird: flipper 200 mm, bill 42 mm
+votes = []
+for seed in range(5):
+    rng = np.random.default_rng(seed)
+    bidx = rng.integers(0, len(Xtr), len(Xtr))
+    t = DecisionTreeClassifier(random_state=0).fit(
+        Xtr.iloc[bidx], ytr.iloc[bidx])
+    root = feats[t.tree_.feature[0]]
+    vote = t.predict(probe)[0]
+    votes.append(vote)
+    print(f"tree {seed}: asks first about {root:<18} -> votes {vote}")
+print(f"\ncrowd verdict: {Counter(votes).most_common(1)[0][0]}")
+```
+
+Three trees open with bills, two with flippers — genuinely different
+flowcharts — yet all five vote **Adelie** for this bird, and Adelie is
+correct. That's the ensemble effect in one probe: the trees disagree about
+*how to think* and still converge on *what's true*; where one tree's quirk
+would err, it's outvoted.
+
+## Disagreement, source #2: ration the features
+
+Bagging alone has a weakness: every bootstrap still contains the same
+*dominant features*, so every tree tends to lean on them the same way —
+the trees stay **correlated**, and correlated errors don't cancel. Two
+heads are only better than one if they think differently.
+
+The forest's second trick: at **every split**, each tree may only consider
+a *random subset* of the features (`max_features`). Strong features get
+benched at random, forcing trees to develop second opinions. This is the
+"random" in random forest — and with only two features, our penguin demo
+can't show it off properly, so file the principle for the capstone's wider
+tables: **bagging diversifies the data; feature randomness diversifies the
+thinking.**
+
+## The crowd, measured
+
+`RandomForestClassifier` bundles both tricks plus the vote. Against
+Chapter 10's lone full-depth tree, on the same held-out birds:
+
+```{pyodide}
+#| caption: "One opinionated expert vs one hundred disagreeing ones"
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+lone = DecisionTreeClassifier(random_state=0).fit(Xtr, ytr)
+forest = RandomForestClassifier(n_estimators=100, oob_score=True,
+                                random_state=0).fit(Xtr, ytr)
+
+print(f"lone full-depth tree: {accuracy_score(yte, lone.predict(Xte)):.3f}")
+print(f"forest of 100:        {accuracy_score(yte, forest.predict(Xte)):.3f}")
+```
+
+`0.953 → 1.000` on this test set. But a single split can flatter (Ch4!),
+and our real claim was about **variance** — so measure that directly,
+Chapter 8-style. Give both models five different 150-bird training
+samples and watch how much their test scores *wobble*:
+
+```{pyodide}
+#| caption: "The thesis, in two spreads: the crowd wobbles less"
+tree_scores, forest_scores = [], []
+for seed in range(5):
+    sub = Xtr.sample(n=150, random_state=seed)
+    sub_y = ytr.loc[sub.index]
+    t = DecisionTreeClassifier(random_state=0).fit(sub, sub_y)
+    f = RandomForestClassifier(n_estimators=100,
+                               random_state=0).fit(sub, sub_y)
+    tree_scores.append(round(accuracy_score(yte, t.predict(Xte)), 3))
+    forest_scores.append(round(accuracy_score(yte, f.predict(Xte)), 3))
+
+print(f"lone tree: {tree_scores}  spread {max(tree_scores) - min(tree_scores):.3f}")
+print(f"forest:    {forest_scores}  spread {max(forest_scores) - min(forest_scores):.3f}")
+```
+
+The lone tree's fate swings by `0.058` depending on which birds it
+happened to study; the forest's by `0.035` — and its worst draw beats the
+tree's worst draw. On a harder, wider dataset the gap grows; the direction
+is the lesson: **averaging engineered disagreement is a variance
+reducer.** (What about bias? A forest of full-depth trees inherits their
+low bias — bagging attacks variance specifically, which is why it suits
+high-variance learners like deep trees and would do little for Chapter 2's
+stable line.)
+
+## The free gift: out-of-bag score
+
+Those ~37% left-out rows per tree? Every bird was left out by roughly a
+third of the forest — so those trees can grade it as unseen data. The
+**out-of-bag (OOB) score** is that grade, computed during training, no
+split required:
+
+```{pyodide}
+#| caption: "A validation estimate the bootstrap paid for"
+print(f"OOB estimate: {forest.oob_score_:.3f}")
+print(f"actual held-out score: 1.000")
+```
+
+`0.945` vs `1.000` — the OOB estimate runs a touch pessimistic here (each
+bird is judged by only a third of the crowd), but it's a solid in-training
+progress gauge. It does **not** retire the ritual: the sealed test set
+still delivers the final number (Ch4's rule survives every convenience).
+
+## Forests do regression too
+
+Swap vote for average and the same machine prices houses. Against the
+module's standing benchmark — Chapter 4's linear CV score of
+`0.558 ± 0.031`:
+
+```{pyodide}
+#| caption: "The crowd takes on the appraisal benchmark"
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestRegressor
+
+homes = load_csv("california-housing-sample")
+hfeats = ["MedInc", "HouseAge", "AveRooms", "AveBedrms",
+          "Population", "AveOccup", "Latitude", "Longitude"]
+
+scores = -cross_val_score(
+    RandomForestRegressor(n_estimators=100, random_state=0),
+    homes[hfeats], homes["MedHouseVal"],
+    cv=5, scoring="neg_mean_absolute_error")
+print(f"forest CV MAE: {scores.mean():.3f} ± {scores.std():.3f}")
+print(f"linear (Ch4):  0.558 ± 0.031")
+```
+
+`0.532 ± 0.050` — a better mean, *but the spreads overlap*, and Chapter 4
+taught you what that means: on 800 rows, "forest beats linear here" is a
+**can't-tell-yet**, not a verdict. Hold the thought; Chapter 12's boosted
+trees push further, and the capstone's bigger dataset gives crowds the room
+they need.
+
+What the forest paid for all this, stated plainly: Chapter 10's superpower
+is gone — a hundred flowcharts explain nothing a stakeholder can follow
+(feature importances survive; path-reading doesn't). Predictions cost a
+hundred traversals. And `n_estimators` is a new *kind* of knob: more trees
+never overfit — the vote only steadies — so it's "as many as you can
+afford", not a capacity dial with a U.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Crowds cancel variance — but only if they disagree.** A forest
+   engineers disagreement twice: bootstrap samples (data) and
+   `max_features` (thinking).
+2. A **bootstrap sample** draws n rows with replacement: ~63% unique, the
+   rest repeated — leaving ~37% out-of-bag per tree.
+3. Measured on resamples, the lone tree's score wobbled by 0.058, the
+   forest's by 0.035 — **bagging is a variance reducer** (bias is
+   inherited from the base trees).
+4. The **OOB score** is free in-training validation from the left-out
+   rows — useful gauge, not a substitute for the sealed test set.
+5. The price: **readability and speed**. And `n_estimators` isn't a
+   capacity dial — more trees only steady the vote.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: seeds are fixed, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Grow the chapter's forest with its free validation gauge switched on.
+Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_forest
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], df["species"], test_size=0.25, random_state=42,
+    stratify=df["species"])
+```
+
+```{pyodide}
+#| exercise: ex_forest
+model = RandomForestClassifier(
+    n_estimators=____,      # TODO: a hundred voters
+    oob_score=____,         # TODO: collect the free gift
+    random_state=0)
+model.fit(Xtr, ytr)
+
+run_tests([
+    ("held-out accuracy", round(
+        accuracy_score(yte, model.predict(Xte)), 3), 1.0),
+    ("out-of-bag estimate", round(model.oob_score_, 3), 0.945),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`n_estimators=100` sets the crowd size; `oob_score=True` asks the forest
+to grade every bird using only the trees that never saw it.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = RandomForestClassifier(
+    n_estimators=100,
+    oob_score=True,
+    random_state=0)
+model.fit(Xtr, ytr)
+```
+
+Note the two numbers' roles: OOB (`0.945`) is the in-training gauge, the
+held-out score is the exam. They should be close; when OOB looks great and
+the test set disagrees, believe the test set.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the forest's two moving parts from spec:
+
+- `bootstrap_indices(n, draws)` — given `draws`, a list of floats in
+  [0, 1), map each to a row index `int(d * n)`: a deterministic stand-in
+  for the random draw (so the grader can check it exactly).
+- `majority_vote(per_tree)` — `per_tree` is a list of prediction lists,
+  one per tree, all the same length. Return the element-wise majority 0/1
+  verdict (an odd number of trees, so no ties).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_vote
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_vote
+def bootstrap_indices(n, draws):
+    """Map each draw in [0,1) to a row index int(draw * n)."""
+    ...  # TODO
+
+def majority_vote(per_tree):
+    """Element-wise majority of several 0/1 prediction lists."""
+    ...  # TODO
+
+run_tests([
+    ("draws to indices", bootstrap_indices(4, [0.1, 0.5, 0.99, 0.1]),
+     [0, 2, 3, 0]),
+    ("repeats are the point", bootstrap_indices(3, [0.0, 0.1, 0.2]),
+     [0, 0, 0]),
+    ("three trees, two birds", majority_vote([[1, 0], [1, 1], [0, 1]]),
+     [1, 1]),
+    ("outvoted quirk", majority_vote([[0], [0], [1]]), [0]),
+    ("five trees agree in the end",
+     majority_vote([[1, 0, 0], [0, 0, 1], [1, 1, 0], [1, 0, 0], [0, 0, 0]]),
+     [1, 0, 0]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`bootstrap_indices` is one comprehension: `int(d * n)` per draw — note how
+`0.1` maps to row 0 twice; repeats are what "with replacement" means.
+`majority_vote`: `zip(*per_tree)` walks the predictions column by column;
+a column's verdict is 1 when its sum exceeds half the number of trees.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def bootstrap_indices(n, draws):
+    return [int(d * n) for d in draws]
+
+def majority_vote(per_tree):
+    n_trees = len(per_tree)
+    return [1 if sum(col) > n_trees / 2 else 0 for col in zip(*per_tree)]
+```
+
+The "outvoted quirk" fixture is the whole ensemble idea in three numbers:
+one tree's error, cancelled by two colleagues who saw different data.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Sweep the crowd size —
+`n_estimators ∈ {1, 5, 20, 50, 100, 200}` — on the chapter's split,
+printing test accuracy for each. Answer in one sentence: where does the
+crowd stop paying, and why is "too many trees" a budget problem rather
+than an overfitting problem?
+
+**Rubric — a good answer:**
+
+- Runs the sweep with `random_state=0` and reports test accuracy per size.
+- Observes the plateau (gains vanish somewhere before 100 here).
+- The sentence distinguishes n_estimators from capacity dials: extra
+  trees only average more, so the risk is compute cost, not memorization.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for n_trees in (1, 5, 20, 50, 100, 200):
+    f = RandomForestClassifier(n_estimators=n_trees,
+                               random_state=0).fit(Xtr, ytr)
+    print(f"{n_trees:3} trees: {accuracy_score(yte, f.predict(Xte)):.3f}")
+```
+
+One tree wobbles, five settle most of it, and past ~100 the vote barely
+moves — the curve flattens instead of turning back up, which is exactly
+why this knob gets set by patience, not by validation.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch11.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The crowd fixed the tree: engineered disagreement in, variance out, plus a
+free OOB gauge — at the price of the readable flowchart. But a forest's
+trees are peers; each one repeats the others' mistakes as often as it
+corrects them. The intern's final upgrade asks a sharper question: *what
+if each new tree were grown specifically to fix what the crowd so far gets
+wrong?* That's **boosting** — and with XGBoost, it's the tabular workhorse
+of working data science. Next chapter.

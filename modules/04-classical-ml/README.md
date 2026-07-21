@@ -15,7 +15,8 @@ built-in, P2-D6).
 > [Ch7 — Overfitting & regularization](ch07-overfitting-regularization.qmd) ·
 > [Ch8 — Bias–variance](ch08-bias-variance.qmd) ·
 > [Ch9 — K-nearest neighbours](ch09-knn.qmd) ·
-> [Ch10 — Decision trees](ch10-decision-trees.qmd)
+> [Ch10 — Decision trees](ch10-decision-trees.qmd) ·
+> [Ch11 — Random forests & ensembles](ch11-random-forests.qmd)
 
 ## Prerequisites
 
