@@ -8,7 +8,8 @@ built-in, P2-D6).
 > files land one at a time; the landing page table gains links as they do.
 > Built so far: [Ch1 — What is learning?](ch01-what-is-learning.qmd) ·
 > [Ch2 — Linear regression](ch02-linear-regression.qmd) ·
-> [Ch3 — Cost functions & gradient descent](ch03-cost-gradient-descent.qmd)
+> [Ch3 — Cost functions & gradient descent](ch03-cost-gradient-descent.qmd) ·
+> [Ch4 — Generalization: splits & CV](ch04-generalization-splits-cv.qmd)
 
 ## Prerequisites
 

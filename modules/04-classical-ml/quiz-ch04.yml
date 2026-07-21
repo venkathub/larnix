@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m4-ch04-generalization"
+questions:
+  - id: parrot-score
+    prompt: "A model scores MAE 0.000 on its training data. What do you now know about it?"
+    options:
+      - "It has found the true pattern in the data"
+      - "Almost nothing — a memorizer scores 0.000 on training data while learning no pattern at all"
+      - "It will score close to 0.000 on new data too"
+    answer: 1
+    explanation: "The parrot aced the training exam by storing the answers. Training scores cannot separate pattern-finding from memorizing; only a score on unseen data can."
+  - id: val-vs-test
+    prompt: "In a train/validation/test workflow, what is the test set for?"
+    options:
+      - "Tuning settings until its score stops improving"
+      - "Giving the model extra examples once training plateaus"
+      - "One final honest measurement, after all tuning decisions are finished"
+    answer: 2
+    explanation: "Tuning happens against the validation data (or cross-validation). Every peek you tune against consumes that data's freshness — so the test set stays sealed until the end and is opened once."
+  - id: read-cv-spread
+    prompt: "Model A cross-validates at MAE 0.552 ± 0.030; model B at 0.559 ± 0.031. What is the honest conclusion?"
+    options:
+      - "Can't tell yet — the difference between the means is far smaller than the fold spread"
+      - "A is better; 0.552 is lower than 0.559"
+      - "B is better because its spread is slightly wider"
+    answer: 0
+    explanation: "The fold-to-fold spread shows how much these scores wobble by luck of the deal. A difference of 0.007 inside a ±0.03 spread is noise until more evidence says otherwise."
+  - id: leakage-transfer
+    prompt: "A teammate standardizes all 1,000 rows (using the full dataset's mean and std), then splits off a test set and reports a great score. What's wrong?"
+    options:
+      - "Nothing — standardizing is a preprocessing step, not training"
+      - "The test rows' values shaped the scaling statistics before the split, so test information touched training — leakage"
+      - "Standardizing should always happen after the model is fitted"
+    answer: 1
+    explanation: "The mean and std were computed from rows that later became the test set, so the training data was transformed using knowledge of the exam. Split first; compute preprocessing statistics on training rows only (pipelines make this automatic in Chapter 16)."

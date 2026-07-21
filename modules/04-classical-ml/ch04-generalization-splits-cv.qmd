@@ -1,0 +1,439 @@
+---
+title: "Generalization: train/val/test & cross-validation"
+module: "M4 — Classical Machine Learning"
+chapter: 4
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch2 — Linear regression"
+learning_objectives:
+  - "Explain why a training-set score cannot distinguish learning from memorizing"
+  - "Split data with train_test_split and report honest test-set MAE and RMSE"
+  - "Run k-fold cross-validation and read its mean ± spread"
+  - "Spot leakage: recognize when information from test rows has contaminated training"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: train-val-test-roles
+    q: "What are the train, validation, and test sets each for?"
+    a: "Train: the examples the model learns from. Validation: unseen data used while tuning — comparing models and settings. Test: sealed data opened once at the end for the final honest score. Tuning against data consumes its freshness, which is why the last set stays sealed."
+  - id: why-cross-validation
+    q: "Why use k-fold cross-validation instead of a single train/test split?"
+    a: "One split's score depends on which rows luck put in the test set. K-fold gives every row one turn in the test role, producing k scores whose mean is steadier and whose spread shows how much the score wobbles."
+  - id: the-leakage-rule
+    q: "What is data leakage, and what is the rule that prevents it?"
+    a: "Leakage is any information from the test rows (or the target) reaching the model during training — inflating the score. The rule: split first; nothing computed from test rows, and no feature derived from the target, may touch training."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 1 planted a promise: *the intern is graded only on houses they have
+never seen.* Time to collect — because without that rule, the best model in
+the world is a parrot.
+
+Here is a "model" that beats everything from Chapters 1–3. It memorizes the
+training table: shown a house it has seen, it recites the exact sale price.
+Its training MAE is **0.000** — not one dollar of error, a perfect score. And
+it has learned *nothing*. Show it any new house and it shrugs.
+
+Training scores cannot tell a pattern-finder from a parrot; both can ace an
+exam they've already read. The only measurement that means anything comes
+from an exam the model has never seen. This chapter builds that exam — the
+**train/test split**, then its sturdier sibling **cross-validation** — and
+names the sin that quietly fakes the results: **leakage**. Nothing in the
+module matters more than this page.
+
+> You'll need from before: fitting and `mean_absolute_error` (Ch2), and Ch1's
+> features/target vocabulary.
+
+---
+
+## Meet the parrot
+
+Build the memorizer for real and grade it twice — once on its own study
+stack, once on houses held back from it:
+
+```{pyodide}
+#| caption: "A perfect training score, produced by learning nothing"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+
+homes = load_csv("california-housing-sample")
+features = ["MedInc", "HouseAge", "AveRooms", "AveBedrms",
+            "Population", "AveOccup", "Latitude", "Longitude"]
+X, y = homes[features], homes["MedHouseVal"]
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+print(f"training houses: {len(train_X)}   held-out houses: {len(test_X)}")
+
+# The parrot: a lookup table of every training house, mean price otherwise.
+price_book = {tuple(row): price
+              for row, price in zip(train_X.itertuples(index=False), train_y)}
+fallback = train_y.mean()
+
+def parrot(rows):
+    return [price_book.get(tuple(r), fallback)
+            for r in rows.itertuples(index=False)]
+
+print(f"parrot MAE on training houses: "
+      f"{mean_absolute_error(train_y, parrot(train_X)):.3f}")
+print(f"parrot MAE on unseen houses:   "
+      f"{mean_absolute_error(test_y, parrot(test_X)):.3f}")
+```
+
+`0.000` on the training set; `0.926` — worse than Chapter 1's mean learner —
+the moment a house isn't in its book. One model, two scores, and only the
+second one is true. Notice the tool that made the honest score possible:
+`train_test_split` dealt 20% of the rows into a held-out set *before*
+anything was fitted. `random_state=42` seeds the shuffle so the deal is
+reproducible — same split for you, us, and the grader.
+
+## Cashing Chapter 2's asterisk
+
+Chapter 2 flagged its scores as *unverified*. Re-measure them honestly:
+fit on the training rows only, grade on the held-out rows.
+
+```{pyodide}
+#| caption: "The honest version of Chapter 2's numbers"
+from sklearn.linear_model import LinearRegression
+
+for cols, label in [(["MedInc"], "1 feature "), (features, "8 features")]:
+    model = LinearRegression().fit(train_X[cols], train_y)
+    train_mae = mean_absolute_error(train_y, model.predict(train_X[cols]))
+    test_mae = mean_absolute_error(test_y, model.predict(test_X[cols]))
+    print(f"{label}:  train MAE {train_mae:.3f}   test MAE {test_mae:.3f}")
+```
+
+Two things worth staring at. The honest (test) scores — `0.698` and `0.562`
+— are *worse* than Chapter 2's all-data versions, as promised: grading on
+studied material flatters. And the gap between train and test MAE is small
+here (`0.526` vs `0.562` for 8 features), which is the signature of a model
+that found a pattern rather than memorizing — the parrot's gap was `0.000`
+vs `0.926`. That train-vs-test gap becomes a diagnostic tool in Chapter 7.
+
+## RMSE joins the toolbox
+
+MAE treats a $200k miss as exactly twice as bad as a $100k miss. Often big
+misses are *more* than twice as embarrassing — an appraiser off by $200k
+makes the news. **RMSE** (root-mean-squared error) squares the gaps before
+averaging — Chapter 3's MSE — then square-roots back to the target's units:
+
+```{pyodide}
+#| caption: "Two error metrics, one model — they tell different truths"
+from sklearn.metrics import root_mean_squared_error
+
+model8 = LinearRegression().fit(train_X, train_y)
+pred = model8.predict(test_X)
+
+print(f"test MAE:  {mean_absolute_error(test_y, pred):.3f}")
+print(f"test RMSE: {root_mean_squared_error(test_y, pred):.3f}")
+```
+
+RMSE (`0.738`) is always ≥ MAE (`0.562`), and the wider the gap, the more
+your errors are dominated by a few large misses. Report MAE for "typical
+miss", RMSE when big errors deserve extra punishment; the pair together says
+more than either alone.
+
+## One split is one deal of the cards
+
+A single 80/20 split has luck in it: which rows landed in the test set? Deal
+five different hands and watch the "honest" score wobble:
+
+```{pyodide}
+#| caption: "Same model, five different splits — five different scores"
+for seed in (0, 1, 2, 3, 4):
+    a, b, c, d = train_test_split(X, y, test_size=0.2, random_state=seed)
+    m = LinearRegression().fit(a, c)
+    print(f"seed {seed}: test MAE {mean_absolute_error(d, m.predict(b)):.3f}")
+```
+
+From `0.496` to `0.535` across seeds — and our seed-42 split said `0.562`.
+None of these is *the* truth; each is one draw. **K-fold cross-validation**
+fixes the luck by dealing systematically: cut the data into k folds, and give
+each fold one turn as the test set while the rest train. K scores, no row
+ever grading itself.
+
+```{pyodide}
+#| caption: "Five folds, five honest scores, one steady summary"
+from sklearn.model_selection import cross_val_score
+
+scores = -cross_val_score(LinearRegression(), X, y, cv=5,
+                          scoring="neg_mean_absolute_error")
+print("fold MAEs:", [round(s, 3) for s in scores])
+print(f"report: {scores.mean():.3f} ± {scores.std():.3f}")
+```
+
+One sklearn convention to absorb head-on: scorers follow "higher is better",
+so error metrics arrive **negated** — hence `neg_mean_absolute_error` and the
+leading minus to flip the scores back positive. The report is the pair
+`0.558 ± 0.031`: the mean is your steadied estimate, and the spread warns you
+how much any single-split score might wobble. From now on, when two models
+differ by less than the spread, the honest conclusion is "can't tell yet".
+
+## The cardinal sin: leakage
+
+Now the sin this chapter exists to prevent. **Leakage** is any path by which
+information the model shouldn't have — from the test rows, or from the target
+itself — sneaks into training. It always inflates the score, silently. Watch
+one classic form: engineering a feature *from the target*.
+
+```{pyodide}
+#| caption: "A leaky feature makes a mediocre model look brilliant"
+leaky = homes.copy()
+# Feels like innocent feature engineering — but MedHouseVal IS the target.
+leaky["PricePerRoom"] = leaky["MedHouseVal"] / leaky["AveRooms"]
+
+Xl = leaky[features + ["PricePerRoom"]]
+a, b, c, d = train_test_split(Xl, y, test_size=0.2, random_state=42)
+m = LinearRegression().fit(a, c)
+print(f"test MAE with the leaky feature: "
+      f"{mean_absolute_error(d, m.predict(b)):.3f}")
+```
+
+`0.229` — the model looks like it halved the error overnight. It learned
+nothing new: `PricePerRoom` *contains the answer*, so the model reads the
+target through a keyhole. In production, where the sale price doesn't exist
+yet, this feature can't be computed and the model collapses. The score was a
+lie the whole pipeline told with a straight face.
+
+The rule, in two halves:
+
+1. **Split first.** Every choice — features, scaling statistics, model
+   settings — is made using training rows only. Anything computed from the
+   full table has already peeked. (Preprocessing leaks are subtler; Chapter
+   16's pipelines make them structurally impossible.)
+2. **No feature may be derived from the target.** If a column couldn't exist
+   before the answer was known, it doesn't belong in the features.
+
+One refinement completes the picture. If you *tune* against your held-out set
+— trying settings until its score improves — you are slowly teaching yourself
+its answers, and it stops being unseen. So mature workflows keep **three**
+sets: **train** (learn), **validation** (tune and compare — CV plays this
+role for us), and **test** (sealed; opened once, at the end, for the final
+number). The M4 capstone grades this discipline with a literal tripwire.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A training-set score cannot tell learning from memorizing — the parrot
+   scored a perfect 0.000 by learning nothing. Only **unseen data** measures
+   a model.
+2. **Split first, fit on train, report on test**: the honest 8-feature MAE is
+   `0.562`, not Chapter 2's flattering `0.531`.
+3. **RMSE** punishes large misses harder than MAE; reporting both tells
+   "typical miss" and "big-miss" stories at once.
+4. Single splits carry luck; **k-fold CV** gives every row one turn as the
+   exam and reports **mean ± spread** — differences inside the spread are
+   "can't tell yet".
+5. **Leakage** — test-row or target information reaching training — silently
+   inflates scores (our leaky feature "improved" MAE to 0.229). Split first;
+   never build features from the target; open the test set once.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same seed, same split, same expected outputs.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+The honest-measurement ritual, end to end: split, fit on train only, report
+on test. Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_split
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error
+```
+
+```{pyodide}
+#| exercise: ex_split
+homes = load_csv("california-housing-sample")
+X, y = homes[["MedInc"]], homes["MedHouseVal"]
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(____, ____)            # TODO: learn from the TRAINING rows only
+test_mae = mean_absolute_error(____, model.predict(____))  # TODO: grade on TEST
+
+run_tests([
+    ("fit saw only training rows", round(
+        mean_absolute_error(train_y, model.predict(train_X)), 3), 0.64),
+    ("honest test MAE", round(test_mae, 3), 0.698),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The model learns from `train_X, train_y`; the score compares `test_y` with
+predictions on `test_X`. If a `test_` name appears inside `fit`, the exam is
+compromised.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+homes = load_csv("california-housing-sample")
+X, y = homes[["MedInc"]], homes["MedHouseVal"]
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(train_X, train_y)
+test_mae = mean_absolute_error(test_y, model.predict(test_X))
+```
+
+The ritual to internalize: split → fit(train) → predict(test) → metric(test).
+Every model for the rest of the module is graded exactly this way.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build cross-validation's machinery yourself. Write `k_fold_indices(n, k)`:
+deal the row indices `0 … n−1`, in order, into `k` contiguous folds — the
+first `n % k` folds get one extra row — and return a list of `(train_ids,
+test_ids)` pairs, one per fold, where `test_ids` is that fold and
+`train_ids` is everything else (in order).
+
+Example: `k_fold_indices(7, 3)` → test folds `[0,1,2]`, `[3,4]`, `[5,6]`.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_kfold
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_kfold
+def k_fold_indices(n, k):
+    """Split indices 0..n-1 into k contiguous folds.
+
+    Returns a list of k (train_ids, test_ids) tuples of lists.
+    """
+    ...  # TODO: fold sizes are n // k, plus one extra for the first n % k folds
+
+run_tests([
+    ("number of folds", len(k_fold_indices(7, 3)), 3),
+    ("fold 1 test rows", k_fold_indices(7, 3)[0][1], [0, 1, 2]),
+    ("fold 2 test rows", k_fold_indices(7, 3)[1][1], [3, 4]),
+    ("fold 3 test rows", k_fold_indices(7, 3)[2][1], [5, 6]),
+    ("fold 2 train rows", k_fold_indices(7, 3)[1][0], [0, 1, 2, 5, 6]),
+    ("even split test rows", k_fold_indices(6, 3)[2][1], [4, 5]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Walk a `start` pointer through the indices: each fold's size is `n // k`,
+plus 1 while the fold number is below `n % k`. That fold's `test_ids` is
+`list(range(start, start + size))`; its `train_ids` is every index not in
+that range. Advance `start` by the size and repeat k times.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def k_fold_indices(n, k):
+    folds = []
+    start = 0
+    for fold in range(k):
+        size = n // k + (1 if fold < n % k else 0)
+        test_ids = list(range(start, start + size))
+        train_ids = [i for i in range(n) if i < start or i >= start + size]
+        folds.append((train_ids, test_ids))
+        start += size
+    return folds
+```
+
+Every row appears in exactly one test fold and k−1 training folds — no row
+ever grades itself. This is precisely the dealing that `cross_val_score`
+performs before fitting k models (sklearn adds optional shuffling on top).
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Choose any feature subset
+you like and run 5-fold CV (`scoring="neg_mean_absolute_error"`) against the
+full 8-feature model's `0.558 ± 0.031`. Then answer in one sentence: is your
+subset's improvement (or deficit) *bigger than the spread*, or a "can't tell
+yet"?
+
+**Rubric — a good answer:**
+
+- Runs `cross_val_score` with 5 folds on a chosen subset of `features`.
+- Reports mean ± std, flipping the negated scores correctly.
+- The sentence compares the *difference between means* against the spreads —
+  and refuses to over-claim when the difference is inside them.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+subset = ["MedInc", "Latitude", "Longitude"]
+s = -cross_val_score(LinearRegression(), homes[subset], y, cv=5,
+                     scoring="neg_mean_absolute_error")
+print(f"{subset}: {s.mean():.3f} ± {s.std():.3f}  (full set: 0.558 ± 0.031)")
+```
+
+Income plus location alone typically lands within a spread of the full
+model — the honest reading is "about as good, with five fewer features",
+which is itself a finding.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+This chapter is the module's spine: every score you report from now on is a
+test-set or cross-validated score, and every pipeline is checked against the
+leakage rule. The pattern — split → fit(train) → evaluate(held-out) → CV when
+it matters — repeats in every remaining chapter, and the capstone grades it
+with a tripwire. Next, the intern's question changes kind: not *how much is
+this house worth* but *which one is it* — **logistic regression**, where the
+model's output becomes a probability.
