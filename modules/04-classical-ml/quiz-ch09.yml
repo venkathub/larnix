@@ -1,0 +1,35 @@
+title: "Chapter 9 — quick check"
+id: "m4-ch09-knn"
+questions:
+  - id: knn-training
+    prompt: "What does KNeighborsClassifier.fit() actually do?"
+    options:
+      - "Learns one weight per feature by gradient descent"
+      - "Stores the training data — the real work happens at prediction time, when neighbours are found and vote"
+      - "Precomputes the vote outcome for every possible input"
+    answer: 1
+    explanation: "KNN is a lazy learner: fit memorizes the data and nothing else. Each prediction then measures distances to all stored examples — free training, expensive predictions, the reverse of the models before it."
+  - id: scale-hostage-transfer
+    prompt: "A KNN model uses salary (20,000–200,000) and age (18–70) to find similar customers. What will its distances mostly measure?"
+    options:
+      - "Age, because it has fewer distinct values"
+      - "Both equally — Euclidean distance is unit-free"
+      - "Salary alone — its raw gaps are thousands of times larger, so age barely moves the distance"
+    answer: 2
+    explanation: "Distance adds raw-unit gaps: a routine 10,000-rupee salary difference dwarfs the entire age range. Standardize (with train-fitted statistics) so both features get a say — the exact trap the penguin masses sprang."
+  - id: k1-diagnosis
+    prompt: "A KNN with k=1 shows train accuracy 1.000. In Chapter 7/8 vocabulary, what is this?"
+    options:
+      - "High variance — each training point is its own nearest neighbour, so the model memorizes; every verdict hangs on one possibly-noisy example"
+      - "High bias — the model is too rigid to fit the training data"
+      - "Leakage — the training rows contaminated the distance metric"
+    answer: 0
+    explanation: "k=1 is KNN's maximum capacity: perfect training recall by self-matching, with predictions maximally sensitive to individual data points. That is the variance end of the dial; k=everyone is the bias end."
+  - id: k-max-baseline
+    prompt: "Setting k equal to the number of training examples turns KNN into what?"
+    options:
+      - "The most accurate version, since all evidence is used"
+      - "The majority-class (lazy) baseline — with everyone voting, the majority always wins, for every input"
+      - "A model equivalent to logistic regression"
+    answer: 1
+    explanation: "When all stored examples vote on every prediction, the input stops mattering and the majority class wins every time — exactly Chapter 6's do-nothing baseline, which is why our k=163 accuracy collapsed to 0.691, the majority share."

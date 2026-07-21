@@ -1,0 +1,426 @@
+---
+title: "K-nearest neighbours"
+module: "M4 — Classical Machine Learning"
+chapter: 9
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch6 — Classification metrics"
+  - "M4 Ch8 — Bias–variance"
+learning_objectives:
+  - "Implement KNN from scratch: distance, sort, vote"
+  - "Explain why unscaled features hold distance hostage, and fix it with train-fitted standardization"
+  - "Read k as a capacity dial: k=1 memorizes, k=everyone is the lazy baseline"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: knn-one-line
+    q: "How does k-nearest neighbours make a prediction?"
+    a: "It stores the training data and does nothing else. At prediction time it measures the distance from the new example to every stored one, takes the k closest, and lets them vote (majority class, or average for regression)."
+  - id: why-scaling-mandatory
+    q: "Why must features be scaled before KNN?"
+    a: "Distance adds feature gaps in raw units, so a big-unit feature (mass in grams) numerically swamps a small-unit one (bill in mm) regardless of which matters. Standardizing — fit on the training rows only — puts every feature on the same footing."
+  - id: k-as-capacity
+    q: "What happens at the two extremes of k?"
+    a: "k=1: maximum capacity — the model memorizes (train accuracy 1.0) and every prediction hangs on a single, possibly noisy neighbour. k=all: the vote is always the majority class — the lazy baseline. k is a capacity dial with the usual two bad ends."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A new intern joins the appraisal firm with a method that sounds like
+cheating. No formulas. No training. No learned weights at all. Handed an
+unlabelled penguin, they walk to the filing cabinet, pull out the **k most
+similar penguins on record, and let those neighbours vote.**
+
+That's the whole model — **k-nearest neighbours** — and it's a real one,
+still used when it fits. Its charm is that it hides nothing; its lesson is
+that it *exposes* three questions every model quietly depends on:
+
+1. What exactly does "similar" mean? (**distance**)
+2. How many neighbours get a vote? (**k** — a capacity dial, and Chapter 8
+   promised every dial traces a U)
+3. What happens when one feature is measured in grams and another in
+   millimetres?
+
+Question 3 is a trap, and this chapter walks into it deliberately, numbers
+first.
+
+> You'll need from before: accuracy and the lazy baseline (Ch6), capacity
+> vocabulary (Ch7–8).
+
+---
+
+## The algorithm, by hand
+
+Adelie vs Chinstrap again (the genuinely hard pair), with two features: bill
+length and body mass. Before any library, the entire algorithm in a few
+lines — distance, sort, vote:
+
+```{pyodide}
+#| caption: "KNN with no sklearn: measure, sort, ask five birds"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+import math
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Chinstrap"])].dropna(
+    subset=["bill_length_mm", "body_mass_g"])
+y = (two["species"] == "Chinstrap").astype(int)
+X = two[["bill_length_mm", "body_mass_g"]]
+
+Xtr, Xte, ytr, yte = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+
+probe = Xte.iloc[0]     # one held-out bird: bill 37.8 mm, mass 4250 g
+dists = ((Xtr - probe) ** 2).sum(axis=1) ** 0.5
+nearest5 = dists.nsmallest(5)
+
+print(f"probe bird: bill {probe['bill_length_mm']} mm, "
+      f"mass {probe['body_mass_g']:.0f} g")
+print("its 5 nearest recorded birds:")
+for idx, d in nearest5.items():
+    label = "Chinstrap" if ytr.loc[idx] == 1 else "Adelie"
+    print(f"  distance {d:6.1f}   bill {Xtr.loc[idx, 'bill_length_mm']:>5} mm  "
+          f"mass {Xtr.loc[idx, 'body_mass_g']:6.0f} g   {label}")
+votes = [ytr.loc[i] for i in nearest5.index]
+print(f"vote: {sum(votes)} of 5 say Chinstrap -> predict "
+      f"{'Chinstrap' if sum(votes) > 2 else 'Adelie'}")
+```
+
+Five Adelies vote, verdict Adelie, and it happens to be right. But study
+*who got picked*: every neighbour has mass within 50 g of the probe — while
+their bills range from 35 to 42 mm. The committee was chosen almost entirely
+by body mass. Why?
+
+## Distance is a scale hostage
+
+Euclidean distance adds up feature gaps **in raw units**. Compare two
+candidate neighbours for our probe bird:
+
+```{pyodide}
+#| caption: "The trap, in two numbers"
+# Bird A: bill wildly different (+10 mm), mass nearly identical (+50 g)
+dist_a = math.sqrt(10**2 + 50**2)
+# Bird B: bill nearly identical (+1 mm), mass off by a routine 300 g
+dist_b = math.sqrt(1**2 + 300**2)
+
+print(f"bird A (bill +10 mm, mass  +50 g): distance {dist_a:.1f}")
+print(f"bird B (bill  +1 mm, mass +300 g): distance {dist_b:.1f}")
+```
+
+Bird A — a *different-looking species candidate* — counts as six times
+closer than bird B, whose bill matches almost exactly. A 300-gram gap
+(routine within one species) outweighs a 10-mm bill gap (which practically
+names the species), purely because grams come in bigger numbers than
+millimetres. The distance metric has been taken hostage by units. And the
+model pays for it:
+
+```{pyodide}
+#| caption: "KNN on raw features: hostage distance, mediocre accuracy"
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+raw = KNeighborsClassifier(n_neighbors=5).fit(Xtr, ytr)
+print(f"held-out accuracy, raw features: "
+      f"{accuracy_score(yte, raw.predict(Xte)):.3f}")
+```
+
+`0.745` — barely above Chapter 6's do-nothing baseline (`0.691` here),
+because the model is effectively classifying by body mass alone.
+
+## The fix: put features on the same footing
+
+**Standardize**: subtract each feature's mean, divide by its standard
+deviation, so both live on comparable scales. One discipline point, straight
+from Chapter 4: the means and deviations are computed **from the training
+rows only** — statistics that saw test rows are leakage.
+
+```{pyodide}
+#| caption: "Same model, scaled features: the hostage is released"
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler().fit(Xtr)          # learns mean/std from TRAIN only
+Xtr_s = scaler.transform(Xtr)
+Xte_s = scaler.transform(Xte)
+
+scaled = KNeighborsClassifier(n_neighbors=5).fit(Xtr_s, ytr)
+print(f"held-out accuracy, scaled features: "
+      f"{accuracy_score(yte, scaled.predict(Xte_s)):.3f}")
+```
+
+From `0.745` to `0.964` — no model change, no new data, only units put in
+their place. This is the M3 Ch10 preview cashed in full: for any
+distance-based method, **scaling is not a nicety, it is the model working
+or not**. (Chapter 16 wraps scaler-plus-model into a pipeline so the
+fit-on-train-only rule enforces itself.)
+
+## k is a capacity dial
+
+Chapter 8 promised every capacity knob traces its own U. Here is KNN's —
+sweep k from one lone neighbour to *the entire filing cabinet*:
+
+```{pyodide}
+#| caption: "From memorization (k=1) to the lazy baseline (k=everyone)"
+print("   k    train acc   test acc")
+for k in (1, 5, 15, 61, 101, 163):
+    m = KNeighborsClassifier(n_neighbors=k).fit(Xtr_s, ytr)
+    tr_acc = accuracy_score(ytr, m.predict(Xtr_s))
+    te_acc = accuracy_score(yte, m.predict(Xte_s))
+    print(f"  {k:3}     {tr_acc:.3f}      {te_acc:.3f}")
+```
+
+Read the ends first. **k=1**: train accuracy `1.000` — of course; every
+training bird's nearest neighbour is *itself*. The parrot from Chapter 4,
+reborn as geometry. On this cleanly-separated data its test score survives
+(`0.964`), but each prediction hangs on a single bird — one mislabelled
+neighbour away from error, the high-variance end. **k=163** — every
+training bird votes on everything — and both accuracies collapse to
+`0.691`: the majority share. Maximum k *is* Chapter 6's lazy baseline,
+derived rather than declared: when everyone votes, the majority always
+wins. High bias, in its purest form.
+
+Between the ends sits a broad plateau (k from 5 to 61 all score within a
+bird or two of each other) — this problem is easy enough that the U's floor
+is wide. Choose k there, by cross-validation when it matters.
+
+Two honest closing notes. First, KNN inverts the cost profile of every
+model so far: **training is free, predicting is expensive** (each
+prediction scans the whole cabinet) — fine for thousands of rows, painful
+for millions. Second, in high dimensions distance itself degrades —
+with many features, everything becomes nearly equidistant from everything
+(**the curse of dimensionality**), and "nearest" stops meaning much. We
+state it here and meet the remedy (dimensionality reduction) in Chapter 19.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **KNN stores, then votes**: no training step; a prediction is
+   distance → sort → k nearest → majority vote.
+2. **Distance is a scale hostage**: raw units let big-number features
+   (grams) swamp meaningful ones (mm) — our accuracy jumped `0.745 → 0.964`
+   from scaling alone.
+3. **Standardize with statistics fitted on training rows only** — anything
+   else is Chapter 4's leakage.
+4. **k is a capacity dial**: k=1 memorizes (train accuracy 1.000, each
+   verdict hostage to one neighbour); k=everyone *is* the lazy baseline
+   (`0.691`). Pick the plateau between, by CV.
+5. KNN's costs invert: **free training, expensive predictions** — and in
+   high dimensions distance loses meaning (the curse of dimensionality).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Spring the trap, then fix it. Complete the scaling step — remembering which
+rows the scaler may learn from. Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_scale
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Chinstrap"])].dropna(
+    subset=["bill_length_mm", "body_mass_g"])
+y = (two["species"] == "Chinstrap").astype(int)
+Xtr, Xte, ytr, yte = train_test_split(
+    two[["bill_length_mm", "body_mass_g"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+```
+
+```{pyodide}
+#| exercise: ex_scale
+scaler = StandardScaler().fit(____)      # TODO: which rows may it learn from?
+Xtr_s = scaler.transform(Xtr)
+Xte_s = scaler.transform(____)           # TODO: transform the held-out rows too
+
+model = KNeighborsClassifier(n_neighbors=5).fit(Xtr_s, ytr)
+
+run_tests([
+    ("scaled held-out accuracy", round(
+        accuracy_score(yte, model.predict(Xte_s)), 3), 0.964),
+    ("scaler learned from train only", round(
+        float(scaler.mean_[0]), 1), 42.1),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The scaler is *fitted* on `Xtr` only (that's where its means come from) and
+then *transforms* both `Xtr` and `Xte`. Fitting it on all rows — or on the
+test rows — is the Chapter 4 sin.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+scaler = StandardScaler().fit(Xtr)
+Xtr_s = scaler.transform(Xtr)
+Xte_s = scaler.transform(Xte)
+
+model = KNeighborsClassifier(n_neighbors=5).fit(Xtr_s, ytr)
+```
+
+The second assert peeks inside the scaler: its learned bill-length mean
+(42.1) is the *training* rows' mean — evidence the test set stayed sealed.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build the whole model from spec — it fits in a dozen lines:
+
+- `euclidean(p, q)` — the straight-line distance between two points given
+  as tuples/lists of numbers.
+- `knn_predict(train_X, train_y, probe, k)` — distances from `probe` to
+  every training point, take the k nearest (break distance ties by lowest
+  index, which is what a stable sort gives you), return the majority label
+  (labels are 0/1; k is odd, so no vote ties).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_knn
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_knn
+import math
+
+def euclidean(p, q):
+    """Straight-line distance between two equal-length points."""
+    ...  # TODO
+
+def knn_predict(train_X, train_y, probe, k):
+    """Distance -> sort -> vote. Returns the majority 0/1 label of the k nearest."""
+    ...  # TODO
+
+pts = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0), (5.0, 5.0), (6.0, 5.0)]
+lbl = [0, 0, 0, 1, 1]
+run_tests([
+    ("3-4-5 triangle", euclidean((0, 0), (3, 4)), 5.0),
+    ("distance to itself", euclidean((2.5, 7.0), (2.5, 7.0)), 0.0),
+    ("deep in the 0-cluster", knn_predict(pts, lbl, (0.5, 0.5), 3), 0),
+    ("deep in the 1-cluster", knn_predict(pts, lbl, (5.5, 5.0), 3), 1),
+    ("midfield, ask everyone", knn_predict(pts, lbl, (3.0, 3.0), 5), 0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`euclidean`: square the pairwise gaps with `zip(p, q)`, sum, `math.sqrt`.
+`knn_predict`: sort the training indices by their distance to `probe`
+(`sorted(range(len(train_X)), key=...)`), slice the first k, collect their
+labels, and return 1 if the ones outnumber the zeros.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def euclidean(p, q):
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(p, q)))
+
+def knn_predict(train_X, train_y, probe, k):
+    order = sorted(range(len(train_X)),
+                   key=lambda i: euclidean(train_X[i], probe))
+    votes = [train_y[i] for i in order[:k]]
+    return 1 if sum(votes) > k / 2 else 0
+
+pts = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0), (5.0, 5.0), (6.0, 5.0)]
+lbl = [0, 0, 0, 1, 1]
+```
+
+The last fixture is the chapter's ending in miniature: at `(3, 3)` —
+midfield — asking all five voters returns the majority class, because
+"ask everyone" always does.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Sweep k over
+`(1, 3, 5, 9, 15, 25, 41, 61)` on the scaled penguin data, print train and
+test accuracy for each, and name the k you'd ship in one sentence — placing
+your choice on Chapter 8's U and acknowledging what a 55-bird test set can
+and cannot tell you.
+
+**Rubric — a good answer:**
+
+- Sweeps all listed k on `Xtr_s`/`Xte_s`, reporting both accuracies.
+- Notes k=1's train accuracy of 1.000 for what it is (self-neighbour
+  memorization).
+- Chooses from the plateau and says so — e.g. "anything 5–25 is within one
+  bird; I take the middle" — rather than crowning a single k on thin
+  evidence.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for k in (1, 3, 5, 9, 15, 25, 41, 61):
+    m = KNeighborsClassifier(n_neighbors=k).fit(Xtr_s, ytr)
+    print(f"k={k:2}  train {accuracy_score(ytr, m.predict(Xtr_s)):.3f}  "
+          f"test {accuracy_score(yte, m.predict(Xte_s)):.3f}")
+```
+
+The test column moves by at most a bird or two across the middle of the
+sweep — the U's floor is a plateau here, and the honest claim is "one of
+these", confirmed with cross-validation if the choice ever matters.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch09.yml >}}
+
+---
+
+## Where this fits / what's next
+
+KNN put geometry under everything: predictions from distance, scaling as a
+precondition rather than a flourish, and k as the third capacity dial
+you've watched trace Chapter 8's U. Next, a model built from an entirely
+different instinct — not "who is nearby?" but **"what question splits the
+data best?"** — the twenty-questions machine: **decision trees**.

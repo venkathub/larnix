@@ -31,7 +31,7 @@ classification — so every new algorithm lands on familiar ground.
 | 6 | [Classification metrics](ch06-classification-metrics.qmd) | 🟡 |
 | 7 | [Overfitting & regularization](ch07-overfitting-regularization.qmd) | 🟡 |
 | 8 | [Bias–variance](ch08-bias-variance.qmd) | 🟡 |
-| 9 | K-nearest neighbours | 🟡 |
+| 9 | [K-nearest neighbours](ch09-knn.qmd) | 🟡 |
 | 10 | Decision trees | 🟡 |
 | 11 | Random forests & ensembles | 🟡 |
 | 12 | Gradient boosting (+ XGBoost) | 🟡 |
