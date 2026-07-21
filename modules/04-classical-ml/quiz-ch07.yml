@@ -1,0 +1,35 @@
+title: "Chapter 7 — quick check"
+id: "m4-ch07-overfitting-regularization"
+questions:
+  - id: diagnose-from-pair
+    prompt: "A model reports train MAE 0.12 and test MAE 1.90. What is happening?"
+    options:
+      - "Underfitting — the model needs more capacity"
+      - "Overfitting — the large train/test gap says it fitted the training set's noise"
+      - "Leakage — the test set has contaminated training"
+    answer: 1
+    explanation: "A tiny training error with a much larger test error is the memorizing signature. Leakage produces the opposite illusion (a test score that is too good); underfitting shows both errors high and close together."
+  - id: what-capacity-means
+    prompt: "In this chapter, what did 'capacity' mean, concretely?"
+    options:
+      - "How many rows of training data the model is given"
+      - "How flexible the model is — e.g. higher polynomial degree lets the curve wiggle enough to visit individual training points"
+      - "The amount of memory the model uses while training"
+    answer: 1
+    explanation: "Capacity is the model's room to bend. Degree-1 has almost none; degree-15 can thread every training dot — and with capacity beyond the true pattern, the extra flexibility gets spent on noise."
+  - id: what-leash-trades
+    prompt: "Adding an L2 penalty (Ridge) to the cost does what?"
+    options:
+      - "Makes large weights expensive, trading a little training fit for calmer weights that generalize better"
+      - "Removes the least useful features from the dataset before training"
+      - "Guarantees the test error will be lower than the training error"
+    answer: 0
+    explanation: "The penalty α·Σw² charges rent on weights, so the optimizer balances fitting the data against keeping weights small. L1 is the variant that zeroes features out; no leash reverses the train/test relationship by guarantee."
+  - id: underfit-transfer
+    prompt: "Your degree-2 model shows train MAE 0.95 and test MAE 0.97 — both high, nearly equal. Which lever helps?"
+    options:
+      - "Tighten the leash — raise alpha to restrain the weights further"
+      - "Nothing; equal train and test error means the model is optimal"
+      - "More capacity (or better features) — the model is underfitting; more regularization would make it worse"
+    answer: 2
+    explanation: "High-and-close errors mean the model is too rigid to capture the pattern at all. The leash fights overfitting; this is the opposite problem, so raising alpha pushes both errors higher still."

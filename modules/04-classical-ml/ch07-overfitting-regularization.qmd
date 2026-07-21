@@ -1,0 +1,430 @@
+---
+title: "Overfitting & regularization"
+module: "M4 — Classical Machine Learning"
+chapter: 7
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch2 — Linear regression"
+  - "M4 Ch4 — Generalization: train/val/test & cross-validation"
+learning_objectives:
+  - "Diagnose overfitting and underfitting from a train/test error pair"
+  - "Explain capacity: how polynomial features let a line memorize noise"
+  - "Implement the L2 penalty and explain how Ridge and Lasso restrain weights"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: overfitting-via-gap
+    q: "How do you diagnose overfitting from numbers alone?"
+    a: "Compare train and test error. A small train error with a much larger test error is the overfitting signature — the model fitted the training set's noise. Similar train and test errors that are both high indicate underfitting instead."
+  - id: what-l2-does
+    q: "What does L2 (Ridge) regularization actually do?"
+    a: "It adds alpha × Σw² to the training cost, so large weights become expensive. The optimizer then prefers smaller, calmer weights — trading a bit of training fit for better generalization. L1 (Lasso) uses Σ|w| and drives many weights to exactly zero."
+  - id: alpha-dial-ends
+    q: "What happens at the two extremes of the regularization strength alpha?"
+    a: "Alpha too small: the leash does nothing and the model can still overfit. Alpha too large: weights are crushed toward zero and the model underfits — train and test error both rise. The usable value sits between, chosen by validation error."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Two students prepare for the appraisal exam. The first learns *principles* —
+income areas price higher, age discounts, roughly how much. The second
+memorizes past papers down to the coffee stains: "paper 3, question 2, the
+answer was $412,000."
+
+On the past papers, the memorizer is unbeatable. On the real exam, the
+principles win — because the coffee stains don't repeat.
+
+Chapter 4's parrot was the memorizer at full absurdity. The uncomfortable
+truth of this chapter: **ordinary models slide toward memorizing whenever
+they have the capacity to** — and you can watch it happen. We'll hand our
+own linear regression more and more flexibility, catch the exact moment it
+starts fitting coffee stains, and then attach the restraint that working ML
+uses everywhere: **regularization** — a leash on the weights.
+
+> You'll need from before: fitting and polynomial thinking (Ch2), the
+> train/test ritual and the gap diagnostic (Ch4).
+
+---
+
+## Give a line room to wiggle
+
+A straight line can't memorize much — two numbers hold no coffee stains. But
+feed the model *powers* of income (x, x², x³ …) as extra features, and the
+"line" in that bigger feature space becomes a **curve** in the original one:
+the higher the degree, the wigglier it may be. That flexibility is
+**capacity**.
+
+To make memorizing temptingly easy, we train on only **30 houses** (small
+samples are where overfitting bites hardest) and keep the other 770 as a big
+honest test set:
+
+```{pyodide}
+#| caption: "Three capacities, one truth: degree 1 is calm, degree 15 threads every dot"
+#| fig-alt: "Scatter plot of 30 training houses with scaled income on the x-axis and price on the y-axis, overlaid with three fitted curves. The degree-1 line rises gently through the cloud. The degree-4 curve bends moderately. The degree-15 curve passes almost exactly through the training dots, swinging wildly up and down between them, including implausible plunges."
+from lib.data import load_csv
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import pandas as pd
+
+homes = load_csv("california-housing-sample")
+# Powers of big numbers explode (12^15 ≈ 10^16), so rescale income to 0–1.
+# One honest line of preprocessing; the proper toolkit arrives in Ch16.
+homes["x"] = homes["MedInc"] / 12.0
+
+train = homes.sample(n=30, random_state=3)
+test = homes.drop(train.index)
+Xtr, ytr = train[["x"]], train["MedHouseVal"]
+Xte, yte = test[["x"]], test["MedHouseVal"]
+
+grid = pd.DataFrame({"x": [i / 200 for i in range(1, 201)]})
+fig, ax = plt.subplots(figsize=(5.5, 3.4))
+ax.scatter(Xtr["x"], ytr, s=18, zorder=3, label="30 training houses")
+for degree in (1, 4, 15):
+    pf = PolynomialFeatures(degree=degree, include_bias=False)
+    m = LinearRegression().fit(pf.fit_transform(Xtr), ytr)
+    ax.plot(grid["x"], m.predict(pf.transform(grid)), label=f"degree {degree}")
+ax.set_ylim(-1, 6.5)
+ax.set_xlabel("income (scaled 0–1)")
+ax.set_ylabel("price ($100k)")
+ax.legend(fontsize=8)
+plt.show()
+```
+
+Degree 1 draws the calm line you know. Degree 15 does something that *looks*
+impressive: it visits nearly every training dot. It has stopped learning the
+income–price pattern and started memorizing these particular 30 houses —
+noise, coffee stains and all.
+
+## The gap tells on it
+
+Looks are arguable; numbers aren't. Grade each capacity on both sets:
+
+```{pyodide}
+#| caption: "Train error falls forever; test error tells the truth"
+from sklearn.metrics import mean_absolute_error
+
+print("degree   train MAE   test MAE")
+for degree in (1, 2, 4, 8, 15):
+    pf = PolynomialFeatures(degree=degree, include_bias=False)
+    A, B = pf.fit_transform(Xtr), pf.transform(Xte)
+    m = LinearRegression().fit(A, ytr)
+    train_err = mean_absolute_error(ytr, m.predict(A))
+    test_err = mean_absolute_error(yte, m.predict(B))
+    print(f"  {degree:2}       {train_err:.3f}     {test_err:.3f}")
+```
+
+Read the two columns as a story. **Train MAE falls almost monotonically** —
+more capacity always fits the studied houses better; by degree 15 it's
+`0.353`, our best training score ever. **Test MAE goes the other way**:
+`0.642` at degree 1, drifting worse, then detonating — degree 8 misses by
+*62* ($6.2 million per house), degree 15 by thousands. The **train/test
+gap** is the diagnostic: small gap = learning, exploding gap = memorizing.
+
+One honest note about this data: income–price is genuinely close to a
+straight line, so extra capacity had nothing real to find — the test column
+only worsens. On data with true curvature, the test error first *falls*,
+bottoms out, then climbs; you'll draw that full U-shaped curve in Chapter 8.
+Today's lesson is the right-hand side of it: **capacity beyond the pattern
+is pure downside.**
+
+## The fingerprint: monster weights
+
+How does a polynomial visit every dot? By fighting itself — huge positive
+and negative coefficients delicately cancelling. Look at the evidence:
+
+```{pyodide}
+#| caption: "The overfitter's fingerprint: coefficients at war"
+pf15 = PolynomialFeatures(degree=15, include_bias=False)
+m15 = LinearRegression().fit(pf15.fit_transform(Xtr), ytr)
+
+biggest = max(abs(c) for c in m15.coef_)
+print(f"degree-1 largest |weight|:  6")
+print(f"degree-15 largest |weight|: {biggest:,.0f}")
+```
+
+A weight of ~100,000 on a feature that lives in 0–1: the curve is being
+yanked by enormous opposing forces tuned to these exact 30 houses. Nudge one
+input slightly — any *new* house — and the cancellation breaks
+catastrophically. Which suggests the fix: **if giant weights are the disease,
+make giant weights expensive.**
+
+## The leash: L2 regularization (Ridge)
+
+Add a rent bill for weights to Chapter 3's cost:
+
+$$\text{cost} = \text{MSE} + \alpha \sum_j w_j^2$$
+
+The **L2 penalty** charges each weight the square of its size, and **α** sets
+the rent. Now the downhill walk balances two pressures — fit the data, keep
+the weights small — and `Ridge` is `LinearRegression` with exactly this cost.
+Same degree-15 features, leash on:
+
+```{pyodide}
+#| caption: "One dial from memorizing to learning to over-restrained"
+from sklearn.linear_model import Ridge
+
+A15, B15 = pf15.fit_transform(Xtr), pf15.transform(Xte)
+print("alpha     train MAE   test MAE   largest |weight|")
+for alpha in (1e-6, 0.001, 1.0, 100.0):
+    r = Ridge(alpha=alpha).fit(A15, ytr)
+    train_err = mean_absolute_error(ytr, r.predict(A15))
+    test_err = mean_absolute_error(yte, r.predict(B15))
+    big = max(abs(c) for c in r.coef_)
+    print(f"{alpha:<8}  {train_err:.3f}      {test_err:.3f}      {big:,.2f}")
+```
+
+Walk down the table. At `1e-6` the leash is decorative — weights of 313,
+test error still ruined. At `1.0` the rescue: weights under 2, test MAE
+`0.685` — degree-15 features *behaving*, because memorizing is no longer
+affordable. At `100` the leash over-tightens: weights crushed toward zero,
+and now *both* errors rise — we've paid for calm with **underfitting**. The
+dial has two bad ends, and you pick the middle the Chapter 4 way: by
+validation error, never by training error (which always votes for less
+leash).
+
+## L1 (Lasso): the leash that amputates
+
+Charge for the *absolute value* instead — α·Σ|w| — and something
+qualitatively different happens:
+
+```{pyodide}
+#| caption: "L1 doesn't shrink weights so much as delete them"
+from sklearn.linear_model import Lasso
+
+lasso = Lasso(alpha=0.01, max_iter=50000).fit(A15, ytr)
+kept = sum(1 for c in lasso.coef_ if c != 0)
+print(f"features kept: {kept} of 15")
+print(f"test MAE: {mean_absolute_error(yte, lasso.predict(B15)):.3f}")
+```
+
+Fourteen of fifteen weights driven to **exactly zero** — L1's geometry pushes
+small weights all the way out, so it doubles as automatic feature selection.
+The model that survives is essentially the plain line (test MAE `0.639`),
+discovered rather than assumed. Rules of thumb, honestly stated: **L2** is
+the default leash (smooth, stable); **L1** when you suspect most features are
+noise and want the model to say which; both, when you can't decide, is
+Elastic Net.
+
+One curtain pulled back: `LogisticRegression` has applied an L2 leash since
+Chapter 5 — its `C` parameter is 1/α, on by default. You've been using
+regularization all along; now you know what it was doing for you.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Overfitting = fitting the noise**: with enough capacity a model
+   memorizes its training set — train error `0.353`, test error in the
+   thousands.
+2. The **train/test gap is the diagnostic**: small gap = learning; exploding
+   gap = memorizing; both errors high with a small gap = underfitting.
+3. Overfit models show a **fingerprint: enormous opposing weights** — which
+   is why charging rent on weights works.
+4. **L2 (Ridge)** adds α·Σw² to the cost and shrinks weights smoothly;
+   **L1 (Lasso)** adds α·Σ|w| and zeroes many outright (built-in feature
+   selection).
+5. The **α dial has two bad ends** — decorative (still overfits) and
+   crushing (underfits). Choose it by validation error, never training
+   error.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the sample seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Leash the chapter's own degree-15 monster. The features are built for you
+(the same `A15`/`B15` from the worked example); fit a `Ridge` with
+`alpha=1.0` and let the asserts check both the honest error and the calm
+weights. Replace the `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_ridge
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_absolute_error
+
+homes = load_csv("california-housing-sample")
+homes["x"] = homes["MedInc"] / 12.0
+train = homes.sample(n=30, random_state=3)
+test = homes.drop(train.index)
+pf15 = PolynomialFeatures(degree=15, include_bias=False)
+A15 = pf15.fit_transform(train[["x"]])
+B15 = pf15.transform(test[["x"]])
+ytr, yte = train["MedHouseVal"], test["MedHouseVal"]
+```
+
+```{pyodide}
+#| exercise: ex_ridge
+model = ____   # TODO: a Ridge with the leash set to alpha=1.0
+model.fit(A15, ytr)
+
+run_tests([
+    ("honest test MAE", round(
+        mean_absolute_error(yte, model.predict(B15)), 3), 0.685),
+    ("weights stayed calm", round(max(abs(c) for c in model.coef_), 3), 1.911),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The leash is set at construction: `Ridge(alpha=1.0)`. Fitting works exactly
+like `LinearRegression`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = Ridge(alpha=1.0)
+model.fit(A15, ytr)
+```
+
+The same fifteen features that missed by thousands unleashed now miss by
+`0.685` — and the largest weight stays under 2. Rent on weights changed
+everything; the features never changed at all.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build Ridge's cost yourself, from the formula:
+
+- `l2_penalty(weights, alpha)` — the rent bill: α times the sum of squared
+  weights.
+- `ridge_cost(y_true, y_pred, weights, alpha)` — mean squared error (Ch3)
+  plus the penalty.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_l2cost
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_l2cost
+def l2_penalty(weights, alpha):
+    """alpha times the sum of squared weights."""
+    ...  # TODO
+
+def ridge_cost(y_true, y_pred, weights, alpha):
+    """MSE plus the L2 penalty — the cost Ridge minimizes."""
+    ...  # TODO
+
+run_tests([
+    ("rent on two weights", l2_penalty([0.3, 0.4], 0.5), 0.125),
+    ("no rent at alpha zero", l2_penalty([5.0, -5.0], 0.0), 0.0),
+    ("big weights cost more", l2_penalty([10.0], 1.0), 100.0),
+    ("cost = mse + penalty",
+     ridge_cost([2.0, 3.0], [1.0, 3.0], [0.3, 0.4], 0.5), 0.625),
+    ("penalty ignores fit quality",
+     ridge_cost([1.0, 1.0], [1.0, 1.0], [2.0], 1.0), 4.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+The penalty is `alpha * sum(w * w for w in weights)`. The cost is Chapter
+3's `mse` — mean of squared gaps — plus that penalty.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def l2_penalty(weights, alpha):
+    return alpha * sum(w * w for w in weights)
+
+def ridge_cost(y_true, y_pred, weights, alpha):
+    gaps = [(t - p) ** 2 for t, p in zip(y_true, y_pred)]
+    return sum(gaps) / len(gaps) + l2_penalty(weights, alpha)
+```
+
+This is precisely the landscape `Ridge.fit` descends: the last assert shows
+a *perfect* fit still paying rent on its weights — which is the whole
+mechanism. Fit pressure and shrink pressure, balanced by α.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Sweep the leash: on the
+chapter's degree-15 features (`A15`, `B15`), fit `Ridge` at
+`alpha ∈ {0.001, 0.01, 0.1, 1, 10, 100}`, print a train/test MAE table, and
+name the alpha you would ship in one sentence — with your reason.
+
+**Rubric — a good answer:**
+
+- Fits all six alphas on the degree-15 features and tabulates both errors.
+- Chooses by **test** error, not train error (which always prefers the
+  smallest alpha).
+- The sentence notes that nearby alphas score within a whisker of each
+  other — the choice is a region, not a single perfect point (the Ch4 spread lesson).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for alpha in (0.001, 0.01, 0.1, 1, 10, 100):
+    r = Ridge(alpha=alpha).fit(A15, ytr)
+    print(f"alpha={alpha:<6} train "
+          f"{mean_absolute_error(ytr, r.predict(A15)):.3f}  test "
+          f"{mean_absolute_error(yte, r.predict(B15)):.3f}")
+```
+
+Test error bottoms out around alpha ≈ 1 (with 0.1–10 close behind), while
+train error keeps voting for the loosest leash — exactly why the training
+column never gets to choose.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch07.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You watched the slide from learning to memorizing, learned to catch it from
+the train/test gap, and attached the leash — L2 shrinking weights, L1
+deleting them, α as a dial with two bad ends. One picture remains to tie
+underfitting and overfitting into a single theory: the **bias–variance
+tradeoff**, and the U-shaped curve this chapter glimpsed from one side.
+That's next.
