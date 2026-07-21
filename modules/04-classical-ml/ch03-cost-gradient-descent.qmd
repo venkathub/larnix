@@ -1,0 +1,401 @@
+---
+title: "Cost functions & gradient descent"
+module: "M4 — Classical Machine Learning"
+chapter: 3
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch2 — Linear regression"
+  - "M2 Ch7 — Gradients"
+learning_objectives:
+  - "Explain what a cost function is and why training minimizes squared error"
+  - "Implement one gradient-descent step for a line from the two gradient formulas"
+  - "Diagnose a learning rate that is too high or too low from the cost trace"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - matplotlib
+review_cards:
+  - id: cost-function-job
+    q: "What is a cost function's job in training?"
+    a: "It turns 'how wrong is the model?' into one number that depends on the model's knobs (like w and b). Training then becomes a search for the knob values that make that number as small as possible."
+  - id: the-update-rule
+    q: "What is the gradient-descent update rule?"
+    a: "knob = knob − learning_rate × gradient. The gradient points uphill on the cost surface, so stepping against it moves the knobs downhill toward lower cost."
+  - id: lr-failure-modes
+    q: "How do you recognize a learning rate that is too high or too low?"
+    a: "Too high: the cost trace oscillates or grows every step (the walker overshoots the valley). Too low: the cost creeps down so slowly it looks stuck. Both are read from the cost printed per step."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 2 ended with a quiet trick: the best line came from a **closed-form
+formula**. Plug in the data, out fall `w` and `b`. It felt like a gift because
+it is one — the line is such a friendly model that mathematicians solved it
+once, centuries ago, for everyone.
+
+Almost nothing else in machine learning is that friendly. Logistic regression
+(Chapter 5): no closed form. Neural networks (module 5): none. The intern
+needs a method that works when there is no formula to plug into — and the
+method turns out to be the one *you* used in Chapter 1's stretch exercise,
+when you tweaked a coefficient, re-ran, checked the error, and tweaked again.
+
+That loop, automated, is **gradient descent**: measure how wrong you are, feel
+which direction makes it worse, step the other way, repeat. It powers most of
+modern ML, and by the end of this chapter you will have written it yourself —
+and watched it walk to the exact same `w` and `b` Chapter 2's formula
+produced.
+
+> You'll need from before: `fit`'s two learned numbers (Ch2) and the gradient
+> as the uphill direction whose negative points downhill (M2 Ch7).
+
+---
+
+## Wrongness as a landscape
+
+A **cost function** turns "how wrong is the model?" into a single number that
+depends on the knobs. For a line, the standard choice is **mean squared
+error** — like Chapter 1's MAE but with the gaps *squared* before averaging:
+
+$$\text{MSE}(w, b) = \frac{1}{n}\sum_i \big((w \cdot x_i + b) - y_i\big)^2$$
+
+Why square instead of taking absolute values? Two honest reasons:
+
+- **Squaring makes the landscape smooth.** MAE has a crease at zero error
+  (the V-shape from M2), and a crease has no slope to follow. A downhill walk
+  needs slopes everywhere, and squared error provides them.
+- **Division of labour.** We *train* on MSE because its geometry is kind to
+  the walker, and still *report* MAE because "$65k average miss" is the number
+  a human understands. The two metrics are colleagues, not rivals.
+
+Fix `b` and sweep `w`, and the cost really is a valley:
+
+```{pyodide}
+#| caption: "The cost landscape for one knob — a valley with a bottom"
+#| fig-alt: "Line chart with the weight w on the x-axis from 0 to 0.9 and mean squared error on the y-axis. The curve is a smooth upward-opening parabola with its lowest point near w equals 0.43 — the same weight Chapter 2's formula chose."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+homes = load_csv("california-housing-sample")
+x = homes["MedInc"].to_list()
+y = homes["MedHouseVal"].to_list()
+n = len(x)
+
+def mse(w, b):
+    return sum(((w * xi + b) - yi) ** 2 for xi, yi in zip(x, y)) / n
+
+ws = [i / 100 for i in range(0, 91)]
+costs = [mse(w, 0.410) for w in ws]
+
+fig, ax = plt.subplots(figsize=(5, 3.2))
+ax.plot(ws, costs)
+ax.set_xlabel("weight w  (with b fixed at 0.410)")
+ax.set_ylabel("MSE")
+plt.show()
+```
+
+The bottom of that valley sits near `w ≈ 0.43` — exactly where Chapter 2's
+formula put it. Training is nothing more than *finding the bottom*. With a
+formula when we're lucky; by walking when we're not.
+
+## The direction of downhill
+
+To walk downhill you need the slope under your feet: how the cost changes
+when each knob moves. Differentiate the MSE with respect to each knob (the
+chain rule from M2 Ch8 — the square's derivative times the inside's), and two
+tidy expressions fall out:
+
+$$\frac{\partial \text{MSE}}{\partial w} = \frac{2}{n}\sum_i \big((w x_i + b) - y_i\big)\, x_i
+\qquad
+\frac{\partial \text{MSE}}{\partial b} = \frac{2}{n}\sum_i \big((w x_i + b) - y_i\big)$$
+
+Read them as sentences: each example's *error* — prediction minus truth —
+votes on how to change the knobs. The `b` gradient is the average error
+(doubled); the `w` gradient weights each error by its `x`, because a wrong
+prediction at large `x` says more about the slope. Then the update rule from
+M2 Ch7, once per knob:
+
+$$w \leftarrow w - \eta \cdot \frac{\partial \text{MSE}}{\partial w}
+\qquad
+b \leftarrow b - \eta \cdot \frac{\partial \text{MSE}}{\partial b}$$
+
+where **η (the learning rate)** is the step size. The gradient points uphill;
+the minus sign walks down.
+
+## The walk, written out
+
+Twelve lines of plain Python — no library, no formula:
+
+```{pyodide}
+#| caption: "Gradient descent finds Chapter 2's answer without the formula"
+def gradient_descent(x, y, lr, steps):
+    w, b = 0.0, 0.0
+    for step in range(1, steps + 1):
+        errors = [(w * xi + b) - yi for xi, yi in zip(x, y)]
+        grad_w = 2 * sum(e * xi for e, xi in zip(errors, x)) / n
+        grad_b = 2 * sum(errors) / n
+        w = w - lr * grad_w
+        b = b - lr * grad_b
+        if step in (1, 10, 100, 1000, 3000):
+            print(f"step {step:5}: w={w:.3f}  b={b:.3f}  cost={mse(w, b):.3f}")
+    return w, b
+
+w, b = gradient_descent(x, y, lr=0.01, steps=3000)
+print(f"\nwalked to:    w={w:.3f}, b={b:.3f}")
+print("Ch2 formula:  w=0.432, b=0.410")
+```
+
+Watch the trace: the first step leaps (the valley wall is steep far from the
+bottom), then progress slows as the floor flattens, and by step 3000 the
+walker stands at `w=0.432, b=0.410` — the closed form's answer, found by
+feel. Two completely different roads, the same destination. That agreement is
+your evidence the walk works — which matters, because from Chapter 5 on, the
+walk is the only road there is.
+
+## When the walk goes wrong
+
+The learning rate is the one knob *you* must choose, and both failure modes
+are visible in the cost trace. Same code, different `lr`:
+
+```{pyodide}
+#| caption: "Too big a step: the walker overshoots the valley and climbs"
+for lr, label in [(0.06, "too high"), (0.001, "too low")]:
+    w, b = 0.0, 0.0
+    trace = []
+    for step in range(6):
+        errors = [(w * xi + b) - yi for xi, yi in zip(x, y)]
+        w -= lr * 2 * sum(e * xi for e, xi in zip(errors, x)) / n
+        b -= lr * 2 * sum(errors) / n
+        trace.append(round(mse(w, b), 3))
+    print(f"lr={lr} ({label}): cost per step = {trace}")
+```
+
+- **Too high (`0.06`)**: each step overshoots the bottom and lands *higher*
+  on the far wall — the cost climbs every step (`7.8 → 11.0 → 15.8 → …`).
+  Left running, it heads to infinity.
+- **Too low (`0.001`)**: every step is safe and tiny; after six steps the
+  cost has barely moved. It would arrive, eventually, long after your
+  patience ended.
+
+Between the two sits a usable range, found in practice by trying a few values
+and reading the trace — a skill you'll sharpen on real networks in M5 Ch15.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. A **cost function** maps the model's knobs to one wrongness number;
+   training = minimizing it. For lines we train on **MSE** (smooth landscape)
+   and still report MAE (human-readable).
+2. The **gradients** of MSE for a line are averages of error-votes:
+   `grad_w = (2/n)Σ(error·x)`, `grad_b = (2/n)Σ error`.
+3. **Gradient descent** repeats `knob ← knob − lr · gradient` — measure,
+   feel the slope, step downhill — and needs no closed-form formula.
+4. On the housing data the walk converges to **the same `w, b` as Chapter
+   2's formula** — the evidence it finds real minima.
+5. The **learning rate** has two visible failure modes: too high (cost
+   oscillates/explodes) and too low (cost crawls) — both read from the trace.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same inputs, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+The walk below is missing its two update lines. On this tiny dataset (the
+true line is y = 2x), three steps with `lr=0.1` should land near the answer.
+Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_step
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_step
+xs = [1.0, 2.0, 3.0]
+ys = [2.0, 4.0, 6.0]
+w, b, lr = 0.0, 0.0, 0.1
+
+for _ in range(3):
+    errors = [(w * xi + b) - yi for xi, yi in zip(xs, ys)]
+    grad_w = 2 * sum(e * xi for e, xi in zip(errors, xs)) / len(xs)
+    grad_b = 2 * sum(errors) / len(xs)
+    w = ____  # TODO: step w against its gradient
+    b = ____  # TODO: step b against its gradient
+
+run_tests([
+    ("w after 3 steps", round(w, 4), 1.7007),
+    ("b after 3 steps", round(b, 4), 0.6862),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The update rule is the same for every knob: the knob minus the learning rate
+times its gradient — `w - lr * grad_w` and `b - lr * grad_b`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+xs = [1.0, 2.0, 3.0]
+ys = [2.0, 4.0, 6.0]
+w, b, lr = 0.0, 0.0, 0.1
+
+for _ in range(3):
+    errors = [(w * xi + b) - yi for xi, yi in zip(xs, ys)]
+    grad_w = 2 * sum(e * xi for e, xi in zip(errors, xs)) / len(xs)
+    grad_b = 2 * sum(errors) / len(xs)
+    w = w - lr * grad_w
+    b = b - lr * grad_b
+```
+
+Three steps take `w` from 0 to about 1.70, already most of the way to the
+true slope of 2 — the first step is huge because the valley wall is steep at
+the start.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build the walk's two ingredients from their formulas, in plain Python:
+
+- `mse(y_true, y_pred)` — mean of the squared gaps (the training metric; you
+  wrote its absolute-value sibling in Ch1).
+- `one_step(w, b, xs, ys, lr)` — compute both gradients from the chapter's
+  formulas and return the tuple `(new_w, new_b)` after one update.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_onestep
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_onestep
+def mse(y_true, y_pred):
+    """Mean squared error between two equal-length lists."""
+    ...  # TODO
+
+def one_step(w, b, xs, ys, lr):
+    """One gradient-descent update for the line w*x + b. Returns (new_w, new_b)."""
+    ...  # TODO: errors, grad_w, grad_b, then the two updates
+
+run_tests([
+    ("mse mixed gaps", mse([2.0, 3.0, 1.0], [1.5, 3.5, 2.0]), 0.5),
+    ("mse perfect", mse([1.0, 4.0], [1.0, 4.0]), 0.0),
+    ("first step w", one_step(0.0, 0.0, [1.0, 2.0, 3.0], [2.0, 4.0, 6.0], 0.1)[0],
+     28 / 15),
+    ("first step b", one_step(0.0, 0.0, [1.0, 2.0, 3.0], [2.0, 4.0, 6.0], 0.1)[1],
+     0.8),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+For `one_step`, follow the chapter's worked code line by line: build the
+error list `(w*xi + b) - yi`, then `grad_w = 2 * sum(e * xi …) / len(xs)`,
+`grad_b = 2 * sum(errors) / len(xs)`, and return `(w - lr * grad_w,
+b - lr * grad_b)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def mse(y_true, y_pred):
+    return sum((t - p) ** 2 for t, p in zip(y_true, y_pred)) / len(y_true)
+
+def one_step(w, b, xs, ys, lr):
+    errors = [(w * xi + b) - yi for xi, yi in zip(xs, ys)]
+    grad_w = 2 * sum(e * xi for e, xi in zip(errors, xs)) / len(xs)
+    grad_b = 2 * sum(errors) / len(xs)
+    return w - lr * grad_w, b - lr * grad_b
+```
+
+At `w=b=0` every prediction is 0, so the errors are `[-2, -4, -6]`; the
+gradients come out to −56/3 and −8, and stepping against them gives
+`(28/15, 0.8)`. You have now written the engine that trains most of modern
+ML — M5 grows it, but never replaces it.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Using your `one_step` on
+the tiny dataset above, find a learning rate that brings the cost below
+**0.05 within 15 steps** — and also find one that visibly *diverges*. Print
+the cost per step for both and write one sentence describing how each trace
+told you what was happening.
+
+**Rubric — a good answer:**
+
+- Runs two loops of ≤15 `one_step` calls with different learning rates,
+  printing `mse` each step.
+- One trace ends below 0.05; the other grows or oscillates.
+- The sentence names the visual signature of each (steady descent vs
+  climbing/bouncing cost).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for lr in (0.12, 0.5):
+    w = b = 0.0
+    costs = []
+    for _ in range(15):
+        w, b = one_step(w, b, [1.0, 2.0, 3.0], [2.0, 4.0, 6.0], lr)
+        costs.append(round(mse([2.0, 4.0, 6.0], [w * xi + b for xi in [1.0, 2.0, 3.0]]), 4))
+    print(f"lr={lr}: {costs}")
+```
+
+At `lr=0.12` the cost slides smoothly under 0.05; at `lr=0.5` it bounces
+upward within a few steps — the overshoot signature from the chapter, on
+data small enough to watch every number.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now hold the module's engine: wrongness as a landscape, the gradient as
+the slope under your feet, and the downhill walk that finds the bottom with
+no formula required — verified against Chapter 2's closed form. From here the
+module can train models that have no closed form at all, and the very next
+one is the workhorse of applied ML: **logistic regression**, where the
+question changes from *how much?* to *which one?*

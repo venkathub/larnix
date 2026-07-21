@@ -1,0 +1,35 @@
+title: "Chapter 3 — quick check"
+id: "m4-ch03-cost-gradient-descent"
+questions:
+  - id: why-squared-error
+    prompt: "Why does training use mean squared error rather than mean absolute error?"
+    options:
+      - "Squared error is what humans find easiest to interpret"
+      - "MAE cannot be computed for a linear model"
+      - "Squaring gives a smooth landscape with a slope everywhere, which a downhill walk needs"
+    answer: 2
+    explanation: "MAE has a crease at zero error where there is no slope to follow; squaring smooths the landscape so gradients exist everywhere. We still report MAE, because an average miss in dollars is what a human reads."
+  - id: gradient-sign
+    prompt: "During training, the gradient of the cost with respect to w is positive. What should the next update do?"
+    options:
+      - "Decrease w, because the gradient points uphill and we step against it"
+      - "Increase w, because a positive gradient means w is too small"
+      - "Leave w alone and change the learning rate instead"
+    answer: 0
+    explanation: "A positive gradient says cost rises as w rises — uphill is that way. The update rule w ← w − lr·grad steps against the gradient, so w decreases and the cost goes down."
+  - id: trace-diagnosis
+    prompt: "Your cost trace reads 4 → 9 → 31 → 190. What is the most likely problem?"
+    options:
+      - "The data has too many features for gradient descent"
+      - "The learning rate is too high — each step overshoots the valley and lands higher"
+      - "The learning rate is too low — the walk has stalled"
+    answer: 1
+    explanation: "A cost that grows every step is the overshoot signature: the step size carries the walker past the bottom and up the far wall, further out each time. Shrink the learning rate."
+  - id: when-walk-needed
+    prompt: "Chapter 2 found the line with a formula. Why learn the downhill walk at all?"
+    options:
+      - "The walk gives more accurate answers than the formula on the same model"
+      - "Most models (logistic regression, neural networks) have no closed-form solution — walking is the only road"
+      - "The formula only works on datasets with fewer than 1,000 rows"
+    answer: 1
+    explanation: "The closed form is a special privilege of the linear model. For nearly everything after this chapter no such formula exists, and minimizing the cost by gradient descent is how those models train."
