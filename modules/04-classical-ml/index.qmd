@@ -23,7 +23,7 @@ classification — so every new algorithm lands on familiar ground.
 
 | # | Chapter | Tier |
 |---|---------|------|
-| 1 | What is learning? | 🟢 |
+| 1 | [What is learning?](ch01-what-is-learning.qmd) | 🟢 |
 | 2 | Linear regression | 🟡 |
 | 3 | Cost functions & gradient descent | 🟡 |
 | 4 | Generalization: train/val/test & cross-validation | 🟡 |

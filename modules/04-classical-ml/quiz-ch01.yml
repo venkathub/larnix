@@ -1,0 +1,35 @@
+title: "Chapter 1 — quick check"
+id: "m4-ch01-what-is-learning"
+questions:
+  - id: learning-inversion
+    prompt: "What changes when a program 'learns' instead of being programmed with rules?"
+    options:
+      - "The program runs faster because the rules are compiled"
+      - "The rules are derived from example data instead of being written by hand"
+      - "The program no longer needs any input data to make predictions"
+    answer: 1
+    explanation: "Learning inverts the workflow: the programmer supplies examples (features plus known answers), and the algorithm fills in the rule's numbers — instead of a human hand-writing every rule and exception."
+  - id: features-target-id
+    prompt: "In the housing table, MedInc and HouseAge are used to predict MedHouseVal. Which is which?"
+    options:
+      - "MedInc and HouseAge are targets; MedHouseVal is a feature"
+      - "All three are features; the target is hidden from us"
+      - "MedInc and HouseAge are features; MedHouseVal is the target"
+    answer: 2
+    explanation: "Features are the inputs the model may look at (income, age); the target is the column it must predict (the house value). One row bundles the features with the known answer."
+  - id: classify-scenario
+    prompt: "A hospital wants to group patient records into similar clusters, with no diagnosis labels available. What kind of learning problem is this?"
+    options:
+      - "Unsupervised learning"
+      - "Supervised regression"
+      - "Supervised classification"
+    answer: 0
+    explanation: "No answers are provided — there is no target column — so the program must find structure on its own. That is unsupervised learning; with diagnosis labels to predict, it would become supervised classification."
+  - id: what-mean-learner-learned
+    prompt: "The 'predict the average' learner beat every hand-written rule in the chapter. What did it actually learn?"
+    options:
+      - "A single number — the mean sale price — read from the example answers"
+      - "The full pricing formula used by California appraisers"
+      - "Nothing; it was given the answer by the programmer"
+    answer: 0
+    explanation: "Its entire rule is one number, but that number came from the data (the mean of the sold prices), not from anyone's opinion — which is exactly why it beat rules whose numbers were guessed by hand."

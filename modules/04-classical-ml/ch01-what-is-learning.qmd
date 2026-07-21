@@ -1,0 +1,365 @@
+---
+title: "What is learning?"
+module: "M4 — Classical Machine Learning"
+chapter: 1
+difficulty: "beginner"
+prereqs:
+  - "M3 Ch2 — Pandas Series & DataFrame"
+learning_objectives:
+  - "Explain the difference between writing rules by hand and learning rules from examples"
+  - "Name the parts of a supervised-learning problem: features, target, model, prediction"
+  - "Implement mean absolute error and use it to compare two predictors on the same data"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 18
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+review_cards:
+  - id: what-learning-means
+    q: "In machine learning, what does it mean for a program to 'learn'?"
+    a: "Instead of a programmer writing the rules by hand, the program derives its rules from examples — pairs of inputs and known answers — and can then apply them to inputs it has never seen."
+  - id: features-vs-target
+    q: "What are the features and the target in a supervised-learning problem?"
+    a: "Features are the input columns the model may look at (income, house age, rooms…); the target is the column it must predict (the house price). One row = one example."
+  - id: supervised-vs-unsupervised
+    q: "What separates supervised from unsupervised learning?"
+    a: "Supervised learning trains on examples that include the right answer (the target) — predicting a price or a species. Unsupervised learning gets no answers and looks for structure on its own, such as grouping similar rows."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=beginner >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+First day at the appraisal firm. Your boss slides a laptop across the desk:
+*"Write us a program that prices houses."*
+
+You know Python, so you start typing rules. High-income neighbourhood? Price it
+high. Old building? Knock something off. Near the coast? Add a premium. Twenty
+minutes in, the exceptions arrive: an old cottage in a rich suburb, a new flat
+in a cheap one, a tiny place with an ocean view. Every fix spawns two new
+special cases, and you have no idea whether your latest tweak made the program
+better or worse overall.
+
+Then the senior appraiser walks past and says the sentence this whole module is
+built on: *"Stop writing the rules. Show it sold houses, and let it work the
+rules out."*
+
+That inversion — from **rules written by hand** to **rules learned from
+examples** — is what "machine learning" literally means. This chapter makes you
+feel the difference on real data, with real numbers.
+
+> You'll need from before: loading and handling a DataFrame (M3 Ch2). No new
+> tools today — the ideas are the content.
+
+---
+
+## The intern and the exam
+
+Picture the learning setup as an apprenticeship. The intern (our program) is
+handed a stack of **sold houses** — for each one, the neighbourhood's median
+income, the building age, the room counts, *and the price it actually sold
+for*. The intern's job is to find the pattern that connects the first things to
+the last one.
+
+Two pieces of vocabulary, used constantly from here on:
+
+- **Features** — the input columns the intern may look at (income, age,
+  rooms…).
+- **Target** — the column to predict (the sale price).
+
+One row of the table = one worked example, with the answer included.
+
+And one warning, planted now and paid off in Chapter 4: the intern will
+eventually be graded **only on houses they have never seen**. Memorizing the
+stack is not the job. Finding the pattern is.
+
+## Meet the data
+
+The module's running dataset is a vendored sample of **California Housing** —
+800 census block groups from 1990, each with eight measured features and the
+median house value. Prices are in units of **$100,000** (so `2.135` means about
+$213,500 — in 1990 dollars; the vintage is part of the data's honesty).
+
+```{pyodide}
+#| caption: "800 sold 'houses', with the answers included"
+from lib.data import load_csv
+
+homes = load_csv("california-housing-sample")
+print(homes.shape)
+print(homes[["MedInc", "HouseAge", "AveRooms", "MedHouseVal"]].head(3))
+```
+
+`MedInc` (median income, in tens of thousands), `HouseAge`, and `AveRooms` are
+features. `MedHouseVal` — the median house value — is the target.
+
+## Round one: rules by hand
+
+Play the boss's original game. Here are three honest attempts an intern might
+type *before looking at any sold prices*, from crude to reasonably thoughtful:
+
+```{pyodide}
+#| caption: "Three hand-written pricing rules — and how wrong each one is"
+prices = homes["MedHouseVal"]
+
+# Rule A: every California house costs about $300k.
+guess_a = 3.0
+# Rule B: price tracks income one-for-one.
+guess_b = homes["MedInc"]
+# Rule C: refined — half the income figure, plus a base of $100k.
+guess_c = homes["MedInc"] / 2 + 1
+
+for name, guess in [("A: flat $300k", guess_a),
+                    ("B: price = income", guess_b),
+                    ("C: income/2 + 1", guess_c)]:
+    mae = (prices - guess).abs().mean()
+    print(f"Rule {name:18} average miss: {mae:.3f}")
+```
+
+The number printed for each rule is the **mean absolute error (MAE)**: for
+every house, take the gap between the guess and the true price, drop the sign,
+and average the gaps. It is the module's first evaluation metric — one number
+that says *how wrong, on average*. Rule C, the intern's best effort, still
+misses by about `1.094` — roughly **$109,000 per house**.
+
+## Round two: rules from examples
+
+Now let the data speak. The dumbest possible "learner" reads the sold prices
+and derives a one-number rule: *predict the average*.
+
+```{pyodide}
+#| caption: "The dumbest learner: one number, read from the data"
+learned_mean = prices.mean()
+mae_mean = (prices - learned_mean).abs().mean()
+
+print(f"learned rule: always predict {learned_mean:.3f}")
+print(f"average miss: {mae_mean:.3f}")
+```
+
+One line of "learning" — computing a mean — beats every hand-written rule
+above. And the learner never needed our opinions about coasts or cottages; it
+looked at the answers.
+
+One step smarter: split neighbourhoods into three income groups and learn the
+average price *of each group* from the examples:
+
+```{pyodide}
+#| caption: "A three-rule learner: group by income, learn each group's average"
+import pandas as pd
+
+buckets = pd.cut(homes["MedInc"], bins=[0, 2.5, 4.5, 100],
+                 labels=["low", "mid", "high"])
+group_price = prices.groupby(buckets, observed=True).mean()
+print(group_price.round(3))
+
+predictions = buckets.map(group_price).astype(float)
+mae_buckets = (prices - predictions).abs().mean()
+print(f"average miss: {mae_buckets:.3f}")
+```
+
+Three learned numbers — about `1.267`, `1.870`, `3.064` — and the average miss
+drops to `0.750`. Notice what we did and did not do: we chose the *shape* of
+the rule (three income groups), but every number inside it came from the
+examples. That division of labour — **you pick the model's shape, the data
+fills in the numbers** — is machine learning in one sentence. In Chapter 2 an
+algorithm replaces the three buckets with a smooth line, and the miss shrinks
+again.
+
+## The map of learning problems
+
+What you built is one corner of a small map worth memorizing:
+
+- **Supervised learning** — the examples include the answer (our sold prices).
+  Two flavours:
+  - **Regression**: the target is a number → *how much?* (house price).
+  - **Classification**: the target is a category → *which one?* (penguin
+    species, spam vs not-spam).
+- **Unsupervised learning** — no answers provided. The program looks for
+  structure on its own: grouping similar neighbourhoods, spotting odd rows.
+  It arrives in Chapter 17.
+
+Everything up to Chapter 16 is supervised: this module's spine is learning
+from answered examples and then proving yourself on unanswered ones.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Machine learning inverts programming**: instead of writing rules by hand,
+   you show the program examples and it derives the rules.
+2. In supervised learning, **features** are the input columns and the
+   **target** is the column to predict; one row is one answered example.
+3. **MAE** (mean absolute error) — the average size of the gaps between
+   predictions and truth — turns "how good is this predictor?" into one
+   comparable number.
+4. Even the dumbest learner (predict the average) beat our best hand-written
+   rule, because its numbers came from the data.
+5. **Regression** predicts a number, **classification** predicts a category,
+   and **unsupervised** learning finds structure with no answers given.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same inputs, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Rules-by-hand, as code. Complete `price_by_income` so it implements the
+intern's Rule C: half the income figure, plus a base of 1 (both in $100k
+units). Replace `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_rule
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_rule
+def price_by_income(med_inc):
+    """Rule C: predicted price = med_inc / 2 + 1 (units of $100k)."""
+    return ____  # TODO: implement the rule
+
+run_tests([
+    ("income 3.0", price_by_income(3.0), 2.5),
+    ("income 5.0", price_by_income(5.0), 3.5),
+    ("income 0.0", price_by_income(0.0), 1.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The rule is the formula from the chapter, written as a return statement:
+divide `med_inc` by 2, then add 1.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def price_by_income(med_inc):
+    return med_inc / 2 + 1
+```
+
+A hand-written rule is a function from features to a prediction. Every model
+in this module is that same thing — the difference is where its numbers come
+from.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Write the module's first metric yourself, from its definition. `mae(y_true,
+y_pred)` takes two equal-length lists of numbers and returns the **mean
+absolute error**: the average of the absolute gaps `|true − predicted|`. Use
+plain Python (a loop or a comprehension — no library needed).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_mae
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_mae
+def mae(y_true, y_pred):
+    """Mean absolute error between two equal-length lists of numbers."""
+    ...  # TODO: implement from the definition
+
+run_tests([
+    ("mixed gaps", mae([2.0, 3.0, 1.0], [1.5, 3.5, 2.0]), 2 / 3),
+    ("perfect predictions", mae([1.0, 1.0], [1.0, 1.0]), 0.0),
+    ("symmetric misses", mae([0.0, 4.0], [2.0, 2.0]), 2.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+Pair the lists with `zip(y_true, y_pred)`, compute `abs(t - p)` for each pair,
+sum the gaps, and divide by the number of pairs with `len(y_true)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def mae(y_true, y_pred):
+    gaps = [abs(t - p) for t, p in zip(y_true, y_pred)]
+    return sum(gaps) / len(gaps)
+```
+
+You will meet this function again in Chapter 2 (as sklearn's
+`mean_absolute_error`) and use it to judge every regression model in the
+module. Now you know exactly what it computes, because you wrote it.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Beat the intern: invent a
+better *hand-written* rule than Rule C using any features you like
+(`homes["HouseAge"]`, `homes["AveRooms"]`, …), compute its MAE on `prices` the
+way the chapter did, and try to get under the bucket learner's `0.750`. Then
+write one honest sentence about how it felt.
+
+**Rubric — a good answer:**
+
+- Defines a rule that maps feature columns to a predicted price.
+- Computes its MAE on `prices` with the same `(prices - guess).abs().mean()`
+  pattern as the chapter.
+- Reports the number, whether or not it beats `0.750`.
+- The closing sentence says something true about the experience — most
+  answers discover that hand-tuning numbers *is* a slow, manual imitation of
+  what the learner did instantly.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+guess = homes["MedInc"] / 2 + 0.5 + homes["AveRooms"] / 10
+mae_hand = (prices - guess).abs().mean()
+print(f"my rule's average miss: {mae_hand:.3f}")
+```
+
+Tweaking coefficients by hand, re-running, and watching the MAE is exactly
+the loop a learning algorithm automates — Chapter 3 shows the automated
+version (gradient descent) walking that loop for you.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch01.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now hold the module's core idea: a model is a rule from features to a
+prediction, and *learning* means filling that rule's numbers in from examples
+instead of by hand — judged by a single honest number like MAE. Our best
+learner so far has three rules and misses by $75k on average. Next chapter, an
+algorithm learns a **smooth line** through the data — the first real model of
+the module: **linear regression**.

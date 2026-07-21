@@ -6,6 +6,7 @@ built-in, P2-D6).
 
 > **Status: in progress** (P2 build, `docs/phases/P2_SPEC.md §6.B`). Chapter
 > files land one at a time; the landing page table gains links as they do.
+> Built so far: [Ch1 — What is learning?](ch01-what-is-learning.qmd)
 
 ## Prerequisites
 
