@@ -1,0 +1,450 @@
+---
+title: "Logistic regression"
+module: "M4 — Classical Machine Learning"
+chapter: 5
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch2 — Linear regression"
+  - "M4 Ch4 — Generalization: train/val/test & cross-validation"
+  - "M3 Ch2 — Pandas Series & DataFrame"
+learning_objectives:
+  - "Explain why a straight line fails at which-one questions and how the sigmoid fixes it"
+  - "Implement sigmoid(z) and a threshold classifier, and read predict_proba output"
+  - "Fit logistic regression with a proper split and report held-out accuracy"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: sigmoid-job
+    q: "What does the sigmoid function do in logistic regression?"
+    a: "It squashes the weighted sum w·x + b (which ranges over all numbers) into (0, 1), so the model's output reads as a probability of belonging to the positive class. At z = 0 it outputs exactly 0.5."
+  - id: proba-vs-decision
+    q: "What is the difference between predict_proba and predict?"
+    a: "predict_proba returns the model's confidence (a probability per class); predict applies a threshold — 0.5 by default — to turn that confidence into a decision. The threshold is policy you choose, separate from the learned model."
+  - id: logistic-is-linear-plus-squash
+    q: "How is logistic regression related to linear regression?"
+    a: "It is the same weighted sum w·x + b passed through a sigmoid. The linear part scores the example; the sigmoid converts the score into a probability. It trains by gradient descent — there is no closed form."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+New counter, new question. For four chapters the intern answered *how much?* —
+a number. Today a field station sends over penguin measurements and asks
+*which one?* — **Adelie or Gentoo?** A category, not a quantity.
+
+The data is an old friend: the **Palmer Penguins** you cleaned and explored
+all through M3, now back as a machine-learning problem. And the intern's first
+instinct is the obvious one — we own a perfectly good line, so code the
+species as numbers (Adelie = 0, Gentoo = 1) and fit linear regression to it.
+
+That instinct produces a model which announces, with a straight face, that a
+small penguin is species `-0.51`. This chapter is about the one bend that
+fixes it: keep the line, but squash its output into a **probability** — and
+then decide how confident is confident enough.
+
+> You'll need from before: fit/predict and the split-first ritual (Ch2, Ch4)
+> and DataFrame handling (M3 Ch2). Every score in this chapter is a held-out
+> score — the Chapter 4 spine is now standard practice.
+
+---
+
+## Two clouds, one question
+
+Keep the Adelie and Gentoo rows, drop rows with missing measurements, and
+plot the single most telling feature:
+
+```{pyodide}
+#| caption: "Flipper length almost separates the two species by itself"
+#| fig-alt: "Strip plot with flipper length in millimetres on the x-axis from about 170 to 235. Adelie penguins cluster between roughly 172 and 210 mm and Gentoo penguins between roughly 203 and 231 mm, forming two clouds that overlap only in a narrow band around 205 to 210 mm."
+from lib.data import load_csv
+import matplotlib.pyplot as plt
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Gentoo"])].dropna(
+    subset=["flipper_length_mm", "body_mass_g",
+            "bill_length_mm", "bill_depth_mm"])
+print(two["species"].value_counts())
+
+fig, ax = plt.subplots(figsize=(5.5, 2.6))
+for species, level in [("Adelie", 0), ("Gentoo", 1)]:
+    sub = two[two["species"] == species]
+    ax.scatter(sub["flipper_length_mm"], [level] * len(sub),
+               s=10, alpha=0.4, label=species)
+ax.set_xlabel("flipper length (mm)")
+ax.set_yticks([0, 1], ["Adelie", "Gentoo"])
+ax.legend(loc="center right")
+plt.show()
+```
+
+Two clouds with a narrow overlap around 205–210 mm. A model should look at a
+flipper and say how strongly it believes *Gentoo* — high certainty far from
+the overlap, honest doubt inside it.
+
+## The line, embarrassed
+
+Code the target as `Gentoo = 1, Adelie = 0` and fit Chapter 2's line:
+
+```{pyodide}
+#| caption: "Linear regression answering a which-one question — badly"
+from sklearn.linear_model import LinearRegression
+import pandas as pd
+
+y = (two["species"] == "Gentoo").astype(int)
+
+line = LinearRegression().fit(two[["flipper_length_mm"]], y)
+tries = pd.DataFrame({"flipper_length_mm": [170.0, 200.0, 235.0]})
+for mm, val in zip(tries["flipper_length_mm"], line.predict(tries)):
+    print(f"flipper {mm:.0f} mm -> species {val:.2f}")
+```
+
+Species `-0.51`. Species `1.43`. The line does what lines do — runs off to
+infinity in both directions — but *belonging* is bounded: it lives between
+"certainly Adelie" (0) and "certainly Gentoo" (1). We need the line's score,
+delivered on a 0-to-1 scale.
+
+## The squash: sigmoid
+
+The fix is one function. The **sigmoid** takes any number and squashes it
+into the open interval (0, 1):
+
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+```{pyodide}
+#| caption: "The sigmoid: every score on the number line becomes a probability"
+#| fig-alt: "Line chart of the sigmoid function with z on the x-axis from minus 8 to 8 and output on the y-axis from 0 to 1. The curve is an S shape: near 0 for very negative z, exactly 0.5 at z equals 0, and near 1 for large positive z, with the steepest rise around the middle."
+import math
+
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
+
+zs = [z / 10 for z in range(-80, 81)]
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(zs, [sigmoid(z) for z in zs])
+ax.axhline(0.5, ls=":", lw=1)
+ax.axvline(0, ls=":", lw=1)
+ax.set_xlabel("z  (the line's score)")
+ax.set_ylabel("sigmoid(z)")
+plt.show()
+print(f"sigmoid(-2)={sigmoid(-2):.4f}  sigmoid(0)={sigmoid(0):.1f}  "
+      f"sigmoid(2)={sigmoid(2):.4f}")
+```
+
+Read it as a dial: hugely negative scores land near 0, hugely positive near
+1, and a score of exactly 0 lands on 0.5 — perfect doubt. **Logistic
+regression is Chapter 2's weighted sum passed through this squash:**
+
+$$P(\text{Gentoo}) = \sigma(w \cdot \text{flipper} + b)$$
+
+Same learned ingredients — one weight per feature plus an intercept — new
+output scale. One more Chapter 3 payoff: with the sigmoid in the model there
+is **no closed-form formula** for the best `w, b`. Under `fit`, sklearn
+minimizes a cost by the downhill walk. The walk was never optional; it was
+early.
+
+## Fit it properly
+
+The Chapter 4 ritual, without ceremony — split first, fit on train, look at
+held-out penguins:
+
+```{pyodide}
+#| caption: "Probabilities for penguins the model never saw"
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+Xtr, Xte, ytr, yte = train_test_split(
+    two[["flipper_length_mm"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+
+clf = LogisticRegression()
+clf.fit(Xtr, ytr)
+
+probe = pd.DataFrame({"flipper_length_mm": [181.0, 210.0, 230.0]})
+for mm, p in zip(probe["flipper_length_mm"], clf.predict_proba(probe)[:, 1]):
+    print(f"flipper {mm:.0f} mm -> P(Gentoo) = {p:.3f}")
+print(f"\nlearned w = {clf.coef_[0][0]:.3f}, b = {clf.intercept_[0]:.3f}")
+print(f"P = 0.5 exactly at flipper = {-clf.intercept_[0] / clf.coef_[0][0]:.1f} mm")
+```
+
+The new verb is **`predict_proba`**: confidence, not verdicts. A 181 mm
+flipper: `0.000` — certainly Adelie. A 230 mm: `1.000` — certainly Gentoo.
+And 210 mm, inside the overlap zone: `0.948` — probably Gentoo, with visible
+doubt. (`stratify=y` is one new split option: it deals both species into the
+test set in the same proportions as the whole data — good manners for
+classification splits.) The learned numbers even have geometry: the model's
+doubt is centred at `206.1` mm, right in the overlap band from the first
+plot.
+
+Verdicts, when you want them, come from **`predict`** — which is nothing but
+"probability ≥ 0.5":
+
+```{pyodide}
+#| caption: "The held-out score — accuracy, our first classification metric"
+pred = clf.predict(Xte)
+print(f"held-out accuracy: {accuracy_score(yte, pred):.3f}")
+```
+
+`0.986` — the fraction of held-out penguins called correctly: 68 of 69. A
+strong start, and a metric to handle with care: **accuracy has famous ways of
+lying**, and the whole of Chapter 6 is about catching it.
+
+## The threshold is policy, not model
+
+That 0.5 inside `predict` is a *choice* — and on an easy problem you barely
+notice it exists. So switch to a harder pair for a moment: Adelie vs
+**Chinstrap** by bill length, where the clouds genuinely overlap and
+borderline probabilities appear. Same code, new question: what happens as we
+demand more confidence before calling "Chinstrap"?
+
+```{pyodide}
+#| caption: "Same model, three thresholds — three different policies"
+hard = df[df["species"].isin(["Adelie", "Chinstrap"])].dropna(
+    subset=["bill_length_mm"])
+yh = (hard["species"] == "Chinstrap").astype(int)
+hard_Xtr, hard_Xte, hard_ytr, hard_yte = train_test_split(
+    hard[["bill_length_mm"]], yh,
+    test_size=0.25, random_state=42, stratify=yh)
+
+chin = LogisticRegression().fit(hard_Xtr, hard_ytr)
+probs = chin.predict_proba(hard_Xte)[:, 1]
+print(f"held-out penguins: {len(hard_yte)}, "
+      f"truly Chinstrap: {int(hard_yte.sum())}\n")
+
+for t in (0.3, 0.5, 0.8):
+    called = probs >= t
+    missed = int((~called & (hard_yte == 1)).sum())
+    false_alarm = int((called & (hard_yte == 0)).sum())
+    print(f"threshold {t}: called Chinstrap {int(called.sum()):>2}, "
+          f"missed real Chinstraps {missed}, false alarms {false_alarm}")
+```
+
+At 0.3 and 0.5 the verdicts happen to agree; raise the bar to **0.8** and the
+model refuses the borderline birds — the missed Chinstraps jump from 1 to 3.
+Nothing about the *model* changed; the **policy** did. Where you set the bar
+depends on which mistake costs more — missing a case, or raising a false
+alarm — and that trade-off deserves better vocabulary than "accuracy".
+Chapter 6 provides it: precision, recall, and the confusion matrix.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Which-one questions need probabilities, not line outputs** — a line
+   happily predicts species `-0.51`; belonging lives in (0, 1).
+2. The **sigmoid** σ(z) = 1/(1+e⁻ᶻ) squashes any score into (0, 1), with
+   σ(0) = 0.5 — perfect doubt.
+3. **Logistic regression = linear regression's weighted sum + the sigmoid**,
+   trained by gradient descent (no closed form exists).
+4. **`predict_proba` gives confidence; `predict` applies a threshold** —
+   0.5 by default. On our held-out penguins: accuracy `0.986`.
+5. The **threshold is policy**: raising it trades missed positives for fewer
+   false alarms. Choosing it well needs Chapter 6's metrics.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+The classification ritual: split (done for you, seeded), fit, read a
+probability, report held-out accuracy. Replace the `____`s, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_clf
+from lib.grader import run_tests
+from lib.data import load_csv
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Gentoo"])].dropna(
+    subset=["flipper_length_mm", "body_mass_g",
+            "bill_length_mm", "bill_depth_mm"])
+y = (two["species"] == "Gentoo").astype(int)
+Xtr, Xte, ytr, yte = train_test_split(
+    two[["flipper_length_mm"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+```
+
+```{pyodide}
+#| exercise: ex_clf
+model = LogisticRegression()
+model.fit(____, ____)   # TODO: learn from the training rows only
+
+run_tests([
+    ("P(Gentoo) for a 210 mm flipper", round(float(
+        model.predict_proba(pd.DataFrame({"flipper_length_mm": [210.0]}))[0, 1]
+    ), 3), 0.948),
+    ("held-out accuracy", round(
+        accuracy_score(yte, model.predict(Xte)), 3), 0.986),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Identical to Chapter 4's ritual: the model learns from `Xtr, ytr` and is
+graded on the held-out `Xte, yte`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = LogisticRegression()
+model.fit(Xtr, ytr)
+```
+
+Fit on train, grade on test — with `predict_proba` as the new lens: the
+210 mm penguin sits in the overlap zone, and the model says so with `0.948`
+rather than a flat verdict.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the chapter's two moving parts yourself, in plain Python:
+
+- `sigmoid(z)` — the squash, from its formula (use `math.exp`).
+- `classify(probs, threshold)` — turn a list of probabilities into 0/1
+  verdicts: 1 when the probability is **greater than or equal to** the
+  threshold.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_sigmoid
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_sigmoid
+import math
+
+def sigmoid(z):
+    """Squash any number into (0, 1)."""
+    ...  # TODO: the formula
+
+def classify(probs, threshold):
+    """Return a list of 0/1 verdicts: 1 where prob >= threshold."""
+    ...  # TODO
+
+run_tests([
+    ("perfect doubt", sigmoid(0), 0.5),
+    ("confident yes", round(sigmoid(2), 4), 0.8808),
+    ("confident no", round(sigmoid(-2), 4), 0.1192),
+    ("mirror symmetry", round(sigmoid(3) + sigmoid(-3), 6), 1.0),
+    ("default policy", classify([0.2, 0.5, 0.9], 0.5), [0, 1, 1]),
+    ("strict policy", classify([0.2, 0.5, 0.9], 0.8), [0, 0, 1]),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`sigmoid` is one line: `1 / (1 + math.exp(-z))`. For `classify`, a list
+comprehension over `probs` with a conditional — remember the boundary case:
+exactly-at-threshold counts as a 1.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
+
+def classify(probs, threshold):
+    return [1 if p >= threshold else 0 for p in probs]
+```
+
+Note the symmetry check: σ(z) + σ(−z) = 1, always — equal scores either
+side of zero are equal confidences in opposite directions. And `classify` is
+the entire gap between `predict_proba` and `predict`: one comparison.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). The flipper model scored
+`0.986`. Can the *bill* do better? Fit a logistic regression on
+`["bill_length_mm", "bill_depth_mm"]` with the same split settings
+(`test_size=0.25, random_state=42, stratify=y`), report held-out accuracy,
+and answer in one sentence: which measurement separates Adelie from Gentoo
+more cleanly — and how sure can you be, given the test set is only 69
+penguins?
+
+**Rubric — a good answer:**
+
+- Splits with the stated settings and fits on the two bill columns.
+- Reports held-out accuracy (not training accuracy).
+- The sentence compares the two models *and* acknowledges that one or two
+  penguins of difference on a 69-bird test set is thin evidence (the Ch4
+  spread lesson, applied).
+
+<details><summary>Show one possible answer</summary>
+
+```python
+Xtr2, Xte2, ytr2, yte2 = train_test_split(
+    two[["bill_length_mm", "bill_depth_mm"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+bill = LogisticRegression(max_iter=1000).fit(Xtr2, ytr2)
+print(f"bill model held-out accuracy: "
+      f"{accuracy_score(yte2, bill.predict(Xte2)):.3f}")
+```
+
+The bill pair scores `1.000` here — one penguin better than the flipper's
+`0.986`. On 69 test birds that difference is a single bird: real, but far
+too thin to declare a winner without cross-validation.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The intern can now answer *which one?* — with a probability first and a
+verdict second, and with the threshold understood as policy rather than
+truth. The score we reported, accuracy, did honest work on balanced penguin
+data. But accuracy has a dark side: on lopsided problems it rewards models
+that learn nothing. Next chapter we catch it in the act — **classification
+metrics**: the confusion matrix, precision, recall, F1, and ROC-AUC.

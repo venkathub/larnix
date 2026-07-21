@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m4-ch05-logistic-regression"
+questions:
+  - id: why-line-fails
+    prompt: "Why is plain linear regression the wrong tool for predicting Adelie (0) vs Gentoo (1)?"
+    options:
+      - "Lines can only be fitted to data with more than one feature"
+      - "Its output runs over all numbers — it will predict values like -0.5 or 1.4, which cannot be read as belonging"
+      - "It cannot be trained on a column of zeros and ones"
+    answer: 1
+    explanation: "You can fit the line, but its output is unbounded, while belonging lives between 0 and 1. The sigmoid squashes the line's score into that range so it reads as a probability."
+  - id: proba-meaning
+    prompt: "clf.predict_proba(x)[0, 1] returns 0.948 for a penguin. What does that mean?"
+    options:
+      - "The model assigns 94.8% probability that this penguin is the positive class (Gentoo)"
+      - "94.8% of training penguins had this flipper length"
+      - "The model is 94.8% accurate on penguins like this one"
+    answer: 0
+    explanation: "predict_proba is the model's confidence for each class on this one example — not an accuracy and not a data frequency. The verdict from predict is this probability compared against a threshold."
+  - id: sigmoid-at-zero
+    prompt: "What is sigmoid(0), and why does that value matter?"
+    options:
+      - "0 — the model outputs the negative class at a score of zero"
+      - "1 — a zero score means certain membership"
+      - "0.5 — a score of zero is the point of perfect doubt, which is where the default decision boundary sits"
+    answer: 2
+    explanation: "σ(0) = 1/(1+e⁰) = 0.5. The score w·x + b crossing zero is exactly where the probability crosses 0.5 — the default decision boundary in feature space."
+  - id: threshold-policy-transfer
+    prompt: "A screening model flags patients for a cheap follow-up test; missing a real case is costly, a false alarm is not. How should the threshold move from the default 0.5?"
+    options:
+      - "Down — demand less confidence before flagging, catching more real cases at the price of extra false alarms"
+      - "Up — demand more confidence so fewer patients are flagged"
+      - "It should stay at 0.5, which is always the optimal choice"
+    answer: 0
+    explanation: "The threshold is policy: when misses are expensive and false alarms are cheap, lower the bar so borderline cases get flagged. The vocabulary for reasoning about this trade-off — precision and recall — is Chapter 6."

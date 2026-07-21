@@ -27,7 +27,7 @@ classification — so every new algorithm lands on familiar ground.
 | 2 | [Linear regression](ch02-linear-regression.qmd) | 🟡 |
 | 3 | [Cost functions & gradient descent](ch03-cost-gradient-descent.qmd) | 🟡 |
 | 4 | [Generalization: train/val/test & cross-validation](ch04-generalization-splits-cv.qmd) | 🟡 |
-| 5 | Logistic regression | 🟡 |
+| 5 | [Logistic regression](ch05-logistic-regression.qmd) | 🟡 |
 | 6 | Classification metrics | 🟡 |
 | 7 | Overfitting & regularization | 🟡 |
 | 8 | Bias–variance | 🟡 |
