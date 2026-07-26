@@ -1,0 +1,441 @@
+---
+title: "Naive Bayes"
+module: "M4 — Classical Machine Learning"
+chapter: 14
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch5 — Logistic regression"
+  - "M2 Ch12 — Bayes, intuitively"
+learning_objectives:
+  - "Explain the Naive Bayes recipe: prior × per-feature likelihoods, biggest product wins"
+  - "Implement the Gaussian likelihood and posterior scoring, and match sklearn digit for digit"
+  - "Name the naive assumption, test it on real data, and explain why the classifier survives its failure"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: nb-recipe
+    q: "What is the Naive Bayes classification recipe?"
+    a: "For each class: start from its prior (how common it is), multiply by each feature's likelihood (how typical this value is for that class), and predict the class with the biggest product. fit is pure counting — priors plus per-class feature means/stds; no optimization."
+  - id: naive-and-survives
+    q: "What does the 'naive' assumption claim, and why does the classifier often work when it is false?"
+    a: "That features are independent within a class — so likelihoods may be multiplied feature by feature. It is usually false (penguin bills and flippers correlate within species), but classification only needs the RANKING of class scores to be right, not the probabilities — rankings survive the distortion far better than the probabilities do."
+  - id: nb-overconfident
+    q: "Why should you distrust Naive Bayes' predict_proba values?"
+    a: "Multiplying correlated features double-counts their shared evidence, pushing posteriors toward 0 and 1. The verdicts stay decent; the confidences are inflated. Use NB for the call, not for calibrated probabilities."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Every model since Chapter 2 has *optimized* something: walked a cost
+landscape, purified splits, widened a street. The oldest classifier in the
+book does none of that. It **counts**.
+
+You met its engine in M2 Ch12: Bayes' rule — start from how common each
+answer is, weigh how well the evidence fits each answer, update. Pointed at
+penguins it reads: how common is each species (**the prior**)? How typical
+is *this* bill and *this* flipper for each species (**the likelihoods**)?
+Multiply, and bet on the biggest product. Training is bookkeeping — a
+table of averages — and finishes in the time other models take to warm up.
+
+The catch is baked into the name. Multiplying per-feature likelihoods
+assumes the features don't talk to each other — that within a species,
+bill length says nothing about flipper length. On penguins that is
+**provably false**, and we will prove it. The chapter's punchline is what
+happens next: the assumption fails, and the classifier works anyway. The
+*why* is one of the most useful lessons in applied ML.
+
+> You'll need from before: Bayes' updating (M2 Ch12), probabilities and
+> their discipline (Ch5–6), the split ritual (Ch4).
+
+---
+
+## The model is a small table
+
+`GaussianNB` handles numeric features by assuming each one follows a bell
+curve *per class*. So `fit` computes exactly this: class frequencies, and
+a mean and spread per feature per class. That table is the **entire
+model**:
+
+```{pyodide}
+#| caption: "Everything Naive Bayes knows, printable on an index card"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+import pandas as pd
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], df["species"], test_size=0.25, random_state=42,
+    stratify=df["species"])
+
+nb = GaussianNB().fit(Xtr, ytr)
+
+print("priors:", dict(zip(nb.classes_, nb.class_prior_.round(3))))
+print("\nper-class feature means:")
+print(pd.DataFrame(nb.theta_, index=nb.classes_, columns=feats).round(1))
+print("\nper-class feature spreads (std):")
+print(pd.DataFrame(np.sqrt(nb.var_), index=nb.classes_, columns=feats).round(1))
+```
+
+Read the card: Adelies are 44% of the colony, with flippers around
+190 ± 7 mm and bills around 39 ± 3 mm; Gentoos live at 217 mm flippers.
+Fourteen numbers and three priors — no weights, no landscape walked.
+
+## Bayes by hand, one bird
+
+A field bird arrives: flipper **195 mm**, bill **45 mm** — Adelie-sized
+flippers, Chinstrap-sized bill. A genuinely ambiguous case. Run the recipe
+with nothing but `math`:
+
+```{pyodide}
+#| caption: "prior × likelihood × likelihood — the whole classifier, by hand"
+import math
+
+def gauss(x, mean, std):
+    """The bell curve's height at x — how typical this value is."""
+    return math.exp(-((x - mean) ** 2) / (2 * std * std)) / (
+        std * math.sqrt(2 * math.pi))
+
+probe = {"flipper_length_mm": 195.0, "bill_length_mm": 45.0}
+
+scores = {}
+for i, species in enumerate(nb.classes_):
+    score = nb.class_prior_[i]                     # start from the prior
+    for j, feat in enumerate(feats):
+        score *= gauss(probe[feat], nb.theta_[i][j],
+                       math.sqrt(nb.var_[i][j]))   # weigh each evidence
+    scores[species] = score
+
+total = sum(scores.values())
+for species, s in scores.items():
+    print(f"P({species:9} | evidence) = {s / total:.3f}")
+
+sk = nb.predict_proba(pd.DataFrame([probe]))[0]
+print("\nsklearn says:", dict(zip(nb.classes_, sk.round(3))))
+```
+
+`Chinstrap 0.713` — and sklearn agrees **digit for digit**, because you
+have re-implemented it. Follow the reasoning like a detective's notes:
+the 45 mm bill nearly rules out Adelie (their bills average 39 ± 3), the
+195 mm flipper nearly rules out Gentoo (217 ± 7), and Chinstrap — average
+on both counts — inherits the case despite its small prior.
+
+The verdict machinery and the score:
+
+```{pyodide}
+#| caption: "The counting classifier takes the held-out exam"
+from sklearn.metrics import accuracy_score
+
+print(f"held-out accuracy: {accuracy_score(yte, nb.predict(Xte)):.3f}")
+```
+
+`0.988` — level with this module's optimizers on these features, from a
+model that trained by computing fourteen averages.
+
+## The lie in the name — tested
+
+The multiplication step assumed feature independence *within a class*.
+Check it:
+
+```{pyodide}
+#| caption: "Do bills and flippers talk to each other? Yes."
+for species in ("Adelie", "Gentoo"):
+    sub = df[df["species"] == species]
+    r = sub["bill_length_mm"].corr(sub["flipper_length_mm"])
+    print(f"{species}: bill–flipper correlation r = {r:.2f}")
+```
+
+Within Gentoos, bill and flipper correlate at **r = 0.66** — bigger birds
+are bigger all over. The independence assumption is false, measured, on
+the very data where the classifier scored 0.988. How?
+
+Because classification only needs the **ranking** of the class scores to
+be right, not the scores themselves. Double-counting correlated evidence
+distorts every class's product — but often distorts them *in the same
+direction*, leaving the winner the winner. The verdicts survive; the
+probabilities don't:
+
+```{pyodide}
+#| caption: "The cost of the lie: swaggering confidence"
+avg_conf = nb.predict_proba(Xte).max(axis=1).mean()
+print(f"average top-class 'confidence' on held-out birds: {avg_conf:.3f}")
+```
+
+`0.95` average confidence — Naive Bayes barely does doubt, because
+multiplying correlated features counts the same evidence twice and shoves
+posteriors toward the extremes. The Ch5–6 discipline applies with force:
+**use NB for the call, never for calibrated confidence.**
+
+Two practical notes to complete the picture. Speed: `fit` here is a few
+milliseconds — at 205 birds everything is quick, but counting scales
+*linearly* and never iterates, which is why NB stays a beloved first
+baseline on big text corpora (spam filtering with `MultinomialNB` over
+word counts is its historic home turf, along with tiny-data problems where
+fourteen averages are all you can honestly estimate). And the zero-count
+trap: a category value never seen in training gets likelihood 0, and one
+zero annihilates the whole product — the standard fix, **Laplace
+smoothing**, adds a small pseudo-count everywhere (`alpha` in
+`MultinomialNB`)… yes, another regularizing knob; you know the shape by
+now.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Naive Bayes counts instead of optimizing**: prior × per-feature
+   likelihoods, biggest product wins; `fit` = class frequencies + a small
+   table of per-class means and spreads.
+2. You reproduced sklearn **digit for digit** by hand: the ambiguous
+   195 mm/45 mm bird went Chinstrap at 0.713 because each feature vetoed a
+   different rival.
+3. The **naive assumption is genuinely false** on real data (Gentoo
+   bill–flipper r = 0.66) — and the classifier scored 0.988 anyway,
+   because verdicts need only the *ranking* to survive.
+4. The price appears in the probabilities: **NB is overconfident** (0.95
+   average top-class posterior) — trust its calls, not its confidence.
+5. Its niches: **text, tiny data, and instant baselines**; Laplace
+   smoothing (`alpha`) guards the zero-count trap.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Run the recipe by hand for a different field bird: flipper **210 mm**,
+bill **50 mm**. The Gaussian helper and the fitted model come from the
+setup; you supply the two lines that *are* Naive Bayes. Replace the
+`____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_recipe
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+import pandas as pd
+import math
+
+df = load_csv("penguins").dropna(subset=["bill_length_mm",
+                                         "flipper_length_mm"])
+feats = ["flipper_length_mm", "bill_length_mm"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[feats], df["species"], test_size=0.25, random_state=42,
+    stratify=df["species"])
+nb = GaussianNB().fit(Xtr, ytr)
+
+def gauss(x, mean, std):
+    return math.exp(-((x - mean) ** 2) / (2 * std * std)) / (
+        std * math.sqrt(2 * math.pi))
+```
+
+```{pyodide}
+#| exercise: ex_recipe
+probe = {"flipper_length_mm": 210.0, "bill_length_mm": 50.0}
+
+scores = {}
+for i, species in enumerate(nb.classes_):
+    score = ____                                   # TODO: start from the prior
+    for j, feat in enumerate(feats):
+        score *= ____                              # TODO: weigh this feature's evidence
+    scores[species] = score
+total = sum(scores.values())
+posteriors = {sp: round(s / total, 3) for sp, s in scores.items()}
+
+run_tests([
+    ("matches sklearn", posteriors, {
+        sp: round(float(p), 3) for sp, p in zip(
+            nb.classes_, nb.predict_proba(pd.DataFrame([probe]))[0])
+    }),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The prior is `nb.class_prior_[i]`; each feature's evidence weight is
+`gauss(probe[feat], nb.theta_[i][j], math.sqrt(nb.var_[i][j]))` — the bell
+curve's height at the observed value, using that class's mean and spread.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+probe = {"flipper_length_mm": 210.0, "bill_length_mm": 50.0}
+
+scores = {}
+for i, species in enumerate(nb.classes_):
+    score = nb.class_prior_[i]
+    for j, feat in enumerate(feats):
+        score *= gauss(probe[feat], nb.theta_[i][j],
+                       math.sqrt(nb.var_[i][j]))
+    scores[species] = score
+total = sum(scores.values())
+posteriors = {sp: round(s / total, 3) for sp, s in scores.items()}
+```
+
+This bird's long flipper *and* long bill pull toward Gentoo and Chinstrap
+respectively — run it and see which evidence wins the argument.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the two functions the recipe stands on:
+
+- `gaussian_likelihood(x, mean, std)` — the bell curve's height at `x`:
+  $\frac{1}{\sigma\sqrt{2\pi}} e^{-(x-\mu)^2 / 2\sigma^2}$
+- `posterior_scores(priors, likes)` — `priors` is a list (one per class);
+  `likes[c]` is that class's list of per-feature likelihoods. Return each
+  class's unnormalized score: prior × the product of its likelihoods.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_gauss
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_gauss
+import math
+
+def gaussian_likelihood(x, mean, std):
+    """Height of the (mean, std) bell curve at x."""
+    ...  # TODO
+
+def posterior_scores(priors, likes):
+    """Per class: prior times the product of its feature likelihoods."""
+    ...  # TODO
+
+run_tests([
+    ("standard bell at its peak", round(gaussian_likelihood(0, 0, 1), 4),
+     0.3989),
+    ("one std out", round(gaussian_likelihood(1, 0, 1), 4), 0.242),
+    ("typical beats atypical",
+     gaussian_likelihood(190, 190, 7) > gaussian_likelihood(217, 190, 7),
+     True),
+    ("two classes scored", [round(s, 5) for s in posterior_scores(
+        [0.6, 0.4], [[0.5, 0.2], [0.1, 0.9]])], [0.06, 0.036]),
+    ("a zero likelihood annihilates its class", [round(s, 5) for s in
+     posterior_scores([0.9, 0.1], [[0.0, 0.8], [0.5, 0.5]])], [0.0, 0.025]),
+], tol=1e-3)
+```
+
+<details><summary>If you're stuck</summary>
+
+The likelihood is one line from the formula (`math.exp`, `math.sqrt`,
+`math.pi`). For the scores, multiply each class's likelihood list down
+with a loop or `math.prod`, then times the prior.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def gaussian_likelihood(x, mean, std):
+    return math.exp(-((x - mean) ** 2) / (2 * std * std)) / (
+        std * math.sqrt(2 * math.pi))
+
+def posterior_scores(priors, likes):
+    return [prior * math.prod(ls) for prior, ls in zip(priors, likes)]
+```
+
+The last fixture is the zero-count trap in miniature: a 90% prior wiped
+out by one zero likelihood — the reason Laplace smoothing exists.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Folklore says Naive
+Bayes wins tiny-data fights. **Test it**: sample 15 training birds
+(`Xtr.sample(n=15, random_state=1)`), fit both a `GaussianNB` and a
+`DecisionTreeClassifier(random_state=0)` on them, and score both on the
+full held-out set. Report what you find and — in one sentence — reconcile
+it with the folklore.
+
+**Rubric — a good answer:**
+
+- Runs both models on the same 15 birds, scores on `Xte`/`yte`.
+- Reports the actual result (on this data the tree wins comfortably).
+- The sentence reconciles honestly: penguins are cleanly separable with 2
+  features, so even 15 birds define good thresholds — the folklore's home
+  turf is noisy, high-dimensional data (like text), where fourteen
+  averages are estimable and deep splits are not. An experiment beats a
+  proverb.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+tiny = Xtr.sample(n=15, random_state=1)
+tiny_y = ytr.loc[tiny.index]
+for name, model in [("GaussianNB", GaussianNB()),
+                    ("tree", DecisionTreeClassifier(random_state=0))]:
+    model.fit(tiny, tiny_y)
+    print(f"{name}: {accuracy_score(yte, model.predict(Xte)):.3f}")
+```
+
+Here the tree wins (≈0.97 vs ≈0.77) — this problem is too cleanly
+separable for the folklore to apply, which is itself the lesson: proverbs
+about models describe *typical terrains*, and only your validation score
+knows which terrain you're on.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch14.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Naive Bayes closes the module's algorithm tour: eight model families, each
+a different bet about what structure data has. This one bet on counting —
+and taught the deepest honest lesson of the tour: a false assumption can
+still ship, if what you need survives the distortion. Next, the module
+turns from *models* back to *data*, starting with its ugliest and most
+common shape: **imbalanced classes**, where the lazy baseline lurks and
+Chapter 6's metrics become survival tools.

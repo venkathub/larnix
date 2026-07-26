@@ -1,0 +1,35 @@
+title: "Chapter 14 — quick check"
+id: "m4-ch14-naive-bayes"
+questions:
+  - id: what-naive-assumes
+    prompt: "What exactly does the 'naive' assumption in Naive Bayes claim?"
+    options:
+      - "That every class is equally common in the data"
+      - "That features are independent within each class, so their likelihoods can be multiplied one by one"
+      - "That every feature follows the same bell curve"
+    answer: 1
+    explanation: "The recipe multiplies per-feature likelihoods — legitimate only if features carry independent evidence within a class. Real features usually correlate (penguin bills and flippers at r = 0.66), which distorts the products but often not their ranking."
+  - id: what-fit-computes
+    prompt: "What does GaussianNB.fit() actually compute?"
+    options:
+      - "Class frequencies plus each feature's mean and spread per class — a counting exercise, no optimization"
+      - "One weight per feature, found by gradient descent"
+      - "The k nearest training examples for every class"
+    answer: 0
+    explanation: "The whole model is a small table: priors and per-class Gaussian parameters. That is why it fits in milliseconds and why it can be reproduced by hand digit for digit."
+  - id: why-overconfident
+    prompt: "Why are Naive Bayes' predict_proba outputs typically overconfident?"
+    options:
+      - "sklearn rounds them to fewer decimal places than other models"
+      - "The priors dominate the likelihoods in every product"
+      - "Correlated features get their shared evidence counted multiple times, pushing posteriors toward 0 and 1"
+    answer: 2
+    explanation: "Multiplying non-independent likelihoods double-counts overlapping information. The winner usually stays the winner (verdicts survive), but the margin of victory is inflated — so use the calls, not the confidences."
+  - id: zero-count-transfer
+    prompt: "A Naive Bayes spam filter meets an email containing a word never seen in training. What happens without a fix, and what is the fix?"
+    options:
+      - "The word is skipped automatically; no fix is needed"
+      - "That word's likelihood is 0, so it annihilates the entire class product; Laplace smoothing (a small pseudo-count everywhere) prevents it"
+      - "The model crashes with an error until retrained"
+    answer: 1
+    explanation: "One zero in a product zeroes everything — a single unseen word could veto an otherwise obvious classification. Adding alpha pseudo-counts keeps every likelihood positive, at the price of slightly flattening the counts: a regularizer, like the others you have met."
