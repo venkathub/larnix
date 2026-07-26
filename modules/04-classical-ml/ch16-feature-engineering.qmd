@@ -1,0 +1,470 @@
+---
+title: "Feature engineering"
+module: "M4 — Classical Machine Learning"
+chapter: 16
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch9 — K-nearest neighbours"
+  - "M4 Ch15 — Imbalanced data"
+  - "M3 Ch10 — Scaling & encoding (a preview)"
+learning_objectives:
+  - "Encode categorical evidence with one-hot vectors, handling unseen categories"
+  - "Engineer new features from existing ones and measure whether they help"
+  - "Build leak-proof Pipeline + ColumnTransformer workflows and tune them with GridSearchCV"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 25
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+  - data/california-housing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: one-hot-why
+    q: "Why encode an unordered category as one-hot vectors instead of integer codes?"
+    a: "Integer codes (Biscoe=0, Dream=1, Torgersen=2) invent an order and distances that don't exist — a linear model would treat Torgersen as 'twice Dream'. One-hot gives each category its own 0/1 column; an unseen category at predict time becomes all zeros (handle_unknown='ignore')."
+  - id: pipeline-guarantee
+    q: "What does wrapping preprocessing and model into a Pipeline guarantee?"
+    a: "pipeline.fit(train) can only ever fit the scaler/encoder on the training data, and cross_val_score(pipeline, ...) re-fits the preprocessing inside every fold. The fit-on-train-only rule becomes structural — impossible to break by accident."
+  - id: features-beat-models
+    q: "What is the 'features beat models' craft rule — and its one hard limit?"
+    a: "Better-prepared evidence (encoded categoricals, meaningful ratios) often improves results more than swapping models — our mass-only classifier gained 13 points from two ignored columns. The limit: features may be engineered from other FEATURES, never from the target (that is Chapter 4's leakage)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+For seven chapters the intern has been swapping *models* — line, tree,
+forest, street — while feeding every one the same raw columns. The senior
+appraiser finally says the quiet part: *"A mediocre model on well-prepared
+evidence beats a clever model on raw paperwork."*
+
+Preparing the evidence is **feature engineering**, and you've been doing
+it in fragments all along: Chapter 7 rescaled income, Chapter 9 made
+scaling mandatory, Chapter 15 showed preparation can *leak*. This chapter
+names the craft, adds its two missing tools — encoding categories and
+inventing features — and then delivers the piece that holds the whole
+module's discipline together: **pipelines**, the structure that makes the
+fit-on-train-only rule impossible to break by accident.
+
+> You'll need from before: scaling and its leakage rule (Ch9, Ch4), the
+> M3 Ch10 preview, and split-first reflexes.
+
+---
+
+## The evidence you've been ignoring
+
+The penguin table has two columns no model in this module has ever been
+allowed to see — `island` and `sex` — because models eat numbers and these
+are words. Are they even worth encoding? Cross-tabulate:
+
+```{pyodide}
+#| caption: "The ignored column knows things: Chinstraps live only on Dream"
+from lib.data import load_csv
+import pandas as pd
+
+pg = load_csv("penguins").dropna(subset=["body_mass_g", "sex"])
+print(pd.crosstab(pg["island"], pg["species"]))
+```
+
+Read it like a detective: every Chinstrap lives on **Dream**; Torgersen
+hosts *only* Adelies. A bird's address is real evidence. **One-hot
+encoding** turns it into numbers without inventing falsehoods — one 0/1
+column per category:
+
+```{pyodide}
+#| caption: "One column of words becomes three columns of flags"
+demo = pd.DataFrame({"island": ["Torgersen", "Biscoe", "Dream"]})
+print(pd.get_dummies(demo, dtype=int))
+```
+
+Why not code the islands as 0, 1, 2? Because a number line carries claims:
+it would tell a linear model that Torgersen is "twice Dream" and that
+Biscoe sits "between" them — an order and a distance we invented. One-hot
+flags claim nothing but membership.
+
+Now the measured payoff. Take a deliberately weak classifier — species
+from **body mass alone** — and hand it the two word-columns, properly
+encoded:
+
+```{pyodide}
+#| caption: "Same model, +13 points — the evidence did the work"
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+y = pg["species"]
+Xtr, Xte, ytr, yte = train_test_split(
+    pg[["body_mass_g", "island", "sex"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+
+mass_only = Pipeline([
+    ("prep", ColumnTransformer([("num", StandardScaler(), ["body_mass_g"])])),
+    ("model", LogisticRegression(max_iter=1000)),
+]).fit(Xtr, ytr)
+
+with_words = Pipeline([
+    ("prep", ColumnTransformer([
+        ("num", StandardScaler(), ["body_mass_g"]),
+        ("cat", OneHotEncoder(handle_unknown="ignore"), ["island", "sex"]),
+    ])),
+    ("model", LogisticRegression(max_iter=1000)),
+]).fit(Xtr, ytr)
+
+print(f"mass only:            {accuracy_score(yte, mass_only.predict(Xte)):.3f}")
+print(f"mass + island + sex:  {accuracy_score(yte, with_words.predict(Xte)):.3f}")
+```
+
+`0.714 → 0.845` — thirteen points, and the model never changed. (Two
+details you'll use forever: the encoder, like the scaler, is **fitted on
+training rows only**; and `handle_unknown="ignore"` maps a category never
+seen in training to all-zero flags instead of crashing — Chapter 14's
+unseen-word ghost, handled by design.)
+
+## Inventing numbers: engineered features
+
+The second craft: build new columns from existing ones. A confession
+first — the housing table is *already* engineered: `AveRooms` is
+rooms-per-household, computed by the dataset's authors from raw census
+counts. You've been benefiting from their feature engineering since
+Chapter 1. Add two more of the same kind:
+
+```{pyodide}
+#| caption: "Two invented ratios join the appraisal"
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LinearRegression
+
+homes = load_csv("california-housing-sample")
+feats = ["MedInc", "HouseAge", "AveRooms", "AveBedrms",
+         "Population", "AveOccup", "Latitude", "Longitude"]
+yh = homes["MedHouseVal"]
+
+homes["BedroomShare"] = homes["AveBedrms"] / homes["AveRooms"]
+homes["RoomsPerPerson"] = homes["AveRooms"] / homes["AveOccup"]
+
+for cols, label in [(feats, "8 raw features     "),
+                    (feats + ["BedroomShare", "RoomsPerPerson"],
+                     "+ 2 engineered      ")]:
+    s = -cross_val_score(LinearRegression(), homes[cols], yh,
+                         cv=5, scoring="neg_mean_absolute_error")
+    print(f"{label}: CV MAE {s.mean():.3f} ± {s.std():.3f}")
+```
+
+`0.558 → 0.544` — a modest, honest gain (inside the spread, Chapter 4
+would remind you — engineered features often move the needle more on
+messier data, and sometimes not at all; measurement decides). The features
+encode *domain reasoning*: what share of a home is bedrooms? How much
+space per person? A linear model can't compute ratios of its inputs, so
+you compute them for it.
+
+One line in the sand, drawn once and finally: features engineered **from
+other features** are the craft; a feature engineered **from the target**
+is Chapter 4's crime (`PricePerRoom` — remember the fake 0.229). If the
+column couldn't exist before the answer was known, it isn't a feature.
+
+## The payload: pipelines make discipline structural
+
+Count the leak opportunities this module has warned about: scaler
+statistics (Ch9), resampling (Ch15), now encoders. Each time, the fix was
+*you remembering a rule*. A **`Pipeline`** replaces your memory with
+structure — preprocessing and model become one object, with one `fit`:
+
+```{pyodide}
+#| caption: "One object, one fit — the leak has nowhere to happen"
+pipe = Pipeline([
+    ("scale", StandardScaler()),
+    ("model", LinearRegression()),
+])
+
+# fit() fits the scaler on THESE rows, then the model on the scaled result.
+# There is no code path by which test rows can reach the scaler's fit.
+scores = -cross_val_score(pipe, homes[feats], yh,
+                          cv=5, scoring="neg_mean_absolute_error")
+print(f"pipeline CV MAE: {scores.mean():.3f} ± {scores.std():.3f}")
+```
+
+The deeper win is in that `cross_val_score` call. Handing it a pipeline
+means **every fold re-fits the preprocessing on that fold's training
+portion** — the subtle leak most practitioners miss (scaling once on all
+data, *then* cross-validating) cannot occur, because the scaler doesn't
+exist outside the pipeline. The `ColumnTransformer` you met above is the
+same idea for mixed tables: numeric columns → scaler, word columns →
+encoder, one object, one discipline.
+
+And tuning slots straight in. `GridSearchCV` cross-validates every dial
+setting *of the whole pipeline* — preprocessing re-fitted per fold per
+setting — and only then do we open the sealed test set:
+
+```{pyodide}
+#| caption: "Tuning done the honest way: CV chooses, the sealed set verdicts"
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_absolute_error
+
+eng = feats + ["BedroomShare", "RoomsPerPerson"]
+homes_tr, homes_te, price_tr, price_te = train_test_split(homes[eng], yh,
+                                        test_size=0.2, random_state=42)
+
+search = GridSearchCV(
+    Pipeline([("scale", StandardScaler()), ("model", Ridge())]),
+    {"model__alpha": [0.01, 0.1, 1, 10, 100]},
+    cv=5, scoring="neg_mean_absolute_error")
+search.fit(homes_tr, price_tr)
+
+print(f"CV chose:        {search.best_params_}")
+print(f"its CV MAE:      {-search.best_score_:.3f}")
+print(f"sealed test MAE: {mean_absolute_error(price_te, search.predict(homes_te)):.3f}")
+```
+
+`alpha=10` chosen by validation, `0.530` in CV, `0.538` on the sealed
+set — close agreement, which is what honesty looks like. This
+`ColumnTransformer → Pipeline → GridSearchCV → one sealed test` chain is
+the complete tabular workflow, and it is *exactly* the skeleton the M4
+capstone grades. Two closing craft notes, honestly flagged:
+`OrdinalEncoder` exists for categories with a real order (shirt sizes,
+education levels); and *target encoding* — replacing a category with the
+target's average for it — is powerful and **leakage-prone by
+construction** (it is built from the target), an advanced tool for after
+this module.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Categoricals are evidence**: one-hot encode them (no invented order);
+   `handle_unknown="ignore"` maps unseen categories to all-zeros. Our
+   mass-only classifier gained 13 points from two ignored columns.
+2. **Engineered features encode domain reasoning** (ratios a linear model
+   can't form itself): 0.558 → 0.544 CV MAE here — measure, and accept
+   honest nulls. From features: craft. From the target: crime.
+3. A **`Pipeline`** fuses preprocessing + model: `fit(train)` structurally
+   cannot leak, and `cross_val_score(pipeline, …)` re-fits preprocessing
+   inside every fold — the leak most practitioners miss, made impossible.
+4. **`ColumnTransformer`** routes numeric → scaler, categorical → encoder
+   in one object — the mixed-table pattern the capstone requires.
+5. **`GridSearchCV` over a pipeline** is honest tuning: CV chooses the
+   dial, the sealed test set delivers the final number (0.530 CV vs 0.538
+   test — agreement is the goal).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: seeds are fixed, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Assemble the leak-proof unit: a scaler and a classifier in one pipeline,
+cross-validated. Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pipe
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+pg = load_csv("penguins").dropna(
+    subset=["bill_length_mm", "bill_depth_mm",
+            "flipper_length_mm", "body_mass_g", "sex"])
+num = ["bill_length_mm", "bill_depth_mm",
+       "flipper_length_mm", "body_mass_g"]
+y = pg["species"]
+```
+
+```{pyodide}
+#| exercise: ex_pipe
+pipe = Pipeline([
+    ("scale", ____),    # TODO: the standardizer
+    ("model", ____),    # TODO: LogisticRegression(max_iter=1000)
+])
+scores = cross_val_score(pipe, pg[num], y, cv=5)
+
+run_tests([
+    ("five folds, preprocessing re-fitted in each", len(scores), 5),
+    ("cross-validated accuracy", round(float(scores.mean()), 3), 0.991),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The two steps are `StandardScaler()` and `LogisticRegression(max_iter=1000)`.
+Because the pipeline is what's cross-validated, each fold fits its own
+scaler — no leak is possible.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from lib.data import load_csv
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+pg = load_csv("penguins").dropna(
+    subset=["bill_length_mm", "bill_depth_mm",
+            "flipper_length_mm", "body_mass_g", "sex"])
+num = ["bill_length_mm", "bill_depth_mm",
+       "flipper_length_mm", "body_mass_g"]
+y = pg["species"]
+
+pipe = Pipeline([
+    ("scale", StandardScaler()),
+    ("model", LogisticRegression(max_iter=1000)),
+])
+scores = cross_val_score(pipe, pg[num], y, cv=5)
+```
+
+Compare mentally with the leaky alternative — scaling all 333 birds once,
+then cross-validating: it runs, it scores similarly here, and it is
+quietly wrong. The pipeline version cannot be wrong that way.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the two encoders' logic from spec:
+
+- `one_hot(value, categories)` — return the 0/1 flag list for `value`
+  against an ordered category list; an unseen value returns **all
+  zeros** (the `handle_unknown="ignore"` contract).
+- `ratio_feature(numerators, denominators)` — element-wise division,
+  each result rounded to 4 decimal places (an engineered-ratio column).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_encode
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_encode
+def one_hot(value, categories):
+    """0/1 flags for value against an ordered category list; unseen -> all zeros."""
+    ...  # TODO
+
+def ratio_feature(numerators, denominators):
+    """Element-wise num/den, each rounded to 4 dp."""
+    ...  # TODO
+
+islands = ["Biscoe", "Dream", "Torgersen"]
+run_tests([
+    ("a Dream penguin", one_hot("Dream", islands), [0, 1, 0]),
+    ("a Torgersen penguin", one_hot("Torgersen", islands), [0, 0, 1]),
+    ("an island never seen in training", one_hot("Deception", islands),
+     [0, 0, 0]),
+    ("bedroom share", ratio_feature([1.0, 2.0], [4.0, 8.0]),
+     [0.25, 0.25]),
+    ("rooms per person", ratio_feature([6.0, 5.0], [3.0, 2.0]),
+     [2.0, 2.5]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`one_hot` is one comprehension: `1 if value == c else 0` for each
+category — an unseen value matches nothing, giving all zeros for free.
+`ratio_feature` zips the two lists and rounds each quotient.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def one_hot(value, categories):
+    return [1 if value == c else 0 for c in categories]
+
+def ratio_feature(numerators, denominators):
+    return [round(n / d, 4) for n, d in zip(numerators, denominators)]
+
+islands = ["Biscoe", "Dream", "Torgersen"]
+```
+
+Note how graceful the unseen-category case is: "Deception" island (a real
+Antarctic island the study never visited) becomes `[0, 0, 0]` — no crash,
+no invented claim, the model falls back to its other evidence.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Invent **one** new
+housing feature of your own (a ratio, a product, a threshold flag —
+anything computed from the existing feature columns), add it to the
+engineered set, and run the chapter's pipeline CV. Report the before/after
+CV MAE and answer in one sentence: did your feature earn its place, and
+how do you know?
+
+**Rubric — a good answer:**
+
+- Builds the feature from feature columns only (anything touching
+  `MedHouseVal` is auto-fail — Chapter 4's crime).
+- Compares CV MAE (mean ± std) with and without it, using the pipeline.
+- The sentence judges by the spread: an improvement inside ±0.03 is
+  honestly reported as "can't tell yet" — null results, honestly measured,
+  score full marks.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+homes["IncomePerRoom"] = homes["MedInc"] / homes["AveRooms"]
+trial = eng + ["IncomePerRoom"]
+s = -cross_val_score(Pipeline([("sc", StandardScaler()),
+                               ("m", LinearRegression())]),
+                     homes[trial], yh, cv=5,
+                     scoring="neg_mean_absolute_error")
+print(f"with my feature: {s.mean():.3f} ± {s.std():.3f}  (before: 0.544 ± 0.027)")
+```
+
+Mine landed within the spread — a null. That's a fine outcome: the craft
+is generate-measure-keep-or-discard, and discarding on evidence is the
+skill.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch16.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The workflow is complete: encode the words, engineer the ratios, fuse it
+all into a pipeline that cannot leak, tune by CV, verdict on the sealed
+set — the exact skeleton the capstone grades. What remains in the module
+is a different kind of question entirely: what can be learned when the
+data has **no target column at all**. Next: **k-means clustering**, the
+first unsupervised chapter — finding groups nobody labelled.

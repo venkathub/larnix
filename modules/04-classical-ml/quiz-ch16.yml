@@ -1,0 +1,35 @@
+title: "Chapter 16 — quick check"
+id: "m4-ch16-feature-engineering"
+questions:
+  - id: why-one-hot
+    prompt: "Why is coding islands as Biscoe=0, Dream=1, Torgersen=2 worse than one-hot encoding for a linear model?"
+    options:
+      - "Integer codes use more memory than 0/1 flags"
+      - "The integers invent an order and distances — the model would treat Torgersen as 'twice Dream' — while one-hot flags claim only membership"
+      - "sklearn cannot fit linear models on integer columns"
+    answer: 1
+    explanation: "A number line carries claims a category doesn't make. One-hot gives each category an independent 0/1 column, so the model learns a separate effect per category instead of a fictional gradient across them."
+  - id: pipeline-fit-guarantee
+    prompt: "What does Pipeline([('scale', StandardScaler()), ('model', ...)]).fit(train_X, train_y) guarantee?"
+    options:
+      - "The scaler's statistics come from the training rows only — there is no code path for test rows to reach its fit"
+      - "The model will not overfit the training data"
+      - "The scaler is skipped when the data is already scaled"
+    answer: 0
+    explanation: "The pipeline is one object with one fit: it fits the scaler on the given rows, transforms, then fits the model. The Chapter 9 leak — scaling with statistics that saw test rows — becomes structurally impossible rather than a rule to remember."
+  - id: cv-preprocessing-leak
+    prompt: "A teammate standardizes the full dataset once, then runs cross_val_score on the scaled matrix. What is subtly wrong?"
+    options:
+      - "Nothing — scaling before CV is the recommended order"
+      - "cross_val_score cannot accept pre-scaled data"
+      - "Each fold's 'unseen' portion helped compute the scaling statistics — every fold is slightly leaked; passing a Pipeline instead re-fits the scaler per fold"
+    answer: 2
+    explanation: "In CV each fold plays test set, but the one-time scaler already learned from those rows. Handing cross_val_score the pipeline itself makes every fold fit its own scaler on its own training portion — the honest version, for free."
+  - id: unseen-category-transfer
+    prompt: "Your deployed encoder meets 'Deception' — an island absent from training. With OneHotEncoder(handle_unknown='ignore'), what happens?"
+    options:
+      - "The row is silently dropped from the batch"
+      - "The island columns all read 0 — no membership claimed — and the model predicts from its remaining evidence"
+      - "The encoder raises an error and the pipeline halts"
+    answer: 1
+    explanation: "handle_unknown='ignore' maps unseen categories to all-zero flags: the honest encoding of 'none of the known islands'. Without it the encoder raises — Chapter 14's unseen-word problem, resurfacing wherever categories meet the real world."
