@@ -1,0 +1,35 @@
+title: "Chapter 15 — quick check"
+id: "m4-ch15-imbalanced-data"
+questions:
+  - id: why-abandon-minority
+    prompt: "An untreated model on 93/7 data scores accuracy 0.932 and rare-class recall 0.000. Why did this happen?"
+    options:
+      - "The optimizer minimized total loss rationally — with the minority so outnumbered, writing it off is the cheapest strategy"
+      - "The training code has a bug that dropped the rare rows"
+      - "The rare class is impossible to predict from these features"
+    answer: 0
+    explanation: "Nothing is broken: fifteen rare training birds contribute so little loss that ignoring them barely costs anything. The remedies all work by changing that arithmetic — repricing mistakes, rebalancing counts, or repositioning the decision bar."
+  - id: what-balanced-changes
+    prompt: "What does class_weight='balanced' actually change?"
+    options:
+      - "It duplicates minority rows in the training set"
+      - "The loss function — each class is weighted n/(k·n_class), so minority mistakes cost proportionally more; the data itself is untouched"
+      - "The decision threshold, from 0.5 to the minority share"
+    answer: 1
+    explanation: "Weights edit the objective, not the data or the policy. A ~7% minority gets roughly 7× weight, so the optimizer can no longer profit by ignoring it — mathematically a near-twin of oversampling to parity."
+  - id: oversample-split-trap
+    prompt: "A teammate oversamples the whole dataset to 50/50, then splits off a test set, and reports precision jumping from 0.15 to 0.71. What happened?"
+    options:
+      - "The oversampling genuinely fixed the model's precision"
+      - "The test set became too small to measure precision"
+      - "Copies of the same rare rows landed in both train and test — the model is being graded on rows it memorized"
+    answer: 2
+    explanation: "Resampling before splitting is the classic modern leakage: in the chapter's demo 70 of 139 'test' rows were training-row copies. Split first, resample the training set only, and keep the test set at natural imbalance."
+  - id: when-threshold-first
+    prompt: "Your imbalanced model has recall 0.0 at the default threshold but AUC 0.85. What is the cheapest effective first move?"
+    options:
+      - "Collect more minority data before touching anything"
+      - "Lower the decision threshold — the model already ranks well; only its default-policy bar assumed balanced classes"
+      - "Switch to a deeper model with more capacity"
+    answer: 1
+    explanation: "A healthy AUC means the ranking is fine and the 0.5 bar is the problem: with rare positives, all predicted probabilities sit low. Moving the threshold requires no retraining and no new data — check the ranking before rebuilding the model."

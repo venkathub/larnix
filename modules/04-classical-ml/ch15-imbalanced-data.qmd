@@ -1,0 +1,462 @@
+---
+title: "Imbalanced data"
+module: "M4 — Classical Machine Learning"
+chapter: 15
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch6 — Classification metrics"
+  - "M4 Ch4 — Generalization: train/val/test & cross-validation"
+learning_objectives:
+  - "Diagnose a model that has abandoned the minority class, despite high accuracy"
+  - "Apply and compare the three remedy families: class weights, resampling, threshold moving"
+  - "Avoid the oversample-before-split leakage trap, and demonstrate its inflated scores"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 24
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: three-remedies
+    q: "Name the three remedy families for imbalanced classification."
+    a: "1) Class weights — make minority mistakes cost more in the loss (class_weight='balanced'). 2) Resampling — duplicate minority rows (oversampling) or drop majority rows (undersampling), on the TRAINING set only. 3) Threshold moving — keep the model, lower the decision bar on predict_proba. All three trade precision for recall."
+  - id: resample-leakage-rule
+    q: "What is the resampling leakage trap?"
+    a: "Oversampling before splitting copies the same rare rows into both train and test, so the model is graded on rows it memorized — scores inflate wildly. Rule: split first; resample the training set only. The test set must stay untouched, at its natural imbalance."
+  - id: balanced-weights-formula
+    q: "What does class_weight='balanced' compute?"
+    a: "Each class gets weight n_samples / (n_classes × n_class) — inversely proportional to its frequency. A 5%-rare class gets ~10× the weight of the 95% class in a binary problem, so the optimizer can no longer profit by ignoring it."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 6 taught you to *see* the imbalance problem — the lazy baseline,
+the metrics that don't lie. This chapter is about *fighting* it, because in
+the wild the problem gets worse than penguins ever showed you: fraud is a
+fraction of a percent of transactions, machine failures a sliver of sensor
+logs, rare diseases a handful of cases per thousand scans.
+
+To fight in that regime we first have to build it. The station asks for a
+**rare-species alarm**: Chinstrap sightings have collapsed, and our seeded
+scenario keeps only 20 of them against 274 other birds — about **93 to 7**.
+On measurements where Chinstraps hide among Adelies (flipper and body
+mass), an untreated model doesn't merely under-serve the rare class. It
+**stops predicting it entirely** — while posting an accuracy anyone would
+approve at a glance.
+
+Three families of remedies exist, and every one of them is a **trade, not a
+cure**. We'll measure each: what it buys, what it costs, and the leakage
+trap hiding inside the second one.
+
+> You'll need from before: precision/recall and the lazy baseline (Ch6),
+> thresholds (Ch5), and the split-first rule (Ch4) — about to matter more
+> than ever.
+
+---
+
+## The emergency, measured
+
+```{pyodide}
+#| caption: "93% accurate — and it will never find a single rare bird"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (accuracy_score, recall_score,
+                             precision_score, confusion_matrix)
+import pandas as pd
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "body_mass_g"])
+feats = ["flipper_length_mm", "body_mass_g"]
+
+common = df[df["species"] != "Chinstrap"]
+rare = df[df["species"] == "Chinstrap"].sample(n=20, random_state=7)
+data = pd.concat([common, rare])
+y = (data["species"] == "Chinstrap").astype(int)
+print(f"{len(common)} common vs {len(rare)} rare "
+      f"({y.mean():.1%} rare)")
+
+Xtr, Xte, ytr, yte = train_test_split(
+    data[feats], y, test_size=0.25, random_state=42, stratify=y)
+scaler = StandardScaler().fit(Xtr)
+Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
+
+untreated = LogisticRegression(max_iter=1000).fit(Xtr_s, ytr)
+pred = untreated.predict(Xte_s)
+print(f"\naccuracy:          {accuracy_score(yte, pred):.3f}")
+print(f"rare-class recall: {recall_score(yte, pred, zero_division=0):.3f}")
+print(confusion_matrix(yte, pred))
+```
+
+Accuracy `0.932`, recall **`0.000`**. Look at the matrix: the model flagged
+*nothing* — all five held-out Chinstraps missed, and it barely dented the
+accuracy. This isn't a bug; it's the optimizer doing exactly what it was
+asked. With 15 rare birds against 205 in training, the cheapest way to
+minimize total loss is to write the minority off. To change the behaviour,
+change what it costs.
+
+## Remedy 1: make rare mistakes expensive
+
+`class_weight="balanced"` reweights the loss so each class contributes
+equally *in total*: every class gets weight `n / (k · n_class)`. Our rare
+birds jump from weight ~0.5 to ~7.3 — a Chinstrap mistake now costs about
+**14×** a common one.
+
+```{pyodide}
+#| caption: "One argument, opposite behaviour — and the bill for it"
+balanced = LogisticRegression(max_iter=1000,
+                              class_weight="balanced").fit(Xtr_s, ytr)
+pred_b = balanced.predict(Xte_s)
+
+print(f"accuracy:          {accuracy_score(yte, pred_b):.3f}")
+print(f"rare-class recall: {recall_score(yte, pred_b):.3f}")
+print(f"precision:         {precision_score(yte, pred_b):.3f}")
+print(confusion_matrix(yte, pred_b))
+```
+
+Recall `0.000 → 1.000` — all five rare birds found. Now read the bill:
+accuracy fell to `0.622`, and precision is `0.152` — the alarm rings for
+33 birds to catch 5 (28 false alarms). Whether that trade is *good* is not
+a modelling question, it's a cost question: if a missed rare bird is a
+conservation crisis and a false alarm is a wasted field trip, you take
+this deal gladly. The remedy didn't fix the tension; it let you choose
+your side of it.
+
+## Remedy 2: resampling — and its trap
+
+If the optimizer ignores the minority because it's outnumbered, duplicate
+minority rows until it isn't. Plain pandas does it (no extra library, no
+mystery):
+
+```{pyodide}
+#| caption: "Honest oversampling: duplicate rare TRAINING rows only"
+rare_train_idx = ytr[ytr == 1].index
+copies = (ytr == 0).sum() // len(rare_train_idx)   # to rough parity
+
+over_X = pd.concat([Xtr] + [Xtr.loc[rare_train_idx]] * copies)
+over_y = pd.concat([ytr] + [ytr.loc[rare_train_idx]] * copies)
+print(f"training set: {len(ytr)} rows ({ytr.mean():.1%} rare)  ->  "
+      f"{len(over_y)} rows ({over_y.mean():.1%} rare)")
+
+sc_o = StandardScaler().fit(over_X)
+over_model = LogisticRegression(max_iter=1000).fit(
+    sc_o.transform(over_X), over_y)
+pred_o = over_model.predict(sc_o.transform(Xte))
+print(f"recall {recall_score(yte, pred_o):.3f}   "
+      f"precision {precision_score(yte, pred_o):.3f}")
+```
+
+Same destination as the weights (`recall 1.000, precision 0.152`) — no
+accident: duplicating a row 13 times and weighting it 13× are near-twins
+mathematically. Oversampling earns its keep when a model's API has no
+weight argument.
+
+Now the trap. It looks so innocent: *balance the dataset first, then do
+the usual split*. Watch what that "improvement" is made of:
+
+```{pyodide}
+#| caption: "The trap: oversample BEFORE splitting, and the exam grades itself"
+# WRONG — for demonstration only.
+rare_all_idx = y[y == 1].index
+copies_all = (y == 0).sum() // len(rare_all_idx)
+leak_X = pd.concat([data[feats]] + [data[feats].loc[rare_all_idx]] * copies_all)
+leak_y = pd.concat([y] + [y.loc[rare_all_idx]] * copies_all)
+
+a, b, c, d = train_test_split(leak_X, leak_y, test_size=0.25,
+                              random_state=42, stratify=leak_y)
+sc_l = StandardScaler().fit(a)
+leak_model = LogisticRegression(max_iter=1000).fit(sc_l.transform(a), c)
+pred_l = leak_model.predict(sc_l.transform(b))
+print(f"'test' recall {recall_score(d, pred_l):.3f}   "
+      f"'test' precision {precision_score(d, pred_l):.3f}")
+
+overlap = sum(1 for i in b.index if i in a.index)
+print(f"\ntest rows that ALSO appear in training: {overlap} of {len(b)}")
+```
+
+Precision leaps from the honest `0.152` to `0.711` — a miracle, until the
+last line explains it: **70 of the 139 "test" rows are copies of training
+rows.** The model is being graded on birds it memorized; half the exam
+questions were printed in the textbook. This is Chapter 4's sin in its
+most common modern costume. The rule, absolute: **split first; resample
+the training set only; the test set stays untouched at its natural
+imbalance** — because nature won't oversample your production data for
+you.
+
+## Remedy 3: move the threshold
+
+Return to the untreated model — the one with recall zero. Is it really
+blind to Chinstraps? Check its *ranking*:
+
+```{pyodide}
+#| caption: "The untreated model ranked fine — its POLICY was wrong"
+from sklearn.metrics import roc_auc_score
+
+probs = untreated.predict_proba(Xte_s)[:, 1]
+print(f"untreated model's AUC: {roc_auc_score(yte, probs):.3f}\n")
+
+print("threshold   recall   precision   birds flagged")
+for t in (0.5, 0.15, 0.08, 0.04):
+    p = (probs >= t).astype(int)
+    print(f"   {t:<9}{recall_score(yte, p, zero_division=0):.3f}     "
+          f"{precision_score(yte, p, zero_division=0):.3f}        "
+          f"{int(p.sum())}")
+```
+
+AUC `0.846`: the model ranks rare birds decently — but with only 7% rare
+training data, its probabilities all sit low, so the default 0.5 bar
+**never fires** (Chapter 5: the threshold is policy, and the default
+policy assumed balance). Drop the bar to `0.08` and recall hits `1.000` —
+**no retraining, no new data, one number changed.** When AUC is healthy
+but recall is dead, threshold moving is often the production answer: check
+the ranking before you rebuild the model.
+
+Which remedy when — the honest cheat-sheet: **weights** first (one
+argument, principled, no data surgery); **oversampling** when the API has
+no weights (and split-first, always); **threshold moving** when the model
+already ranks well — look at AUC to decide. Two names you'll meet
+elsewhere, flagged honestly: *undersampling* (throw away majority rows —
+cheap, but discards data) and *SMOTE* (synthesize interpolated minority
+rows — needs the `imblearn` library and care near class boundaries; beyond
+this chapter's scope). And the capstone warning: **Bank Marketing, your
+M4 capstone dataset, is naturally imbalanced** — this chapter is the
+toolkit you'll reach for.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. Untreated imbalance makes the optimizer **write off the minority**:
+   accuracy 0.932 with recall 0.000 — rational behaviour, wrong costs.
+2. **Class weights** (`n/(k·n_class)`) reprice mistakes: recall 0 → 1.000,
+   precision down to 0.152 — a trade you choose with stakeholder costs,
+   not a cure.
+3. **Oversampling ≈ weighting**, done with data instead of math — and its
+   trap is lethal: resample before splitting and copies of training rows
+   land in the test set (70 of our 139), inflating scores. **Split first,
+   resample train only.**
+4. **Threshold moving needs no retraining**: our "blind" model had AUC
+   0.846; lowering the bar to 0.08 recovered full recall. Check the
+   ranking before rebuilding.
+5. The test set always stays at **natural imbalance** — production data
+   will be.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: seeds are fixed, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Fire the alarm: refit the emergency's model with repriced mistakes.
+Replace the `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_weights
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import recall_score, precision_score
+import pandas as pd
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "body_mass_g"])
+common = df[df["species"] != "Chinstrap"]
+rare = df[df["species"] == "Chinstrap"].sample(n=20, random_state=7)
+data = pd.concat([common, rare])
+y = (data["species"] == "Chinstrap").astype(int)
+Xtr, Xte, ytr, yte = train_test_split(
+    data[["flipper_length_mm", "body_mass_g"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+scaler = StandardScaler().fit(Xtr)
+Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
+```
+
+```{pyodide}
+#| exercise: ex_weights
+model = LogisticRegression(max_iter=1000, class_weight=____)  # TODO: reprice
+model.fit(Xtr_s, ytr)
+pred = model.predict(Xte_s)
+
+run_tests([
+    ("every rare bird found", round(recall_score(yte, pred), 3), 1.0),
+    ("the price, in precision", round(precision_score(yte, pred), 3), 0.152),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`class_weight="balanced"` computes the `n/(k·n_class)` weights for you —
+the one-argument version of remedy 1.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = LogisticRegression(max_iter=1000, class_weight="balanced")
+model.fit(Xtr_s, ytr)
+pred = model.predict(Xte_s)
+```
+
+Both asserts matter equally: the recall is the win, the precision is the
+bill. An exercise that only checked recall would be teaching you to
+ignore half the trade.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build both remedies' arithmetic from spec:
+
+- `balanced_weights(labels)` — return a dict mapping each class to
+  `n / (k · n_class)`, where `n` is the total count and `k` the number of
+  distinct classes (sklearn's exact formula).
+- `oversample_indices(labels)` — return the list of all indices
+  `0…n-1` in order, followed by extra copies of the minority-class
+  indices, cycling through them in order, until the minority count equals
+  the majority count. (Binary labels, 0 = majority.)
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_resample
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_resample
+from collections import Counter
+
+def balanced_weights(labels):
+    """Class -> n / (k * n_class), sklearn's 'balanced' formula."""
+    ...  # TODO
+
+def oversample_indices(labels):
+    """All indices, plus cycling copies of minority indices up to parity."""
+    ...  # TODO
+
+run_tests([
+    ("four to one", balanced_weights([0, 0, 0, 0, 1]), {0: 0.625, 1: 2.5}),
+    ("already balanced", balanced_weights([0, 1, 0, 1]), {0: 1.0, 1: 1.0}),
+    ("one rare row, copied to parity",
+     oversample_indices([0, 0, 0, 1]), [0, 1, 2, 3, 3, 3]),
+    ("two rare rows, cycling",
+     oversample_indices([0, 0, 0, 0, 1, 1]), [0, 1, 2, 3, 4, 5, 4, 5]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+For the weights: `Counter(labels)` gives each class's count; the weight is
+`len(labels) / (len(counts) * count)`. For the indices: find the minority
+positions, compute how many extras parity needs
+(`majority − minority`), and append `minority_positions[i %
+len(minority_positions)]` for each extra.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from collections import Counter
+
+def balanced_weights(labels):
+    counts = Counter(labels)
+    n, k = len(labels), len(counts)
+    return {cls: n / (k * c) for cls, c in counts.items()}
+
+def oversample_indices(labels):
+    minority = [i for i, v in enumerate(labels) if v == 1]
+    majority_count = sum(1 for v in labels if v == 0)
+    extras = majority_count - len(minority)
+    out = list(range(len(labels)))
+    out += [minority[i % len(minority)] for i in range(extras)]
+    return out
+```
+
+Run `balanced_weights` on a 95/5 split and you'll see the ~10× repricing
+the chapter used — the two remedies are the same idea in two currencies:
+one edits the loss, the other edits the data.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). The station's cost
+model: **a missed Chinstrap costs 10× a false alarm.** Using the untreated
+model's `probs` from the worked example, sweep thresholds from 0.02 to
+0.5, compute each policy's total cost on the held-out birds
+(`10 × misses + 1 × false_alarms`), and recommend a threshold in one
+sentence.
+
+**Rubric — a good answer:**
+
+- Sweeps a reasonable grid and computes misses and false alarms per
+  threshold from the 0/1 predictions.
+- Applies the stated cost model rather than optimizing accuracy or F1.
+- The recommendation names the minimum-cost threshold (here a low one, ≈
+  0.08) and states the reasoning: with misses this expensive, buying
+  recall with false alarms is the rational trade.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for t in (0.02, 0.04, 0.08, 0.15, 0.3, 0.5):
+    p = (probs >= t).astype(int)
+    misses = int(((p == 0) & (yte == 1)).sum())
+    alarms = int(((p == 1) & (yte == 0)).sum())
+    print(f"t={t:<5} misses={misses}  false alarms={alarms}  "
+          f"cost={10 * misses + alarms}")
+```
+
+At 10:1 costs the sweep bottoms out near t=0.08 — every rare bird caught
+for 22 field trips — while the default 0.5 policy is the *most* expensive
+on the menu: five misses, cost 50, from the "safest-looking" setting.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch15.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now have the imbalance toolkit: reprice mistakes, resample (train
+only, always), or move the policy bar — each a measured trade, chosen by
+stakeholder costs, judged by Chapter 6's metrics on a naturally-imbalanced
+test set. The module's remaining craft chapter looks one step earlier in
+the pipeline: **feature engineering** — making the data easier to learn
+from in the first place, and the pipelines that keep it leak-proof.
