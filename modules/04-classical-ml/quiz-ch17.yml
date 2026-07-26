@@ -1,0 +1,35 @@
+title: "Chapter 17 — quick check"
+id: "m4-ch17-kmeans"
+questions:
+  - id: what-kmeans-minimizes
+    prompt: "What quantity does the k-means loop drive down?"
+    options:
+      - "Inertia — the total squared distance from each point to its assigned centre"
+      - "The number of clusters"
+      - "The classification error against the true labels"
+    answer: 0
+    explanation: "Each assign step and each update step can only reduce inertia, which is why the loop must settle. There are no true labels anywhere in the process — that is the point of unsupervised learning."
+  - id: lowest-inertia-trap
+    prompt: "Why can't 'pick the k with the lowest inertia' choose the number of clusters?"
+    options:
+      - "Inertia can only be computed after k is already chosen"
+      - "Inertia always falls as k grows — k equal to the number of points scores a perfect, meaningless zero"
+      - "Inertia rises with k, so it would always choose k=1"
+    answer: 1
+    explanation: "More centres are always closer to more points; one private centre per point is the unsupervised parrot. That is why the elbow — where inertia stops falling fast — is the criterion, judgement call and all."
+  - id: n-init-guards
+    prompt: "What problem does KMeans(n_init=10) guard against?"
+    options:
+      - "Overfitting to the training labels"
+      - "Features on different scales dominating the distance"
+      - "Local minima — where the loop settles depends on the random starting centres, so ten restarts keep the best result"
+    answer: 2
+    explanation: "The loop always converges, but not always to the best arrangement: bad starts can settle into worse piles. Restarting from ten random placements and keeping the lowest-inertia run is the standard defence. Scaling is necessary too — but that is Chapter 9's fix, not n_init's."
+  - id: cluster-meaning-transfer
+    prompt: "k-means finds 4 'customer segments' in your purchase data. What can you honestly claim?"
+    options:
+      - "The company has exactly four types of customer"
+      - "Each segment corresponds to a distinct demographic group"
+      - "There are four roundish piles in the feature space you chose — whether they mean anything about customers is a domain question the algorithm cannot answer"
+    answer: 2
+    explanation: "A cluster is a shape in feature space under k-means' assumptions (roundish, similar-sized, distance-separable). The penguin reveal went 95.6% because biology happened to draw distance-visible boundaries; your segments earn meaning only through domain validation."

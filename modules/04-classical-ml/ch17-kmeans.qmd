@@ -1,0 +1,452 @@
+---
+title: "k-means clustering"
+module: "M4 — Classical Machine Learning"
+chapter: 17
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch9 — K-nearest neighbours"
+learning_objectives:
+  - "Implement the k-means assign-update loop and run it to convergence"
+  - "Choose k with the inertia elbow — and explain why lowest inertia is not a criterion"
+  - "Interpret found clusters honestly: shapes in feature space, not guaranteed categories"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 23
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: assign-update-loop
+    q: "Describe the k-means algorithm."
+    a: "Pick k starting centres. Assign: deal every point to its nearest centre. Update: move each centre to the mean of its pile. Repeat until nothing moves. It minimizes inertia — the total squared distance from points to their centres — and needs scaled features, like every distance method."
+  - id: elbow-and-caveat
+    q: "How is k chosen without labels, and what is the catch?"
+    a: "Plot inertia against k and look for the elbow — where extra clusters stop buying much. The catch: inertia ALWAYS falls as k grows (k=n scores 0 and means nothing), so 'lowest inertia' can never choose k; the elbow is a judgement call and is sometimes ambiguous."
+  - id: clusters-not-categories
+    q: "What is a k-means cluster, and what is it not?"
+    a: "A pile of points near a centre — a shape in the feature space you chose, under k-means' assumptions (roundish, similar-sized piles). It is not a guaranteed real-world category: whether a cluster means something is a domain question, checked outside the algorithm."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A crate arrives from a shuttered field station: hundreds of penguin
+measurement cards — and the species column is **lost**. No labels. No
+answers.
+
+Notice what that breaks. Sixteen chapters of tools assumed a target: no
+labels means no training signal, no accuracy, no recall, no validation
+score to tune against. Welcome to **unsupervised learning**, where the
+question changes from *"predict the answer"* to *"find the structure"* —
+and where, fair warning, evaluation gets harder, not easier.
+
+The intern's instinct is the right one: spread the cards on a table and
+look for **natural piles**. **k-means** is that instinct as an algorithm —
+guess k pile-centres, deal every card to its nearest centre, move each
+centre to the middle of its pile, repeat until nothing moves. We'll play
+the game honestly: the species column stays locked away from every model
+*and every plot* until the final reveal.
+
+> You'll need from before: distance and mandatory scaling (Ch9) — k-means
+> is pure geometry, so Chapter 9's rules apply in full.
+
+---
+
+## The cards, face down
+
+```{pyodide}
+#| caption: "342 unlabelled birds — lumps, but no names"
+#| fig-alt: "Scatter plot of scaled flipper length against scaled bill length showing 342 identical grey dots. The dots form visibly separated lumps: a large cloud lower-left, a dense cloud upper-right, and a smaller cloud between them, with sparse gaps separating the groups."
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "bill_length_mm"])
+Xs = StandardScaler().fit_transform(
+    df[["flipper_length_mm", "bill_length_mm"]])
+
+fig, ax = plt.subplots(figsize=(5, 3.6))
+ax.scatter(Xs[:, 0], Xs[:, 1], s=10, color="grey", alpha=0.5)
+ax.set_xlabel("flipper length (scaled)")
+ax.set_ylabel("bill length (scaled)")
+plt.show()
+```
+
+Your eye already sees piles. The algorithm's job is to find them without
+an eye — and without ever being told what a penguin is.
+
+## The loop, by hand
+
+Two moves, alternated. **Assign**: deal each card to its nearest centre.
+**Update**: move each centre to its pile's average. Start with three
+centres placed on three arbitrary cards and watch the machine settle:
+
+```{pyodide}
+#| caption: "Assign, update, repeat — settled in five rounds"
+centres = Xs[[0, 170, 340]].copy()     # three arbitrary starting cards
+
+def assign(points, centres):
+    dists = ((points[:, None, :] - centres[None, :, :]) ** 2).sum(axis=2)
+    return dists.argmin(axis=1)        # index of each point's nearest centre
+
+for it in range(1, 30):
+    labels = assign(Xs, centres)
+    new_centres = np.array([Xs[labels == j].mean(axis=0) for j in range(3)])
+    move = float(np.abs(new_centres - centres).max())
+    print(f"round {it}: pile sizes {np.bincount(labels).tolist()}, "
+          f"largest centre move {move:.4f}")
+    if move == 0:
+        print(f"\nconverged — nothing moved in round {it}")
+        break
+    centres = new_centres
+```
+
+Five rounds from arbitrary starts to piles of **151 / 127 / 64** and total
+stillness. Each round can only *reduce* the total squared distance from
+cards to their centres — which is why the loop must settle — and that
+quantity has a name we'll need: **inertia**.
+
+## The library version, and a catch
+
+```{pyodide}
+#| caption: "sklearn's k-means finds the same piles — from ten random restarts"
+from sklearn.cluster import KMeans
+
+km = KMeans(n_clusters=3, n_init=10, random_state=0).fit(Xs)
+print(f"pile sizes: {np.bincount(km.labels_).tolist()}")
+print(f"inertia:    {km.inertia_:.1f}")
+```
+
+Same piles (order aside), inertia `157.8`. The catch worth knowing:
+where the loop *settles depends on where it starts* — bad starting
+centres can converge to a worse arrangement (a local minimum, Chapter 3's
+landscape vocabulary). `n_init=10` runs ten different random starts and
+keeps the lowest-inertia result: brute honesty about a brittle start.
+
+```{pyodide}
+#| caption: "The found piles — coloured by CLUSTER, not by species"
+#| fig-alt: "The same scatter of 342 birds, now coloured into three groups matching the visible lumps, with three X markers at the centre of each group. The colours are labelled cluster 0, 1, and 2 — deliberately not species names."
+fig, ax = plt.subplots(figsize=(5, 3.6))
+ax.scatter(Xs[:, 0], Xs[:, 1], c=km.labels_, cmap="viridis", s=10, alpha=0.6)
+ax.scatter(km.cluster_centers_[:, 0], km.cluster_centers_[:, 1],
+           marker="x", s=120, color="red", label="centres")
+ax.set_xlabel("flipper length (scaled)")
+ax.set_ylabel("bill length (scaled)")
+ax.legend(fontsize=8)
+plt.show()
+```
+
+Note the labels: cluster 0, 1, 2. The algorithm found *piles*, not
+*penguin species* — it has no idea what a species is. Keeping that
+distinction sharp is half of unsupervised literacy.
+
+## Choosing k: the elbow
+
+We told it three piles. The crate didn't. With no labels there's no
+validation accuracy to tune against — so what chooses k? Run every k and
+watch inertia:
+
+```{pyodide}
+#| caption: "Inertia always falls — the question is where it stops falling fast"
+#| fig-alt: "Line chart of inertia against k from 1 to 8. Inertia plunges from 684 at k equals 1 to 247 at k equals 2 and 158 at k equals 3, then declines gently through 119, 92, 78, 67 and 58 — a sharp bend, like an elbow, at k equals 3."
+inertias = []
+for k in range(1, 9):
+    m = KMeans(n_clusters=k, n_init=10, random_state=0).fit(Xs)
+    inertias.append(m.inertia_)
+    print(f"k={k}: inertia {m.inertia_:.1f}")
+
+fig, ax = plt.subplots(figsize=(5, 3.2))
+ax.plot(range(1, 9), inertias, marker="o")
+ax.set_xlabel("k (number of piles)")
+ax.set_ylabel("inertia")
+ax.annotate("the elbow", (3.1, 190))
+plt.show()
+```
+
+Two truths, in order. First: **inertia always falls as k grows** — more
+centres are always nearer to more points, and k=342 scores a perfect,
+meaningless zero (one private centre per card: Chapter 4's parrot, in its
+unsupervised costume). So "lowest inertia" can never choose k. Second:
+what *can* is the **elbow** — the bend where extra piles stop buying much.
+Here the plunge (684 → 247 → 158) turns to a crawl after k=3. Honest
+caveat attached: the elbow is a judgement call, and on real data it is
+sometimes ambiguous or absent — when it matters, it gets supplemented
+with other diagnostics and, above all, domain sense.
+
+## The reveal
+
+The species column comes out of the drawer. How much biology did raw
+geometry recover?
+
+```{pyodide}
+#| caption: "Found piles vs hidden species — the moment of truth"
+import pandas as pd
+
+reveal = pd.crosstab(km.labels_, df["species"])
+print(reveal)
+
+agree = reveal.max(axis=1).sum()
+print(f"\nbest-match agreement: {agree} of {len(df)} birds "
+      f"({agree / len(df):.1%})")
+```
+
+**95.6%.** One pile is essentially Gentoo (122 of 127), one Adelie (146
+of 151), one Chinstrap (59 of 64) — and the confusions sit exactly where
+Chapter 5 found the clouds overlapping. Two measurements and no labels
+recovered the species boundaries biology drew. That's the honest upside
+of clustering.
+
+The honest limits, stated before you're tempted to over-trust it:
+k-means assumes piles that are **roundish, similar in size, and
+separable by distance** — it will happily carve a crescent into chunks
+or split one stretched cluster in two. Whether a found pile *means*
+anything (a species, a customer segment, a fraud pattern) is a domain
+question the algorithm cannot answer; it found a shape, and you supply
+the meaning — or discover there isn't one. When piles come in awkward
+shapes or unknown counts, Chapter 18's **hierarchical clustering** offers
+a different lens: not "deal to k centres" but "merge the closest piles,
+one step at a time".
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Unsupervised learning finds structure without answers** — and loses
+   the entire evaluation toolkit that labels made possible.
+2. **k-means = assign + update, repeated**: deal cards to nearest
+   centres, move centres to pile means; converged here in 5 rounds. Scaled
+   features mandatory (it's pure distance).
+3. **Inertia** (within-pile squared distance) always falls with k — k=n
+   scores a meaningless 0 — so k is chosen at the **elbow** (684 → 247 →
+   158, then a crawl), a judgement call, honestly.
+4. Local minima are real: `n_init=10` restarts and keeps the best.
+5. Our unlabelled piles matched the hidden species at **95.6%** — and a
+   cluster is still only a *shape in feature space*; meaning is a domain
+   question.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: fixed starts, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Run the first assign of the chapter's by-hand loop. Complete the nearest-
+centre line, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_assign
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "bill_length_mm"])
+Xs = StandardScaler().fit_transform(
+    df[["flipper_length_mm", "bill_length_mm"]])
+centres = Xs[[0, 170, 340]].copy()
+```
+
+```{pyodide}
+#| exercise: ex_assign
+dists = ((Xs[:, None, :] - centres[None, :, :]) ** 2).sum(axis=2)
+labels = ____   # TODO: each card's nearest centre (which axis do you argmin?)
+
+run_tests([
+    ("every card dealt", len(labels), 342),
+    ("first-round pile sizes", np.bincount(labels).tolist(), [162, 98, 82]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`dists` is 342×3 — one row per card, one column per centre. The nearest
+centre for each card is `dists.argmin(axis=1)`: the argmin *across the
+columns*.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "bill_length_mm"])
+Xs = StandardScaler().fit_transform(
+    df[["flipper_length_mm", "bill_length_mm"]])
+centres = Xs[[0, 170, 340]].copy()
+
+dists = ((Xs[:, None, :] - centres[None, :, :]) ** 2).sum(axis=2)
+labels = dists.argmin(axis=1)
+```
+
+First deal: 162 / 98 / 82 — compare with the converged 151 / 127 / 64
+from the chapter. The piles start rough and the update rounds sculpt
+them.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build both halves of the loop from spec, in plain Python:
+
+- `assign_to_centres(points, centres)` — for each point (a tuple), the
+  index of its nearest centre by squared distance (ties: the lower
+  index).
+- `update_centres(points, labels, k)` — for each cluster `0…k-1`, the
+  mean of its points, as a tuple rounded to 4 dp.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_loop
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_loop
+def assign_to_centres(points, centres):
+    """Index of each point's nearest centre (squared distance)."""
+    ...  # TODO
+
+def update_centres(points, labels, k):
+    """Mean point of each cluster 0..k-1, each rounded to 4 dp."""
+    ...  # TODO
+
+pts = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0),
+       (10.0, 10.0), (11.0, 10.0), (10.0, 11.0)]
+cs = [(0.0, 0.0), (10.0, 10.0)]
+run_tests([
+    ("two clear piles", assign_to_centres(pts, cs), [0, 0, 0, 1, 1, 1]),
+    ("centres move to pile middles",
+     update_centres(pts, [0, 0, 0, 1, 1, 1], 2),
+     [(0.3333, 0.3333), (10.3333, 10.3333)]),
+    ("a second round changes nothing",
+     assign_to_centres(pts, [(0.3333, 0.3333), (10.3333, 10.3333)]),
+     [0, 0, 0, 1, 1, 1]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+For assign: compute `sum((a - b) ** 2 …)` against every centre and take
+the index of the smallest (`min(range(len(centres)), key=…)`). For
+update: collect each cluster's points, average coordinate-wise, round.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def assign_to_centres(points, centres):
+    def sq_dist(p, c):
+        return sum((a - b) ** 2 for a, b in zip(p, c))
+    return [min(range(len(centres)), key=lambda j: sq_dist(p, centres[j]))
+            for p in points]
+
+def update_centres(points, labels, k):
+    out = []
+    for j in range(k):
+        pile = [p for p, lab in zip(points, labels) if lab == j]
+        out.append(tuple(round(sum(coord) / len(pile), 4)
+                         for coord in zip(*pile)))
+    return out
+
+pts = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0),
+       (10.0, 10.0), (11.0, 10.0), (10.0, 11.0)]
+cs = [(0.0, 0.0), (10.0, 10.0)]
+```
+
+The third fixture is convergence itself: after one update, re-assigning
+changes nothing — the loop's stopping condition, verified on six points
+you can check in your head.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Rerun the whole game
+with **four** numeric features (`bill_length_mm`, `bill_depth_mm`,
+`flipper_length_mm`, `body_mass_g` — scaled, rows without missing values
+dropped): plot the elbow, argue for a k, fit it, then reveal against
+species and reconcile your choice in one sentence.
+
+**Rubric — a good answer:**
+
+- Scales the four features (fit on the data being clustered) and sweeps
+  k with a fixed `random_state`, `n_init=10`.
+- Argues for a k from the elbow *before* peeking at species.
+- The reveal crosstab is read honestly — whether the extra features
+  sharpened or blurred the species match — and the sentence separates
+  "the geometry's piles" from "biology's categories".
+
+<details><summary>Show one possible answer</summary>
+
+```python
+feats4 = ["bill_length_mm", "bill_depth_mm",
+          "flipper_length_mm", "body_mass_g"]
+d4 = load_csv("penguins").dropna(subset=feats4)
+X4 = StandardScaler().fit_transform(d4[feats4])
+for k in range(1, 8):
+    m = KMeans(n_clusters=k, n_init=10, random_state=0).fit(X4)
+    print(f"k={k}: {m.inertia_:.0f}")
+km4 = KMeans(n_clusters=3, n_init=10, random_state=0).fit(X4)
+print(pd.crosstab(km4.labels_, d4["species"]))
+```
+
+The elbow still argues for 3 (with a whisper of a case for 2 — Gentoo
+vs everyone); the reveal typically stays strong, and where it blurs, it
+blurs at the same Adelie–Chinstrap seam every supervised chapter met —
+the geometry is consistent about where the hard boundary lives.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch17.yml >}}
+
+---
+
+## Where this fits / what's next
+
+First unsupervised tool, banked: piles from raw geometry, k from the
+elbow's judgement call, and the discipline of not confusing a cluster
+with a category — plus one honest 95.6% moment where geometry and biology
+agreed. k-means deals cards to a fixed number of centres; the next
+chapter grows structure the other way — **hierarchical clustering**,
+merging the closest groups step by step into a family tree you can cut at
+any height.

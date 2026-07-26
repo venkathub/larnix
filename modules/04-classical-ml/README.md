@@ -21,7 +21,8 @@ built-in, P2-D6).
 > [Ch13 — Support vector machines](ch13-svm.qmd) ·
 > [Ch14 — Naive Bayes](ch14-naive-bayes.qmd) ·
 > [Ch15 — Imbalanced data](ch15-imbalanced-data.qmd) ·
-> [Ch16 — Feature engineering](ch16-feature-engineering.qmd)
+> [Ch16 — Feature engineering](ch16-feature-engineering.qmd) ·
+> [Ch17 — k-means clustering](ch17-kmeans.qmd)
 
 ## Prerequisites
 

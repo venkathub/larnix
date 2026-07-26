@@ -39,7 +39,7 @@ classification — so every new algorithm lands on familiar ground.
 | 14 | [Naive Bayes](ch14-naive-bayes.qmd) | 🟡 |
 | 15 | [Imbalanced data](ch15-imbalanced-data.qmd) | 🟡 |
 | 16 | [Feature engineering](ch16-feature-engineering.qmd) | 🟡 |
-| 17 | k-means clustering | 🟡 |
+| 17 | [k-means clustering](ch17-kmeans.qmd) | 🟡 |
 | 18 | Hierarchical clustering | 🟡 |
 | 19 | PCA & dimensionality reduction | 🟡 |
 | 20 | The scikit-learn workflow + your first model card | 🟡 |
