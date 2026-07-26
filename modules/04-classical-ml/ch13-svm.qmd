@@ -1,0 +1,426 @@
+---
+title: "Support vector machines"
+module: "M4 — Classical Machine Learning"
+chapter: 13
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch5 — Logistic regression"
+  - "M4 Ch9 — K-nearest neighbours"
+learning_objectives:
+  - "Explain the SVM's founding idea: of all separating boundaries, take the widest street"
+  - "Identify support vectors and show, by deletion, that only they position the boundary"
+  - "Use C as the street-width dial and the RBF kernel for data no line can cut"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 23
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: widest-street
+    q: "What makes the SVM's boundary different from any other separating line?"
+    a: "Among all boundaries that separate the classes, the SVM picks the one with the maximum margin — the widest street between the classes. Width forgives measurement noise: a new point near the middle of a wide street is still classified confidently."
+  - id: support-vectors-only
+    q: "What are support vectors, and why do they matter?"
+    a: "The training points standing on the street's curbs. They alone determine the boundary — delete any other point and the refit boundary does not move at all. The model is a summary of its hardest cases."
+  - id: kernels-one-line
+    q: "What does a kernel (like RBF) do for an SVM?"
+    a: "It scores similarity as if the data lived in a higher-dimensional space where a straight boundary works — without ever computing that space. Concentric rings that no line can cut become linearly separable through the RBF kernel's lens."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Here's a question no model so far has asked. Logistic regression separates
+the penguin clouds and stops — *any* boundary that gets the training birds
+right satisfies it. But between two well-separated clouds there are
+infinitely many lines that work. Are they all equally good?
+
+Stand in the gap and look around. A line that skims one cloud's edge leaves
+no room for error — one slightly odd new bird and it's on the wrong side. A
+line through the *middle* of the gap, with maximum breathing room on both
+sides, forgives noise. The **support vector machine** turns that instinct
+into an optimization: **of all the boundaries that separate the classes,
+take the one with the widest street.**
+
+And it comes with the strangest property in classical ML: the street's
+position depends *only on the birds standing at its curb*. Every penguin
+deep in its own territory could vanish tomorrow and the model wouldn't move
+a millimetre. We'll prove that by deletion.
+
+> You'll need from before: linear boundaries and probabilities (Ch5), and
+> scaling for geometric models (Ch9 — SVMs measure distances too, so the
+> lesson applies without ceremony).
+
+---
+
+## The street, drawn
+
+Adelie vs Gentoo on flipper and bill (scaled, fitted on train only — the
+Ch9 ritual):
+
+```{pyodide}
+#| caption: "The widest street, its curbs, and the 13 birds holding it up"
+#| fig-alt: "Scatter plot of scaled flipper length against scaled bill length with Adelie points lower-left and Gentoo points upper-right. A solid diagonal line separates the clouds, flanked by two dashed lines marking the street's curbs. Thirteen points sitting on or inside the dashed lines are circled — the support vectors. All other points lie well outside the street."
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+import matplotlib.pyplot as plt
+import numpy as np
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Gentoo"])].dropna(
+    subset=["flipper_length_mm", "bill_length_mm"])
+y = (two["species"] == "Gentoo").astype(int)
+X = two[["flipper_length_mm", "bill_length_mm"]]
+Xtr, Xte, ytr, yte = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+
+scaler = StandardScaler().fit(Xtr)
+Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
+
+svm = SVC(kernel="linear", C=1.0).fit(Xtr_s, ytr)
+print(f"training birds: {len(Xtr_s)}   support vectors: {len(svm.support_)}")
+
+# Draw boundary (decision_function = 0) and curbs (= ±1).
+xx, yy = np.meshgrid(np.linspace(-2.5, 2.5, 200), np.linspace(-2.5, 2.5, 200))
+zz = svm.decision_function(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+
+fig, ax = plt.subplots(figsize=(5.2, 4))
+ax.scatter(Xtr_s[:, 0], Xtr_s[:, 1], c=ytr, cmap="coolwarm", s=12, alpha=0.6)
+ax.contour(xx, yy, zz, levels=[-1, 0, 1],
+           linestyles=["--", "-", "--"], colors="k", linewidths=1)
+sv = svm.support_vectors_
+ax.scatter(sv[:, 0], sv[:, 1], s=90, facecolors="none",
+           edgecolors="k", label="support vectors")
+ax.set_xlabel("flipper length (scaled)")
+ax.set_ylabel("bill length (scaled)")
+ax.legend(fontsize=8)
+plt.show()
+```
+
+Two hundred and five training birds — and the entire model rests on the
+**13 circled ones** at the curbs. The solid line is the boundary; the
+dashed lines are the street's edges, pushed as far apart as the data
+allows. Everything the SVM knows is a summary of its *hardest cases*.
+
+## The deletion experiment
+
+Big claim, cheap test. Refit twice: once without a bird deep in its own
+territory, once without a curb bird, and measure how far the boundary
+moves:
+
+```{pyodide}
+#| caption: "Delete a deep bird: nothing. Delete a curb bird: the street shifts."
+def boundary_shift(remove_idx):
+    mask = np.ones(len(Xtr_s), dtype=bool)
+    mask[remove_idx] = False
+    refit = SVC(kernel="linear", C=1.0).fit(Xtr_s[mask], ytr.values[mask])
+    return float(np.linalg.norm(svm.coef_[0] - refit.coef_[0]))
+
+deep_bird = int(np.argmax(np.abs(svm.decision_function(Xtr_s))))
+curb_bird = int(svm.support_[0])
+
+print(f"removing the deepest bird:  boundary moved {boundary_shift(deep_bird):.6f}")
+print(f"removing one curb bird:     boundary moved {boundary_shift(curb_bird):.6f}")
+```
+
+`0.000000` versus `0.066735`. The deep bird — the most emphatically
+Adelie-ish Adelie in the data — contributes *nothing* to the boundary's
+position; the model would be bit-for-bit identical without it. The curb
+bird moves the street. No other model in this module ignores most of its
+training data this completely — and that economy is also a hint about
+memory: the fitted model needs to store only its support vectors.
+
+## C: the street-width dial
+
+Real clouds overlap, so real streets must tolerate some birds on the wrong
+curb. **C** prices those violations — and by now you'll recognize the dial
+before we describe it:
+
+```{pyodide}
+#| caption: "One dial, from wide-and-forgiving to narrow-and-strict"
+from sklearn.metrics import accuracy_score
+
+print("   C      support vectors   street width   test acc")
+for C in (0.01, 0.1, 1.0, 10.0, 100.0):
+    m = SVC(kernel="linear", C=C).fit(Xtr_s, ytr)
+    width = 2 / np.linalg.norm(m.coef_[0])
+    acc = accuracy_score(yte, m.predict(Xte_s))
+    print(f"{C:7}        {len(m.support_):3}            {width:.3f}        {acc:.3f}")
+```
+
+Small C: violations are cheap, the street sprawls (width `2.485`) and
+**106 birds** stand near enough to matter — a forgiving, high-bias model.
+Large C: violations are punished, the street narrows to `0.533` held up by
+**7 birds** — strict, and on messier data the high-variance end (here the
+clouds are so clean every setting aces the test). If this dial feels
+familiar, it should: **C is 1/α**, the same leash you tightened in Chapter
+7 and met inside `LogisticRegression` — third appearance, same tradeoff.
+
+## Kernels: when no line exists
+
+Some data defeats every line. Two concentric rings:
+
+```{pyodide}
+#| caption: "No straight line can cut a ring out of a ring — but the RBF kernel can"
+#| fig-alt: "Two side-by-side scatter plots of the same synthetic data: an inner ring of one class surrounded by an outer ring of the other. Left, titled linear kernel with accuracy 0.453: the background is split by a straight line that cuts through both rings, misclassifying large arcs. Right, titled RBF kernel with accuracy 1.000: the background shows a circular decision region that wraps the inner ring exactly."
+from sklearn.datasets import make_circles
+
+Xc, yc = make_circles(n_samples=300, factor=0.4, noise=0.08, random_state=0)
+Ctr, Cte, ctr, cte = train_test_split(Xc, yc, test_size=0.25,
+                                      random_state=42, stratify=yc)
+
+fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.4))
+for ax, kernel in zip(axes, ("linear", "rbf")):
+    m = SVC(kernel=kernel).fit(Ctr, ctr)
+    acc = accuracy_score(cte, m.predict(Cte))
+    gx, gy = np.meshgrid(np.linspace(-1.4, 1.4, 200),
+                         np.linspace(-1.4, 1.4, 200))
+    gz = m.decision_function(np.c_[gx.ravel(), gy.ravel()]).reshape(gx.shape)
+    ax.contourf(gx, gy, gz > 0, alpha=0.15, cmap="coolwarm")
+    ax.scatter(Xc[:, 0], Xc[:, 1], c=yc, cmap="coolwarm", s=8)
+    ax.set_title(f"{kernel} kernel — acc {acc:.3f}", fontsize=9)
+plt.show()
+```
+
+The linear SVM scores `0.453` — worse than guessing, because no line
+exists to find. The **RBF kernel** scores `1.000`, wrapping the inner ring
+exactly. Here is the one-picture idea: a kernel scores *similarity between
+points* as if the data had been lifted into a higher-dimensional space
+where a straight boundary works — imagine the inner ring raised out of the
+page, so a flat sheet slides between the rings — **without ever computing
+that space**. The lift is implicit in the similarity function; that
+sleight-of-hand is called the kernel trick, and its full mathematics is
+beyond this chapter, honestly flagged. What you need: `kernel="rbf"` buys
+curved boundaries, and its `gamma` dial is one more capacity knob (small =
+smooth, large = wiggly — the U again).
+
+Where SVMs live today, stated plainly: superb on small-to-medium *scaled*
+tables and still the cleanest geometry lesson in ML; on big tabular data
+the Ch11–12 tree ensembles usually win, and on images and text, M5's
+networks. Knowing which tool owns which terrain is part of the toolbox.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The SVM asks the question others skip: among all separating boundaries,
+   **take the widest street** (maximum margin) — width forgives noise.
+2. **Only the curb matters**: 13 support vectors held up a 205-bird model;
+   deleting the deepest bird moved the boundary by exactly 0.000000.
+3. **C prices street violations**: small C = wide, forgiving, high-bias;
+   large C = narrow, strict, high-variance. It is 1/α — Chapter 7's leash,
+   third sighting.
+4. **Kernels buy curved boundaries**: RBF took the rings from 0.453 to
+   1.000 by scoring similarity as if in a lifted space — never computed.
+5. SVMs need **scaled features** (they measure distances) and shine on
+   small/medium tables; trees and nets own other terrain.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Build the chapter's street and count who's holding it up. Replace the
+`____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_street
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+df = load_csv("penguins")
+two = df[df["species"].isin(["Adelie", "Gentoo"])].dropna(
+    subset=["flipper_length_mm", "bill_length_mm"])
+y = (two["species"] == "Gentoo").astype(int)
+Xtr, Xte, ytr, yte = train_test_split(
+    two[["flipper_length_mm", "bill_length_mm"]], y,
+    test_size=0.25, random_state=42, stratify=y)
+scaler = StandardScaler().fit(Xtr)
+Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
+```
+
+```{pyodide}
+#| exercise: ex_street
+model = SVC(kernel=____, C=1.0)   # TODO: a straight street
+model.fit(____, ytr)              # TODO: the SCALED training birds
+
+run_tests([
+    ("held-out accuracy", round(
+        accuracy_score(yte, model.predict(Xte_s)), 3), 1.0),
+    ("birds holding up the street", len(model.support_), 13),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`kernel="linear"` asks for a straight boundary, and the model fits on
+`Xtr_s` — the scaled training matrix (raw millimetres would re-spring
+Chapter 9's trap).
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = SVC(kernel="linear", C=1.0)
+model.fit(Xtr_s, ytr)
+```
+
+Thirteen support vectors out of 205 birds: `model.support_` lists their
+indices, and everything else in the training set is, to this model,
+scenery.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+The street's two measurements, from spec:
+
+- `street_side(w, b, p)` — for a boundary defined by weights `w` and
+  intercept `b`, return `+1` if point `p` satisfies `w·p + b ≥ 0`, else
+  `-1` (which side of the line — the SVM's verdict rule).
+- `margin_width(w)` — the street's width, `2 / ‖w‖`: the quantity the SVM
+  maximizes (smaller weights = wider street, one more echo of Chapter 7).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_margin
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_margin
+import math
+
+def street_side(w, b, p):
+    """+1 if w·p + b >= 0 else -1."""
+    ...  # TODO
+
+def margin_width(w):
+    """2 divided by the Euclidean norm of w."""
+    ...  # TODO
+
+run_tests([
+    ("north side", street_side([2.0, -1.0], 0.5, [1.0, 1.0]), 1),
+    ("south side", street_side([2.0, -1.0], 0.5, [-1.0, 1.0]), -1),
+    ("standing on the line counts as +1",
+     street_side([1.0, 0.0], -2.0, [2.0, 5.0]), 1),
+    ("3-4-5 street", margin_width([3.0, 4.0]), 0.4),
+    ("small weights, wide street", margin_width([0.5, 0.0]), 4.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+The dot product is `sum(wi * pi for wi, pi in zip(w, p))`; compare it plus
+`b` against zero. The norm is `math.sqrt(sum(wi ** 2 ...))`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def street_side(w, b, p):
+    score = sum(wi * pi for wi, pi in zip(w, p)) + b
+    return 1 if score >= 0 else -1
+
+def margin_width(w):
+    return 2 / math.sqrt(sum(wi ** 2 for wi in w))
+```
+
+The last fixture is the whole optimization in two numbers: halving the
+weights doubles the street. "Maximize the margin" and "keep the weights
+small" are the same instruction — which is why C and Chapter 7's α are one
+dial wearing two names.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Sweep
+`C ∈ {0.01, 0.1, 1, 10, 100}` on the chapter's scaled penguins, printing
+the support-vector count, street width (`2 / np.linalg.norm(m.coef_[0])`),
+and test accuracy for each. Answer in one sentence: what is the
+relationship between C, the width, and how many birds matter — and which C
+would worry you on noisier data?
+
+**Rubric — a good answer:**
+
+- Produces the three-column sweep.
+- States the monotone story: bigger C → narrower street → fewer support
+  vectors.
+- Flags large C as the overfitting-prone end on noisy data (the strict
+  street bends to individual birds), even though this clean dataset hides
+  the cost.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import numpy as np
+for C in (0.01, 0.1, 1, 10, 100):
+    m = SVC(kernel="linear", C=C).fit(Xtr_s, ytr)
+    print(f"C={C:<6} svs={len(m.support_):3}  "
+          f"width={2 / np.linalg.norm(m.coef_[0]):.3f}  "
+          f"acc={accuracy_score(yte, m.predict(Xte_s)):.3f}")
+```
+
+From 106 birds and width 2.5 down to 7 birds and width 0.53 — C=100 builds
+its street to please a handful of edge cases, which is exactly the model
+I'd distrust once the clouds overlap.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch13.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The SVM added the module's sharpest geometric idea — optimize the boundary
+itself, trust only the hard cases, and buy curves with kernels when lines
+run out. One classical family remains, and it thinks in an entirely
+different currency: not distances or streets but **probabilities**. M2's
+Bayes' rule returns as a working classifier — **Naive Bayes** — naive on
+purpose, and surprisingly hard to beat at certain jobs.

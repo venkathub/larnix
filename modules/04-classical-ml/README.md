@@ -17,7 +17,8 @@ built-in, P2-D6).
 > [Ch9 — K-nearest neighbours](ch09-knn.qmd) ·
 > [Ch10 — Decision trees](ch10-decision-trees.qmd) ·
 > [Ch11 — Random forests & ensembles](ch11-random-forests.qmd) ·
-> [Ch12 — Gradient boosting (+ XGBoost)](ch12-gradient-boosting.qmd)
+> [Ch12 — Gradient boosting (+ XGBoost)](ch12-gradient-boosting.qmd) ·
+> [Ch13 — Support vector machines](ch13-svm.qmd)
 
 ## Prerequisites
 

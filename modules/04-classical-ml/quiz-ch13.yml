@@ -1,0 +1,35 @@
+title: "Chapter 13 — quick check"
+id: "m4-ch13-svm"
+questions:
+  - id: what-svm-optimizes
+    prompt: "Many boundaries separate two well-separated classes perfectly. What does the SVM optimize that other classifiers ignore?"
+    options:
+      - "The number of features used by the boundary"
+      - "The margin — it picks the boundary with the widest street between the classes"
+      - "The training speed of the final model"
+    answer: 1
+    explanation: "Logistic regression stops at 'separated'; the SVM maximizes the breathing room on both sides. A wide street means a slightly odd new point still lands on the right side — margin is noise insurance."
+  - id: support-vector-delete
+    prompt: "You delete a training point that sits far inside its own class's territory and refit the SVM. What happens to the boundary?"
+    options:
+      - "Nothing — only the support vectors at the street's curbs position the boundary, and deep points contribute zero"
+      - "It shifts toward the deleted point's class"
+      - "It becomes wider because there is less data to violate it"
+    answer: 0
+    explanation: "The chapter's deletion experiment: removing the deepest bird moved the boundary by exactly 0.000000, removing a curb bird by 0.067. The model is a summary of its hardest cases only."
+  - id: c-dial-ends
+    prompt: "In Chapter 7/8 vocabulary, what do the two ends of the C dial correspond to?"
+    options:
+      - "Small C overfits (too flexible); large C underfits (too rigid)"
+      - "C only affects training speed, not the bias–variance position"
+      - "Small C = wide forgiving street, the high-bias end; large C = narrow strict street, the high-variance end"
+    answer: 2
+    explanation: "C prices street violations. Cheap violations (small C) give a sprawling, stable, possibly-too-simple street; expensive violations (large C) bend the street to individual points. C is 1/alpha — the Chapter 7 leash inverted."
+  - id: kernel-transfer
+    prompt: "Your two classes form concentric rings. A linear SVM scores 0.45. What is the right move, and why does it work?"
+    options:
+      - "Increase C until the line fits the rings"
+      - "Add more training rings so a line can be found"
+      - "Use an RBF kernel — it scores similarity as if the data were lifted into a space where a straight boundary separates the rings"
+    answer: 2
+    explanation: "No line exists in the flat plane, so no C can help. The kernel trick evaluates similarity in an implicit higher-dimensional space — picture the inner ring lifted out of the page — where a flat separator exists; the RBF SVM cut the rings at 1.000."

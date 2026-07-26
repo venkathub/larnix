@@ -35,7 +35,7 @@ classification — so every new algorithm lands on familiar ground.
 | 10 | [Decision trees](ch10-decision-trees.qmd) | 🟡 |
 | 11 | [Random forests & ensembles](ch11-random-forests.qmd) | 🟡 |
 | 12 | [Gradient boosting (+ XGBoost)](ch12-gradient-boosting.qmd) | 🟡 |
-| 13 | Support vector machines | 🟡 |
+| 13 | [Support vector machines](ch13-svm.qmd) | 🟡 |
 | 14 | Naive Bayes | 🟡 |
 | 15 | Imbalanced data | 🟡 |
 | 16 | Feature engineering | 🟡 |
