@@ -1,0 +1,35 @@
+title: "Chapter 18 — quick check"
+id: "m4-ch18-hierarchical-clustering"
+questions:
+  - id: linkage-decides
+    prompt: "Two groups of points must be compared for a merge. What does the linkage choice decide?"
+    options:
+      - "How the distance between the two GROUPS is defined — nearest members (single), farthest (complete), all-pairs average, or variance growth (Ward)"
+      - "How many clusters the final answer will contain"
+      - "Which distance metric (Euclidean vs Manhattan) is used between individual points"
+    answer: 0
+    explanation: "Point-to-point distance is settled; linkage answers the new question groups create. The chapter measured the stakes: Ward gave 29/11/20 on sixty birds, single linkage 58/1/1 — same data, different lens."
+  - id: dendrogram-height
+    prompt: "In a dendrogram, what does a long vertical stretch with no merges represent?"
+    options:
+      - "A region where the algorithm failed to converge"
+      - "A natural gap: the clusters below it were internally close, and merging across it required reaching far — a good place to cut"
+      - "Clusters that contain outliers"
+    answer: 1
+    explanation: "Height is merge distance. Short merges are natural joins; a long climb before the next merge means genuinely separated groups. Our tree's gap between heights 4.4 and 12.9 is why cutting at 10 yields two clean clusters."
+  - id: k-after-vs-before
+    prompt: "What can hierarchical clustering offer that k-means cannot?"
+    options:
+      - "Faster clustering on millions of points"
+      - "Clusters guaranteed to match real-world categories"
+      - "The full structure at every scale from one fit — k is chosen afterwards by cutting the tree, not guessed up front"
+    answer: 2
+    explanation: "One fitted tree yields 2, 3, or any number of clusters by cutting at different heights. The price runs the other way: all-pairs distances scale poorly, where k-means stays cheap — complements, not rivals."
+  - id: chaining-transfer
+    prompt: "Under single linkage, two well-separated clusters connected by a thin line of intermediate points end up merged early. Why?"
+    options:
+      - "Single linkage measures group distance by the nearest pair, so each stepping-stone point bridges the gap one short hop at a time — chaining"
+      - "Single linkage always produces exactly one cluster"
+      - "The intermediate points increase the variance, which single linkage minimizes"
+    answer: 0
+    explanation: "Nearest-member distance lets a chain of close points weld distant groups together — the pathology behind our 58/1/1 result. It is also single linkage's superpower on genuinely stringy shapes; know which lens you are holding."

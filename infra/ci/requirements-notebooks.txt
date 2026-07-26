@@ -25,3 +25,10 @@ torchvision==0.28.0+cpu
 # Pyodide 0.28.1 ships in the browser (P2-D6 / DECISIONS D0020) — so the twin
 # executes the same library version the learner runs.
 xgboost==2.1.4
+
+# M4 Ch18's twin draws dendrograms with scipy. Browser parity (Pyodide 0.28.1
+# ships scipy 1.14.1) is NOT possible here: 1.14.1 predates numpy 2.5 and the
+# pins conflict. Pinned instead to a current release verified against this
+# file's numpy/sklearn pins (2026-07-21); the scipy.cluster.hierarchy API used
+# (linkage/dendrogram/fcluster) is long-stable across both versions.
+scipy==1.16.3

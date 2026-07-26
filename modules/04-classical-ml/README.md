@@ -22,7 +22,8 @@ built-in, P2-D6).
 > [Ch14 — Naive Bayes](ch14-naive-bayes.qmd) ·
 > [Ch15 — Imbalanced data](ch15-imbalanced-data.qmd) ·
 > [Ch16 — Feature engineering](ch16-feature-engineering.qmd) ·
-> [Ch17 — k-means clustering](ch17-kmeans.qmd)
+> [Ch17 — k-means clustering](ch17-kmeans.qmd) ·
+> [Ch18 — Hierarchical clustering](ch18-hierarchical-clustering.qmd)
 
 ## Prerequisites
 

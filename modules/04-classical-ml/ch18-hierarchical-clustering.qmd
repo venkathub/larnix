@@ -1,0 +1,436 @@
+---
+title: "Hierarchical clustering"
+module: "M4 — Classical Machine Learning"
+chapter: 18
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch17 — k-means clustering"
+learning_objectives:
+  - "Run agglomerative clustering by hand: merge the closest groups, keep the diary"
+  - "Explain linkage — how group-to-group distance is defined — and its measurable consequences"
+  - "Read a dendrogram and cut it at a height, choosing k after clustering instead of before"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - matplotlib
+    - scipy
+    - scikit-learn
+review_cards:
+  - id: merge-loop-diary
+    q: "How does agglomerative (hierarchical) clustering work?"
+    a: "Every point starts as its own group; repeatedly merge the two closest groups and record each merge and its distance. The diary of merges is the model — a tree (dendrogram) — and merges are final: nothing is ever re-assigned."
+  - id: linkage-one-line
+    q: "What does the linkage choice decide?"
+    a: "How to measure the distance between two GROUPS: single = nearest members (prone to chaining), complete = farthest members, average = mean of all pairs, Ward = smallest growth in within-group variance (the compact, k-means-flavoured default)."
+  - id: cut-the-tree
+    q: "How do you get k clusters from a dendrogram?"
+    a: "Cut the tree at a height: every branch below the cut is one cluster. Long vertical gaps mark natural cluster counts. One fitted tree yields any k — the number of clusters becomes a reading you make afterwards, not an input you guess up front."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+k-means demanded a strange act of faith: state the number of piles
+*before* looking at a single card. Like guessing the number of families
+at a reunion before anyone walks in.
+
+The bottom-up alternative skips the guess. Every penguin starts as its
+own tiny group. Then, over and over: **find the two closest groups and
+merge them**, writing each merge and its distance into a diary. Run it to
+the end and everything is one group — but the diary is the treasure: a
+**family tree** of the whole dataset, which you can cut at any height
+*afterwards*. Two clusters, three, seven — all from one fitted tree.
+"How many clusters?" stops being an input and becomes a *reading*.
+
+One new question appears the moment two points merge, and it names the
+chapter's key concept: the distance from a *group* to anything is… what,
+exactly? That decision is called **linkage**, and it changes results in
+ways we'll measure.
+
+> You'll need from before: distance, scaling, and cluster literacy
+> (Ch17, Ch9).
+
+---
+
+## Merging by hand: six birds
+
+Two of each species, scaled, and the full distance table — small enough
+to run the algorithm on paper:
+
+```{pyodide}
+#| caption: "Six birds, fifteen distances, and the first three merges"
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+import pandas as pd
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "bill_length_mm"])
+Xs = StandardScaler().fit_transform(
+    df[["flipper_length_mm", "bill_length_mm"]])
+
+pos6 = []
+for sp in ("Adelie", "Chinstrap", "Gentoo"):
+    pos6 += [df.index.get_loc(i) for i in df.index[df["species"] == sp][:2]]
+pts = Xs[pos6]
+D = np.sqrt(((pts[:, None, :] - pts[None, :, :]) ** 2).sum(axis=2))
+print("birds 0-1 Adelie, 2-3 Chinstrap, 4-5 Gentoo\n")
+print(pd.DataFrame(np.round(D, 2)))
+
+groups = [[i] for i in range(6)]
+
+def group_distance(g1, g2):          # single linkage: nearest members
+    return min(D[a][b] for a in g1 for b in g2)
+
+for step in range(1, 4):
+    i, j = min(((i, j) for i in range(len(groups))
+                for j in range(i + 1, len(groups))),
+               key=lambda p: group_distance(groups[p[0]], groups[p[1]]))
+    d = group_distance(groups[i], groups[j])
+    print(f"\nmerge {step}: {groups[i]} + {groups[j]}  at distance {d:.2f}")
+    groups = [g for k, g in enumerate(groups) if k not in (i, j)] \
+        + [groups[i] + groups[j]]
+print(f"\ngroups now: {groups}")
+```
+
+Walk the diary. Merge 1: the two Adelies (0.36 apart — the closest pair
+on the table). Merge 2: the two Chinstraps. Merge 3 is where the new
+concept earned its name: bird 4 (a Gentoo) joined the *Chinstrap group*
+— because our `group_distance` measured to the group's **nearest
+member**, and bird 4 sits 1.29 from bird 3. That rule — nearest members
+— is **single linkage**, and it was a choice, not a law.
+
+## Linkage: the choice, measured
+
+Four standard answers to "how far apart are two groups?":
+
+- **single** — distance of the *nearest* pair of members.
+- **complete** — distance of the *farthest* pair.
+- **average** — mean over all cross-pairs.
+- **ward** — merge whichever pair makes within-group variance grow least
+  (the compact, k-means-flavoured default).
+
+Do they matter? Sixty birds, same data, two linkages:
+
+```{pyodide}
+#| caption: "Same 60 birds, two linkage rules, unrecognizably different piles"
+from sklearn.cluster import AgglomerativeClustering
+
+rng = np.random.default_rng(0)
+sub = rng.choice(len(Xs), 60, replace=False)
+X60 = Xs[sub]
+
+for link in ("ward", "single"):
+    ac = AgglomerativeClustering(n_clusters=3, linkage=link).fit(X60)
+    print(f"{link:7}: cluster sizes {np.bincount(ac.labels_).tolist()}")
+```
+
+Ward finds three sensible piles (29/11/20). Single linkage returns
+**58/1/1** — one giant cluster and two stranded birds. That's single
+linkage's famous pathology, **chaining**: any string of close stepping-
+stones fuses groups, so one bridge bird welds two real clusters together
+and the "clusters" left over are outliers. Neither rule is wrong — single
+linkage is exactly what you want for stringy, non-round shapes — but you
+must know which lens you're holding.
+
+## The dendrogram: the diary, drawn
+
+scipy draws the full merge diary as a tree. Height = the distance at
+which a merge happened; long vertical stretches = merges that had to
+reach far — natural gaps in the data:
+
+```{pyodide}
+#| caption: "Sixty birds' family tree — cut it anywhere"
+#| fig-alt: "A dendrogram of 60 birds. Many short merges form dense brushwork near the bottom. Two tall trunks dominate: the final merge happens at height 12.9, far above the next merge at 4.4 — a long vertical gap indicating two natural clusters, with a secondary gap around height 4 suggesting a three-way split. Two horizontal dashed lines mark cuts at heights 10 and 4."
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+
+Z = linkage(X60, method="ward")
+
+fig, ax = plt.subplots(figsize=(7, 3.4))
+dendrogram(Z, ax=ax, no_labels=True, color_threshold=4)
+ax.axhline(10, ls="--", lw=1, color="grey")
+ax.axhline(4, ls="--", lw=1, color="grey")
+ax.set_ylabel("merge distance")
+plt.show()
+
+for cut in (10, 4):
+    labs = fcluster(Z, t=cut, criterion="distance")
+    print(f"cut at height {cut}: {len(set(labs))} clusters, "
+          f"sizes {np.bincount(labs)[1:].tolist()}")
+```
+
+Read it like tree rings. The last merge happened at height **12.9**; the
+one before at **4.4** — that huge gap says the data resists being one
+pile: cut anywhere in the gap (our dashed line at 10) and you get **2
+clusters**. A second, subtler gap sits around 4: cut there and you get
+**3** (29/20/11). One fitted tree, both answers, chosen by inspection
+*after* the fact — the exact thing k-means could not offer. (Honesty
+note: on 60 birds the three-way cut is blurrier than the two-way one —
+small samples are; the elbow had judgement calls and so does the tree.)
+
+## Full flock, and a cross-check
+
+Does the merge lens agree with Chapter 17's centre lens? All 342 birds,
+Ward, three clusters, reveal:
+
+```{pyodide}
+#| caption: "The merge diary meets the hidden species"
+ac = AgglomerativeClustering(n_clusters=3, linkage="ward").fit(Xs)
+reveal = pd.crosstab(ac.labels_, df["species"])
+print(reveal)
+
+agree = reveal.max(axis=1).sum()
+print(f"\nagreement: {agree} of {len(df)} ({agree / len(df):.1%})")
+print("k-means (Ch17) scored: 95.6%")
+```
+
+**95.9%** — two entirely different algorithms, one telling piles apart by
+centres, the other by merges, agreeing bird-for-bird almost everywhere
+(and disagreeing, once again, at the Adelie–Chinstrap seam). When two
+unrelated lenses find the same structure, the structure is probably in
+the data, not in the algorithm — the closest thing unsupervised learning
+has to a confirmation.
+
+The trade-offs, plainly: hierarchical clustering computes **all pairwise
+distances** — effortless at hundreds of points, prohibitive at millions
+(k-means scales far better). Merges are **greedy and final** — an early
+bad merge is never undone (k-means re-assigns every round). Reach for
+the tree when you want the *structure at every scale* and k unknown;
+reach for k-means when the data is big and k is roughly known.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Agglomerative clustering merges bottom-up**: closest groups first,
+   every merge recorded — the diary (dendrogram) is the model, and merges
+   are final.
+2. **Linkage defines group-to-group distance**: single (nearest — chains:
+   our 58/1/1), complete, average, Ward (compact default: 29/11/20). The
+   choice changes everything; pick the lens for the shapes you expect.
+3. **Cut the dendrogram, don't guess k**: long vertical gaps mark natural
+   cluster counts — our tree offered 2 (cut at 10) and 3 (cut at 4) from
+   one fit.
+4. Ward on the full flock matched the hidden species at **95.9%** — and
+   agreed with k-means almost bird-for-bird. Two lenses, one structure:
+   the best confirmation unsupervised learning offers.
+5. Costs: **all-pairs distances** (fine for hundreds, not millions) and
+   greedy merges — k-means and the tree are complements, not rivals.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: fixed samples, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Fit the full-flock tree with the compact linkage. Replace the `____`s,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_agg
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+import numpy as np
+
+df = load_csv("penguins").dropna(subset=["flipper_length_mm",
+                                         "bill_length_mm"])
+Xs = StandardScaler().fit_transform(
+    df[["flipper_length_mm", "bill_length_mm"]])
+```
+
+```{pyodide}
+#| exercise: ex_agg
+model = AgglomerativeClustering(n_clusters=____, linkage=____)  # TODO: 3 piles, compact default
+model.fit(Xs)
+
+run_tests([
+    ("three clusters found", len(set(model.labels_)), 3),
+    ("cluster sizes", sorted(np.bincount(model.labels_).tolist()),
+     [64, 126, 152]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`n_clusters=3` and `linkage="ward"` — the variance-minimizing default
+the chapter used on the full flock.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+model = AgglomerativeClustering(n_clusters=3, linkage="ward")
+model.fit(Xs)
+```
+
+Sizes 64/126/152 — within a few birds of k-means' 64/127/151. Different
+algorithm, same structure: the confirmation pattern from the chapter.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Build one merge step from spec, under single linkage:
+
+- `closest_pair(groups, points)` — `groups` is a list of index-lists
+  into `points`. Return the tuple `(i, j)` (i < j) of the two groups
+  whose **nearest members** are closest.
+- `merge_step(groups, pair)` — return a new group list with the pair
+  merged: unmerged groups first (original order), the merged group
+  (first group's indices then second's) appended last.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_merge
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_merge
+import math
+
+def closest_pair(groups, points):
+    """(i, j) of the two groups with the closest nearest-members."""
+    ...  # TODO
+
+def merge_step(groups, pair):
+    """Merge groups[pair[0]] and groups[pair[1]]; merged group goes last."""
+    ...  # TODO
+
+pts = [(0.0, 0.0), (1.0, 0.0), (5.0, 5.0), (5.8, 5.0), (10.0, 0.0)]
+g0 = [[0], [1], [2], [3], [4]]
+run_tests([
+    ("first merge: the 0.8-apart pair", closest_pair(g0, pts), (2, 3)),
+    ("the diary updates", merge_step(g0, (2, 3)),
+     [[0], [1], [4], [2, 3]]),
+    ("second merge: the 1.0-apart pair",
+     closest_pair([[0], [1], [4], [2, 3]], pts), (0, 1)),
+    ("group distance uses nearest members",
+     closest_pair([[0, 1], [4], [2, 3]], pts), (0, 2)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Group distance under single linkage: `min` of `math.dist(points[a],
+points[b])` over all cross-pairs. `closest_pair` scans every `(i, j)`
+with `i < j` and keeps the minimum; `merge_step` rebuilds the list,
+appending `groups[i] + groups[j]`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def closest_pair(groups, points):
+    def gd(g1, g2):
+        return min(math.dist(points[a], points[b])
+                   for a in g1 for b in g2)
+    return min(((i, j) for i in range(len(groups))
+                for j in range(i + 1, len(groups))),
+               key=lambda p: gd(groups[p[0]], groups[p[1]]))
+
+def merge_step(groups, pair):
+    i, j = pair
+    rest = [g for k, g in enumerate(groups) if k not in pair]
+    return rest + [groups[i] + groups[j]]
+
+pts = [(0.0, 0.0), (1.0, 0.0), (5.0, 5.0), (5.8, 5.0), (10.0, 0.0)]
+g0 = [[0], [1], [2], [3], [4]]
+```
+
+The last fixture is linkage in miniature: group `[0, 1]` sits closest to
+`[2, 3]` *through its nearest member* — run these two functions in a loop
+and you have written hierarchical clustering.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Build the **full
+flock's** dendrogram (`linkage(Xs, method="ward")`), choose a cut height
+by reading the tree's gaps — *before* any reveal — then `fcluster` at
+your height and crosstab against species. Defend your cut in one
+sentence.
+
+**Rubric — a good answer:**
+
+- Plots or inspects the full tree's top merge heights and picks a cut
+  inside a visible gap.
+- Commits to the cut before peeking at species.
+- The sentence ties the cut to the tree ("the gap between the last and
+  second-to-last merges says 2; the next gap says 3") and reads the
+  reveal honestly, including where the Adelie–Chinstrap seam blurs.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+from scipy.cluster.hierarchy import linkage, fcluster
+import pandas as pd
+
+Zfull = linkage(Xs, method="ward")
+print("top merge heights:", Zfull[-4:, 2].round(1))
+labs = fcluster(Zfull, t=15, criterion="distance")
+print(f"{len(set(labs))} clusters")
+print(pd.crosstab(labs, df["species"]))
+```
+
+My cut sits in the gap below the final merge — the tree's strongest
+signal — giving three clusters that align with species except at the
+usual seam; the tree and biology disagree exactly where every other
+chapter's methods did.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch18.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Two clustering lenses now: centres (commit to k, iterate) and merges
+(build the whole tree, cut later) — with linkage as the choice that
+changes what "close" means for groups, and a 95.9%-vs-95.6% cross-check
+showing real structure survives a change of algorithm. One unsupervised
+tool remains, and it answers a different question entirely: not "which
+rows group together?" but **"which directions matter?"** — squashing
+many features down to few while keeping the story: **PCA**.
