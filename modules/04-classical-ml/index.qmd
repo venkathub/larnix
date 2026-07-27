@@ -4,9 +4,8 @@ toc: false
 ---
 
 ::: {.callout-note}
-**All 20 chapters are live**, with the module quiz below. Everything runs **in
-your browser at ₹0** — including real XGBoost. The capstone brief is being
-finalized (its dataset and auto-checks land with the capstone build).
+**Module complete.** All 20 chapters, the module quiz, and the capstone are
+live. Everything runs **in your browser at ₹0** — including real XGBoost.
 :::
 
 Stop exploring data and start **training models**. The running thread is *the
@@ -53,6 +52,8 @@ module's judgement. Your score is saved in your browser.
 
 ## Capstone
 
-Lands with the module build: [**an end-to-end tabular predictor + model
-card**](capstone.md) on new, imbalanced data — the full workflow from split to
-held-out evaluation, documented honestly.
+Finish with the module project:
+[**an end-to-end tabular predictor + model card**](capstone.qmd) on the UCI
+Bank Marketing data — new domain, naturally imbalanced, with a real leakage
+landmine. Auto-checks verify the sealed split, the landmine's absence, and a
+held-out ROC-AUC floor; a rubric grades the judgement and the model card.

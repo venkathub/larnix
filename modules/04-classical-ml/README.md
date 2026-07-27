@@ -4,8 +4,8 @@ Train, tune, and honestly evaluate models with scikit-learn — the full tabular
 workflow, in the browser at ₹0 (including real XGBoost via the Pyodide
 built-in, P2-D6).
 
-> **Status: in progress** (P2 build, `docs/phases/P2_SPEC.md §6.B`). Chapter
-> files land one at a time; the landing page table gains links as they do.
+> **Status: complete** (P2 build, `docs/phases/P2_SPEC.md §6.B`) — 20 chapters,
+> module quiz, and capstone all live, 100% in-browser.
 > Built so far: [Ch1 — What is learning?](ch01-what-is-learning.qmd) ·
 > [Ch2 — Linear regression](ch02-linear-regression.qmd) ·
 > [Ch3 — Cost functions & gradient descent](ch03-cost-gradient-descent.qmd) ·
@@ -49,15 +49,16 @@ By the end of M4 you can:
 - Regression: `data/california-housing-sample.csv` (800-row seeded sample,
   public domain; script: `infra/datasets/make_california_sample.py`).
 - Classification: Palmer Penguins, reused from M3 (CC0).
-- Capstone: UCI Bank Marketing (CC BY 4.0; sample vendored with the capstone
-  task). All ledgered in `docs/ASSETS.md` (R11).
+- Capstone: `data/bank-marketing-sample.csv` (1,500-row stratified sample,
+  CC BY 4.0; script: `infra/datasets/make_bank_sample.py`). All ledgered in
+  `docs/ASSETS.md` (R11).
 
 ## Assessment
 
 - Per-chapter **quick check** (`quiz-chNN.yml`, 3–4 MCQ).
 - Cumulative **module quiz** (`module-quiz.yml`) — transfer questions only.
 - **Capstone:** end-to-end tabular predictor + model card — see
-  [`capstone.md`](capstone.md). Auto-checks: leakage tripwire + ROC-AUC floor;
+  [`capstone.qmd`](capstone.qmd). Auto-checks: leakage tripwire + ROC-AUC floor;
   the rest is rubric-graded.
 
 ## How to run

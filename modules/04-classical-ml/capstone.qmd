@@ -1,0 +1,243 @@
+---
+title: "M4 Capstone — An end-to-end tabular predictor + model card"
+module: "M4 — Classical Machine Learning"
+chapter: 21
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch20 — The scikit-learn workflow + your first model card"
+  - "M4 Ch15 — Imbalanced data"
+learning_objectives:
+  - "Run the eight-step workflow solo on new, naturally imbalanced data"
+  - "Pass the leakage tripwire: sealed split intact, no after-the-fact features"
+  - "Ship a model card whose every claim carries a measured number"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 90
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/bank-marketing-sample.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The brief
+
+A Portuguese bank ran phone campaigns selling term deposits and logged
+every call: 16 facts per customer, and whether they subscribed. Your
+client wants a model that predicts **"will this customer subscribe?"** so
+the next campaign calls the right people — plus the **model card** their
+compliance team will actually read.
+
+This is Chapter 20 with the training wheels off: new domain, and the data
+is **naturally imbalanced** — only 11.7% of customers said yes, so
+Chapter 15's toolkit is not optional. You are graded two ways, per the
+module's standing rule (R4): **auto-checks** for the machine-verifiable
+facts (below), a **rubric** for the judgement.
+
+One landmine is buried in the data, and it is real, not planted: the
+`duration` column records **how long each call lasted**. Long calls
+correlate strongly with "yes" — because interested people stay on the
+line. But call duration *does not exist until the call is over*: a model
+deployed to decide *whom to call* can never know it. UCI's own
+documentation says to discard it for realistic prediction. Using it is
+Chapter 4's crime with a phone cord: your test AUC would jump from
+roughly 0.64 to 0.82 — nineteen points of pure leakage — and the model
+would be useless on launch day. **The auto-checks hunt for it.**
+
+## Setup: meet the data
+
+```{pyodide}
+#| caption: "1,500 logged calls — and the imbalance, immediately"
+from lib.data import load_csv
+
+bank = load_csv("bank-marketing-sample")
+print(bank.shape)
+print(bank["y"].value_counts(normalize=True).round(3))
+bank.head(3)
+```
+
+A stratified 1,500-row sample of the UCI Bank Marketing dataset (CC BY
+4.0 — Moro, Laureano & Cortez; the full 45,211-row set is one download
+away if you ever want the heavyweight version). Mixed types, a lazy
+baseline of 0.883, and the landmine in column 12.
+
+## The sealed split (provided — the tripwire watches it)
+
+Everyone uses **this exact split**, so the graders and your numbers
+agree. Run it once and treat `test_X`, `test_y` as radioactive until the
+final cell:
+
+```{pyodide}
+#| caption: "Split first. The test set is now sealed."
+from sklearn.model_selection import train_test_split
+
+y = (bank["y"] == "yes").astype(int)
+X = bank.drop(columns=["y"])
+
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+
+print(f"train {len(train_X)}, sealed test {len(test_X)} "
+      f"({int(test_y.sum())} subscribers)")
+```
+
+## Your build
+
+Work the eight steps on `train_X`/`train_y` **only**. The deliverables
+the auto-checks and rubric expect:
+
+1. **EDA-lite** — enough to know the columns and the imbalance.
+2. **Baseline** — what does always-say-no score? (Which metric makes
+   that number look silly? Use *that* one going forward.)
+3. **≥3 model families** in Chapter 16 pipelines, compared by
+   cross-validated **ROC-AUC** (the fair lens for imbalanced ranking —
+   Ch6), spreads reported.
+4. **Handle the imbalance deliberately** — weights, resampling
+   (train-side only!), or a threshold argument (Ch15). Say which and
+   why.
+5. **Tune the leader** (GridSearchCV over the pipeline).
+6. Fit your final pipeline as `final_model` — trained on training data,
+   `duration` nowhere in its diet.
+
+Build freely in your own cells above the grading cell. Then let the
+machine check the checkable:
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_capstone
+from lib.grader import run_tests, between
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+
+bank = load_csv("bank-marketing-sample")
+y = (bank["y"] == "yes").astype(int)
+X = bank.drop(columns=["y"])
+train_X, test_X, train_y, test_y = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+```
+
+```{pyodide}
+#| exercise: ex_capstone
+# Build your final_model here (or above), fitted on train_X/train_y.
+final_model = ...  # TODO: your fitted pipeline
+
+# ── The grading cell computes its own numbers. ──────────────────────────
+sealed_auc = roc_auc_score(
+    test_y, final_model.predict_proba(test_X[final_model.feature_names_in_])[:, 1])
+
+run_tests([
+    ("sealed set intact (the tripwire)",
+     (len(test_X), int(test_X.index.to_numpy().sum())), (375, 286013)),
+    ("train and test disjoint",
+     len(set(train_X.index) & set(test_X.index)), 0),
+    ("the landmine is not in the model's diet",
+     "duration" in list(final_model.feature_names_in_), False),
+    between("held-out ROC-AUC (grader-computed)", float(sealed_auc), 0.55, 1.0),
+])
+```
+
+**How you're being graded, stated plainly (P2-D7 seeded mode):** the
+split is seeded, so the tripwire values are exact; the AUC floor of
+**0.55** is set with generous margin below our four reference solutions
+(0.62–0.65 without `duration`) — it checks you built a working,
+leak-free ranker, not that you squeezed every point. The rubric handles
+quality.
+
+## The model card (rubric-graded)
+
+Write it in a markdown cell, Chapter 20's shape, every claim a measured
+number: **details · intended use · training data** (provenance, licence,
+the sampling, what `duration`'s exclusion means) · **metrics** —
+held-out AUC *and* per-class precision/recall at your chosen threshold
+(an 11.7% minority makes accuracy a vanity metric; say so) ·
+**limitations** (Portuguese bank, 2008–2010 campaigns, 1,500-row
+sample…) · **when NOT to use**.
+
+## Rubric (0–2 per criterion)
+
+| Criterion | What "2" looks like |
+|-----------|---------------------|
+| Runs | Top-to-bottom without edits; all four auto-checks green. |
+| Honest evaluation | Split untouched; CV on train only; imbalance handled train-side; no leakage anywhere — including subtle ones. |
+| Model comparison | ≥3 families compared by CV AUC with spreads; the choice defended with numbers, ties called ties. |
+| Measurement | Every claim carries a number; the metric choices are argued from the imbalance, not habit. |
+| Model card | Complete, adjective-free, with a when-NOT-to-use section a compliance officer could enforce. |
+
+<details><summary>Reference walkthrough (open after your own attempt)</summary>
+
+```python
+from lib.grader import between
+from sklearn.metrics import roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+
+# Steps 1-2 happened above. Step 6's landmine rule: duration is out.
+feats = [c for c in train_X.columns if c != "duration"]
+num = train_X[feats].select_dtypes(include="number").columns.tolist()
+cat = [c for c in feats if c not in num]
+
+prep = ColumnTransformer([
+    ("num", StandardScaler(), num),
+    ("cat", OneHotEncoder(handle_unknown="ignore"), cat),
+])
+
+# One of several passing builds: the balanced logistic pipeline.
+# (Our comparison run: logistic 0.728±0.026, forest 0.735±0.047,
+#  boosted 0.733±0.043 CV AUC — a three-way tie inside the spreads;
+#  we take the interpretable one, per Ch20.)
+final_model = Pipeline([
+    ("prep", prep),
+    ("model", LogisticRegression(max_iter=2000, class_weight="balanced")),
+]).fit(train_X[feats], train_y)
+
+sealed_auc = roc_auc_score(
+    test_y, final_model.predict_proba(test_X[final_model.feature_names_in_])[:, 1])
+```
+
+Its sealed-test AUC lands near 0.64 — honest and modest, which is the
+point: without the leaked `duration`, predicting subscriptions from
+demographics alone is genuinely hard, and a card that says so beats a
+model that lies. At the default threshold the balanced model catches
+~48% of subscribers at ~21% precision — Chapter 15's trade, ready to be
+tuned to the bank's actual call costs.
+</details>
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The capstone *is* the module: eight steps, solo, on data that fights
+   back — imbalance (11.7%) and a documented real-world leak
+   (`duration`: +0.19 AUC of fiction).
+2. **Auto-checks grade facts** (sealed split intact, disjoint,
+   landmine absent, grader-computed AUC ≥ 0.55); **the rubric grades
+   judgement** — that split is R4's rule, and your future teams'.
+3. An honest 0.64 with a truthful card outranks a leaky 0.82 — on
+   launch day, and in this course.
+:::

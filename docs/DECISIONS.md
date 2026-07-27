@@ -5,6 +5,40 @@
 
 ---
 
+## D0021 — M4 capstone implementation: 120 KB dataset exception + runnable `.qmd` capstone format
+
+- **Date:** 2026-07-27
+- **Status:** Accepted
+- **Context.** Building the M4 capstone (P2 §6.B task 28). Two forks the spec left open:
+  (1) the Bank Marketing sample cannot both respect the ≤~50 KB vendoring rule (P1-D8) and
+  carry enough minority rows for an imbalanced-workflow capstone (~450 rows ⇒ ~50 "yes"
+  customers); (2) P1 capstones are static `.md` briefs, but this capstone's spec demands
+  **grader-verifiable auto-checks** (leakage tripwire + AUC floor), which need runnable cells.
+- **Decisions.**
+  1. **Vendor a 1,500-row stratified sample (~120 KB) as a documented one-off exception** to
+     the ≤~50 KB rule. The rule's purpose is page weight; 120 KB is negligible beside the
+     Pyodide runtime the page already loads, and capstone realism (176 positive customers,
+     11.7% — matching the full set's ratio) wins. Script `infra/datasets/make_bank_sample.py`
+     (seed 0, byte-deterministic); ledgered with the exception noted. *Rejected:* trimming to
+     ~10 columns × 800 rows (~60 KB) — poorer feature-engineering material, still over the rule.
+  2. **The capstone is a `compute: browser` `.qmd`** with full front-matter, flowing through
+     the entire chapter machinery: structure lint, R3, and a **generated twin whose CI
+     execution proves the capstone is completable at the stated floors** (the reference
+     walkthrough in `<details>` is the twin's solution). *Rejected:* `.md` brief + separate
+     grading page (two artifacts, drift, no CI proof of completability). Consequence: M5/M6
+     capstones follow this format.
+  3. **Auto-check design (P2-D7 seeded mode):** sealed-split fingerprint (length + index sum,
+     exact under the seeded split), a train/test overlap check (must be empty), `duration` absent from
+     `final_model.feature_names_in_` (the dataset's own documented leak — UCI says discard it;
+     using it inflates test AUC 0.64 → 0.82, measured), and a **grader-computed** (never
+     learner-reported) held-out ROC-AUC ≥ **0.55** — floor set below four reference solutions
+     (0.62–0.65) with generous margin. Quality is the rubric's job (R4).
+- **Consequences.** `ASSETS.md` row with the exception; capstone twin joins R10;
+  `capstone.md` template deleted; the first learner-facing use of the P2-D7 `between` helper
+  ships in content.
+
+---
+
 ## D0020 — P2 technical decisions (XGBoost-in-browser reversal, stochastic grader, colab pipeline, CI tier, provider & version policy)
 
 - **Date:** 2026-07-19
