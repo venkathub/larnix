@@ -1,0 +1,35 @@
+title: "Chapter 3 — quick check"
+id: "m5-ch03-layers-networks"
+questions:
+  - id: hidden-output-is
+    prompt: "What is the output of a trained hidden layer, conceptually?"
+    options:
+      - "The network's final prediction, before rounding"
+      - "A learned re-description of the input — one score per learned detector, which later layers work from instead of the raw input"
+      - "A compressed copy of the training set"
+    answer: 1
+    explanation: "Each hidden neuron scores one emergent feature (a stroke, a ring), so the layer turns 64 raw pixels into a summary vector — sparse ReLU testimony in the chapter. This vector is what later modules call a representation."
+  - id: shape-grammar
+    prompt: "A layer maps 20 inputs to 7 outputs. What are the shapes of W and b?"
+    options:
+      - "W: (20, 7), b: (20,)"
+      - "W: (7, 7), b: (7,)"
+      - "W: (7, 20), b: (7,) — one row of W and one bias per output neuron"
+    answer: 2
+    explanation: "The grammar is (n_out, n_in): row i holds neuron i's 20 input weights, and each neuron gets one bias. Shapes are the first thing to check when a network misbehaves."
+  - id: count-novel
+    prompt: "How many parameters does a 100 → 50 → 10 fully-connected network have?"
+    options:
+      - "5,000 — weights only count between the biggest layers"
+      - "5,560 — (100·50 + 50) + (50·10 + 10)"
+      - "160 — the sum of the layer sizes"
+    answer: 1
+    explanation: "Per layer: n_in·n_out weights plus n_out biases. 5,050 + 510 = 5,560 knobs — the counting habit that later reads model cards and memory budgets."
+  - id: similar-summaries-transfer
+    prompt: "Two different inputs produce nearly identical hidden-layer summaries (cosine ≈ 0.99). What does that tell you?"
+    options:
+      - "The network sees them as nearly the same thing — its learned detectors respond alike, so downstream layers will treat them almost interchangeably"
+      - "The network has memorized both inputs"
+      - "The inputs must be byte-identical"
+    answer: 0
+    explanation: "The summary is the network's own description. Near-identical summaries mean the re-description has merged them — great if they share a class, a diagnosed failure if they don't. Reading representations is how you debug what a network 'thinks'."

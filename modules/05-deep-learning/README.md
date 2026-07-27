@@ -6,7 +6,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > **Status: in progress** (P2 build, `docs/phases/P2_SPEC.md §6.C`). Chapter
 > files land one at a time; the landing page table gains links as they do.
 > Built so far: [Ch1 — From logistic regression to a neuron](ch01-logreg-to-neuron.qmd) ·
-> [Ch2 — Activation functions](ch02-activation-functions.qmd)
+> [Ch2 — Activation functions](ch02-activation-functions.qmd) ·
+> [Ch3 — Layers & networks](ch03-layers-networks.qmd)
 
 ## Prerequisites
 

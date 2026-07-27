@@ -1,0 +1,454 @@
+---
+title: "Layers & networks"
+module: "M5 — Deep Learning Foundations"
+chapter: 3
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch2 — Activation functions"
+  - "M2 Ch4 — Matrix multiplication"
+learning_objectives:
+  - "Compute a whole layer at once as W·x + b through an activation, and read weight shapes"
+  - "Implement layer() and count_params() and count a network's knobs on sight"
+  - "Read a trained hidden layer as a panel of learned detectors producing a re-description"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: layer-is-matrix
+    q: "What does one network layer compute, in matrix form?"
+    a: "activation(W @ x + b): the weight matrix holds one row per neuron (shape n_out × n_in), the bias one entry per neuron, and the activation applies element-wise. One matrix product runs the whole panel of neurons at once."
+  - id: hidden-is-redescription
+    q: "What does a hidden layer's output represent?"
+    a: "A learned re-description of the input: each hidden neuron scores one learned feature (a stroke, a blob), so the layer turns 64 raw pixels into, say, 16 feature scores. Later layers work from this summary, never the raw input."
+  - id: count-params-habit
+    q: "How many parameters does a 64 → 16 → 10 fully-connected network have?"
+    a: "Per layer: n_in·n_out weights + n_out biases. Here 64·16+16 = 1,040 plus 16·10+10 = 170 → 1,210 total. Counting knobs on sight is how you read architectures, model cards, and memory budgets."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 2 said "eight hidden neurons" the way you'd say "a bag of
+parts". Time to open the bag — because what a hidden layer holds is the
+single most useful intuition in deep learning.
+
+Picture the appraisal office's **front desk**. Raw paperwork arrives —
+64 messy pixel values. Each desk clerk reads *all* of it and reports one
+number about one thing they've learned to notice: "strong loop stroke in
+the lower half: 25.4". "Vertical bar mid-frame: 0". Sixteen clerks,
+sixteen numbers — and the decision-makers upstairs never see raw
+paperwork again. They work from the summary.
+
+That's a hidden layer: a **panel of learned detectors** whose joint
+output is a *re-description* of the input. A network is a chain of
+re-descriptions, each easier to decide from than the last. Today: the
+matrix that runs a whole panel in one line (M2 Ch4, cashing out), the
+habit of counting a network's knobs, and a look at sixteen real clerks
+trained on real digits — including the summaries they write.
+
+> You'll need from before: `neuron()` and the bend (Ch1–2), matrix
+> multiplication (M2 Ch4), dot-product similarity (M2 Ch5).
+
+---
+
+## A layer is a matrix
+
+Run three Chapter-1 neurons on the same input — then run them again as
+*one matrix line*:
+
+```{pyodide}
+#| caption: "Three neurons, two ways: the loop and the matrix agree exactly"
+import numpy as np
+import math
+
+def neuron(x, w, b):                      # Chapter 1's function, verbatim
+    z = sum(xi * wi for xi, wi in zip(x, w)) + b
+    return 1 / (1 + math.exp(-z))
+
+x = [2.0, 1.0]
+weights = [[0.5, -1.0], [1.0, 1.0], [-0.5, 0.25]]
+biases = [0.0, -1.0, 0.5]
+
+looped = [neuron(x, w, b) for w, b in zip(weights, biases)]
+
+W = np.array(weights)                     # one ROW per neuron
+b = np.array(biases)
+vectorized = 1 / (1 + np.exp(-(W @ np.array(x) + b)))
+
+print("one at a time:", [round(v, 6) for v in looped])
+print("all at once:  ", np.round(vectorized, 6).tolist())
+```
+
+Identical — `[0.5, 0.880797, 0.437823]` both ways — because `W @ x`
+computes every neuron's weighted sum in one product: **row i of W is
+neuron i's weights**. That's the entire code difference between "a
+neuron" and "a layer", and it comes with a grammar worth engraving:
+
+- `W` has shape **(n_out, n_in)** — outputs by inputs.
+- `b` has shape **(n_out,)** — one bias per neuron.
+- A layer is a **shape transformer**: it eats a vector of length n_in
+  and emits one of length n_out. A 64 → 16 → 10 network is two
+  transformers in a row.
+
+Working rule, adopted now and used daily from here to M6: **when a
+network misbehaves, check the shapes first.** Most deep-learning bugs
+are shape bugs wearing costumes.
+
+## Count the knobs
+
+Every weight and bias is one learnable knob. Counting them is
+one line of arithmetic per layer — and a professional reflex:
+
+```{pyodide}
+#| caption: "How big is this network, really?"
+def count_params(sizes):
+    """Total weights + biases for a fully-connected net, e.g. [64, 16, 10]."""
+    return sum(sizes[i] * sizes[i + 1] + sizes[i + 1]
+               for i in range(len(sizes) - 1))
+
+print(f"Chapter 1's lone neuron (64 -> 1):   {count_params([64, 1]):>6}")
+print(f"this chapter's net (64 -> 16 -> 10): {count_params([64, 16, 10]):>6}")
+```
+
+From 65 knobs to **1,210** — and when M6's networks reach millions and
+the news reports billions, it's this same sum. Parameter count is the
+first number on any model card, the first term in any memory budget, and
+(Ch7–8 of M4 whispering) a rough proxy for capacity.
+
+## Sixteen real clerks
+
+Train the 64 → 16 → 10 network on the full ten-class digits task —
+sklearn's `MLPClassifier` again as the preview appliance (from next
+chapter on, we build the machinery ourselves):
+
+```{pyodide}
+#| caption: "The whole digits problem, first attempt"
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+print(f"held-out accuracy (10 classes): "
+      f"{accuracy_score(yte, net.predict(Xte)):.3f}")
+print(f"weight matrices: {[c.shape for c in net.coefs_]}")
+```
+
+`0.960` on all ten digits with 1,210 knobs. Now the chapter's promise —
+open the bag. Each hidden neuron has 64 input weights, and Chapter 1
+taught you what a 64-weight vector is: **an image of where that neuron
+looks**. Render all sixteen:
+
+```{pyodide}
+#| caption: "The front desk, photographed: sixteen learned detectors"
+#| fig-alt: "A 2-by-8 grid of 8-by-8 heat maps, one per hidden neuron. Each shows a distinct learned pattern: some have bright diagonal strokes, some a bright ring against a dark centre, some bright vertical bars, others patchy blob detectors. No two panels look alike."
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 8, figsize=(8.5, 2.4))
+for i, ax in enumerate(axes.ravel()):
+    ax.imshow(net.coefs_[0][:, i].reshape(8, 8), cmap="coolwarm")
+    ax.set_title(f"clerk {i}", fontsize=6)
+    ax.axis("off")
+plt.show()
+```
+
+Nobody designed these. Stroke detectors, ring detectors, bar detectors —
+sixteen specializations that *emerged from training* because they were
+useful for telling digits apart. This gallery is the Chapter 1
+attention-image trick, scaled to a panel — and a preview of M6, where
+convolutional detectors make the same idea sharper.
+
+## The summary, read directly
+
+What do the clerks write about an actual digit? Compute the hidden
+layer's output for one held-out **8** — the network's own 16-number
+summary — then compare summaries across digits with M2 Ch5's cosine:
+
+```{pyodide}
+#| caption: "One digit, re-described in the network's own 16 words"
+def hidden_summary(x):
+    return np.maximum(0, x @ net.coefs_[0] + net.intercepts_[0])
+
+eights = np.where(yte == 8)[0][:2]
+a_one = np.where(yte == 1)[0][0]
+h8a = hidden_summary(Xte[eights[0]])
+h8b = hidden_summary(Xte[eights[1]])
+h1 = hidden_summary(Xte[a_one])
+
+print("an 8's summary:", np.round(h8a, 1))
+
+def cosine(u, v):
+    return float(u @ v / (np.linalg.norm(u) * np.linalg.norm(v)))
+
+print(f"\nsimilarity of two different 8s:   {cosine(h8a, h8b):.3f}")
+print(f"similarity of an 8 and a 1:       {cosine(h8a, h1):.3f}")
+```
+
+Read the summary first: most clerks report **0** (ReLU: "my pattern
+isn't here"), a few speak loudly — 25.4, 22.6, 20.5. Sparse, specific
+testimony. Then the comparison: two *different* handwritten 8s get
+summaries at cosine `0.908`; an 8 against a 1, `0.808`. An honest
+reading: the gap is real but not dramatic — sixteen coarse detectors
+share plenty across digits — yet that 0.1 of separation, refined by the
+output layer, is already worth 96% accuracy. Deeper networks widen
+exactly this gap, re-describing until classes drift far apart; when M7's
+embeddings talk about "representation", *this vector is what they mean*.
+
+One closing honesty about architecture: width (more clerks) and depth
+(more desks in sequence) are both **capacity** — M4 Ch8's U applies to
+each, and neither is free lunch. You'll choose them by validation, like
+every dial before them.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **A layer is a matrix**: `activation(W @ x + b)`, one row of W per
+   neuron, shapes (n_out, n_in) — and a layer is a shape transformer.
+   Debug shapes first.
+2. **Count the knobs on sight**: n_in·n_out + n_out per layer;
+   64 → 16 → 10 = 1,210 parameters (vs the lone neuron's 65).
+3. A trained hidden layer is a **panel of emergent detectors** — sixteen
+   weight-images nobody designed, each a learned stroke/ring/bar
+   specialist.
+4. The hidden output is a **re-description**: sparse ReLU testimony
+   (mostly 0s, a few loud numbers); similar inputs get similar summaries
+   (8-vs-8 cosine 0.908 > 8-vs-1 0.808) — the thing later modules call a
+   representation.
+5. **Width and depth are both capacity** — the U-curve owns them too;
+   validation chooses.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: fixed values, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Run the panel both ways and prove they agree. Replace the `____`, then
+press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_matrix
+from lib.grader import run_tests
+import numpy as np
+import math
+
+def neuron(x, w, b):
+    z = sum(xi * wi for xi, wi in zip(x, w)) + b
+    return 1 / (1 + math.exp(-z))
+
+x = [2.0, 1.0]
+weights = [[0.5, -1.0], [1.0, 1.0], [-0.5, 0.25]]
+biases = [0.0, -1.0, 0.5]
+looped = [round(neuron(x, w, b), 6) for w, b in zip(weights, biases)]
+```
+
+```{pyodide}
+#| exercise: ex_matrix
+W = np.array(weights)
+b = np.array(biases)
+z_all = ____                    # TODO: every neuron's weighted sum, one product
+vectorized = 1 / (1 + np.exp(-z_all))
+
+run_tests([
+    ("the matrix runs the whole panel",
+     [round(float(v), 6) for v in vectorized], looped),
+    ("shape grammar: (n_out,)", vectorized.shape, (3,)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Every neuron's z in one line: `W @ np.array(x) + b` — the matrix product
+does the three dot products at once, and the bias vector adds
+element-wise.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+import math
+
+def neuron(x, w, b):
+    z = sum(xi * wi for xi, wi in zip(x, w)) + b
+    return 1 / (1 + math.exp(-z))
+
+x = [2.0, 1.0]
+weights = [[0.5, -1.0], [1.0, 1.0], [-0.5, 0.25]]
+biases = [0.0, -1.0, 0.5]
+looped = [round(neuron(x, w, b), 6) for w, b in zip(weights, biases)]
+
+W = np.array(weights)
+b = np.array(biases)
+z_all = W @ np.array(x) + b
+vectorized = 1 / (1 + np.exp(-z_all))
+```
+
+M3 Ch1's vectorization lesson, promoted: the loop over neurons vanished
+into a matrix product — which is also why GPUs (Ch11) will make this
+fast: matrix products are what they eat.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the module's next two tools from spec:
+
+- `layer(x, W, b, act)` — one full layer: `act` applied element-wise to
+  `W @ x + b` (`x`, `b` are 1-D arrays; `act` is a function like
+  `np.tanh`, or `None` for a linear layer).
+- `count_params(sizes)` — total weights + biases for a fully-connected
+  architecture given as a size list.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_layer
+from lib.grader import run_tests
+import numpy as np
+```
+
+```{pyodide}
+#| exercise: ex_layer
+def layer(x, W, b, act=None):
+    """One layer: act(W @ x + b); act=None means linear."""
+    ...  # TODO
+
+def count_params(sizes):
+    """Weights + biases for e.g. [64, 16, 10]."""
+    ...  # TODO
+
+W_fix = np.array([[1.0, 0.0], [0.0, 2.0]])
+b_fix = np.array([0.0, -1.0])
+x_fix = np.array([3.0, 0.0])
+run_tests([
+    ("linear layer", layer(x_fix, W_fix, b_fix).tolist(), [3.0, -1.0]),
+    ("relu layer kills the negative",
+     layer(x_fix, W_fix, b_fix, act=lambda z: np.maximum(0, z)).tolist(),
+     [3.0, 0.0]),
+    ("shape transformer 2 -> 2", layer(x_fix, W_fix, b_fix).shape, (2,)),
+    ("the chapter's network", count_params([64, 16, 10]), 1210),
+    ("a tiny net", count_params([2, 3, 1]), 13),
+    ("no hidden layer at all", count_params([10, 10]), 110),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`layer`: compute `z = W @ x + b`; return `z` if `act is None` else
+`act(z)`. `count_params`: for each adjacent pair in `sizes`, add
+`n_in * n_out + n_out`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+def layer(x, W, b, act=None):
+    z = W @ x + b
+    return z if act is None else act(z)
+
+def count_params(sizes):
+    return sum(sizes[i] * sizes[i + 1] + sizes[i + 1]
+               for i in range(len(sizes) - 1))
+
+W_fix = np.array([[1.0, 0.0], [0.0, 2.0]])
+b_fix = np.array([0.0, -1.0])
+x_fix = np.array([3.0, 0.0])
+```
+
+`layer` is the forward pass's atom — Chapter 4 chains it; Chapter 10's
+from-scratch MLP is a stack of exactly this call. And `[2, 3, 1] → 13`
+is a count you can verify on your fingers: 6+3 then 3+1.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). What does width buy?
+Retrain the digits network at `hidden_layer_sizes=(4,)` and `(64,)`
+(same seed and settings), report accuracy and `count_params` for both,
+render one clerk's weight-image from each, and answer in one sentence:
+what did the extra clerks purchase, and at what price?
+
+**Rubric — a good answer:**
+
+- Trains both widths with the chapter's settings; reports accuracy
+  (≈0.898 vs ≈0.967) and parameters (310 vs 4,810).
+- Renders `coefs_[0][:, i].reshape(8, 8)` for one neuron of each net.
+- The sentence weighs the trade — ~7 accuracy points for ~15× the knobs —
+  and notes (Ch8 reflex) that "more width helped *here*" is a
+  validation-measured fact, not a law.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for width in (4, 64):
+    m = MLPClassifier(hidden_layer_sizes=(width,), activation="relu",
+                      random_state=0, max_iter=2000).fit(Xtr, ytr)
+    print(f"width {width:2}: acc "
+          f"{accuracy_score(yte, m.predict(Xte)):.3f}, "
+          f"params {count_params([64, width, 10])}")
+```
+
+Four clerks can't cover ten digits' worth of strokes — their weight
+images look overloaded, trying to be several detectors at once. Sixty-
+four specialize sharply and buy ~7 points for 15× the parameters: worth
+it here, and the kind of trade the U-curve says can stop paying.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch03.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The bag is open: a layer is one matrix line, a network is a chain of
+shape transformers, its knobs are countable on sight, and its hidden
+output is a *learned re-description* — sparse clerk testimony you've now
+read directly. One thing remains black-boxed: `MLPClassifier` did all
+the arithmetic. Next chapter we take over — **the forward pass**,
+computed entirely by hand, matrices from M2 doing every step of the
+work.
