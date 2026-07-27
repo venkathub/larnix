@@ -23,7 +23,8 @@ built-in, P2-D6).
 > [Ch15 — Imbalanced data](ch15-imbalanced-data.qmd) ·
 > [Ch16 — Feature engineering](ch16-feature-engineering.qmd) ·
 > [Ch17 — k-means clustering](ch17-kmeans.qmd) ·
-> [Ch18 — Hierarchical clustering](ch18-hierarchical-clustering.qmd)
+> [Ch18 — Hierarchical clustering](ch18-hierarchical-clustering.qmd) ·
+> [Ch19 — PCA & dimensionality reduction](ch19-pca.qmd)
 
 ## Prerequisites
 

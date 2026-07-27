@@ -1,0 +1,35 @@
+title: "Chapter 19 — quick check"
+id: "m4-ch19-pca"
+questions:
+  - id: what-pc1-is
+    prompt: "What is the first principal component (PC1)?"
+    options:
+      - "The original feature with the largest variance"
+      - "The direction in feature space along which the (scaled) data spreads most — a weighted mix of the original features"
+      - "The feature most correlated with the target"
+    answer: 1
+    explanation: "PC1 is a new axis, not an old column: the photographer's angle that maximizes spread. Each component is a recipe of weights over the original features — and PCA never sees a target, so correlation with one plays no role."
+  - id: read-evr
+    prompt: "explained_variance_ratio_ returns [0.69, 0.19, 0.09, 0.03]. Which claim is justified?"
+    options:
+      - "Keeping the first two components preserves about 88% of the data's spread"
+      - "The first two components contain 88% of what any classifier needs"
+      - "The last two components are noise and can always be discarded"
+    answer: 0
+    explanation: "The ratios measure variance kept — spread, nothing more. The chapter's twist was exactly the second claim failing: PC3, at 9%, carried the species signal. Prediction claims need measurement, not variance arithmetic."
+  - id: why-scale-first
+    prompt: "Why must features be standardized before PCA?"
+    options:
+      - "PCA only accepts values between 0 and 1"
+      - "Scaling makes the components easier to name"
+      - "PCA maximizes variance, and raw variance is unit-dependent — body mass in grams would dominate every component regardless of structure"
+    answer: 2
+    explanation: "Variance in grams² is numerically enormous next to variance in mm² — unscaled PCA would point PC1 at whatever feature has the biggest units. The Chapter 9 scale-hostage trap, in variance form."
+  - id: variance-relevance-transfer
+    prompt: "A colleague reduces 100 features to 10 components holding 95% of the variance, and their classifier's accuracy drops sharply. What is the most likely explanation?"
+    options:
+      - "PCA corrupted the data during rotation"
+      - "The discriminating directions were low-variance components that got discarded — variance ranks spread, not usefulness for the target"
+      - "95% variance retention always preserves accuracy, so the classifier must be broken"
+    answer: 1
+    explanation: "PCA is unsupervised: the 5% it threw away is where the class signal can live — exactly the penguins' PC3 story (9% of variance, 10 points of accuracy). The fix is a measured sweep over component counts, inside a pipeline."

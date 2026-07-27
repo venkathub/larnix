@@ -1,0 +1,440 @@
+---
+title: "PCA & dimensionality reduction"
+module: "M4 — Classical Machine Learning"
+chapter: 19
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch17 — k-means clustering"
+  - "M2 Ch5 — Dot products & similarity"
+learning_objectives:
+  - "Explain PCA as finding ranked directions of maximum variance, and read explained-variance ratios"
+  - "Implement projection onto a direction and variance-along — the atoms of PCA"
+  - "Demonstrate that variance is not relevance: a low-variance component can carry the signal you need"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 23
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - numpy
+    - pandas
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: pca-one-line
+    q: "What does PCA compute?"
+    a: "New axes for the data, ranked by variance: PC1 is the direction along which the points spread most, PC2 the best perpendicular direction, and so on. It is a rotation — the data is unchanged, the axes are chosen better — and features must be scaled first."
+  - id: explained-variance
+    q: "What does explained_variance_ratio_ = [0.69, 0.19, 0.09, 0.03] tell you?"
+    a: "How much of the total spread each new axis carries: PC1 holds 69%, the first two together 88%. It measures spread kept, NOT prediction usefulness — a small component can still carry the class signal."
+  - id: variance-not-relevance
+    q: "Why can dropping a low-variance principal component hurt a classifier?"
+    a: "PCA is unsupervised: it ranks directions by spread, knowing nothing about your target. On the penguins, PC3 held only 9% of the variance but restored species accuracy from 0.892 to 0.991 — the discriminating direction was a quiet one. Variance ≠ relevance."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+A penguin lives in four measured dimensions — two bill numbers, a
+flipper, a mass — and the station wants **one chart** for the annual
+report. Any flattening loses information; the craft is choosing *what to
+lose*.
+
+A photographer already knows the answer. To capture a whole flock in one
+frame, you walk around until you find **the angle that spreads the birds
+out most** — shoot down the line of the flock and everyone hides behind
+everyone else; shoot across it and the picture holds the most
+information a single frame can. **Principal Component Analysis** is that
+instinct as linear algebra (M2's dot products, about to earn their keep):
+find the direction of maximum spread, then the best remaining
+perpendicular direction, and so on — new axes, ranked by how much of the
+story each carries.
+
+And this chapter has a twist ending: the module's most quotable honest
+lesson, *variance is not relevance*, demonstrated with one unforgiving
+number.
+
+> You'll need from before: scaling (Ch9 — PCA is geometry), projections
+> via dot products (M2 Ch5), and cluster literacy (Ch17).
+
+---
+
+## See it in two dimensions first
+
+Flipper length and body mass travel together (r = 0.87) — the point
+cloud is a cigar. Ask PCA for the photographer's angle:
+
+```{pyodide}
+#| caption: "The cigar and its axes: 93.6% of the story lies along one line"
+#| fig-alt: "Scatter plot of scaled flipper length against scaled body mass forming an elongated diagonal cloud. Two arrows radiate from the cloud's centre: a long one labelled PC1 pointing along the cloud's diagonal, and a short perpendicular one labelled PC2. Text notes PC1 carries 93.6 percent of the variance and PC2 6.4 percent."
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+
+feats = ["bill_length_mm", "bill_depth_mm",
+         "flipper_length_mm", "body_mass_g"]
+df = load_csv("penguins").dropna(subset=feats)
+
+X2 = StandardScaler().fit_transform(df[["flipper_length_mm",
+                                        "body_mass_g"]])
+pca2 = PCA().fit(X2)
+print("variance carried:", np.round(pca2.explained_variance_ratio_, 3))
+
+fig, ax = plt.subplots(figsize=(4.6, 4))
+ax.scatter(X2[:, 0], X2[:, 1], s=8, alpha=0.4)
+for comp, ratio, name in zip(pca2.components_,
+                             pca2.explained_variance_ratio_,
+                             ("PC1", "PC2")):
+    ax.annotate("", xy=comp * ratio * 3.5, xytext=(0, 0),
+                arrowprops=dict(arrowstyle="->", lw=2, color="red"))
+    ax.annotate(name, xy=comp * ratio * 3.8, fontsize=9)
+ax.set_xlabel("flipper (scaled)")
+ax.set_ylabel("mass (scaled)")
+ax.set_aspect("equal")
+plt.show()
+```
+
+PC1 runs along the cigar and carries **93.6%** of the variance; PC2, at
+right angles, holds the leftover 6.4%. Nothing was deleted — PCA is a
+**rotation**, the same data seen from better axes. Compression happens
+only when you *choose* to keep the first few axes and drop the rest.
+
+## Four dimensions, ranked
+
+Now the real table. Scale (mandatory — variance in grams would swamp
+variance in millimetres, Chapter 9's hostage crisis in new clothes), fit,
+and read the ranking:
+
+```{pyodide}
+#| caption: "Four old axes become four ranked ones"
+scaler = StandardScaler().fit(df[feats])
+Xs = scaler.transform(df[feats])
+
+pca = PCA().fit(Xs)
+ratios = pca.explained_variance_ratio_
+print("per-axis:   ", np.round(ratios, 3))
+print("cumulative: ", np.round(np.cumsum(ratios), 3))
+```
+
+PC1 carries 68.8%, PC1+PC2 together **88.2%**. Keep two of four
+dimensions, keep seven-eighths of the spread. Do it, and look at the one
+chart the station asked for:
+
+```{pyodide}
+#| caption: "Four dimensions flattened to two — the clusters survive the squash"
+#| fig-alt: "Scatter plot of the penguins projected onto PC1 and PC2, coloured by species. Three distinct clouds appear: Gentoo well separated on the right, Adelie on the left, and Chinstrap between and below them, overlapping slightly with Adelie. The caption notes this 2-D view preserves 88 percent of the variance."
+pca_2 = PCA(n_components=2).fit(Xs)
+Z = pca_2.transform(Xs)
+
+fig, ax = plt.subplots(figsize=(5.2, 3.6))
+for sp in df["species"].unique():
+    mask = (df["species"] == sp).to_numpy()
+    ax.scatter(Z[mask, 0], Z[mask, 1], s=10, alpha=0.6, label=sp)
+ax.set_xlabel("PC1 (68.8% of variance)")
+ax.set_ylabel("PC2 (19.3%)")
+ax.legend(fontsize=8)
+plt.show()
+```
+
+(Species colours allowed this time — Chapters 17–18 earned the reveal.)
+All three clouds survive in two dimensions. This is PCA's everyday job:
+faithful maps of high-dimensional data — and relief for Chapter 9's curse
+of dimensionality, since distance behaves better in 2 honest dimensions
+than in 40 noisy ones.
+
+What did the squash discard? Reconstruct and compare:
+
+```{pyodide}
+#| caption: "Decompress a bird and see what two axes couldn't hold"
+back = scaler.inverse_transform(pca_2.inverse_transform(Z))
+
+print("bird 0, original:      ",
+      [round(v, 1) for v in df[feats].iloc[0]])
+print("bird 0, from 2 numbers:", [round(v, 1) for v in back[0]])
+```
+
+Bird 0 compressed to two coordinates and decompressed: bills nearly
+perfect, flipper 5 mm off, mass off by ~350 g. Two numbers per penguin
+instead of four, and this is the cost — measurable, per bird, honest.
+
+## Reading the new axes
+
+What *are* PC1 and PC2? Each is a weighted mix of the old features:
+
+```{pyodide}
+#| caption: "The recipe of each principal component"
+import pandas as pd
+
+print(pd.DataFrame(np.round(pca_2.components_, 2),
+                   index=["PC1", "PC2"], columns=feats))
+```
+
+PC1 weights flipper, mass and bill length together (with bill *depth*
+opposed) — read it loosely as **overall size**. PC2 is almost pure
+**bill shape** (length and depth together, body ignored). Useful
+readings — with the standard caution: components are variance
+directions, not concepts; naming them is interpretation, and
+over-narrating them is a classic way to fool yourself.
+
+## The twist: variance is not relevance
+
+Here is the trap this chapter exists to spring. If PC1+PC2 hold 88% of
+the variance, a species classifier on those two components should lose
+almost nothing… right? Measure it — one pipeline per component count
+(PCA fitted inside the pipeline, on training folds only — Chapter 16's
+rule covers *every* fitted transform, this one included):
+
+```{pyodide}
+#| caption: "The unforgiving table: PC3 holds 9% of the variance and all of the missing signal"
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+
+y = df["species"]
+for n in (1, 2, 3, 4):
+    pipe = Pipeline([("scale", StandardScaler()),
+                     ("pca", PCA(n_components=n)),
+                     ("model", LogisticRegression(max_iter=1000))])
+    acc = cross_val_score(pipe, df[feats], y, cv=5).mean()
+    print(f"{n} component(s): CV accuracy {acc:.3f}")
+```
+
+Read it twice. One component: `0.889`. Adding PC2 — 19% of the
+variance! — moves accuracy *barely at all* (`0.892`). Adding PC3 — a
+mere 9% — leaps to `0.991`, the full-feature score. **PC2 is loud but
+says nothing about species; PC3 is quiet and says everything.**
+
+The lesson, worth its own line: **PCA is unsupervised — it ranks
+directions by spread, knowing nothing about your target.** Variance
+measures how much the data moves along an axis, not whether that
+movement matters for your question. So: PCA for maps, compression, and
+noise/dimensionality relief — always; PCA as an automatic feature
+selector for prediction — only with a measured check like this table,
+never on faith.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **PCA finds ranked variance directions** — the photographer's angle,
+   then the best perpendicular, and so on. It's a rotation; compression
+   is the *choice* to keep the first axes. Scale first, always.
+2. **Explained-variance ratios** tell how much spread each axis carries:
+   68.8 / 19.3 / 9.1 / 2.7% here; two axes kept 88% and all three
+   penguin clouds.
+3. **Reconstruction shows the cost**: bird 0 from two numbers came back
+   with its mass off by ~350 g — compression's bill, itemized.
+4. **Components are recipes** over old features (PC1 ≈ overall size,
+   PC2 ≈ bill shape) — read loosely; over-narrating them is
+   self-deception.
+5. **Variance ≠ relevance**: PC2 (19%) added nothing for species; PC3
+   (9%) restored 0.892 → 0.991. PCA inside a pipeline, and prediction
+   claims measured, never assumed.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same inputs, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Build the squash: scale, then keep two ranked axes. Replace the `____`s,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pca
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import numpy as np
+
+feats = ["bill_length_mm", "bill_depth_mm",
+         "flipper_length_mm", "body_mass_g"]
+df = load_csv("penguins").dropna(subset=feats)
+Xs = StandardScaler().fit_transform(df[feats])
+```
+
+```{pyodide}
+#| exercise: ex_pca
+pca = PCA(n_components=____)   # TODO: keep two axes
+Z = pca.____(Xs)               # TODO: fit AND project in one call
+
+run_tests([
+    ("each bird now has 2 coordinates", Z.shape, (342, 2)),
+    ("variance the two axes carry",
+     [round(float(r), 3) for r in pca.explained_variance_ratio_],
+     [0.688, 0.193]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`PCA(n_components=2)` keeps the top two axes, and `fit_transform(Xs)`
+learns them and projects in one step.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+pca = PCA(n_components=2)
+Z = pca.fit_transform(Xs)
+```
+
+342 birds × 2 coordinates, 88.2% of the spread retained — and, from the
+chapter's twist, a reminder that "88% of the variance" and "88% of what
+you need" are different sentences.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build PCA's atoms from spec, with M2 Ch5's dot product:
+
+- `project(point, direction)` — the point's coordinate along a unit
+  direction: the dot product.
+- `variance_along(points, direction)` — project every point, then
+  return the variance of those coordinates (mean of squared deviations
+  from their mean).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_project
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_project
+import math
+
+def project(point, direction):
+    """The point's coordinate along a unit direction (dot product)."""
+    ...  # TODO
+
+def variance_along(points, direction):
+    """Variance of the points' projected coordinates."""
+    ...  # TODO
+
+cigar = [(-2.0, -1.0), (0.0, 0.0), (2.0, 1.0)]
+along = (2 / math.sqrt(5), 1 / math.sqrt(5))     # the cigar's own axis
+across = (-1 / math.sqrt(5), 2 / math.sqrt(5))   # perpendicular to it
+run_tests([
+    ("projection onto the x-axis", project((3.0, 4.0), (1.0, 0.0)), 3.0),
+    ("projection onto a tilted axis",
+     round(project((10.0, 0.0), (0.6, 0.8)), 4), 6.0),
+    ("spread along the cigar",
+     round(variance_along(cigar, along), 4), 3.3333),
+    ("no spread across it",
+     round(variance_along(cigar, across), 4), 0.0),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`project` is `sum(p * d for p, d in zip(point, direction))`. For the
+variance: project all points, take the mean of the coordinates, then
+average the squared deviations.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def project(point, direction):
+    return sum(p * d for p, d in zip(point, direction))
+
+def variance_along(points, direction):
+    coords = [project(p, direction) for p in points]
+    mean = sum(coords) / len(coords)
+    return sum((c - mean) ** 2 for c in coords) / len(coords)
+
+cigar = [(-2.0, -1.0), (0.0, 0.0), (2.0, 1.0)]
+along = (2 / math.sqrt(5), 1 / math.sqrt(5))
+across = (-1 / math.sqrt(5), 2 / math.sqrt(5))
+```
+
+The last two fixtures are PCA in miniature: along the cigar's own axis
+the variance is 3.33, across it exactly 0 — PCA's whole job is finding
+the direction that maximizes the quantity you implemented here.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈8 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). The chapter sprang the
+variance-vs-relevance trap on *species*. Does it spring on **sex** too?
+Run the same component sweep (1–4, PCA inside the pipeline) predicting
+`df["sex"]` instead (drop rows where it's missing), and report in one
+sentence which components carry the sex signal and how that compares
+with the species story.
+
+**Rubric — a good answer:**
+
+- Rebuilds the sweep against the sex target with the pipeline pattern
+  (no leakage: PCA fitted per fold).
+- Reports the accuracy-per-component table.
+- The sentence reads it honestly — e.g. if PC1 ("overall size") already
+  predicts sex well, that contrasts neatly with species needing quiet
+  PC3 — and avoids over-narrating the components while doing so.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+d2 = load_csv("penguins").dropna(subset=feats + ["sex"])
+for n in (1, 2, 3, 4):
+    pipe = Pipeline([("s", StandardScaler()),
+                     ("p", PCA(n_components=n)),
+                     ("m", LogisticRegression(max_iter=1000))])
+    print(f"n={n}: {cross_val_score(pipe, d2[feats], d2['sex'], cv=5).mean():.3f}")
+```
+
+Sex rides mostly on PC1 — bigger birds skew male, so the loud "overall
+size" axis does the work that species had to wait for quiet PC3 to get:
+which directions matter depends entirely on the question you ask.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch19.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The unsupervised trilogy is complete: groups by centres, groups by
+merges, and now *directions* — maps that keep the story, ranked axes,
+and the module's most transferable warning (variance ≠ relevance,
+measure before trusting). One chapter remains, and it is the victory
+lap with a deliverable: **the full scikit-learn workflow, end to end,
+plus your first model card** — everything since Chapter 1, assembled
+into the shape the capstone (and working ML) actually takes.
