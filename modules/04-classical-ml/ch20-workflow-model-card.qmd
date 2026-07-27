@@ -1,0 +1,460 @@
+---
+title: "The scikit-learn workflow + your first model card"
+module: "M4 — Classical Machine Learning"
+chapter: 20
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch16 — Feature engineering"
+  - "M4 Ch6 — Classification metrics"
+  - "M4 Ch4 — Generalization: train/val/test & cross-validation"
+learning_objectives:
+  - "Run the complete tabular workflow: split → baseline → pipelines → CV comparison → tuning → one sealed evaluation"
+  - "Implement the per-class metrics a model card reports"
+  - "Write an honest model card: intended use, data, metrics, limitations, and when not to use the model"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-21"
+est_minutes: 26
+resources:
+  - ../../lib/grader.py
+  - ../../lib/data.py
+  - data/penguins.csv
+pyodide:
+  packages:
+    - pandas
+    - scikit-learn
+review_cards:
+  - id: workflow-eight-steps
+    q: "Name the eight steps of the tabular ML workflow."
+    a: "Frame the problem → split first and seal the test set → establish a lazy baseline → build a pipeline per candidate model → compare by cross-validation (spreads included) → tune the leader with GridSearchCV → evaluate ONCE on the sealed test set → document with a model card."
+  - id: model-card-sections
+    q: "What sections does a model card carry?"
+    a: "Model details (what/version/date), intended use (and users), training data (provenance, licence, known gaps), metrics (per-class, on held-out data), limitations and failure modes, and — the most valuable line — when NOT to use the model."
+  - id: card-most-valuable-line
+    q: "Why is 'when not to use this model' the model card's most valuable line?"
+    a: "Models fail silently outside their training distribution — a different region, season, or population. The card is read by people who didn't build the model; stating the boundary of validity is the one sentence that prevents confident misuse."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Nineteen chapters of parts. Today the intern assembles the machine once,
+start to finish — and then does the thing that separates a script from
+professional work: **documents it for the person who has to trust it.**
+
+Here's the scenario that makes documentation real. The field station is
+deploying the species classifier. It will be used by rangers who never
+met you, on birds you never saw, long after you've left. The deliverable
+is not the model — it's the model **plus its honest paperwork**: a
+**model card**, the one-page document (a practice introduced by Mitchell
+and colleagues, now standard) that states what the model is, what it's
+for, how well it works *per class*, and — the most valuable line on the
+page — when **not** to use it.
+
+First the workflow, then the card. Both are the capstone's exact shape.
+
+> You'll need from before: everything — this chapter is the assembly.
+
+---
+
+## The workflow, named
+
+Eight steps, each one a chapter you've already lived:
+
+1. **Frame the problem** — supervised? classification? which metric
+   matters? *(Ch1, Ch6)*
+2. **Split first, seal the test set** — before any decision. *(Ch4)*
+3. **Baseline** — the lazy model every candidate must beat. *(Ch6)*
+4. **A pipeline per candidate** — preprocessing fused in, leak-proof.
+   *(Ch16)*
+5. **Compare by CV** — means *and* spreads. *(Ch4)*
+6. **Tune the leader** — GridSearchCV over the pipeline. *(Ch16)*
+7. **Evaluate once** on the sealed set. *(Ch4)*
+8. **Document** — the model card. *(today)*
+
+## Steps 1–3: frame, split, baseline
+
+```{pyodide}
+#| caption: "The problem framed, the exam sealed, the bar set"
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split
+
+num = ["bill_length_mm", "bill_depth_mm",
+       "flipper_length_mm", "body_mass_g"]
+cat = ["island", "sex"]
+df = load_csv("penguins").dropna(subset=num + cat)
+y = df["species"]
+print(f"{len(df)} birds, three classes:",
+      y.value_counts().to_dict())
+
+Xtr, Xte, ytr, yte = train_test_split(
+    df[num + cat], y, test_size=0.25, random_state=42, stratify=y)
+print(f"training {len(Xtr)}, sealed test {len(Xte)}")
+
+lazy = (yte == ytr.value_counts().idxmax()).mean()
+print(f"lazy baseline (always '{ytr.value_counts().idxmax()}'): {lazy:.3f}")
+```
+
+Multiclass classification; accuracy is a fair headline here (the classes
+aren't wildly imbalanced) but the card will report **per class**, because
+Chapter 6 taught what averages hide. The bar to beat: `0.440`.
+
+## Steps 4–5: candidates, compared honestly
+
+Three families from the tour, each in the Chapter 16 pipeline (numeric →
+scaler, categorical → encoder), compared on **training data only** via
+CV:
+
+```{pyodide}
+#| caption: "Three candidates, five folds each — read the spreads before the means"
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (RandomForestClassifier,
+                              HistGradientBoostingClassifier)
+from sklearn.model_selection import cross_val_score
+
+prep = ColumnTransformer([
+    ("num", StandardScaler(), num),
+    ("cat", OneHotEncoder(handle_unknown="ignore"), cat),
+])
+candidates = {
+    "logistic": LogisticRegression(max_iter=1000),
+    "forest":   RandomForestClassifier(n_estimators=100, random_state=0),
+    "boosted":  HistGradientBoostingClassifier(random_state=0),
+}
+for name, model in candidates.items():
+    pipe = Pipeline([("prep", prep), ("model", model)])
+    s = cross_val_score(pipe, Xtr, ytr, cv=5)
+    print(f"{name:9}: CV {s.mean():.3f} ± {s.std():.3f}")
+```
+
+All three land at `0.988–0.992 ± 0.016` — **inside one another's
+spreads**, the Chapter 4 verdict: on this clean problem, model choice
+barely matters (a finding worth reporting, not hiding). We take logistic
+regression forward — the nominal leader, and the most interpretable of
+the three, which a deployed card appreciates.
+
+## Steps 6–7: tune, then open the seal
+
+```{pyodide}
+#| caption: "CV picks the dial; the sealed set speaks once"
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix)
+
+search = GridSearchCV(
+    Pipeline([("prep", prep),
+              ("model", LogisticRegression(max_iter=1000))]),
+    {"model__C": [0.01, 0.1, 1, 10]}, cv=5)
+search.fit(Xtr, ytr)
+print(f"CV chose {search.best_params_} at {search.best_score_:.3f}\n")
+
+pred = search.predict(Xte)
+print(f"SEALED TEST accuracy: {accuracy_score(yte, pred):.3f}\n")
+print(classification_report(yte, pred))
+print(confusion_matrix(yte, pred))
+```
+
+`0.988` on the sealed set — one bird wrong in 84. And look *which* bird:
+an Adelie called Chinstrap. The same seam that blurred Chapter 5's
+clouds, Chapter 6's detector, both clusterings, and PCA's map — the
+module's most consistent empirical fact, making its final appearance.
+That fact belongs in the card.
+
+## Step 8: the model card
+
+Now the second half of the deliverable, assembled from **measured**
+values only — every number below appeared above:
+
+```{pyodide}
+#| caption: "The card, built from evidence — not adjectives"
+card = f"""
+# Model card — Palmer Penguin Species Classifier v1.0
+
+## Model details
+Logistic regression (scikit-learn pipeline: standardized numeric
+features + one-hot island/sex), C=10 chosen by 5-fold CV.
+Trained 2026-07 on 249 birds; evaluated once on 84 held-out birds.
+
+## Intended use
+Field identification of Adelie / Chinstrap / Gentoo penguins at Palmer
+Archipelago stations, from four body measurements plus island and sex.
+Users: station rangers. Decisions supported: routine survey logging —
+NOT conservation-critical determinations.
+
+## Training data
+Palmer Penguins (Gorman et al., CC0), 2007–2009 field seasons,
+333 of 344 birds (rows missing sex were dropped — sex-unknown birds
+are therefore outside this model's experience).
+
+## Metrics (held-out test set, n=84)
+accuracy 0.988 | per class — Adelie: precision 1.00, recall 0.97;
+Chinstrap: precision 0.94, recall 1.00; Gentoo: precision 1.00,
+recall 1.00.
+
+## Limitations & failure modes
+- The known failure lives at the Adelie–Chinstrap boundary (the one
+  test error; both species overlap in bill/flipper space).
+- Trained on 2007–2009 Palmer Archipelago birds only.
+
+## When NOT to use
+Other regions or penguin species; birds measured with different
+protocols; sex-unknown birds; any conservation-critical decision
+without a human in the loop.
+"""
+print(card)
+```
+
+Read it as its audience would. A ranger learns in thirty seconds what
+this tool is, that Chinstrap calls are the ones to double-check
+(precision 0.94 — its only sub-1.00 number), and that taking it to a
+different colony voids the warranty. Notice what the card does *not*
+contain: adjectives. No "highly accurate", no "robust" — sections,
+numbers, and boundaries. **The when-NOT-to-use section is the page's
+most valuable real estate**: models fail silently outside their training
+distribution, and that section is the one sentence standing between a
+reader and confident misuse.
+
+Module's end. The capstone brief is this chapter with the training
+wheels off: **Bank Marketing** — new domain, naturally imbalanced (so
+Chapter 15 rides along), same eight steps, model card required, and a
+grader-enforced leakage tripwire on step 2. You have every part; the
+capstone is assembly under your own judgement.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **The workflow is eight steps**: frame → split-and-seal → baseline →
+   pipelines → CV-compare (spreads!) → tune → one sealed evaluation →
+   document.
+2. Our three candidates tied inside their spreads (0.988–0.992 ±
+   0.016) — "model choice barely matters here" is a *finding*, and the
+   interpretable one wins ties.
+3. The sealed set spoke once: **0.988**, one error — at the
+   Adelie–Chinstrap seam, the module's most consistent fact, now
+   documented rather than discovered.
+4. A **model card** = details, intended use, data provenance (including
+   what was dropped), per-class metrics, limitations, and when NOT to
+   use — built from measured values, zero adjectives.
+5. The capstone is this chapter on new, imbalanced data — every part is
+   now in your hands.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Run step 5 yourself: the three-way CV comparison. Replace the `____`s,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_compare
+from lib.grader import run_tests
+from lib.data import load_csv
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (RandomForestClassifier,
+                              HistGradientBoostingClassifier)
+
+num = ["bill_length_mm", "bill_depth_mm",
+       "flipper_length_mm", "body_mass_g"]
+cat = ["island", "sex"]
+df = load_csv("penguins").dropna(subset=num + cat)
+y = df["species"]
+Xtr, Xte, ytr, yte = train_test_split(
+    df[num + cat], y, test_size=0.25, random_state=42, stratify=y)
+prep = ColumnTransformer([
+    ("num", StandardScaler(), num),
+    ("cat", OneHotEncoder(handle_unknown="ignore"), cat),
+])
+```
+
+```{pyodide}
+#| exercise: ex_compare
+results = {}
+for name, model in [
+    ("logistic", LogisticRegression(max_iter=1000)),
+    ("forest", RandomForestClassifier(n_estimators=100, random_state=0)),
+    ("boosted", HistGradientBoostingClassifier(random_state=0)),
+]:
+    pipe = Pipeline([("prep", ____), ("model", ____)])  # TODO: wire each candidate
+    results[name] = round(float(cross_val_score(pipe, Xtr, ytr, cv=5).mean()), 3)
+
+run_tests([
+    ("compared on training data only, by CV", results,
+     {"logistic": 0.992, "forest": 0.988, "boosted": 0.988}),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Each candidate gets the same `prep` and its own `model`:
+`Pipeline([("prep", prep), ("model", model)])` — the loop variable does
+the rest.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+results = {}
+for name, model in [
+    ("logistic", LogisticRegression(max_iter=1000)),
+    ("forest", RandomForestClassifier(n_estimators=100, random_state=0)),
+    ("boosted", HistGradientBoostingClassifier(random_state=0)),
+]:
+    pipe = Pipeline([("prep", prep), ("model", model)])
+    results[name] = round(float(cross_val_score(pipe, Xtr, ytr, cv=5).mean()), 3)
+```
+
+Note what never appears in this loop: `Xte`. The sealed set plays no
+part in choosing — that's the entire point of steps 2 and 5.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the card's metrics block from spec. `card_metrics(y_true, y_pred,
+labels)` returns a dict mapping each label to its `(precision, recall)`
+tuple, each rounded to 4 dp — one-vs-rest, with Chapter 6's zero-division
+convention (no predictions for a class → precision 0.0; no true members
+→ recall 0.0).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_card
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_card
+def card_metrics(y_true, y_pred, labels):
+    """Per-class (precision, recall), rounded to 4 dp, zero-division -> 0.0."""
+    ...  # TODO: count TP/FP/FN per label, apply Ch6's formulas
+
+run_tests([
+    ("three-class card block",
+     card_metrics(["A", "A", "B", "B", "B", "C"],
+                  ["A", "B", "B", "B", "A", "C"],
+                  ["A", "B", "C"]),
+     {"A": (0.5, 0.5), "B": (0.6667, 0.6667), "C": (1.0, 1.0)}),
+    ("a class the model never predicts",
+     card_metrics(["A", "B"], ["A", "A"], ["A", "B"]),
+     {"A": (0.5, 1.0), "B": (0.0, 0.0)}),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+For each label: TP = both equal the label; FP = predicted it, truth
+differs; FN = truth is it, prediction differs. Then Chapter 6's
+formulas with an `if` guard on each denominator.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def card_metrics(y_true, y_pred, labels):
+    out = {}
+    for lab in labels:
+        tp = sum(1 for t, p in zip(y_true, y_pred) if t == lab and p == lab)
+        fp = sum(1 for t, p in zip(y_true, y_pred) if t != lab and p == lab)
+        fn = sum(1 for t, p in zip(y_true, y_pred) if t == lab and p != lab)
+        precision = round(tp / (tp + fp), 4) if tp + fp else 0.0
+        recall = round(tp / (tp + fn), 4) if tp + fn else 0.0
+        out[lab] = (precision, recall)
+    return out
+```
+
+This is `classification_report`'s core, written by you — and the second
+fixture is why cards report per class: label B vanished from the
+predictions entirely, and only its own row shows it.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Write the
+**Limitations & failure modes** and **When NOT to use** sections of a
+model card for the *housing price regressor* (the Ch16 tuned Ridge:
+sealed-test MAE 0.538). Raw material: everything Chapters 2–19 measured
+about that data and model. Aim for five concrete lines.
+
+**Rubric — a good answer:**
+
+- Every limitation is quantified or sourced, not hedged — e.g. "average
+  miss ≈ $54k (sealed-test MAE 0.538)", "values capped at $500k in the
+  source survey, so high-end predictions saturate", "trained on 1990
+  census data — prices, not patterns, are 35 years stale".
+- The when-NOT-to-use section names concrete out-of-scope uses
+  (individual-house appraisal — the model predicts block-group medians;
+  non-California regions; current-market pricing).
+- No adjectives doing the work of numbers.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+print("""## Limitations & failure modes
+- Average miss ~= $54k (sealed-test MAE 0.538 in $100k units).
+- Source values capped at $500k (1990 survey): predictions saturate
+  at the high end.
+- Trained on 1990 census block groups: dollar levels are ~35 years
+  stale; only relative patterns may transfer.
+- Weights are not importances: correlated features (rooms/bedrooms)
+  distort individual coefficients (Ch2).
+
+## When NOT to use
+- Individual-house appraisal (the unit is a census block group).
+- Any region outside 1990 California.
+- Current-market pricing without recalibration.""")
+```
+
+The test of a good limitations section: a stranger could predict the
+model's next embarrassing failure from it.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch20.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Module 4 is complete: twenty chapters from "what is learning?" to a
+deployed-grade workflow with honest paperwork. Two assessments remain —
+the module quiz, and the capstone where Bank Marketing's imbalanced
+customers meet everything you've built. After that, Module 5 asks the
+question this module quietly parked in Chapter 5: what happens when you
+stack the intern's neurons — **deep learning, from scratch**.

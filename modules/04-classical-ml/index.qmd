@@ -42,7 +42,7 @@ classification — so every new algorithm lands on familiar ground.
 | 17 | [k-means clustering](ch17-kmeans.qmd) | 🟡 |
 | 18 | [Hierarchical clustering](ch18-hierarchical-clustering.qmd) | 🟡 |
 | 19 | [PCA & dimensionality reduction](ch19-pca.qmd) | 🟡 |
-| 20 | The scikit-learn workflow + your first model card | 🟡 |
+| 20 | [The scikit-learn workflow + your first model card](ch20-workflow-model-card.qmd) | 🟡 |
 
 ## Module quiz
 

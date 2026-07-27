@@ -24,7 +24,8 @@ built-in, P2-D6).
 > [Ch16 — Feature engineering](ch16-feature-engineering.qmd) ·
 > [Ch17 — k-means clustering](ch17-kmeans.qmd) ·
 > [Ch18 — Hierarchical clustering](ch18-hierarchical-clustering.qmd) ·
-> [Ch19 — PCA & dimensionality reduction](ch19-pca.qmd)
+> [Ch19 — PCA & dimensionality reduction](ch19-pca.qmd) ·
+> [Ch20 — The workflow + model card](ch20-workflow-model-card.qmd) — **all 20 chapters built**
 
 ## Prerequisites
 

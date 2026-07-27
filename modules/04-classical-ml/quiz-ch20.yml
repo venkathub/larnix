@@ -1,0 +1,35 @@
+title: "Chapter 20 — quick check"
+id: "m4-ch20-workflow-model-card"
+questions:
+  - id: why-split-first
+    prompt: "In the eight-step workflow, why does 'split and seal the test set' come before baseline, comparison, and tuning?"
+    options:
+      - "Because splitting is the slowest step and should run early"
+      - "Every later decision — features, model choice, dials — must be made without test-set influence, or the final score inherits leakage"
+      - "The baseline can only be computed on the test set"
+    answer: 1
+    explanation: "The sealed set's only job is one honest final measurement. Any decision informed by it — even indirectly — spends its freshness. Split first makes every downstream step safe by construction."
+  - id: card-purpose
+    prompt: "Who is a model card for, and what does it do for them?"
+    options:
+      - "The people who must trust or deploy the model without having built it — it states what it is, how well it works per class, and where it stops being valid"
+      - "The model's author, as a private training log"
+      - "The CI system, which parses it to re-run training"
+    answer: 0
+    explanation: "The card is the interface between builder and user: rangers, reviewers, future maintainers. Its value is boundaries — intended use, measured per-class performance, and the when-not-to-use line that prevents confident misuse."
+  - id: per-class-on-card
+    prompt: "Why does the card report per-class precision/recall instead of only overall accuracy?"
+    options:
+      - "Per-class metrics are required by scikit-learn"
+      - "Accuracy cannot be computed for multiclass problems"
+      - "Aggregates average away exactly what a user needs: our card's only sub-1.00 number (Chinstrap precision 0.94) tells rangers which calls to double-check"
+    answer: 2
+    explanation: "One 0.988 hides which class carries the errors. The per-class rows localize the model's weakness — here the Adelie–Chinstrap seam — turning a vague score into an actionable caution."
+  - id: which-section-transfer
+    prompt: "A team deploys a Palmer-trained penguin classifier at a South Georgia station and gets garbage. Which card section exists to prevent exactly this?"
+    options:
+      - "Model details, which lists the algorithm and version"
+      - "When NOT to use — it names out-of-distribution uses (other regions, species, protocols) as void-the-warranty territory"
+      - "Metrics, which shows the held-out accuracy"
+    answer: 1
+    explanation: "Models fail silently outside their training distribution, and no metric on the card measures a place the data never saw. The when-not-to-use section is the single line standing between a reader and this failure — which is why it is the card's most valuable real estate."
