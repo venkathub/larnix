@@ -1,0 +1,35 @@
+title: "Chapter 8 — quick check"
+id: "m5-ch08-micrograd-engine"
+questions:
+  - id: when-history
+    prompt: "Why does the engine record parents and blame rules at creation time — during the forward pass?"
+    options:
+      - "Because Python closures only work inside __init__"
+      - "That is the only moment when the participants and their values (the receipts) are all in hand — the backward pass later merely replays the stored rules in reverse"
+      - "To save memory: recording later would duplicate the graph"
+    answer: 1
+    explanation: "A result like out = u * v knows u and v exactly when it is made. The _backward closure written at that moment captures the participants, so when blame arrives — possibly much later — the local derivative can still read the forward values it needs. Forward builds the graph; backward replays it."
+  - id: closure-captures
+    prompt: "In __mul__'s stored rule, self.grad += out.grad * other.data — why other.data and not self.data?"
+    options:
+      - "It's an arbitrary convention; either factor works"
+      - "Because multiplication's local derivative with respect to one factor is the OTHER factor — Chapter 6's product rule, written as code"
+      - "Because self.data may have changed since the forward pass"
+    answer: 1
+    explanation: "For out = u·v, ∂out/∂u = v: wiggling u moves out in proportion to v. So u's blame is the incoming blame scaled by v's value — and symmetrically for v. Swap them and every gradient in the network is wrong (the finite-difference jury would catch it immediately)."
+  - id: plus-equals
+    prompt: "The buggy engine used grad = instead of grad += and reported a.grad = 1.0 for b = a + a. What law did it break?"
+    options:
+      - "Parallel paths add (Ch6): a reaches b along two routes, and each route's blame must accumulate — the truth is 2.0, and = let the second delivery overwrite the first"
+      - "The chain rule: derivatives along one path must be multiplied"
+      - "Gradient descent: steps must be scaled by the learning rate"
+    answer: 0
+    explanation: "d(a+a)/da = 2, which finite differences confirm. The = bug delivers 1.0 twice to the same mailbox, erasing each time. In a real network almost every value feeds several consumers, so this one character decides whether nearly every gradient is right — and it is why fresh passes must first zero the grads."
+  - id: rule-transfer
+    prompt: "You add a squaring op: out = sq(u) with out.data = u.data². Which stored blame rule is correct?"
+    options:
+      - "u.grad += out.grad * u.data ** 2"
+      - "u.grad += out.grad * 2 * u.data"
+      - "u.grad += 2 * out.data"
+    answer: 1
+    explanation: "The local derivative of u² is 2u, and the engine's contract is always incoming blame × local derivative: out.grad * 2 * u.data. The third option forgets the incoming blame entirely — a rule that ignores out.grad breaks the chain the moment the op sits anywhere but at the loss."

@@ -1,0 +1,621 @@
+---
+title: "Build micrograd I: the autograd engine"
+module: "M5 — Deep Learning Foundations"
+chapter: 8
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch6 — Backpropagation, spelled out"
+  - "M1 Ch9 — A little OOP"
+learning_objectives:
+  - "Build a Value class that records every operation's participants — Ch6's receipts, kept automatically"
+  - "Write per-operation _backward closures that settle blame by the chain rule"
+  - "Explain why gradients must accumulate (+=) — and demonstrate the wrong answer when they don't"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 27
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: value-remembers
+    q: "What three things does a micrograd Value record beyond its number, and why at creation time?"
+    a: "Its parents (_prev), the operation that made it (_op), and a _backward closure that knows how to pass blame to those parents. They must be recorded at creation — during the forward pass — because that is the only moment the participants and their values (the receipts) are all in hand; the backward pass later merely replays these stored rules in reverse."
+  - id: closure-receipts
+    q: "How does the _backward closure for multiplication know the values it needs?"
+    a: "It closes over the participating Values themselves: for out = u * v it reads other.data and self.data at call time — each factor's blame is out.grad times the OTHER factor, exactly Ch6's product rule. The closure is a receipt with instructions attached."
+  - id: why-accumulate
+    q: "Why must _backward use `grad +=` instead of `grad =`?"
+    a: "Because a Value can be used more than once, and parallel paths ADD (Ch6). With `=`, the second path overwrites the first: for b = a + a, the buggy engine reported a.grad = 1.0 where the truth (verified by finite differences) is 2.0. The += is Ch6's add-over-paths rule compressed into one character."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 6 ended with a confession: the *rules* of backprop are two
+moves, but the *bookkeeping* — keep every receipt, know every local
+slope, remember to add over paths — is a job for a machine that never
+forgets. Today you build that machine.
+
+It is called an **autograd engine**, and the whole thing is one small
+Python class: a `Value` — **a number that remembers where it came
+from**. About a hundred lines when finished (this chapter and the
+next), no imports, no NumPy — the same design as
+[micrograd](https://github.com/karpathy/micrograd), the engine PyTorch
+is the industrial-strength version of. When you later type
+`loss.backward()` in PyTorch, you will know exactly what is happening,
+because you will have written it.
+
+> You'll need from before: Ch6's blame game (receipts, local
+> derivatives, paths add), and M1 Ch9's classes — `__init__`, methods,
+> and the dunder operators.
+
+## The problem: numbers have amnesia
+
+Watch an ordinary Python float forget:
+
+```{pyodide}
+#| caption: "A float keeps no receipts"
+a = 2.0
+b = 3.0
+c = a * b
+print(c)
+```
+
+`c` is 6.0 — and that is *everything* `c` knows. Ask it where it came
+from and there is no answer: not that a multiplication happened, not
+who the factors were. But Chapter 6's backward pass needs exactly that
+history — blame flows from `c` *to `a` and `b`*, scaled by their
+values. With plain floats, there is nobody to deliver the blame to.
+
+So: a number with a memory.
+
+## Version 1: record the history
+
+Wrap the float in a class that records, for every result, **who made
+it** (`_prev`) and **how** (`_op`):
+
+```{pyodide}
+#| caption: "A Value that knows its parents"
+class Value:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self._prev = _prev      # the Values this one was made from
+        self._op = _op          # the operation that made it
+
+    def __add__(self, other):
+        return Value(self.data + other.data, (self, other), "+")
+
+    def __mul__(self, other):
+        return Value(self.data * other.data, (self, other), "*")
+
+def show(v, indent=0):
+    label = v._op if v._op else "leaf"
+    print("  " * indent + f"{label}: {v.data}")
+    for p in v._prev:
+        show(p, indent + 1)
+
+a, b, c = Value(2.0), Value(3.0), Value(10.0)
+d = a * b + c
+show(d)
+```
+
+Read the printout bottom-up: the leaves 2.0 and 3.0 fed a `*` node
+(6.0), which joined the leaf 10.0 at a `+` node (16.0). Writing
+`a * b + c` didn't only compute 16.0 — it **built a graph**, one node
+per operation, parents recorded at the moment of creation. These are
+Chapter 6's receipts, kept without you lifting a finger. What the
+graph *cannot* do yet is settle blame.
+
+## Version 2: every operation packs its own blame rule
+
+Chapter 6's backward pass had one rule per station: incoming blame ×
+local derivative. The engine's key idea: **each operation writes down
+its own rule at creation time**, as a closure stored on the result. Two
+new ingredients per `Value`: a `grad` (blame received so far, starting
+at 0) and a `_backward` function (how to pass blame to the parents).
+
+```{pyodide}
+#| caption: "The engine: data, grad, and a _backward per operation"
+class Value:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0                  # blame received so far
+        self._backward = lambda: None    # leaves have nothing to pass on
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = Value(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad        # + routes blame through unchanged
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = Value(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data   # each factor's blame is
+            other.grad += out.grad * self.data   # out.grad × the OTHER factor
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = Value(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    def __repr__(self):
+        return f"Value(data={self.data}, grad={self.grad})"
+
+print("engine loaded")
+```
+
+Look closely at `__mul__`'s rule — it *is* Chapter 6's product rule:
+each factor receives the incoming blame times **the other factor's
+value**. And notice the closure trick: `_backward` mentions `self`,
+`other` and `out`, so Python keeps those objects alive inside the
+function — the receipt and the instruction, stapled together. `relu`
+is the gate from Chapter 4: blame passes only if the input was
+positive.
+
+## The engine settles a neuron's blame
+
+Chapter 6's smallest circuit, rebuilt on the engine: a two-input ReLU
+neuron, `out = relu(x1·w1 + x2·w2)`:
+
+```{pyodide}
+#| caption: "Forward: the graph assembles itself"
+x1, w1 = Value(1.0), Value(0.5)
+x2, w2 = Value(0.5), Value(-0.5)
+
+p1 = x1 * w1        # 0.5
+p2 = x2 * w2        # -0.25
+z  = p1 + p2        # 0.25
+out = z.relu()      # 0.25 — the gate is open
+
+print(f"p1={p1.data}  p2={p2.data}  z={z.data}  out={out.data}")
+```
+
+Now the backward pass. Seed the output's blame at 1.0, then call each
+stored `_backward` **in reverse creation order** — for now, by hand:
+
+```{pyodide}
+#| caption: "Backward: replay the stored rules, newest first"
+out.grad = 1.0      # blame starts at the output
+
+out._backward()     # relu gate: open, so z receives 1.0
+z._backward()       # + routes 1.0 to both p1 and p2
+p1._backward()      # * : x1 gets 1.0×0.5, w1 gets 1.0×1.0
+p2._backward()
+
+print(f"x1.grad={x1.grad}   w1.grad={w1.grad}")
+print(f"x2.grad={x2.grad}   w2.grad={w2.grad}")
+```
+
+Every number checks out against Chapter 6's hand rules: each weight's
+blame is the input it multiplied (w1 ← 1.0, w2 ← 0.5), each input's
+blame is its weight (x1 ← 0.5, x2 ← −0.5). But hand-checking is not
+the ritual — the wiggle test is:
+
+```{pyodide}
+#| caption: "The verification ritual, now aimed at our own engine"
+from lib.grader import run_tests, grad_check
+
+def neuron_of(params):
+    wa, wb = params
+    return max(0.0, 1.0 * wa + 0.5 * wb)
+
+run_tests([
+    grad_check("the engine vs finite differences",
+               neuron_of, [0.5, -0.5], [w1.grad, w2.grad]),
+])
+```
+
+Relative error ~10⁻¹², same as Chapter 6's hand pass. The engine
+didn't learn calculus — it replayed four stored one-line rules, in
+order. That's the whole secret.
+
+## The most important character: `+=`
+
+Why do the rules say `grad +=` and not `grad =`? Chapter 6 answered
+this on paper — **parallel paths add** — and the engine must get it
+right whenever a Value is used twice. Here is the bug, committed
+deliberately. One forgetful engine, identical except `=` where `+=`
+should be:
+
+```{pyodide}
+#| caption: "The = bug: the second path overwrites the first"
+class Forgetful(Value):
+    def __add__(self, other):
+        out = Forgetful(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad = out.grad      # = instead of +=  (the bug)
+            other.grad = out.grad
+        out._backward = _backward
+        return out
+
+a = Forgetful(3.0)
+b = a + a                  # b = 2a, so db/da is 2 — no calculus needed
+b.grad = 1.0
+b._backward()
+print(f"forgetful engine says a.grad = {a.grad}   (truth: 2.0)")
+
+a = Value(3.0)             # the real engine, += intact
+b = a + a
+b.grad = 1.0
+b._backward()
+print(f"accumulating engine says a.grad = {a.grad}")
+```
+
+`b = a + a` sends blame to `a` along **two** paths — and the forgetful
+engine delivers 1.0 twice to the same mailbox, each delivery erasing
+the last. The real engine's `+=` collects both. In a network this bug
+is everywhere-at-once: every hidden activation feeds many downstream
+neurons (Ch4's clerks testify to ten digit-judges each), so nearly
+*every* gradient would be silently wrong. One character carries the
+whole add-over-paths law.
+
+The flip side of accumulation: before a fresh backward pass you must
+**zero the grads**, or yesterday's blame contaminates today's. That
+housekeeping (`zero_grad`) joins the engine in Chapter 10's training
+loop — and you have already met its PyTorch name.
+
+## One more gate, and what's still missing
+
+The dead-ReLU clerk from Chapter 4, mechanically explained in one
+call:
+
+```{pyodide}
+#| caption: "A closed gate passes no blame"
+xd = Value(-2.0)
+g = xd.relu()          # forward: 0.0 — the clerk is silent
+g.grad = 1.0
+g._backward()
+print(f"relu(-2.0) = {g.data},  blame passed upstream: {xd.grad}")
+```
+
+Zero forward, zero backward — a dead unit cannot learn, because its
+stored rule multiplies every blame by 0. You now hold a working
+engine with one embarrassing limitation: *we* ordered the `_backward`
+calls, newest to oldest, by hand. Four calls for four nodes was fine;
+a digits-network step has thousands, and a wrong order silently
+computes garbage (call `p1._backward()` before `z._backward()` and p1
+passes on a blame it hasn't received yet). Making the graph order
+itself — and collapsing the whole ceremony into one `backward()` — is
+Chapter 9.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Autograd = numbers with memory**: every `+` and `*` records its
+   participants (`_prev`) and result — Ch6's receipts, kept by the
+   forward pass automatically.
+2. **Each op packs its own blame rule** as a `_backward` closure
+   written at creation time: `+` routes blame through unchanged; `*`
+   hands each factor `out.grad` × the other factor; `relu` gates on
+   the sign of its input.
+3. **Backward = replay the rules, newest first** — the engine
+   reproduced Ch6's neuron blames and passed the finite-difference
+   audit at ~10⁻¹².
+4. **`+=` is the law of paths**: with `=`, `b = a + a` reports
+   a.grad = 1.0 against the verifiable truth 2.0 — and in a real
+   network almost every value is reused. Corollary: zero the grads
+   before each new pass.
+5. **Still missing**: the engine can't yet order its own backward
+   walk — topological sort and the one-call `backward()` are
+   Chapter 9.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic** — and Exercise 2 is additionally audited by
+`grad_check`, the chapter's own ritual.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Addition's blame rule, from Chapter 6: a `+` node routes incoming
+blame to **both** parents unchanged (its local derivative is 1 for
+each). Fill the two lines, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_add_rule
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_add_rule
+class V:
+    def __init__(self, data, _prev=()):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other))
+        def _backward():
+            self.grad += ____      # TODO: what does + pass to each parent?
+            other.grad += ____
+        out._backward = _backward
+        return out
+
+a, b = V(2.0), V(5.0)
+s = a + b
+s.grad = 3.0          # pretend blame arrived from downstream
+s._backward()
+
+run_tests([
+    ("left parent's blame", a.grad, 3.0),
+    ("right parent's blame", b.grad, 3.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+For s = a + b, both local derivatives are 1 — so each parent receives
+the incoming blame as-is. Both blanks are the same thing: `out.grad`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class V:
+    def __init__(self, data, _prev=()):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other))
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+a, b = V(2.0), V(5.0)
+s = a + b
+s.grad = 3.0
+s._backward()
+```
+
+Addition is blame's plumbing: whatever arrives at the sum flows to
+every summand untouched. The 3.0 seeded downstream lands on both
+parents in full.
+</details>
+
+### Exercise 2 — Implement (≈10 min) 🟡
+
+The engine's two working ops, from their Chapter 6 rules:
+`__mul__` (each factor's blame is `out.grad` × the *other* factor) and
+`relu` (blame passes only if the input was positive). `__add__` is
+done for you. Your engine then runs the chapter's neuron end to end —
+and faces the wiggle-test jury.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_engine
+from lib.grader import run_tests, grad_check
+```
+
+```{pyodide}
+#| exercise: ex_engine
+class V:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        ...  # TODO: forward, then the product blame rule, then return out
+
+    def relu(self):
+        ...  # TODO: forward (clip at 0), then the gate rule
+
+x1, w1, x2, w2 = V(1.0), V(0.5), V(0.5), V(-0.5)
+p1 = x1 * w1; p2 = x2 * w2; z = p1 + p2; out = z.relu()
+out.grad = 1.0
+out._backward(); z._backward(); p1._backward(); p2._backward()
+
+dead = V(-2.0); gate = dead.relu()
+gate.grad = 1.0; gate._backward()
+
+def neuron_of(params):
+    wa, wb = params
+    return max(0.0, 1.0 * wa + 0.5 * wb)
+
+run_tests([
+    ("forward through the neuron", out.data, 0.25),
+    ("weight blames", [w1.grad, w2.grad], [1.0, 0.5]),
+    ("input blames", [x1.grad, x2.grad], [0.5, -0.5]),
+    ("the dead gate passes nothing", dead.grad, 0.0),
+    grad_check("your engine vs finite differences",
+               neuron_of, [0.5, -0.5], [w1.grad, w2.grad]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Mirror `__add__`'s shape exactly: compute `out`, define `_backward`,
+attach it, return `out`. For `__mul__` the two lines are
+`self.grad += out.grad * other.data` and
+`other.grad += out.grad * self.data`. For `relu`, forward is
+`self.data if self.data > 0 else 0.0` and the rule is
+`self.grad += out.grad * (1.0 if self.data > 0 else 0.0)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class V:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = V(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = V(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+x1, w1, x2, w2 = V(1.0), V(0.5), V(0.5), V(-0.5)
+p1 = x1 * w1; p2 = x2 * w2; z = p1 + p2; out = z.relu()
+out.grad = 1.0
+out._backward(); z._backward(); p1._backward(); p2._backward()
+
+dead = V(-2.0); gate = dead.relu()
+gate.grad = 1.0; gate._backward()
+
+def neuron_of(params):
+    wa, wb = params
+    return max(0.0, 1.0 * wa + 0.5 * wb)
+```
+
+Three ops, three one-line rules — and the finite-difference jury
+signs off on your engine the way it signed off on your hand algebra
+in Chapter 6. Everything a network needs except self-ordering.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Extend your
+Exercise 2 engine with a new operation: `exp(self)`, computing eˣ.
+Its local derivative is famously itself — so the blame rule can reuse
+the receipt: `self.grad += out.grad * out.data`. Verify against
+finite differences at x = 1.5. Then, if you want the flourish: add
+`__pow__(self, k)` for constant exponents and assemble **sigmoid from
+your own parts** — σ(x) = (1 + e⁻ˣ)⁻¹ — and check that σ(0) = 0.5
+with gradient exactly 0.25, Chapter 2's slope ceiling, computed by an
+engine you wrote.
+
+**Rubric — a good answer:**
+
+- `exp` follows the established shape (forward, closure, attach,
+  return) and its rule reuses `out.data` rather than recomputing eˣ.
+- A `grad_check` (or manual central difference) at x = 1.5 confirms
+  the gradient to ≤1e-6 relative error.
+- The sigmoid assembly composes only engine ops (`*`, `+`, `exp`,
+  `**`), backward is called in reverse creation order, and x.grad
+  comes out 0.25 at x = 0 — matching Chapter 2's `sigmoid_slope`
+  ceiling.
+- Bonus observation: the by-hand backward ordering is getting
+  painful — five calls for one sigmoid — which is precisely
+  Chapter 9's opening problem.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+import math
+
+class VX(V):                      # V from Exercise 2, extended
+    def exp(self):
+        out = VX(math.exp(self.data), (self,), "exp")
+        def _backward():
+            self.grad += out.grad * out.data   # d(e^x)/dx = e^x, the receipt
+        out._backward = _backward
+        return out
+
+    def __pow__(self, k):
+        out = VX(self.data ** k, (self,), f"**{k}")
+        def _backward():
+            self.grad += out.grad * k * self.data ** (k - 1)
+        out._backward = _backward
+        return out
+
+# sigma(0) from parts: (1 + exp(-0))^-1
+x = VX(0.0)
+neg = x * VX(-1.0)
+e = neg.exp()
+onep = VX(1.0) + e
+sig = onep ** -1
+print(sig.data)                   # 0.5
+
+sig.grad = 1.0
+sig._backward(); onep._backward(); e._backward(); neg._backward()
+print(x.grad)                     # 0.25 — Ch2's ceiling, from your engine
+```
+
+(One subtlety: `VX(1.0) + e` calls `V.__add__`, which constructs a
+`V`, not a `VX` — fine here because the sum needs no new ops
+downstream, but a production engine builds results via `type(self)`
+or keeps one class. Micrograd keeps one class.) The chain of four
+`_backward()` calls in exactly the right order is the tedium to
+remember — Chapter 9 deletes it.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch08.yml >}}
+
+---
+
+## Where this fits / what's next
+
+Half the engine exists: Values remember their history, every op knows
+its own blame rule, and the finite-difference jury has approved the
+first three ops. The missing half is *orchestration* — the graph must
+learn to order its own backward walk (topological sort), so that one
+call to `backward()` settles every blame in any expression you can
+type. That, plus the full micrograd op set, is Chapter 9 — and it
+completes the machine that Chapter 10 trains on real digits, entirely
+in your browser.
