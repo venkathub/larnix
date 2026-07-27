@@ -1,0 +1,35 @@
+title: "Chapter 9 — quick check"
+id: "m5-ch09-micrograd-backward"
+questions:
+  - id: silent-wrongness
+    prompt: "Calling p1._backward() before z._backward() produced w1.grad = 0.0 instead of 1.0. Why did Python raise no error?"
+    options:
+      - "The hooks catch and suppress their own exceptions"
+      - "Nothing illegal happened: p1's hook ran fine — it just forwarded the blame it held at that moment, which was still 0. Wrong order is wrong *arithmetic*, not a crash"
+      - "Errors only occur when the graph contains a cycle"
+    answer: 1
+    explanation: "Each hook is ordinary code: read my grad, deliver shares upstream. Fired early, it reads a stale zero and delivers zeros — perfectly legal, silently wrong. That is what makes ordering a safety property the engine must enforce rather than a bug you would be told about."
+  - id: why-postorder
+    prompt: "In the topological sort, why is order.append(v) placed AFTER the loop that recurses into v's parents?"
+    options:
+      - "It makes the recursion terminate faster"
+      - "So the list comes out sorted by data value"
+      - "That placement guarantees every node is appended only once its parents already are — parents-first order, whose reverse is exactly consumers-before-suppliers"
+    answer: 2
+    explanation: "Post-order is the whole trick: a node's append can only execute after its parents' recursive calls returned, so parents always precede children in the list. Replaying it reversed means every node fires only after everything it feeds has reported — the safety rule, mechanized."
+  - id: seed-one
+    prompt: "backward() starts by setting self.grad = 1.0 on the loss node. Why 1.0?"
+    options:
+      - "Because dL/dL = 1: the loss is fully responsible for itself, and every other gradient is measured relative to that"
+      - "It's the learning rate for the first step"
+      - "Any nonzero constant works and changes nothing downstream"
+    answer: 0
+    explanation: "The chain of blame needs a starting value, and the calculus fixes it: the derivative of the loss with respect to itself is exactly 1. Seeding 2.0 would silently double every gradient in the network — the scale does propagate, so the constant is not arbitrary."
+  - id: shared-node-transfer
+    prompt: "For c = a * a with a = 3.0, a correct engine reports a.grad = 6.0. Which pair of mechanisms produces that?"
+    options:
+      - "The visited set fires a's hook twice, and = keeps the last delivery"
+      - "The visited set records a once (its hook is never double-fired), while __mul__'s += delivers blame twice — 3.0 from each role a plays"
+      - "__pow__ is called automatically because a·a is rewritten as a²"
+    answer: 1
+    explanation: "Dedup the nodes, accumulate the blame. a appears twice as a parent but must be visited once; meanwhile the product rule hands each factor the other's value — both hands belong to a, so 3.0 + 3.0 = 6.0 = 2a, exactly d(a²)/da. Ex2's fixture tests precisely this cooperation."

@@ -1,0 +1,728 @@
+---
+title: "Build micrograd II: backward through a graph"
+module: "M5 — Deep Learning Foundations"
+chapter: 9
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch8 — Build micrograd I: the autograd engine"
+learning_objectives:
+  - "Demonstrate why backward order matters: firing a node early computes provably wrong gradients"
+  - "Implement topological sort and a one-call backward(), and certify the finished engine against Ch6's hand-derived gradients"
+  - "Show why grads must be zeroed between passes — stale blame compounds, not merely doubles"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 28
+resources:
+  - ../../lib/grader.py
+review_cards:
+  - id: order-or-garbage
+    q: "Why must _backward hooks fire in reverse topological order?"
+    a: "A node may pass blame upstream only after ALL its consumers have delivered blame to it. Fire early and it forwards a stale (usually zero) grad: calling p1._backward() before z._backward() in the neuron graph reported w1.grad = 0.0 against the truth 1.0 — silently, with no error raised."
+  - id: topo-in-eight-lines
+    q: "How does the engine find a safe backward order?"
+    a: "Post-order depth-first search: visit a node's parents before appending the node itself, with a visited set so shared nodes are recorded once. The resulting list has every node after its parents; replaying it REVERSED guarantees every consumer fires before its suppliers — that plus seeding loss.grad = 1.0 is the whole of backward()."
+  - id: stale-blame-compounds
+    q: "What happens if you call backward() twice without zeroing grads?"
+    a: "Worse than doubling: intermediate nodes still hold yesterday's blame, and new deliveries stack on top of stale values that then get forwarded again — b3's gradient went from the true −0.1867 to −1.4939, about 8× off. Hence zero_grad before every fresh pass, a line you will type in every PyTorch loop."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 8 left you doing the machine's job. The engine stores a blame
+rule on every node — but *you* called the `_backward` hooks, newest to
+oldest, by hand: four calls for a neuron, five for a sigmoid built
+from parts. For the digits network a single training step would mean
+thousands of calls in exactly the right order, and — this is the
+dangerous part — **a wrong order raises no error**. It computes wrong
+gradients, silently.
+
+Today the graph learns to order itself. One classic algorithm
+(topological sort, about eight lines), one method that uses it
+(`backward()`), and the engine is **finished** — certified against
+Chapter 6's hand-derived gradients and the finite-difference jury.
+From then on, everything you type is `loss.backward()`. Which is,
+verbatim, the line you will type in PyTorch for the rest of the
+school.
+
+> You'll need from before: Ch8's `Value` (data, `_prev`, `_backward`
+> closures, the `+=` law) and Ch6's paper network — it returns for the
+> certification.
+
+First, Chapter 8's engine, reassembled:
+
+```{pyodide}
+#| caption: "Ch8's three-op engine (add, mul, relu), as you built it"
+class V8:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = V8(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = V8(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = V8(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+def neuron():
+    x1, w1, x2, w2 = V8(1.0), V8(0.5), V8(0.5), V8(-0.5)
+    p1 = x1 * w1; p2 = x2 * w2
+    z = p1 + p2; out = z.relu()
+    return x1, w1, x2, w2, p1, p2, z, out
+
+print("engine reassembled")
+```
+
+## The disaster, demonstrated
+
+Same neuron, same four `_backward` calls — but `p1` fires *before*
+`z` has delivered its blame:
+
+```{pyodide}
+#| caption: "One swap, no error, wrong gradients"
+x1, w1, x2, w2, p1, p2, z, out = neuron()
+out.grad = 1.0
+out._backward(); p1._backward(); z._backward(); p2._backward()
+print(f"wrong order:  w1.grad = {w1.grad}   x1.grad = {x1.grad}")
+
+x1, w1, x2, w2, p1, p2, z, out = neuron()
+out.grad = 1.0
+out._backward(); z._backward(); p1._backward(); p2._backward()
+print(f"right order:  w1.grad = {w1.grad}   x1.grad = {x1.grad}")
+```
+
+When `p1._backward()` ran early, `p1.grad` was still 0 — so it
+forwarded **zero blame** to x1 and w1. The courier left before the
+mail arrived. Then `z._backward()` delivered 1.0 to p1… too late;
+p1's hook never runs again. Result: w1.grad = 0.0 against the truth
+1.0, and Python raised nothing. A training loop built on this bug
+would drift wrong forever without one error message.
+
+The safety rule, extracted: **a node may pass blame upstream only
+after every node it feeds has reported back.** Now make the machine
+enforce it.
+
+## Topological sort: the graph orders itself
+
+The graph already knows who feeds whom — every node holds `_prev`.
+The ordering we need is: *every node appears after all of its
+parents*. One classic algorithm produces it — **post-order
+depth-first search**: to record a node, first record its parents,
+then append the node. A `visited` set makes sure a shared node
+(remember `b = a + a`) is recorded exactly once:
+
+```{pyodide}
+#| caption: "Eight lines: parents first, each node once"
+def topo(root):
+    order, visited = [], set()
+    def build(v):
+        if v not in visited:
+            visited.add(v)
+            for parent in v._prev:
+                build(parent)
+            order.append(v)
+    build(root)
+    return order
+
+x1, w1, x2, w2, p1, p2, z, out = neuron()
+order = topo(out)
+print([v._op if v._op else "leaf" for v in order])
+```
+
+Read it left to right: leaves, then the `*` they feed, more leaves,
+their `*`, the `+`, the `relu` — parents always before children. Blame
+flows the *other* way, so replay the list **reversed**:
+
+```{pyodide}
+#| caption: "Reversed replay: the ceremony, automated"
+out.grad = 1.0
+for v in reversed(order):
+    v._backward()
+
+print(f"w1.grad = {w1.grad}   w2.grad = {w2.grad}")
+print(f"x1.grad = {x1.grad}   x2.grad = {x2.grad}")
+```
+
+Chapter 8's hand-ordered results, exactly — but the order came from
+the graph, not from you. Wrap the seed and the replay into a method
+and the engine is complete.
+
+## The finished engine
+
+Everything from both chapters in one place, plus the ergonomics that
+make expressions pleasant: scalars auto-wrap (`x * 2` works), and
+`-x`, `a - b`, `a / b` are *compositions* of existing ops — two lines
+each, **no new calculus**:
+
+```{pyodide}
+#| caption: "micrograd, complete — 66 non-blank lines, dependency-free"
+import math
+
+class Value:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def __pow__(self, k):
+        out = Value(self.data ** k, (self,), f"**{k}")
+        def _backward():
+            self.grad += out.grad * k * self.data ** (k - 1)
+        out._backward = _backward
+        return out
+
+    def exp(self):
+        out = Value(math.exp(self.data), (self,), "exp")
+        def _backward():
+            self.grad += out.grad * out.data
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = Value(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    # ergonomics: compositions and scalar-friendliness, no new calculus
+    def __neg__(self):           return self * -1
+    def __sub__(self, other):    return self + (-other if isinstance(other, Value) else -other)
+    def __truediv__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        return self * other ** -1
+    def __radd__(self, other):   return self + other
+    def __rmul__(self, other):   return self * other
+    def __rsub__(self, other):   return (-self) + other
+
+    def backward(self):
+        order, visited = [], set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for parent in v._prev:
+                    build(parent)
+                order.append(v)
+        build(self)
+        self.grad = 1.0             # blame starts at the output, in full
+        for v in reversed(order):
+            v._backward()
+
+    def __repr__(self):
+        return f"Value(data={self.data}, grad={self.grad})"
+
+print("micrograd complete")
+```
+
+That's the whole machine: the same lineage as
+[karpathy/micrograd](https://github.com/karpathy/micrograd), and the
+conceptual core of `torch.autograd`. `backward()` seeds the output's
+own grad at 1.0 (dL/dL = 1 — the loss is fully to blame for itself)
+and replays every stored rule, in an order the graph computed.
+
+## Certification day: Chapter 6's network, one call
+
+The paper network you back-propagated by hand — two sigmoid hidden
+neurons, sigmoid output, squared error — rebuilt on the engine, with
+sigmoid *composed from parts* (σ(z) = 1/(1 + e⁻ᶻ)):
+
+```{pyodide}
+#| caption: "Nine hand-derived blames vs one backward() call"
+def sigmoid(z):
+    return (1 + (-z).exp()) ** -1
+
+xa, xb = Value(1.0), Value(0.5)
+w11, w12, b1 = Value(0.5), Value(-0.5), Value(0.0)
+w21, w22, b2 = Value(1.0), Value(1.0), Value(-1.0)
+w31, w32, b3 = Value(1.0), Value(-1.0), Value(0.5)
+
+h1 = sigmoid(xa * w11 + xb * w12 + b1)
+h2 = sigmoid(xa * w21 + xb * w22 + b2)
+out = sigmoid(h1 * w31 + h2 * w32 + b3)
+loss = (out - 1.0) ** 2
+
+loss.backward()                       # the entire ceremony
+
+print(f"loss = {loss.data:.4f}   (Ch6: 0.1535)")
+print(f"w1: {w11.grad:.5f}, {w12.grad:.5f}   b1: {b1.grad:.5f}")
+print(f"w2: {w21.grad:.5f}, {w22.grad:.5f}   b2: {b2.grad:.5f}")
+print(f"w3: {w31.grad:.4f}, {w32.grad:.4f}   b3: {b3.grad:.4f}")
+print(f"x1: {xa.grad:.5f}  ← the two-path sum, automatic")
+```
+
+Every number is Chapter 6's, to the printed digit — including
+dL/dx₁ = 0.02090, the add-over-two-paths you summed by hand, now
+performed silently by `+=` and the visited set working together. And
+the jury, one more time, aimed at the finished machine:
+
+```{pyodide}
+#| caption: "The wiggle test signs off on the whole engine"
+from lib.grader import run_tests, grad_check
+
+def sigf(z):
+    return 1 / (1 + math.exp(-z))
+
+def loss_of(params):
+    a, b, c, d, e, f, g, h, i = params
+    hh1 = sigf(a * 1.0 + b * 0.5 + c)
+    hh2 = sigf(d * 1.0 + e * 0.5 + f)
+    return (sigf(g * hh1 + h * hh2 + i) - 1.0) ** 2
+
+run_tests([
+    grad_check("finished engine, all nine parameters", loss_of,
+               [0.5, -0.5, 0.0, 1.0, 1.0, -1.0, 1.0, -1.0, 0.5],
+               [w11.grad, w12.grad, b1.grad, w21.grad, w22.grad, b2.grad,
+                w31.grad, w32.grad, b3.grad]),
+])
+
+print("nodes in this graph:", len(topo(loss)))
+```
+
+Max relative error ~10⁻¹² across all nine parameters. One detail
+worth savoring: this expression built a **44-node graph** (sigmoid
+from parts is 11 nodes each) and you never thought about a single
+node — you wrote math, the graph assembled itself, ordered itself,
+and settled every blame.
+
+## The flip side: stale blame compounds
+
+Chapter 8 warned that accumulation needs housekeeping. Watch what
+happens if you skip it — call `backward()` a second time without
+zeroing:
+
+```{pyodide}
+#| caption: "Skip zero_grad and the books corrupt — worse than doubling"
+print(f"b3.grad after one backward :  {b3.grad:.4f}   (the truth)")
+
+loss.backward()                       # second pass, grads not zeroed
+print(f"b3.grad after two backwards:  {b3.grad:.4f}   (~8× the truth!)")
+
+def zero_grad(root):
+    order, visited = [], set()
+    def build(v):
+        if v not in visited:
+            visited.add(v)
+            for parent in v._prev:
+                build(parent)
+            order.append(v)
+    build(root)
+    for v in order:
+        v.grad = 0.0
+
+zero_grad(loss)
+loss.backward()
+print(f"zeroed, then one backward  :  {b3.grad:.4f}   (sanity restored)")
+```
+
+Not −0.3734 (a mere doubling) but **−1.4939** — because the
+*intermediate* nodes also kept their stale grads, and the second
+pass's deliveries stacked on top of old blame that then got forwarded
+again, compounding at every station. A training loop with this bug
+doesn't crash; it optimizes garbage, enthusiastically. This is
+why every PyTorch loop you will ever write contains
+`optimizer.zero_grad()` — a line whose reason you have now *measured*.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Order or garbage**: firing `p1._backward()` one position early
+   reported w1.grad = 0.0 against the truth 1.0 — with no error
+   raised. A node may report only after all its consumers have.
+2. **Topological sort is eight lines**: post-order DFS (parents
+   before self, visited set for shared nodes); replay it *reversed*
+   and the order is always safe.
+3. **`backward()` = seed + replay**: set the output's grad to 1.0
+   (dL/dL = 1), walk the reversed order — the entire Ch6 ceremony in
+   one call.
+4. **Certified**: the finished engine reproduced all nine of Ch6's
+   hand gradients (including the two-path dL/dx₁ = 0.0209, now
+   automatic) with finite-difference error ~10⁻¹², on a 44-node graph
+   you never had to think about.
+5. **Stale blame compounds**: a second backward without zeroing took
+   b3's grad from −0.1867 to −1.4939 (~8×, not 2×) — the measured
+   reason for `zero_grad` in every training loop from here to the end
+   of the school.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic** — and Exercise 2 faces the finite-difference
+jury as usual.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+The topological sort, with its two crucial lines blanked: the
+*skip-if-seen* check and the *append-after-parents*. Fill them, then
+press **Run** — the asserts verify the property that makes the order
+safe.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_topo
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_topo
+class N:                                # minimal node: data + parents
+    def __init__(self, data, _prev=()):
+        self.data = data
+        self._prev = _prev
+
+def topo(root):
+    order, visited = [], set()
+    def build(v):
+        if v not in ____:               # TODO: skip nodes already recorded
+            visited.add(v)
+            for parent in v._prev:
+                build(parent)
+            ____.append(v)              # TODO: record v — but only after its parents
+    build(root)
+    return order
+
+# the neuron graph from the chapter: 8 nodes
+x1, w1, x2, w2 = N(1.0), N(0.5), N(0.5), N(-0.5)
+p1 = N(0.5, (x1, w1)); p2 = N(-0.25, (x2, w2))
+z = N(0.25, (p1, p2)); out = N(0.25, (z,))
+
+order = topo(out)
+parents_first = all(order.index(p) < order.index(v)
+                    for v in order for p in v._prev)
+
+run_tests([
+    ("every node recorded exactly once", len(order), 8),
+    ("every node appears after its parents", parents_first, True),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The first blank guards against revisiting: `if v not in visited:`.
+The second appends to the result list: `order.append(v)` — placed
+*after* the parents' recursive calls, which is what makes the walk
+post-order.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class N:
+    def __init__(self, data, _prev=()):
+        self.data = data
+        self._prev = _prev
+
+def topo(root):
+    order, visited = [], set()
+    def build(v):
+        if v not in visited:
+            visited.add(v)
+            for parent in v._prev:
+                build(parent)
+            order.append(v)
+    build(root)
+    return order
+
+x1, w1, x2, w2 = N(1.0), N(0.5), N(0.5), N(-0.5)
+p1 = N(0.5, (x1, w1)); p2 = N(-0.25, (x2, w2))
+z = N(0.25, (p1, p2)); out = N(0.25, (z,))
+
+order = topo(out)
+parents_first = all(order.index(p) < order.index(v)
+                    for v in order for p in v._prev)
+```
+
+The recursion *is* the ordering argument: a node can only be appended
+after its parents' calls have returned, so parents always precede
+children — and reversing that list is exactly "consumers before
+suppliers".
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Write `backward()` itself: build the topological order, seed the
+output's grad at 1.0, replay the stored rules in reverse. The class
+(Ch8's three ops) is complete except for your method. The fixtures
+include the case that needs *both* safety features at once —
+`c = a * a` uses one node twice, exercising the visited set and the
+`+=` law together.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_backward
+from lib.grader import run_tests, grad_check
+```
+
+```{pyodide}
+#| exercise: ex_backward
+class V:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = V(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = V(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    def backward(self):
+        ...  # TODO: topo order, seed self.grad = 1.0, replay reversed
+
+# the chapter's neuron, one call
+x1, w1, x2, w2 = V(1.0), V(0.5), V(0.5), V(-0.5)
+out = (x1 * w1 + x2 * w2).relu()
+out.backward()
+
+# the reuse case: c = a·a, so dc/da = 2a = 6
+a = V(3.0)
+c = a * a
+c.backward()
+
+def neuron_of(params):
+    wa, wb = params
+    return max(0.0, 1.0 * wa + 0.5 * wb)
+
+run_tests([
+    ("neuron weight blames", [w1.grad, w2.grad], [1.0, 0.5]),
+    ("neuron input blames", [x1.grad, x2.grad], [0.5, -0.5]),
+    ("shared node: both paths delivered", a.grad, 6.0),
+    grad_check("your backward() vs finite differences",
+               neuron_of, [0.5, -0.5], [w1.grad, w2.grad]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Three parts, verbatim from the chapter: (1) the eight-line `topo`
+build (an inner function works, with `order`/`visited` lists outside
+it); (2) `self.grad = 1.0`; (3) `for v in reversed(order):
+v._backward()`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+class V:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        out = V(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = V(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = V(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    def backward(self):
+        order, visited = [], set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for parent in v._prev:
+                    build(parent)
+                order.append(v)
+        build(self)
+        self.grad = 1.0
+        for v in reversed(order):
+            v._backward()
+
+x1, w1, x2, w2 = V(1.0), V(0.5), V(0.5), V(-0.5)
+out = (x1 * w1 + x2 * w2).relu()
+out.backward()
+
+a = V(3.0)
+c = a * a
+c.backward()
+
+def neuron_of(params):
+    wa, wb = params
+    return max(0.0, 1.0 * wa + 0.5 * wb)
+```
+
+The `c = a·a` fixture is the deep one: `a` sits in `_prev` twice, the
+visited set records it *once* (so its hook is never double-fired),
+while `__mul__`'s rule delivers blame *twice* via `+=` — 3.0 from
+each role, totalling the true 6.0. Dedup the nodes, accumulate the
+blame: the engine's two safety features, cooperating.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Give the finished
+engine a `tanh` **primitive**: one node, forward `math.tanh`, blame
+rule `1 − out²` (the receipt trick again — tanh's derivative written
+in terms of its own output). Then build tanh a second way, *composed*
+from existing ops — (e²ˣ − 1)/(e²ˣ + 1) — and make the two testify
+against each other at x = 0.7: same value, same gradient, both
+confirmed by finite differences. Compare the two graphs' node counts
+and answer: why do real engines ship big primitives instead of
+composing everything?
+
+**Rubric — a good answer:**
+
+- The primitive follows the engine's shape (forward, closure, attach,
+  return) with rule `self.grad += out.grad * (1 - out.data ** 2)`.
+- Both routes agree at x = 0.7: value 0.604368, gradient 0.634740 —
+  and a finite-difference check confirms to ≤1e-6.
+- The node-count comparison lands: 2 nodes for the primitive vs 10
+  for the composition — every composed node stores receipts and runs
+  a Python-level hook, so primitives buy speed and memory (and, at
+  scale, numerical care in one vetted place).
+- Bonus: this is exactly why PyTorch has `torch.tanh` as a fused
+  kernel rather than five tensor ops — same engine design decision,
+  industrial scale.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+class VT(Value):                       # Value: the finished engine above
+    def tanh(self):
+        out = VT(math.tanh(self.data), (self,), "tanh")
+        def _backward():
+            self.grad += out.grad * (1 - out.data ** 2)
+        out._backward = _backward
+        return out
+
+xp = VT(0.7)                           # route 1: the primitive
+tp = xp.tanh()
+tp.backward()
+
+xc = Value(0.7)                        # route 2: composed from parts
+e2 = (xc * 2).exp()
+tc = (e2 - 1) / (e2 + 1)
+tc.backward()
+
+print(f"primitive: value {tp.data:.6f}, grad {xp.grad:.6f}")
+print(f"composed : value {tc.data:.6f}, grad {xc.grad:.6f}")
+```
+
+Both print value 0.604368 and gradient 0.634740 — two entirely
+different graphs (2 nodes vs 10), one truth. The composed route runs
+five stored rules to compute what the primitive does in one; multiply
+that overhead by a billion tensor entries and you have the case for
+fused kernels.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch09.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The engine is done. It keeps receipts, knows every op's blame rule,
+orders its own backward walk, and has been certified twice over —
+against your Chapter 6 hand algebra and against finite differences.
+What it has never done is *learn*: no neuron class, no layers, no
+loss over a dataset, no update step. Chapter 10 assembles all of it —
+micrograd neurons into an MLP, cross-entropy from Chapter 5, the
+optimizer from Chapter 7, `zero_grad` in its rightful place — and
+trains on the 8×8 digits, entirely in your browser. The first loss
+printed should be very near ln(10) ≈ 2.3026. You know why.

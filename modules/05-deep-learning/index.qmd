@@ -32,7 +32,7 @@ you will have built every part of it yourself.
 | 6 | [Backpropagation, spelled out](ch06-backpropagation.qmd) | 🟡 | browser |
 | 7 | [Gradient-descent variants](ch07-gradient-descent-variants.qmd) | 🟡 | browser |
 | 8 | [Build micrograd I: the autograd engine](ch08-micrograd-engine.qmd) | 🟡 | browser |
-| 9 | Build micrograd II: backward through a graph | 🟡 | browser |
+| 9 | [Build micrograd II: backward through a graph](ch09-micrograd-backward.qmd) | 🟡 | browser |
 | 10 | An MLP from scratch | 🟡 | browser |
 | 11 | GPUs & your first Colab notebook | 🟡 | colab |
 | 12 | Enter PyTorch: tensors & autograd | 🟡 | colab |

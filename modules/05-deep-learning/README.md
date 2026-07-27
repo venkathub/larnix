@@ -12,7 +12,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > [Ch5 — Loss functions](ch05-loss-functions.qmd) ·
 > [Ch6 — Backpropagation, spelled out](ch06-backpropagation.qmd) ·
 > [Ch7 — Gradient-descent variants](ch07-gradient-descent-variants.qmd) ·
-> [Ch8 — Build micrograd I: the autograd engine](ch08-micrograd-engine.qmd)
+> [Ch8 — Build micrograd I: the autograd engine](ch08-micrograd-engine.qmd) ·
+> [Ch9 — Build micrograd II: backward through a graph](ch09-micrograd-backward.qmd)
 
 ## Prerequisites
 
