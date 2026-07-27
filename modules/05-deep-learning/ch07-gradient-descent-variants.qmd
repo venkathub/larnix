@@ -1,0 +1,562 @@
+---
+title: "Gradient-descent variants"
+module: "M5 — Deep Learning Foundations"
+chapter: 7
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch6 — Backpropagation, spelled out"
+  - "M4 Ch3 — Gradient descent"
+learning_objectives:
+  - "Explain why minibatch gradients are noisy but ~40× cheaper, and why that trade wins"
+  - "Show how one global learning rate fails in a ravine, and how momentum's velocity fixes it"
+  - "Implement one Adam step from its equations and verify its scale-free behaviour"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 28
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - scikit-learn
+    - matplotlib
+review_cards:
+  - id: one-lr-two-curvatures
+    q: "Why does plain gradient descent struggle in a ravine (steep one way, shallow the other)?"
+    a: "One global learning rate must be small enough for the steepest direction or the walk diverges (lr 0.21 blew up in four steps) — but that same rate makes the shallow direction crawl. At the largest stable rate the chapter's ravine took 424 steps, with w1 ping-ponging across the walls the whole way."
+  - id: momentum-ledger
+    q: "What does momentum's velocity v = β·v + g do to oscillating versus consistent gradients?"
+    a: "Blame that flip-flops in sign cancels inside v (the ravine's wall-to-wall component hit exactly 0 on step 2), while blame that keeps pointing the same way compounds (the floor component grew 0.010 → 0.041 in four steps). Result: 83 steps where plain GD took 424 — and the same averaging also smooths minibatch noise."
+  - id: adam-per-knob
+    q: "What do Adam's two running averages buy, and what is the honest caveat?"
+    a: "m (mean blame) gives momentum; v (mean squared blame) divides the step, so each knob gets its own effective rate and the first step is ≈ lr regardless of gradient scale (g = 100 and g = 0.0001 both moved 0.1). Bias correction un-shrinks the cold-start averages. It won the ravine (19 steps) and the digits race — but momentum beat it on the curved banana valley at 500 steps, so 'Adam always wins' is folklore."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 6 made the gradient cheap: every knob's blame for the price of
+two passes. But look at what M4 Ch3's walk *does* with that gradient —
+and two problems surface:
+
+1. **Each step reads the whole dataset.** The gradient is an average
+   over every training row. A million rows means a million-row bill
+   *per step*.
+2. **One learning rate serves every knob.** Loss surfaces are not round
+   bowls; they have ravines — steep in one direction, nearly flat in
+   another. A rate that survives the steep direction starves the flat
+   one.
+
+This chapter upgrades the walk three times — **SGD** (cheaper steps),
+**momentum** (steadier steps), **Adam** (per-knob steps) — and each
+upgrade is bought with a measured failure of the one before it. At the
+end, all three race on the real digits network, and the folklore
+("Adam always wins") gets an honest audit.
+
+> You'll need from before: the downhill walk (M4 Ch3), `p − target` as
+> the output blame (Ch6), and the digits network (Ch4).
+
+## The "S": a noisy jury, at a 42× discount
+
+Start with the bill. The gradient is a *mean over rows* — so ask the
+statistician's question: do we need every row, or does a sample do?
+Take the Chapter 6 output-bias blame (`p − onehot`, averaged over the
+batch) on a deliberately half-trained digits network, and compare the
+full-batch verdict with three random juries of 32:
+
+```{pyodide}
+#| caption: "Full-batch blame vs three minibatch estimates of it"
+import warnings
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+
+with warnings.catch_warnings():          # 5 epochs — deliberately unconverged
+    warnings.simplefilter("ignore")
+    early = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                          random_state=0, max_iter=5).fit(Xtr, ytr)
+
+G = early.predict_proba(Xtr) - np.eye(10)[ytr]   # p − onehot, row by row (Ch6)
+full = G.mean(axis=0)                            # the full-batch verdict
+print(f"full batch ({len(Xtr)} rows): db2[:4] = {np.round(full[:4], 4)}")
+
+rng = np.random.default_rng(0)
+for i in range(3):
+    rows = rng.choice(len(Xtr), 32, replace=False)
+    mb = G[rows].mean(axis=0)
+    cos = mb @ full / (np.linalg.norm(mb) * np.linalg.norm(full))
+    print(f"batch of 32: db2[:4] = {np.round(mb[:4], 4)}   agreement: {cos:.3f}")
+
+print(f"cost per step: 32 rows instead of {len(Xtr)} — "
+      f"{len(Xtr) / 32:.0f}× cheaper")
+```
+
+The juries disagree with the full court — agreement 0.475, 0.507,
+0.811, never 1.000 — but they *lean the right way*, and each costs
+**42× less**. That is **stochastic** gradient descent: take many cheap,
+noisy steps instead of few perfect ones. The noise is not even purely a
+bug — but it does mean the walk jitters, which makes the next problem
+worse.
+
+## The ravine: where one learning rate dies
+
+Here is the smallest surface that breaks the walk. A two-knob bowl,
+**steep** along w1 (curvature 10) and **nearly flat** along w2
+(curvature 0.01) — a ravine with hard walls and a gentle floor. First
+failure: pick the learning rate for the floor and the walls throw you
+out.
+
+```{pyodide}
+#| caption: "lr = 0.21: the steep direction diverges in four steps"
+steep, shallow = 10.0, 0.01
+
+def ravine_loss(w):
+    return 0.5 * (steep * w[0]**2 + shallow * w[1]**2)
+
+def ravine_grad(w):
+    return np.array([steep * w[0], shallow * w[1]])
+
+w = np.array([1.0, 1.0])
+for step in range(4):
+    w = w - 0.21 * ravine_grad(w)
+    print(f"step {step + 1}:  w1 = {w[0]:+.3f}   loss = {ravine_loss(w):.3f}")
+```
+
+Each step *overshoots* the steep valley and lands higher on the far
+wall: 6.1 → 7.3 → 8.9 → 10.7 and climbing. So retreat to the largest
+stable rate — and watch the price:
+
+```{pyodide}
+#| caption: "lr = 0.19: stable, but 424 steps of wall-to-wall ping-pong"
+def descend(stepper, lr, max_steps=200000):
+    """Walk until loss < 1e-3; return (steps, path)."""
+    w = np.array([1.0, 1.0]); state = {}; path = [w.copy()]
+    for t in range(1, max_steps + 1):
+        w = stepper(w, ravine_grad(w), state, t, lr)
+        path.append(w.copy())
+        if ravine_loss(w) < 1e-3:
+            return t, np.array(path)
+    return None, np.array(path)
+
+def gd_step(w, g, state, t, lr):
+    return w - lr * g
+
+n_gd, gd_path = descend(gd_step, lr=0.19)
+print("w1 walk:", np.round(gd_path[:5, 0], 3), "…")
+print(f"w2 after 5 steps: {gd_path[5, 1]:.4f}  (the crawl)")
+print(f"steps to loss < 1e-3: {n_gd}")
+```
+
+Diagnosis, precisely: w1 ping-pongs +1.0 → −0.9 → +0.81 → −0.73 —
+*burning almost the whole step on oscillation* — while w2 has crawled
+from 1.0 to 0.9905. One rate, two curvatures, no good answer. This is
+not a toy pathology: a real network's 1,210 knobs have 1,210 different
+curvatures.
+
+## Momentum: a ledger with memory
+
+The fix hides in the diagnosis. The wall-to-wall blame **flip-flops in
+sign** every step; the floor blame **points the same way** every step.
+So keep a running velocity instead of obeying each gradient fresh:
+
+$$v \leftarrow \beta\, v + g \qquad w \leftarrow w - \text{lr}\cdot v$$
+
+Blame that flip-flops cancels *inside v*; blame that repeats
+compounds. Watch both happen in the ledger:
+
+```{pyodide}
+#| caption: "The velocity ledger: oscillation cancels, consistency compounds"
+def momentum_step(w, g, state, t, lr, beta=0.9):
+    state["v"] = beta * state.get("v", 0.0) + g
+    return w - lr * state["v"]
+
+w = np.array([1.0, 1.0]); v = np.zeros(2)
+for step in range(1, 5):
+    grad = ravine_grad(w)
+    v = 0.9 * v + grad
+    w = w - 0.19 * v
+    print(f"step {step}:  g1 = {grad[0]:+.2f}  v1 = {v[0]:+.2f}    "
+          f"g2 = {grad[1]:+.4f}  v2 = {v[1]:+.4f}")
+
+n_mom, mom_path = descend(momentum_step, lr=0.19)
+print(f"\nsteps to loss < 1e-3: {n_mom}  (plain GD: {n_gd})")
+```
+
+Read the two columns. On the wall axis, step 2's fresh blame (−9.00)
+lands against the remembered +10.00 decayed to +9.00 — and the
+velocity cancels to **exactly 0.00** (this bowl's arithmetic makes the
+cancellation perfect; in general it's merely strong). On the floor
+axis the velocity *grows*, 0.010 → 0.041, four gradients deep. Same
+learning rate, **83 steps instead of 424** — and because v is a
+running average, it smooths minibatch noise for free. One knob though
+still bothers: the floor axis is faster only because momentum stacked
+its patience. Each knob still shares one global rate.
+
+## Adam: every knob gets its own step size
+
+Adam keeps **two** ledgers per knob: the running mean of the blame
+(`m`, momentum's idea) and the running mean of the *squared* blame
+(`v`). The step divides one by the root of the other:
+
+$$m \leftarrow \beta_1 m + (1-\beta_1)g \qquad
+v \leftarrow \beta_2 v + (1-\beta_2)g^2$$
+
+$$\hat m = \frac{m}{1-\beta_1^t} \quad
+\hat v = \frac{v}{1-\beta_2^t} \qquad
+w \leftarrow w - \text{lr}\cdot\frac{\hat m}{\sqrt{\hat v} + \varepsilon}$$
+
+Dividing by $\sqrt{\hat v}$ makes the step **scale-free**: a knob with
+habitually huge gradients gets them shrunk, a knob with whisper-small
+gradients gets them amplified — each knob its own effective rate, from
+its own history. The $1-\beta^t$ corrections fix the cold start: both
+ledgers begin at 0, so early averages are shrunk toward zero and would
+otherwise understate the truth (at t = 1, m is only $(1-\beta_1)g =
+0.1g$; dividing by $1-\beta_1^1 = 0.1$ restores exactly $g$).
+
+```{pyodide}
+#| caption: "Adam on the ravine — and the sweep nobody had to tune"
+def adam_walk(w, g, state, t, lr, b1=0.9, b2=0.999, eps=1e-8):
+    state["m"] = b1 * state.get("m", 0.0) + (1 - b1) * g
+    state["v"] = b2 * state.get("v", 0.0) + (1 - b2) * g**2
+    m_hat = state["m"] / (1 - b1**t)
+    v_hat = state["v"] / (1 - b2**t)
+    return w - lr * m_hat / (np.sqrt(v_hat) + eps)
+
+n_adam, adam_path = descend(adam_walk, lr=0.19)
+print(f"Adam, lr = 0.19: {n_adam} steps to loss < 1e-3\n")
+
+print("        lr      GD   momentum   Adam")
+for lr in [0.1, 0.01]:
+    ng, _ = descend(gd_step, lr)
+    nm, _ = descend(momentum_step, lr)
+    na, _ = descend(adam_walk, lr)
+    print(f"      {lr:4}   {ng:5d}   {nm:8d}   {na:4d}")
+```
+
+**19 steps.** And the sweep is the deeper result: drop the rate to
+0.1 and GD needs 805 steps, momentum 89, Adam **11**; at 0.01 it's
+8,047 vs 807 vs **203**. Adam's per-knob normalization makes it far
+less sensitive to the one hyperparameter everyone dreads tuning —
+that, more than raw speed, is why it became the default.
+
+```{pyodide}
+#| caption: "Three walks down the same ravine, drawn"
+#| fig-alt: "Contour plot of an elongated ravine with three optimizer paths from the same start. Plain gradient descent ping-pongs between the steep walls while barely advancing along the flat floor, taking 424 steps. Momentum swings at first, then settles into the floor and arrives in 83 steps. Adam cuts almost directly toward the minimum in 19 steps. Takeaway: smarter steps, not more steps, solve the ravine — one learning rate cannot serve two curvatures, but velocity and per-knob scaling can."
+import matplotlib.pyplot as plt
+
+xs = np.linspace(-1.3, 1.3, 200); ys = np.linspace(-1.2, 1.2, 200)
+XX, YY = np.meshgrid(xs, ys)
+ZZ = 0.5 * (steep * XX**2 + shallow * YY**2)
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.contour(XX, YY, ZZ, levels=np.geomspace(5e-4, 6, 12),
+           linewidths=0.6, colors="#94a3b8")
+for path, label, colour in [
+        (gd_path,   f"plain GD ({n_gd} steps)", "#dc2626"),
+        (mom_path,  f"momentum ({n_mom} steps)", "#2563eb"),
+        (adam_path, f"Adam ({n_adam} steps)",    "#059669")]:
+    ax.plot(path[:, 0], path[:, 1], marker=".", markersize=3,
+            linewidth=1, color=colour, label=label, alpha=0.8)
+ax.scatter([0], [0], marker="*", s=140, color="black", zorder=5)
+ax.set_xlabel("w1 (steep axis)"); ax.set_ylabel("w2 (shallow axis)")
+ax.set_title("Same ravine, same start — three kinds of step")
+ax.legend(loc="lower left", fontsize=8)
+plt.tight_layout()
+plt.show()
+```
+
+## The race on real data
+
+Toy bowls can flatter. So: the Chapter 4 digits network, three
+optimizers, everything else identical (sklearn's defaults, 500-epoch
+cap):
+
+```{pyodide}
+#| caption: "Digits, hidden layer of 16: plain SGD vs momentum vs Adam"
+for name, kw in [
+        ("plain SGD     ", dict(solver="sgd", momentum=0.0,
+                                nesterovs_momentum=False)),
+        ("SGD + momentum", dict(solver="sgd", momentum=0.9,
+                                nesterovs_momentum=False)),
+        ("Adam          ", dict(solver="adam"))]:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                            random_state=0, max_iter=500, **kw).fit(Xtr, ytr)
+    lc = net.loss_curve_
+    under = next((i + 1 for i, l in enumerate(lc) if l < 0.1), None)
+    print(f"{name}: epochs {net.n_iter_:3d}   final loss {net.loss_:.4f}   "
+          f"test acc {net.score(Xte, yte):.3f}   "
+          f"loss<0.1 at epoch {under}")
+```
+
+Same network, same data, same budget. Plain SGD spends all 500 epochs
+and is *still* at loss 0.98 (test 61.3%). Momentum reaches loss < 0.1
+at epoch 401 and finishes at 93.3%. Adam gets under 0.1 by epoch
+**91**, decides it has converged at 372, and posts 96.0% — the very
+score the last three chapters have been dissecting. Every `net.fit()`
+you have called since Chapter 1 was running this machinery; now you
+know what the defaults were quietly doing for you.
+
+One honest caveat before the takeaways: these rankings are *this
+surface, this budget*. In the stretch exercise you'll race the same
+three walkers on a curved valley where **momentum beats Adam** — the
+"always" in "Adam always wins" does not survive measurement.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **SGD trades noise for speed**: minibatch blame agreed with the
+   full batch at only 0.48–0.81 — but cost 42× less, and many cheap
+   noisy steps beat few perfect ones.
+2. **Ravines defeat one global rate**: lr 0.21 diverged in four steps;
+   lr 0.19 spent 424 steps ping-ponging between walls while the floor
+   crawled.
+3. **Momentum is a ledger**: v = βv + g cancels flip-flopping blame
+   (to exactly 0.00 on step 2) and compounds consistent blame — 83
+   steps, same learning rate.
+4. **Adam gives every knob its own rate** by dividing by √v̂, with
+   bias correction fixing the cold start — 19 steps, and the least
+   learning-rate-sensitive of the three (11 / 89 / 805 at lr 0.1).
+5. **Measured on digits**: Adam hit loss < 0.1 in 91 epochs where
+   momentum took 401 and plain SGD never arrived — but the stretch's
+   banana valley shows momentum winning, so defaults are a starting
+   point, not a law.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Two momentum steps by hand on the one-knob bowl L(w) = ½w² (so the
+blame is g = w), with lr = 0.5 and β = 0.4. Fill the two update lines,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_momentum
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_momentum
+w, v = 1.0, 0.0
+for _ in range(2):
+    g = w                # dL/dw for this bowl
+    v = ____             # TODO: decay the old velocity by beta, add the new blame
+    w = ____             # TODO: step against the velocity, scaled by lr
+
+run_tests([
+    ("velocity after two steps", round(v, 4), 0.9),
+    ("position after two steps", round(w, 4), 0.05),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The two lines are the boxed update rule with the chapter's constants
+filled in: `v = 0.4 * v + g`, then `w = w - 0.5 * v`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+w, v = 1.0, 0.0
+for _ in range(2):
+    g = w
+    v = 0.4 * v + g
+    w = w - 0.5 * v
+```
+
+Step 1: v = 1.0, w = 0.5. Step 2: the remembered velocity (0.4) joins
+the fresh blame (0.5), so v = 0.9 and w drops to 0.05. Plain GD with
+the same lr reaches only 0.25 in two steps — the ledger's memory
+covered four times the distance.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Implement one Adam update for a single knob, straight from the boxed
+equations: `adam_step(w, g, m, v, t)` returns the updated `(w, m, v)`.
+Defaults: lr = 0.1, β₁ = 0.9, β₂ = 0.999, ε = 1e-8.
+
+The fixtures probe the two properties the chapter demonstrated: the
+first step is **≈ lr regardless of gradient scale** (g = 100 and
+g = 0.0001 must move the knob the same distance), and the ledgers must
+chain correctly into step two.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_adam
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_adam
+def adam_step(w, g, m, v, t, lr=0.1, b1=0.9, b2=0.999, eps=1e-8):
+    """One Adam update for one knob. Returns (w_new, m_new, v_new)."""
+    ...  # TODO: update m and v, bias-correct both, then step
+
+w1, m1, v1 = adam_step(1.0, 100.0, 0.0, 0.0, t=1)
+w2, m2, v2 = adam_step(1.0, 0.0001, 0.0, 0.0, t=1)
+w3, m3, v3 = adam_step(w1, 50.0, m1, v1, t=2)
+
+run_tests([
+    ("huge gradient, bounded first step", round(w1, 4), 0.9),
+    ("tiny gradient, the SAME first step", round(w2, 4), 0.9),
+    ("the ledgers chain into step two",
+     [round(w3, 4), round(m3, 4), round(v3, 4)], [0.8068, 14.0, 12.49]),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Five lines, in order: `m = b1 * m + (1 - b1) * g`, then
+`v = b2 * v + (1 - b2) * g**2`, then `m_hat = m / (1 - b1**t)` and
+`v_hat = v / (1 - b2**t)`, and finally
+`w - lr * m_hat / (v_hat**0.5 + eps)`. Return the new w with the
+*uncorrected* m and v — the hats are recomputed fresh each step.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def adam_step(w, g, m, v, t, lr=0.1, b1=0.9, b2=0.999, eps=1e-8):
+    m = b1 * m + (1 - b1) * g
+    v = b2 * v + (1 - b2) * g**2
+    m_hat = m / (1 - b1**t)
+    v_hat = v / (1 - b2**t)
+    return w - lr * m_hat / (v_hat**0.5 + eps), m, v
+
+w1, m1, v1 = adam_step(1.0, 100.0, 0.0, 0.0, t=1)
+w2, m2, v2 = adam_step(1.0, 0.0001, 0.0, 0.0, t=1)
+w3, m3, v3 = adam_step(w1, 50.0, m1, v1, t=2)
+```
+
+At t = 1 the bias corrections make m̂ = g and v̂ = g² exactly, so the
+step is lr·g/(|g| + ε) ≈ lr·sign(g) — the knob moves 0.1 whether the
+gradient is 100 or 0.0001. That is the scale-free property, visible in
+one line of algebra.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). The ravine was
+straight; real valleys bend. Race all three walkers on the **banana
+valley** below (start at (−1, 1), lr = 0.01 for all three, 500 steps
+each) and report the three final losses. Then answer: does the
+chapter's ranking survive the bend?
+
+```{pyodide}
+#| caption: "The banana valley — your racetrack (definitions only)"
+import numpy as np
+
+def banana_loss(w):
+    return (1 - w[0])**2 + 5 * (w[1] - w[0]**2)**2
+
+def banana_grad(w):
+    return np.array([-2 * (1 - w[0]) - 20 * w[0] * (w[1] - w[0]**2),
+                     10 * (w[1] - w[0]**2)])
+
+start = np.array([-1.0, 1.0])
+print("start:", start, "  loss there:", banana_loss(start))
+```
+
+**Rubric — a good answer:**
+
+- Runs all three walkers 500 steps from the same start at the same lr.
+- Reports the three losses and notices the upset: **momentum finishes
+  first** (loss ≈ 0.000000, at the minimum (1, 1)), Adam second
+  (≈ 0.002), plain GD third (≈ 0.004).
+- Explains *why* in the valley's terms: the curved floor keeps a
+  consistent downhill direction that momentum's velocity follows at
+  full length, while Adam's per-knob normalization shrinks the very
+  steps that were already well-scaled here.
+- Draws the honest conclusion: optimizer rankings are
+  surface-dependent — measure on *your* problem before trusting a
+  default.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def race(stepper, steps=500):
+    w = start.copy(); state = {}
+    for t in range(1, steps + 1):
+        w = stepper(w, banana_grad(w), state, t)
+    return banana_loss(w), w
+
+def gd(w, g, s, t, lr=0.01):
+    return w - lr * g
+
+def mom(w, g, s, t, lr=0.01, beta=0.9):
+    s["v"] = beta * s.get("v", 0.0) + g
+    return w - lr * s["v"]
+
+def adam(w, g, s, t, lr=0.01, b1=0.9, b2=0.999, eps=1e-8):
+    s["m"] = b1 * s.get("m", 0.0) + (1 - b1) * g
+    s["v"] = b2 * s.get("v", 0.0) + (1 - b2) * g**2
+    return w - lr * (s["m"] / (1 - b1**t)) / (
+        np.sqrt(s["v"] / (1 - b2**t)) + eps)
+
+for name, st in [("plain GD", gd), ("momentum", mom), ("Adam", adam)]:
+    loss, w = race(st)
+    print(f"{name:9s} loss = {loss:.6f}   w = ({w[0]:+.4f}, {w[1]:+.4f})")
+```
+
+Measured: GD 0.003957, momentum **0.000000**, Adam 0.002027. Give all
+three 5,000 steps and every walker reaches the minimum — the ranking
+was a statement about *budget*, not destiny. The two honest morals:
+rankings are surface- and budget-dependent, and the only optimizer
+advice that survives contact with data is "measure".
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch07.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You now hold every ingredient of modern training: forward pass (Ch4),
+loss (Ch5), backprop (Ch6), and the upgraded walk (this chapter). What
+you do *not* yet have is the machine that does Chapter 6's bookkeeping
+for you — remembering every receipt, every local slope, every
+add-over-paths. Building that machine, in about a hundred lines you
+will understand completely, is next: **micrograd**, Chapters 8 and 9.
+The optimizers return in Chapter 10's training loop, and again as
+`torch.optim.Adam` — where you'll recognize every parameter.

@@ -1,0 +1,35 @@
+title: "Chapter 7 — quick check"
+id: "m5-ch07-gradient-descent-variants"
+questions:
+  - id: why-minibatch
+    prompt: "Why does stochastic gradient descent use minibatches instead of the full dataset for each step?"
+    options:
+      - "Minibatch gradients are more accurate than full-batch gradients"
+      - "The gradient is a mean over rows, so a random sample estimates it far more cheaply — the chapter's batches of 32 leaned the right way (agreement 0.48–0.81) at 42× less cost per step"
+      - "Full-batch gradients cause divergence; minibatches are the only stable option"
+    answer: 1
+    explanation: "A minibatch gradient is a noisy estimate, never a better one — its agreement with the full batch was well below 1.0. The win is economic: many cheap, roughly-right steps outrun few perfect ones, which is why the S is in every modern optimizer's name."
+  - id: ravine-diagnosis
+    prompt: "In the ravine (curvature 10 on one axis, 0.01 on the other), what exactly went wrong for plain gradient descent?"
+    options:
+      - "The gradient pointed uphill on the steep axis"
+      - "The loss surface had multiple minima and the walk got trapped in the wrong one"
+      - "One global learning rate can't serve both curvatures: 0.21 overshot the steep walls and diverged, while the stable 0.19 spent 424 steps ping-ponging as the flat floor crawled"
+    answer: 2
+    explanation: "The gradient always pointed downhill and the bowl has one minimum — the failure was the step size. Any rate safe for the steep direction starves the shallow one; a real network's thousands of knobs have thousands of curvatures, so this tension is the norm, not the exception."
+  - id: momentum-mechanism
+    prompt: "How does momentum's velocity v = β·v + g cut the ravine from 424 steps to 83 at the same learning rate?"
+    options:
+      - "Gradients that flip sign each step cancel inside v (the wall axis hit 0.00 on step 2), while gradients that keep pointing the same way compound (the floor axis grew 0.010 → 0.041)"
+      - "It increases the learning rate automatically whenever the loss decreases"
+      - "It skips the gradient computation on alternating steps, halving the cost"
+    answer: 0
+    explanation: "The velocity is a running average with memory. Oscillating blame averages toward zero, so the wall-to-wall waste disappears; consistent blame stacks, so the floor speeds up. Bonus: the same averaging smooths minibatch noise for free."
+  - id: adam-transfer
+    prompt: "Training a new network, you have time for one learning-rate guess. The chapter's ravine sweep (lr 0.1: GD 805, momentum 89, Adam 11; lr 0.01: 8047 / 807 / 203) suggests which optimizer, and why?"
+    options:
+      - "Plain SGD — fewer moving parts means less to go wrong"
+      - "Adam — dividing by √v̂ gives each knob its own effective rate, so a mediocre global guess still lands close to its best behaviour"
+      - "Momentum — it always beats Adam, as the banana valley proved"
+    answer: 1
+    explanation: "Adam's per-knob normalization made it the least sensitive to the one hyperparameter you can't tune — that robustness, not raw speed, is why it's the default first guess. The banana valley showed momentum *can* win on a given surface and budget, which argues for measuring, not for a new 'always'."

@@ -10,7 +10,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > [Ch3 — Layers & networks](ch03-layers-networks.qmd) ·
 > [Ch4 — The forward pass](ch04-forward-pass.qmd) ·
 > [Ch5 — Loss functions](ch05-loss-functions.qmd) ·
-> [Ch6 — Backpropagation, spelled out](ch06-backpropagation.qmd)
+> [Ch6 — Backpropagation, spelled out](ch06-backpropagation.qmd) ·
+> [Ch7 — Gradient-descent variants](ch07-gradient-descent-variants.qmd)
 
 ## Prerequisites
 
