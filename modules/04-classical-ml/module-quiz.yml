@@ -1,0 +1,99 @@
+title: "M4 — module quiz"
+id: "m4-module-quiz"
+questions:
+  - id: fraud-check-first
+    prompt: "Your fraud model shows 99.2% accuracy. What do you check first?"
+    options:
+      - "The fraud rate — if ~1% of transactions are fraud, always-say-legit scores ~99%; check the fraud class's recall and the confusion matrix"
+      - "Whether a deeper model can reach 99.5%"
+      - "The training accuracy, to confirm the model has converged"
+    answer: 0
+    explanation: "Under heavy imbalance the lazy baseline scores the majority share, so a high accuracy may certify nothing. The first questions are: what does doing-nothing score, and does the model actually catch fraud?"
+  - id: spot-the-leak
+    prompt: "A churn model uses the feature 'number of cancellation-survey responses' and scores brilliantly in testing, then collapses in production. What happened?"
+    options:
+      - "The model was undertrained and needed more epochs"
+      - "Target leakage — that feature only exists for customers who already churned, so it encoded the answer; in production it is absent exactly when you need the prediction"
+      - "The production servers used a different version of scikit-learn"
+    answer: 1
+    explanation: "A feature that could not exist before the outcome is known reads the target through a keyhole. Test scores inflate; production, where the answer hasn't happened yet, tells the truth."
+  - id: diagnose-from-numbers
+    prompt: "Model A: train error 0.02, validation error 0.31. Model B: train 0.28, validation 0.30. Which diagnosis and levers are right?"
+    options:
+      - "A underfits (add capacity); B overfits (regularize)"
+      - "Both are near the sweet spot; ship either"
+      - "A overfits (regularize / more data / less capacity); B underfits (more capacity or better features)"
+    answer: 2
+    explanation: "A's huge train/validation gap is the memorizing signature; B's high-and-close errors are the rigid signature. The levers point in opposite directions — misdiagnosing wastes them."
+  - id: cv-spread-verdict
+    prompt: "Across 5 CV folds, model X averages 0.847 ± 0.041 and model Y 0.861 ± 0.038. A colleague declares Y the winner. What is the honest verdict?"
+    options:
+      - "Y wins — 0.861 beats 0.847"
+      - "Can't tell yet — the 0.014 difference sits well inside both spreads; more folds/data or paired comparison needed before declaring"
+      - "X wins, because its spread is smaller"
+    answer: 1
+    explanation: "Fold-to-fold spread measures score wobble from data luck. Differences inside the spread are noise until stronger evidence arrives — declaring winners from them is how teams ship coin flips."
+  - id: threshold-under-costs
+    prompt: "A sepsis early-warning model has AUC 0.91, but at threshold 0.5 it misses most true cases. Missing a case is catastrophic; false alarms cost a cheap review. First move?"
+    options:
+      - "Retrain with more capacity to fix the recall"
+      - "Reject the model — an AUC of 0.91 with poor recall means the ranking is broken"
+      - "Lower the decision threshold — the ranking is strong; the default bar assumed balanced costs and classes"
+    answer: 2
+    explanation: "Healthy AUC = healthy ranking; the 0.5 policy is what fails under rare positives and asymmetric costs. Threshold moving needs no retraining and directly buys recall with cheap false alarms."
+  - id: scaling-who-cares
+    prompt: "You forgot to scale features. Which pair of models is (hurt, indifferent)?"
+    options:
+      - "(KNN, decision tree) — distance methods are scale hostages; threshold questions carry their units"
+      - "(decision tree, KNN) — trees need scaling, KNN does not"
+      - "(random forest, logistic regression) — forests are scale-sensitive"
+    answer: 0
+    explanation: "Anything built on distances or penalized weights (KNN, SVM, k-means, PCA, regularized regressions) needs scaling; tree splits compare one feature to a threshold in its own units and don't care."
+  - id: pick-the-family
+    prompt: "A 40-feature tabular dataset, 200,000 rows, mixed types, some missing values — you need a strong first shot at a classifier. The tour's default reach is:"
+    options:
+      - "K-nearest neighbours — simple and strong at this scale"
+      - "Gradient-boosted trees — the tabular workhorse: handles mixed features, scale-indifferent, strong defaults; validated against simpler baselines"
+      - "Naive Bayes — counting always wins on big tables"
+    answer: 1
+    explanation: "Boosted trees earned the tabular-default reputation on exactly this terrain. KNN pays per-prediction at 200k rows; NB's independence assumption strains at 40 correlated features. And the workflow still demands a baseline and CV comparison, not faith."
+  - id: oversample-order
+    prompt: "To fix imbalance, a notebook oversamples the minority to parity, then does train_test_split, then reports precision 0.9. What must you do before believing anything?"
+    options:
+      - "Re-run with a different random seed to confirm stability"
+      - "Redo the order: split FIRST, oversample the training set only, and re-measure on a test set at natural imbalance"
+      - "Also report the F1 score"
+    answer: 1
+    explanation: "Oversampling before splitting copies the same minority rows into both train and test — the model is graded on rows it memorized. The honest pipeline resamples only the training side and leaves the test set as nature made it."
+  - id: unsupervised-claim
+    prompt: "k-means on shopping data yields 5 clusters, and marketing names them ('bargain hunters', 'loyalists', …). What does the clustering itself actually establish?"
+    options:
+      - "That five customer personality types exist"
+      - "That the names are statistically validated by the elbow method"
+      - "Five roundish piles exist in the chosen feature space — the names are interpretation, to be validated (or falsified) outside the algorithm"
+    answer: 2
+    explanation: "Clusters are geometry under k-means' assumptions; meaning is supplied by humans and must be checked against reality. The penguin reveal worked because biology happened to draw distance-visible boundaries — that was a finding, not a guarantee."
+  - id: variance-not-relevance-module
+    prompt: "To speed up training, a teammate keeps only the principal components holding 95% of variance, and accuracy craters. What principle did they trust too far?"
+    options:
+      - "That variance ranks usefulness — but PCA never sees the target, and the discriminating signal can live in a low-variance component"
+      - "That PCA requires unscaled features"
+      - "That components must always be interpreted before use"
+    answer: 0
+    explanation: "Explained variance measures spread kept, not prediction power kept. The remedy is measured: sweep component counts inside a pipeline and let validation accuracy choose."
+  - id: pipeline-why
+    prompt: "Two notebooks score identically in CV. One scales the whole dataset once, then cross-validates the model; the other cross-validates a Pipeline(scaler, model). Why prefer the second even when scores agree?"
+    options:
+      - "Pipelines run faster than separate steps"
+      - "The first quietly leaks — every fold's 'unseen' rows shaped the scaler — and the pipeline version makes that leak structurally impossible, today and after every future edit"
+      - "The second gives the model more parameters"
+    answer: 1
+    explanation: "On easy data the leak may not move the score — this time. The pipeline removes the failure mode by construction, so correctness stops depending on whoever edits the notebook next."
+  - id: card-gap
+    prompt: "A vendor's model card shows: overall accuracy 0.96, 'state-of-the-art architecture', 'robust performance'. As a Ch20 graduate, what do you ask for first?"
+    options:
+      - "The learning-rate schedule used in training"
+      - "A higher accuracy number before considering deployment"
+      - "Per-class metrics on held-out data, the training data's provenance and gaps, and the when-NOT-to-use boundaries — the sections adjectives are standing in for"
+    answer: 2
+    explanation: "0.96 overall can hide a dead minority class; 'robust' is not a number; and without stated validity boundaries the first out-of-distribution deployment fails silently. A card's worth lives in its measured, unflattering sections."

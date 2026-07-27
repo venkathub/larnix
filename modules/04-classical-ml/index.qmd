@@ -4,9 +4,9 @@ toc: false
 ---
 
 ::: {.callout-note}
-**Module in progress.** Chapters unlock as they are built; titles below become
-links when each chapter lands. Everything in this module runs **in your browser
-at ₹0** — including real XGBoost.
+**All 20 chapters are live**, with the module quiz below. Everything runs **in
+your browser at ₹0** — including real XGBoost. The capstone brief is being
+finalized (its dataset and auto-checks land with the capstone build).
 :::
 
 Stop exploring data and start **training models**. The running thread is *the
@@ -46,8 +46,10 @@ classification — so every new algorithm lands on familiar ground.
 
 ## Module quiz
 
-Lands with the module build — transfer questions over the whole module, scored
-in your browser.
+Test the whole module — every question is a *new* scenario that exercises the
+module's judgement. Your score is saved in your browser.
+
+{{< quiz module-quiz.yml >}}
 
 ## Capstone
 
