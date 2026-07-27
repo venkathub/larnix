@@ -1,0 +1,35 @@
+title: "Chapter 1 — quick check"
+id: "m5-ch01-logreg-to-neuron"
+questions:
+  - id: map-vocabulary
+    prompt: "In neuron vocabulary, what are logistic regression's coefficients and intercept?"
+    options:
+      - "The weights (connection strengths, one per input) and the bias"
+      - "The activations and the pre-activation"
+      - "The layers and the loss"
+    answer: 0
+    explanation: "coef_ becomes the weights, intercept_ the bias; the weighted sum w·x + b is the pre-activation z, and the sigmoid is the activation. Same numbers, new names — verified digit-for-digit in the chapter."
+  - id: what-z-is
+    prompt: "What is the pre-activation z, and what turns it into the neuron's output?"
+    options:
+      - "The prediction error; gradient descent turns it into the output"
+      - "The weighted sum of inputs plus bias; the activation function (here the sigmoid) squashes it into the output"
+      - "The learning rate; the optimizer turns it into the output"
+    answer: 1
+    explanation: "z = w·x + b can be any number — M4 called it the line's score. The activation maps it to the output scale; with a sigmoid, z = -13.3 became the emphatic 0.000002."
+  - id: why-relabel
+    prompt: "The neuron computes exactly what logistic regression computes. Why does the relabeling matter?"
+    options:
+      - "Neurons train faster than regressions on the same data"
+      - "The neuron framing is more accurate mathematically"
+      - "A neuron is a component: outputs can feed other neurons' inputs and rows can stack into layers — an architecture the 'finished model' framing never suggested"
+    answer: 2
+    explanation: "Nothing about the computation changed. What changed is composability: regression ends at one model, while neurons open into networks — which is the entire direction of this module."
+  - id: weight-image-transfer
+    prompt: "A 3-vs-8 neuron's weight image shows strongly positive pixels along the left edge (positive class: 8). What does that mean?"
+    options:
+      - "The neuron ignores the left edge of every digit"
+      - "Ink on the left edge pushes the verdict toward '8' — that's where an 8 closes loops a 3 leaves open, and the neuron learned to look there"
+      - "The training images were brighter on the left"
+    answer: 1
+    explanation: "With one weight per pixel, positive weights excite the positive class when inked. The weight image is a map of learned attention — readable evidence of what the neuron actually keys on."

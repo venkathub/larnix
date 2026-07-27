@@ -1,0 +1,398 @@
+---
+title: "From logistic regression to a neuron"
+module: "M5 — Deep Learning Foundations"
+chapter: 1
+difficulty: "intermediate"
+prereqs:
+  - "M4 Ch5 — Logistic regression"
+  - "M2 Ch16 — The math of one neuron"
+learning_objectives:
+  - "Relabel a fitted logistic regression as a neuron: weights, bias, pre-activation, activation"
+  - "Implement neuron(x, w, b) and match sklearn's predict_proba digit for digit"
+  - "Read a neuron's weights as an image and explain why the neuron framing stacks"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 20
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: neuron-anatomy
+    q: "What are the parts of an artificial neuron?"
+    a: "Inputs, one weight per input (connection strengths), a bias, the pre-activation z = w·x + b (a weighted sum), and an activation function that squashes z into the output. For a sigmoid activation, this is exactly logistic regression."
+  - id: logreg-is-neuron
+    q: "How is logistic regression related to a neural network?"
+    a: "It IS a one-neuron network: the weighted sum w·x + b passed through a sigmoid. Same numbers, same predictions — the neuron framing matters because neurons stack into layers, which the regression framing never suggested."
+  - id: weights-as-image
+    q: "What does it mean to view a digit-classifier neuron's weights as an image?"
+    a: "With one weight per pixel, the 64 weights reshape to 8×8: bright (positive) pixels vote for the positive class when inked, dark (negative) pixels vote against. The weight image literally shows where the neuron looks."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Here is the best-kept secret of Module 4: **you have already trained a
+neural network.** You did it in Chapter 5, again in Chapter 6, and once
+more in the capstone. It had one neuron, and it was called logistic
+regression.
+
+This module's mission is to teach a machine to read handwritten digits —
+first built entirely by hand in your browser, later rebuilt properly in
+PyTorch on a free GPU. And its first step costs nothing but a change of
+vocabulary: take the model you already own, relabel its parts, and watch
+the new labels reveal something the old ones hid — **this thing stacks.**
+M2 Ch16 sketched the math of one neuron on paper; today it comes off the
+page, trained on real handwriting.
+
+> You'll need from before: logistic regression and the sigmoid (M4 Ch5),
+> the one-neuron math (M2 Ch16), and the split ritual — permanent
+> equipment now.
+
+---
+
+## Meet the module's dataset
+
+sklearn ships 1,797 handwritten digits, each an 8×8 grid of ink darkness
+(0 = blank, 16 = heavy ink). Small enough to live in your browser,
+real enough to be genuinely handwritten:
+
+```{pyodide}
+#| caption: "A handwritten zero — which is to say, 64 numbers"
+#| fig-alt: "Left: an 8-by-8 grid of integers from 0 to 16, with high values forming a ring shape and zeros in the middle and corners. Right: the same grid rendered as a grey-scale image, clearly showing a handwritten digit zero."
+from sklearn.datasets import load_digits
+import matplotlib.pyplot as plt
+import numpy as np
+
+digits = load_digits()
+print(f"{len(digits.images)} digits, each {digits.images[0].shape}")
+print(digits.images[0].astype(int))
+
+fig, ax = plt.subplots(figsize=(2.2, 2.2))
+ax.imshow(digits.images[0], cmap="gray_r")
+ax.set_title(f"label: {digits.target[0]}", fontsize=9)
+ax.axis("off")
+plt.show()
+```
+
+An image *is* a number grid — hold that thought until Module 6 makes a
+meal of it. Flattened to a row of 64 numbers, each digit is a plain
+tabular example: 64 features, one label. Which means every Module 4 tool
+already applies.
+
+## Warm-up: Module 4 reads handwriting
+
+Start binary — is this a 0 or a 1? — with the Chapter 5 model and the
+standard ritual:
+
+```{pyodide}
+#| caption: "Logistic regression meets handwriting: the warm-up it deserves"
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+mask = (digits.target == 0) | (digits.target == 1)
+X, y = digits.data[mask], digits.target[mask]
+print(f"{len(y)} zeros-and-ones")
+
+Xtr, Xte, ytr, yte = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y)
+
+clf = LogisticRegression(max_iter=2000).fit(Xtr, ytr)
+print(f"held-out accuracy: {accuracy_score(yte, clf.predict(Xte)):.3f}")
+```
+
+`1.000` on 90 held-out digits — zeros and ones look nothing alike, so
+this is the warm-up it appears to be. The interesting part isn't the
+score; it's what this fitted object *is*.
+
+## The relabeling
+
+Draw the same model as a diagram of signal flow:
+
+- **64 inputs** — the pixel values.
+- **64 weights** — one per input: the *connection strengths*.
+- **bias** — the intercept, renamed.
+- **pre-activation** — `z = w·x + b`, the weighted sum. M4 called this
+  "the line's score".
+- **activation** — the sigmoid, squashing `z` into the output.
+
+That five-part unit is an **artificial neuron**, and the claim isn't
+analogy — it's identity. Prove it: rip the learned numbers out of
+sklearn's model and run the neuron by hand:
+
+```{pyodide}
+#| caption: "sklearn's model, re-run as a bare neuron — digit for digit"
+import math
+
+w = clf.coef_[0]          # 64 connection strengths
+b = clf.intercept_[0]     # the bias
+
+x = Xte[0]                # one held-out digit (truth: a zero)
+z = float(np.dot(w, x) + b)
+output = 1 / (1 + math.exp(-z))
+
+print(f"pre-activation z = {z:.3f}")
+print(f"neuron output σ(z) = {output:.6f}")
+print(f"sklearn's predict_proba = {clf.predict_proba(Xte[[0]])[0, 1]:.6f}")
+```
+
+`z = -13.270`, output `0.000002` — an emphatic "not a 1" — and sklearn
+agrees to the sixth decimal, because there is nothing else inside the
+box: **logistic regression is one neuron.** Same numbers, same
+predictions. So why bother relabeling?
+
+Because of what the diagram suggests that the regression never did. A
+"regression" is a finished thing. A **neuron** is a *component* — its
+output can feed another neuron's input, and rows of them can feed rows of
+them. The regression framing ends at one model; the neuron framing opens
+into architecture. That one shift in view is the door to this entire
+module.
+
+## A neuron shows you where it looks
+
+One more gift from the relabeling. This neuron has exactly one weight
+per pixel — so its 64 weights reshape into an 8×8 **image of its own
+attention**:
+
+```{pyodide}
+#| caption: "The neuron's weights, viewed as the image they secretly are"
+#| fig-alt: "An 8-by-8 heat map of the neuron's weights. A bright vertical band of positive weights runs down the centre columns — where the stroke of a handwritten 1 falls — while dark negative weights form a ring around the middle, where the loop of a 0 leaves ink. Bright means votes-for-1, dark means votes-for-0."
+fig, ax = plt.subplots(figsize=(2.6, 2.6))
+im = ax.imshow(w.reshape(8, 8), cmap="coolwarm")
+ax.set_title("red: votes '1'   blue: votes '0'", fontsize=8)
+ax.axis("off")
+fig.colorbar(im, shrink=0.8)
+plt.show()
+```
+
+Read it like a strategy card. Warm pixels down the centre: ink there is
+how a **1** looks, so those connections *excite* the output. Cool pixels
+in the ring around the middle: ink there is a **0**'s loop, so those
+connections *inhibit* it. The neuron taught itself, from examples, where
+to look — and because weights map one-to-one onto pixels, you can watch
+it. (File this trick: it returns for every network we build.)
+
+The cliffhanger, honestly stated: one neuron draws **one straight
+boundary** (M4 Ch13's vocabulary), and 0-vs-1 happened to need no more.
+The real task — all ten digits, tangled classes like 3-vs-8-vs-5 — will
+not fall to straight lines. Stacking neurons is the answer, but stacking
+weighted sums of weighted sums collapses back into… one weighted sum.
+Something has to *bend* between the layers. That bend is Chapter 2.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **You already trained a neural network**: logistic regression is one
+   neuron — inputs → weights → bias → pre-activation `z = w·x + b` →
+   activation σ(z). Identity, not analogy: your hand-run neuron matched
+   `predict_proba` to six decimals.
+2. The relabeling matters because **neurons compose**: outputs feed
+   inputs, rows stack into layers — the regression framing never opened
+   that door.
+3. With one weight per pixel, **the weight vector is an image of the
+   neuron's attention** — bright excites, dark inhibits, and you can
+   render it.
+4. The module's dataset: sklearn's 8×8 `digits` — 64 numbers per image,
+   browser-sized, genuinely handwritten.
+5. One neuron = one straight boundary; ten tangled digit classes demand
+   **stacking, and stacking demands a bend** — Chapter 2's job.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: the split seed is fixed, so your numbers must
+match exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Run the relabeling yourself: pull the learned numbers out of the fitted
+model and push one digit through the bare neuron. Replace the `____`s,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_relabel
+from lib.grader import run_tests
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+import numpy as np
+import math
+
+digits = load_digits()
+mask = (digits.target == 0) | (digits.target == 1)
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data[mask], digits.target[mask],
+    test_size=0.25, random_state=42, stratify=digits.target[mask])
+clf = LogisticRegression(max_iter=2000).fit(Xtr, ytr)
+```
+
+```{pyodide}
+#| exercise: ex_relabel
+w = ____                          # TODO: the 64 connection strengths
+b = ____                          # TODO: the bias
+z = float(np.dot(w, Xte[0]) + b)
+output = 1 / (1 + math.exp(-z))
+
+run_tests([
+    ("pre-activation of the first held-out digit", round(z, 3), -13.27),
+    ("the neuron's verdict (a confident zero)", round(output, 3), 0.0),
+    ("identity, not analogy", round(
+        abs(output - float(clf.predict_proba(Xte[[0]])[0, 1])), 9), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+sklearn stores the learned numbers as `clf.coef_[0]` (the weights) and
+`clf.intercept_[0]` (the bias) — the same attributes you read in M4 Ch2.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+w = clf.coef_[0]
+b = clf.intercept_[0]
+z = float(np.dot(w, Xte[0]) + b)
+output = 1 / (1 + math.exp(-z))
+```
+
+The third assert is the chapter's thesis as a number: your bare neuron
+and sklearn's model differ by exactly 0.0, because they are the same
+machine.
+</details>
+
+### Exercise 2 — Implement (≈7 min) 🟡
+
+Write the function this module grows for the next seventeen chapters:
+`neuron(x, w, b)` — dot product, plus bias, through the sigmoid, in pure
+Python (no NumPy; this one runs inside micrograd territory later).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_neuron
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_neuron
+import math
+
+def neuron(x, w, b):
+    """One artificial neuron: sigmoid(w·x + b), lists in, float out."""
+    ...  # TODO
+
+run_tests([
+    ("perfect doubt at z = 0", neuron([1.0, 2.0], [0.5, -0.25], 0.0), 0.5),
+    ("gentle yes at z = 1", round(neuron([2.0, 0.0], [1.0, 1.0], -1.0), 4),
+     0.7311),
+    ("strong no at z = -4", round(neuron([0.0], [3.0], -4.0), 4), 0.018),
+    ("bias alone can fire it", neuron([0.0, 0.0], [9.9, 9.9], 0.0), 0.5),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+Three steps in one line each: `z = sum(xi * wi for xi, wi in zip(x, w))
++ b`, then `1 / (1 + math.exp(-z))`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def neuron(x, w, b):
+    z = sum(xi * wi for xi, wi in zip(x, w)) + b
+    return 1 / (1 + math.exp(-z))
+```
+
+Note the last fixture: with all-zero inputs, only the bias speaks — z
+equals b, and a zero bias means perfect doubt. Every network in this
+module is this function, repeated and connected.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Zeros and ones were
+easy prey. Fit the same model on the notoriously confusable **3 vs 8**
+pair (same split settings), report held-out accuracy, render the weight
+image, and read it in one sentence: where does the neuron look to tell a
+3 from an 8?
+
+**Rubric — a good answer:**
+
+- Builds the 3/8 subset with a binary target and the standard seeded
+  split; reports held-out accuracy (~0.99 — one or two digits slip).
+- Renders `coef_[0].reshape(8, 8)` with a diverging colormap.
+- The sentence ties weights to strokes — e.g. an 8 closes its left
+  loops where a 3 stays open, so left-edge pixels carry strong weights —
+  without over-claiming from one image.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+m38 = (digits.target == 3) | (digits.target == 8)
+X38, y38 = digits.data[m38], (digits.target[m38] == 8).astype(int)
+a, b_, c, d = train_test_split(X38, y38, test_size=0.25,
+                               random_state=42, stratify=y38)
+clf38 = LogisticRegression(max_iter=2000).fit(a, c)
+print(f"3 vs 8 held-out accuracy: "
+      f"{clf38.score(b_, d):.3f}")
+
+fig, ax = plt.subplots(figsize=(2.6, 2.6))
+ax.imshow(clf38.coef_[0].reshape(8, 8), cmap="coolwarm")
+ax.axis("off")
+plt.show()
+```
+
+The hot pixels cluster along the left edge — where an 8 closes its
+loops and a 3 leaves a gap. The neuron found the calligraphy lesson on
+its own; `0.989` says it mostly works, and the misses preview why ten
+tangled classes need more than one straight boundary.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch01.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The module's foundation is laid with borrowed bricks: the model you
+mastered in M4 *is* the neuron, `neuron(x, w, b)` is now yours in pure
+Python, and you've seen a neuron's attention as an image. The cliffhanger
+stands: stacked weighted sums collapse into one weighted sum unless
+something bends between them. Next chapter — **activation functions**:
+sigmoid, tanh, and the unreasonably effective ReLU.
