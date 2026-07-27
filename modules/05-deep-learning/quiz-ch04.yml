@@ -1,0 +1,35 @@
+title: "Chapter 4 — quick check"
+id: "m5-ch04-forward-pass"
+questions:
+  - id: pass-order
+    prompt: "Put the two-layer forward pass in order for input x."
+    options:
+      - "Weighted sum + bias → ReLU → weighted sum + bias → logits out (no bend after the last layer)"
+      - "ReLU on x first, then two weighted sums back to back"
+      - "Weighted sum → logits → ReLU → weighted sum"
+    answer: 0
+    explanation: "Each layer computes W-sums plus bias; the bend sits BETWEEN layers, never after the last — the output stays raw logits so any score is expressible. Bending first or last breaks both properties."
+  - id: what-logits-are
+    prompt: "The output layer produces [5.2, 8.4, -12.4, …]. What are these numbers?"
+    options:
+      - "Probabilities that should sum to 1"
+      - "Logits — raw, unbounded class scores; argmax already picks the class, and softmax later converts them into probabilities"
+      - "The network's weights for the final layer"
+    answer: 1
+    explanation: "Logits can be any size or sign — judge 2 at −12.4 is fine. They rank classes directly; making them sum to 1 as honest probabilities is softmax's job in Chapter 5."
+  - id: batch-ledger
+    prompt: "A batch of 32 examples with 100 features enters a 100 → 50 → 10 network (weights stored (n_in, n_out)). What shape ledger is correct?"
+    options:
+      - "(32×100) @ (100×50) → (32×50); then (32×50) @ (50×10) → (32×10)"
+      - "(100×32) @ (50×100) → (50×32); then a transpose fixes it"
+      - "Batching requires a loop; matrix products only handle one example"
+    answer: 0
+    explanation: "One row per example, inner dimensions chaining left to right: 100 meets 100, then 50 meets 50, ending in one row of 10 logits per example — every example processed in the same two products."
+  - id: shape-error-transfer
+    prompt: "Your code raises: 'matmul: Input operand 1 has a mismatch in its core dimension 0'. What is the calm diagnosis?"
+    options:
+      - "The data contains NaN values that must be dropped"
+      - "The learning rate is too high"
+      - "Two matrices' inner dimensions disagree — write the shape ledger and find the row that doesn't chain (often a transposed weight convention)"
+    answer: 2
+    explanation: "'Core dimension mismatch' is NumPy for inner-dimensions-disagree. The chapter triggered it on purpose with (450×64) @ (16×10); the ledger locates such bugs in seconds, and library weight-storage conventions (W vs Wᵀ) are the usual culprit."

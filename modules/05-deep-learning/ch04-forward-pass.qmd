@@ -1,0 +1,430 @@
+---
+title: "The forward pass"
+module: "M5 — Deep Learning Foundations"
+chapter: 4
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch3 — Layers & networks"
+learning_objectives:
+  - "Compute a full network forward pass by hand and match the library on every test digit"
+  - "Implement a batched forward() — the module's machinery for the chapters ahead"
+  - "Read shape ledgers and diagnose shape errors calmly"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - scikit-learn
+review_cards:
+  - id: pass-one-line
+    q: "What is the forward pass of a two-layer network, in one line?"
+    a: "logits = W2-layer(relu(W1-layer(x))): the input flows through each layer's weighted sum + bias, bent by the activation between layers, ending in one raw score (logit) per class; argmax picks the verdict."
+  - id: batching-idea
+    q: "What changes between predicting one example and predicting a batch?"
+    a: "One example is a vector; a batch is a matrix with one ROW per example. The same X @ W + b lines process every row at once — no loop — which is why batches run ~50× faster and why GPUs, built for matrix products, eat them."
+  - id: logits-vs-probs
+    q: "What are logits?"
+    a: "The output layer's raw scores, one per class, before any squashing — they can be any size, positive or negative. argmax on logits already gives the predicted class; converting them into honest probabilities is softmax's job (Ch5)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+For three chapters, `MLPClassifier` has done the real arithmetic while
+we studied the parts. Today the appliance is retired — not thrown out,
+**seen through**.
+
+The plan is an audit. We lift the trained network's weights out of
+sklearn, run its entire computation ourselves — pixels in, verdict
+out — and then check our hand-made predictions against the library's on
+*every single held-out digit*. If all 450 agree, we have proved by
+exhaustion that there is nothing else inside the box: the forward pass
+is two matrix lines and a bend, and it is ours now.
+
+> You'll need from before: `layer()` and shape grammar (Ch3), ReLU
+> (Ch2), and the trained 64 → 16 → 10 digits network.
+
+---
+
+## One digit, all the way through
+
+Same network as Chapter 3 (same seeds — same clerks). Trace one
+held-out digit through the building, printing every stop:
+
+```{pyodide}
+#| caption: "Pixels to verdict, every intermediate visible"
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+
+W1, W2 = net.coefs_          # note: sklearn stores these as (n_in, n_out)
+b1, b2 = net.intercepts_
+
+x = Xte[0]                               # truth: a 1
+hidden = np.maximum(0, x @ W1 + b1)      # the 16 clerks report
+logits = hidden @ W2 + b2                # 10 judges score
+print(f"x: {x.shape}   hidden: {hidden.shape}   logits: {logits.shape}")
+print(f"logits: {np.round(logits, 1)}")
+print(f"our verdict: {int(np.argmax(logits))}   "
+      f"sklearn's: {int(net.predict(Xte[[0]])[0])}   truth: {yte[0]}")
+```
+
+Read the trace. Sixty-four pixels → sixteen clerk reports → **ten raw
+scores**, one per digit class — judge 1 shouting `8.4`, judge 2 buried
+at `-12.4` — and `argmax` picks the loudest. Those raw scores have a
+name you'll use forever: **logits**. They aren't probabilities (they're
+any-sized, negative-happy numbers); turning logits into honest
+probabilities is next chapter's business. One convention caught in the
+act: sklearn stores its weight matrices **transposed** — `(n_in,
+n_out)` — so the multiply is `x @ W1`, not `W1 @ x`. Both conventions
+are common; check which one your library uses before anything else.
+
+## The audit: all 450 digits
+
+One digit agreeing could be luck. Run the hand-made pass over the
+entire held-out set:
+
+```{pyodide}
+#| caption: "The exhaustive proof: nothing else lives in the box"
+def hand_forward(X):
+    H = np.maximum(0, X @ W1 + b1)
+    return H @ W2 + b2
+
+our_verdicts = np.argmax(hand_forward(Xte), axis=1)
+agreement = int((our_verdicts == net.predict(Xte)).sum())
+print(f"agreement with sklearn: {agreement} / {len(Xte)}")
+print(f"our hand-made accuracy: {(our_verdicts == yte).mean():.3f}")
+```
+
+**450 / 450.** Every prediction the library makes, our two lines make
+identically — the appliance is now optional, kept only for
+convenience. And notice what slipped in while you weren't looking:
+`hand_forward` took the *whole matrix* `Xte` at once.
+
+## Batching: the whole crowd in one multiply
+
+One example is a vector. A **batch** is a matrix — one row per
+example — and the *same lines* process every row simultaneously,
+because that's what matrix multiplication *is* (M2 Ch4's rows-hit-
+columns, working at scale). The shape ledger of the batched pass:
+
+| step | shapes | result |
+|------|--------|--------|
+| `Xte @ W1` | (450×64) @ (64×16) | (450×16) |
+| `+ b1`, ReLU | broadcast over rows | (450×16) |
+| `H @ W2` | (450×16) @ (16×10) | (450×10) |
+| `+ b2`, argmax per row | | (450,) |
+
+Does batching matter? Measure it:
+
+```{pyodide}
+#| caption: "One digit at a time vs everyone at once"
+import time
+
+t0 = time.perf_counter()
+loop_preds = [np.argmax(np.maximum(0, xi @ W1 + b1) @ W2 + b2)
+              for xi in Xte]
+t_loop = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+batch_preds = np.argmax(hand_forward(Xte), axis=1)
+t_batch = time.perf_counter() - t0
+
+print(f"python loop: {t_loop * 1000:6.1f} ms")
+print(f"one batch:   {t_batch * 1000:6.2f} ms   "
+      f"(~{t_loop / t_batch:.0f}x faster)")
+```
+
+Around **50× on a tiny network in a browser tab** — and the gap grows
+with size, because batched matrix products are exactly the operation
+GPUs are built to devour (Chapter 11 turns this observation into
+hardware). M3 Ch1's vectorization habit was training for this moment.
+
+Since shapes run the show, meet the failure mode on purpose:
+
+```{pyodide}
+#| caption: "A shape error, triggered deliberately — read it calmly"
+try:
+    Xte @ W2        # (450×64) @ (16×10): 64 ≠ 16 — illegal on purpose
+except ValueError as e:
+    print(f"ValueError: {str(e)[:70]}…")
+```
+
+"Mismatch in its core dimension" = the inner dimensions disagree.
+Translate every such message the same way: *write the shape ledger,
+find the row that doesn't chain.* Calm beats stack-trace panic, and the
+ledger never lies.
+
+## Freeze the machinery
+
+Package the pass in its final module form — any depth, ReLU between
+layers, linear (logits) at the end:
+
+```{pyodide}
+#| caption: "The module's forward machinery — ten lines, no appliance"
+def forward(X, params):
+    """Batched forward pass. params = [(W1, b1), (W2, b2), ...]."""
+    out = X
+    for i, (W, b) in enumerate(params):
+        out = out @ W + b
+        if i < len(params) - 1:          # bend between layers,
+            out = np.maximum(0, out)     # never after the last
+    return out
+
+logits_all = forward(Xte, [(W1, b1), (W2, b2)])
+print(f"agreement, again: "
+      f"{int((np.argmax(logits_all, axis=1) == net.predict(Xte)).sum())} / 450")
+```
+
+This function is the spine of everything ahead: **Chapter 5 scores its
+outputs** (loss), **Chapter 6 blames its knobs** (backprop), **Chapter
+10 trains it** from scratch on these very digits. It has no learning in
+it — the weights came pre-trained today — and that's the honest gap:
+we can now *run* a network perfectly and still can't *train* one. The
+next two chapters close that gap.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. The forward pass is **two lines and a bend**: `relu(X @ W1 + b1) @
+   W2 + b2` — proved by exhaustion: 450/450 agreement with sklearn.
+2. The outputs are **logits** — raw, any-sized class scores; argmax
+   picks the verdict, softmax (Ch5) makes them probabilities.
+3. **Batching**: one row per example, same lines, every example at
+   once — ~50× faster here, and the operation GPUs are built for.
+4. **Shapes run the show**: keep the ledger, check conventions
+   (sklearn stores W as (n_in, n_out)), and translate "core dimension
+   mismatch" as "find the ledger row that doesn't chain."
+5. `forward(X, params)` is the frozen machinery: Ch5 scores it, Ch6
+   blames it, Ch10 trains it.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same seeds, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Walk one digit through by hand. Replace the `____`s, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_pass
+from lib.grader import run_tests
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+import numpy as np
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+W1, W2 = net.coefs_
+b1, b2 = net.intercepts_
+x = Xte[0]
+```
+
+```{pyodide}
+#| exercise: ex_pass
+hidden = ____                    # TODO: the 16 clerks (remember the bend)
+logits = ____                    # TODO: the 10 judges (no bend after the last layer)
+
+run_tests([
+    ("sixteen clerk reports", hidden.shape, (16,)),
+    ("ten judges' scores", logits.shape, (10,)),
+    ("the verdict", int(np.argmax(logits)), 1),
+    ("matches the appliance", int(np.argmax(logits)),
+     int(net.predict(Xte[[0]])[0])),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`hidden = np.maximum(0, x @ W1 + b1)` — weighted sums, bias, ReLU.
+`logits = hidden @ W2 + b2` — and no activation after the last layer:
+logits stay raw.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+hidden = np.maximum(0, x @ W1 + b1)
+logits = hidden @ W2 + b2
+```
+
+Two lines. The digit you pushed through is a genuine handwritten 1, and
+judge 1's 8.4 outshouts the rest — the same verdict the library
+computes, because this *is* what the library computes.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the frozen machinery from spec: `forward(X, params)` — batched,
+any depth, `params` a list of `(W, b)` pairs, ReLU between layers,
+**linear after the last** (logits out).
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_forward
+from lib.grader import run_tests
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+import numpy as np
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+```
+
+```{pyodide}
+#| exercise: ex_forward
+def forward(X, params):
+    """Batched pass: ReLU between layers, linear (logits) after the last."""
+    ...  # TODO
+
+Wa = np.array([[1.0, -1.0], [0.0, 1.0]])
+ba = np.array([0.0, 0.5])
+Wb = np.array([[2.0], [1.0]])
+bb = np.array([-1.0])
+tiny = forward(np.array([[1.0, 2.0], [0.0, 0.0]]), [(Wa, ba), (Wb, bb)])
+
+sk_params = list(zip(net.coefs_, net.intercepts_))
+agreement = int((np.argmax(forward(Xte, sk_params), axis=1)
+                 == net.predict(Xte)).sum())
+
+run_tests([
+    ("hand-checkable batch of two",
+     [round(float(v), 1) for v in tiny.ravel()], [2.5, -0.5]),
+    ("the full audit", agreement, 450),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Loop over `params` with an index: `out = out @ W + b`, and apply
+`np.maximum(0, out)` only when the layer is *not* the last
+(`i < len(params) - 1`).
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def forward(X, params):
+    out = X
+    for i, (W, b) in enumerate(params):
+        out = out @ W + b
+        if i < len(params) - 1:
+            out = np.maximum(0, out)
+    return out
+
+Wa = np.array([[1.0, -1.0], [0.0, 1.0]])
+ba = np.array([0.0, 0.5])
+Wb = np.array([[2.0], [1.0]])
+bb = np.array([-1.0])
+tiny = forward(np.array([[1.0, 2.0], [0.0, 0.0]]), [(Wa, ba), (Wb, bb)])
+
+sk_params = list(zip(net.coefs_, net.intercepts_))
+agreement = int((np.argmax(forward(Xte, sk_params), axis=1)
+                 == net.predict(Xte)).sum())
+```
+
+Verify the tiny fixture in your head: row (1, 2) → (1, 1.5) after the
+bend → 2·1 + 1·1.5 − 1 = 2.5. Then the audit: your ten lines match the
+library on all 450 digits. This exact function returns in Chapter 10 —
+where the weights will be yours too.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Instrument the pass:
+compute the hidden batch for all 450 test digits, then each clerk's
+*mean activation* across the set. Report the busiest and quietest
+clerks — and investigate the quietest with Chapter 2's vocabulary: is
+anyone at exactly 0.0 for the entire test set, and what is that called?
+
+**Rubric — a good answer:**
+
+- Computes `H = np.maximum(0, Xte @ W1 + b1)` and `H.mean(axis=0)`.
+- Names the busiest clerk (index 0, mean ≈ 16.1) and finds the
+  quietest at **exactly 0.000** (clerk 11 — and several others).
+- The sentence diagnoses them as **dead ReLUs** — never positive on any
+  test digit, hence slope 0, hence unteachable — Ch2's warning found
+  alive (dead?) in a real trained network, with the honest note that
+  the net still scores 0.96: some death is tolerable waste.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+H = np.maximum(0, Xte @ W1 + b1)
+means = H.mean(axis=0)
+print("mean activation per clerk:", np.round(means, 1))
+print(f"busiest: clerk {int(np.argmax(means))} ({means.max():.1f})")
+dead = [i for i, m in enumerate(means) if m == 0.0]
+print(f"silent on every test digit: clerks {dead}")
+```
+
+Five clerks never say a word — dead ReLUs, drawing salary in
+parameters and contributing nothing. The network works anyway (0.960):
+in small nets this is tolerable waste, and Chapter 15's initialization
+and learning-rate care is where we learn to keep more of the payroll
+alive.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch04.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The audit is complete: 450 of 450 digits agree that a network's
+prediction is two matrix lines and a bend, batched for free, with
+shapes as the only discipline. `forward()` is frozen. What it cannot
+yet do is *learn* — its weights were borrowed. Learning starts with a
+score: next chapter, **loss functions** — MSE's return, cross-entropy's
+debut, and softmax turning logits into probabilities worth grading.
