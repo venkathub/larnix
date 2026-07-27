@@ -1,0 +1,35 @@
+title: "Chapter 10 — quick check"
+id: "m5-ch10-mlp-from-scratch"
+questions:
+  - id: ln10-check
+    prompt: "Before any training, the network's first-batch loss printed 2.2627. Why is that a GOOD sign?"
+    options:
+      - "It shows the network has already learned something from initialization"
+      - "An untrained 10-class net with small random weights gives near-uniform softmax probabilities, so CE should sit near −log(1/10) = ln(10) ≈ 2.3026 — landing close says 'untrained, as expected'; landing far says 'bug'"
+      - "Any loss below 3.0 means the data is clean"
+    answer: 1
+    explanation: "p_truth ≈ 0.1 for every sample when the logits are nearly equal, and −log(0.1) = ln(10). The small gap (2.2627 vs 2.3026) is honest randomness — logits are only approximately uniform. This one glance is a free sanity check at the top of every training run: on a C-class problem, expect ≈ ln(C)."
+  - id: loop-order
+    prompt: "Why must zero_grad come BEFORE loss.backward() in every iteration, rather than after the step?"
+    options:
+      - "Order is aesthetic; the engine handles duplicates either way"
+      - "Because backward() accumulates with += into whatever grads already hold — Ch9 measured stale blame compounding ~8×, so each fresh pass must start from clean books"
+      - "zero_grad also resets the momentum velocity, which the step needs"
+    answer: 1
+    explanation: "The engine's += is the law of paths within one pass — but across passes it becomes contamination unless the books are cleared. Zeroing anywhere before backward() works; the loop convention puts it first so no path can skip it. (Velocity is separate state and must NOT be zeroed — its memory is the point.)"
+  - id: why-parameters
+    prompt: "Why does every class define parameters(), when the engine already tracks all Values in the graph?"
+    options:
+      - "The graph knows every Value but not which ones are adjustable knobs — inputs and weights look identical to the engine, so the network must tell the optimizer which numbers it may move"
+      - "parameters() speeds up backward() by pruning the graph"
+      - "It is required by Python for operator overloading to work"
+    answer: 0
+    explanation: "backward() happily computes blame for pixels too (Ch6 computed dL/dx₁). The optimizer must not 'improve' the input data — only the weights and biases. The roll-call is that permission list; PyTorch's model.parameters() exists for exactly the same reason."
+  - id: stuck-at-ln10
+    prompt: "A colleague's 10-class training run prints loss ≈ 2.30 at epoch 1… and still ≈ 2.30 at epoch 40. Most likely story?"
+    options:
+      - "The model has converged — 2.30 is a good final loss"
+      - "The dataset is too small for deep learning"
+      - "The network is stuck at uniform ignorance — nothing is learning. First suspects: gradients not reaching the weights (a broken backward, or grads never zeroed/applied) or a step size that moves nothing"
+    answer: 2
+    explanation: "2.30 is where 10-class training STARTS (ln 10) — staying there means the probabilities never left uniform. The chapter's checklist applies: is backward() actually called, are grads zeroed then applied, is the learning rate nonzero? A converged model would sit far below the ignorance line, not on it."

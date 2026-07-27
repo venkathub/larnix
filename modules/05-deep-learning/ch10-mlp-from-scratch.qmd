@@ -1,0 +1,698 @@
+---
+title: "An MLP from scratch"
+module: "M5 — Deep Learning Foundations"
+chapter: 10
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch9 — Build micrograd II: backward through a graph"
+  - "M5 Ch7 — Gradient-descent variants"
+learning_objectives:
+  - "Assemble micrograd Values into Neuron, Layer and MLP classes with a parameters() roll-call"
+  - "Train a scratch-built network on real digits with the five-line loop: zero_grad, forward, loss, backward, step"
+  - "Measure the scalar engine's cost and extrapolate honestly to MNIST scale — the case for Chapter 11's GPUs"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 34
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - scikit-learn
+    - matplotlib
+review_cards:
+  - id: first-loss-ln10
+    q: "Why is an untrained 10-class network's first cross-entropy loss almost exactly ln(10) ≈ 2.3026?"
+    a: "Small random weights make the logits nearly equal, so softmax hands out ≈uniform probabilities: p_truth ≈ 0.1 and CE = −log(0.1) = ln(10). Ours printed 2.2627 — a hair under, because random logits are only approximately uniform. A first loss far from ln(C) on a C-class problem is a bug signal before training even starts."
+  - id: five-line-loop
+    q: "Recite the training loop and the chapter that justifies each line."
+    a: "zero_grad (Ch9 — stale blame compounds ~8×), forward (Ch4), loss (Ch5 — softmax+CE), loss.backward() (Ch6/9 — the engine settles every blame), optimizer step (Ch7 — ours used momentum, β=0.9). Five lines, nine chapters of reasons."
+  - id: scalar-ceiling
+    q: "What did the scalar engine's cost measurement say about training MNIST in the browser?"
+    a: "One 8×8 sample builds a 4,662-node graph and costs tens of milliseconds forward+backward; 150 samples × 5 epochs ≈ 40 s of pure Python for 80% test accuracy. Scaling the node count ~86× (784→128→10 net) and the data 400× (60k samples) puts ONE MNIST epoch in the tens-of-hours-to-days range — scalar Python is the wrong tool, which is exactly Chapter 11's opening argument."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Nine chapters of parts are on the workbench: the neuron (Ch1), the
+bend (Ch2), layers (Ch3), the forward pass (Ch4), the loss (Ch5), the
+blame game (Ch6), smarter steps (Ch7), and an engine that
+back-propagates anything you can type (Ch8–9). Today: **assembly**. A
+network built from your own `Value` objects learns to read handwritten
+digits, live, in this page — and the very first number it prints is
+one you predicted two chapters ago: something very near
+**ln(10) ≈ 2.3026**.
+
+One warning, worn proudly: this will be *slow*. A scalar engine builds
+a multi-thousand-node graph per sample, in pure Python. The slowness
+is not a flaw in the chapter — it is the chapter's final measurement,
+and the reason the next one is about GPUs.
+
+> You'll need from before: the finished engine (Ch9), momentum
+> (Ch7), softmax + cross-entropy (Ch5), and ln(10) (Ch5's uniform
+> fine).
+
+## The engine, one primitive richer
+
+Cross-entropy ends in −log(p) — and the Ch9 engine has no `log`. Add
+it exactly the way the Ch9 stretch added `tanh`: forward, closure
+(rule: d(log x)/dx = 1/x), attach, return. The extension pattern, now
+used in anger:
+
+```{pyodide}
+#| caption: "The finished engine + log — still dependency-free"
+import math
+
+class Value:
+    def __init__(self, data, _prev=(), _op=""):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = _prev
+        self._op = _op
+
+    def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data + other.data, (self, other), "+")
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data * other.data, (self, other), "*")
+        def _backward():
+            self.grad += out.grad * other.data
+            other.grad += out.grad * self.data
+        out._backward = _backward
+        return out
+
+    def __pow__(self, k):
+        out = Value(self.data ** k, (self,), f"**{k}")
+        def _backward():
+            self.grad += out.grad * k * self.data ** (k - 1)
+        out._backward = _backward
+        return out
+
+    def exp(self):
+        out = Value(math.exp(self.data), (self,), "exp")
+        def _backward():
+            self.grad += out.grad * out.data
+        out._backward = _backward
+        return out
+
+    def log(self):
+        out = Value(math.log(self.data), (self,), "log")
+        def _backward():
+            self.grad += out.grad / self.data      # d(log x)/dx = 1/x
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = Value(self.data if self.data > 0 else 0.0, (self,), "relu")
+        def _backward():
+            self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    def __neg__(self):           return self * -1
+    def __sub__(self, other):    return self + (-other if isinstance(other, Value) else -other)
+    def __truediv__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        return self * other ** -1
+    def __radd__(self, other):   return self + other
+    def __rmul__(self, other):   return self * other
+
+    def backward(self):
+        order, visited = [], set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for parent in v._prev:
+                    build(parent)
+                order.append(v)
+        build(self)
+        self.grad = 1.0
+        for v in reversed(order):
+            v._backward()
+
+    def __repr__(self):
+        return f"Value(data={self.data}, grad={self.grad})"
+
+print("engine ready: + * ** exp log relu, backward()")
+```
+
+## Neuron, Layer, MLP
+
+Three small classes, each a thin arrangement of `Value`s. A `Neuron`
+is Chapter 1's recipe — weighted sum, bias, bend. A `Layer` is
+Chapter 3's row of them. An `MLP` chains layers, ReLU between, linear
+last (Chapter 4's frozen convention). Each class answers one roll-call
+question — `parameters()`, the list of its adjustable knobs:
+
+```{pyodide}
+#| caption: "The network, assembled from Values"
+import random
+
+class Neuron:
+    def __init__(self, n_in, relu=True):
+        k = n_in ** -0.5                 # small random start, scaled by fan-in
+        self.w = [Value(random.uniform(-k, k)) for _ in range(n_in)]
+        self.b = Value(0.0)
+        self.use_relu = relu
+
+    def __call__(self, x):
+        z = self.b
+        for wi, xi in zip(self.w, x):
+            z = z + wi * xi
+        return z.relu() if self.use_relu else z
+
+    def parameters(self):
+        return self.w + [self.b]
+
+class Layer:
+    def __init__(self, n_in, n_out, relu=True):
+        self.neurons = [Neuron(n_in, relu) for _ in range(n_out)]
+
+    def __call__(self, x):
+        return [n(x) for n in self.neurons]
+
+    def parameters(self):
+        return [p for n in self.neurons for p in n.parameters()]
+
+class MLP:
+    def __init__(self, sizes):
+        self.layers = [Layer(sizes[i], sizes[i + 1],
+                             relu=(i < len(sizes) - 2))
+                       for i in range(len(sizes) - 1)]
+
+    def __call__(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        return x
+
+    def parameters(self):
+        return [p for layer in self.layers for p in layer.parameters()]
+
+random.seed(0)
+net = MLP([64, 16, 10])
+print("knobs:", len(net.parameters()))
+```
+
+**1,210 knobs** — the very same count as the sklearn network you have
+been dissecting since Chapter 3. Why does `parameters()` need to
+exist at all? Because to the engine, a weight and a pixel are equally
+ordinary `Value`s — nothing marks the *adjustable* ones. The
+roll-call is the network telling the optimizer which of its numbers
+are knobs.
+
+## The loss, differentiable end to end
+
+Chapter 5's softmax + cross-entropy, composed from engine ops — with
+the max-subtraction shift (also Chapter 5's, and provably free):
+
+```{pyodide}
+#| caption: "softmax + CE from parts, overflow-proofed"
+def cross_entropy(logits, target):
+    zmax = max(z.data for z in logits)          # a constant shift — no grad path
+    exps = [(z - zmax).exp() for z in logits]
+    total = exps[0]
+    for e in exps[1:]:
+        total = total + e
+    return -(exps[target] / total).log()
+
+probe = cross_entropy(net([0.5] * 64), 3)
+order, seen = [], set()
+def count(v):
+    if v not in seen:
+        seen.add(v)
+        for p in v._prev:
+            count(p)
+        order.append(v)
+count(probe)
+print(f"one sample's loss builds a graph of {len(order)} nodes")
+```
+
+**4,662 nodes** — for *one* 8×8 digit. Chapter 9's certification graph
+had 44. Keep that number in mind; it is the price tag on everything
+that follows.
+
+## The promise kept: 2.2627
+
+Real data: sklearn's 8×8 digits, same split as every chapter since
+Ch1. Scalar engines are slow, so we train on an honestly-stated
+subset — **150 training digits** (of 1,347) — and evaluate on 100
+held-out test digits. Pixels are scaled to 0–1 (Ch9 of M4: scaling is
+a habit, not an option):
+
+```{pyodide}
+#| caption: "Data in — and the untrained network's first verdict"
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+
+N = 150
+Xs = [[v / 16.0 for v in row] for row in Xtr[:N]]
+ys = [int(t) for t in ytr[:N]]
+Xq = [[v / 16.0 for v in row] for row in Xte[:100]]
+yq = [int(t) for t in yte[:100]]
+
+first = sum(cross_entropy(net(x), t).data
+            for x, t in zip(Xs[:25], ys[:25])) / 25
+print(f"untrained loss on the first batch: {first:.4f}")
+print(f"ln(10)                           : {math.log(10):.4f}")
+```
+
+Chapter 5 promised the first training curve would start here:
+−log(1/10) = **2.3026**, the fine for uniform ignorance over ten
+classes. We printed **2.2627** — a hair under, and the gap is honest:
+random small weights make the logits *nearly* equal, not exactly, so
+the softmax is *almost* uniform. Close to ln(C) says "untrained, as
+expected"; far from it says "bug" — a free sanity check you now get
+at the top of every training run for the rest of your life.
+
+## The loop, finally assembled
+
+Five lines, nine chapters of reasons: **zero the grads** (Ch9 —
+stale blame compounds), **forward** (Ch4), **loss** (Ch5),
+**backward** (Ch6/9 — one call, every blame), **step** (Ch7 — we use
+momentum, β = 0.9, because you measured why). Minibatches of 25
+(Ch7's noisy-jury trade).
+
+::: {.callout-warning}
+## This cell is deliberately slow
+
+Training runs ~750 sample-passes of pure scalar Python — about forty
+seconds in a native container, and likely a few minutes in the
+browser. Let it run. Feeling this cost *is the point*: it is the
+measured case for vectorized tensors and for Chapter 11's GPUs.
+:::
+
+```{pyodide}
+#| caption: "Five epochs of honest work"
+import time
+
+params = net.parameters()
+velocity = [0.0] * len(params)
+curve = []
+
+t0 = time.time()
+for epoch in range(5):
+    epoch_loss = 0.0
+    for s in range(0, N, 25):
+        xb, yb = Xs[s:s + 25], ys[s:s + 25]
+
+        for p in params:                 # 1. zero_grad  (Ch9)
+            p.grad = 0.0
+        loss = cross_entropy(net(xb[0]), yb[0])
+        for x, t in zip(xb[1:], yb[1:]): # 2–3. forward + loss (Ch4, Ch5)
+            loss = loss + cross_entropy(net(x), t)
+        loss = loss * (1.0 / 25)
+        loss.backward()                  # 4. backward   (Ch6, Ch9)
+        for i, p in enumerate(params):   # 5. momentum step (Ch7)
+            velocity[i] = 0.9 * velocity[i] + p.grad
+            p.data -= 0.2 * velocity[i]
+
+        epoch_loss += loss.data
+    curve.append(epoch_loss / (N // 25))
+    print(f"epoch {epoch + 1}: mean loss {curve[-1]:.3f}")
+
+print(f"trained in {time.time() - t0:.0f} s")
+```
+
+Watch the schedule: 2.261 → 1.892 → 1.189 → 0.878 → **0.410**. Every
+decimal of that fall is your own code: your engine's gradients, your
+momentum ledger, your cross-entropy. Nothing imported did any
+learning.
+
+## Report card
+
+```{pyodide}
+#| caption: "100 digits the network has never seen"
+hits = 0
+preds = []
+for xi, yi in zip(Xq, yq):
+    logits = net(xi)
+    guess = max(range(10), key=lambda i: logits[i].data)
+    preds.append(guess)
+    hits += (guess == yi)
+
+print(f"test accuracy: {hits}/{len(yq)}")
+print("first ten predictions:", preds[:10])
+print("first ten truths     :", yq[:10])
+miss = next(i for i in range(len(yq)) if preds[i] != yq[i])
+print(f"first mistake: read a {yq[miss]} as a {preds[miss]}")
+```
+
+**80/100** from 150 training examples and five epochs — against a 10%
+guessing floor. (The sklearn net from Chapter 4 reached 96% — with
+1,347 training digits and hundreds of epochs; given its budget, the
+scratch net is holding its head high.) And the first mistake is an
+old friend: a **9 read as something else** — the same seam the
+Chapter 5 worst-digit hunt found. Look at the two exhibits:
+
+```{pyodide}
+#| caption: "The training curve, and the digit that fooled the network"
+#| fig-alt: "Two panels. Left: training loss over five epochs falling from 2.26 to 0.41, starting slightly below the dashed ln(10) = 2.303 line that marks uniform ignorance — the curve begins where theory predicts an untrained 10-class net must. Right: the 8-by-8 pixel image of the first test digit the network misread, a handwritten 9 — coarse handwriting seams, not exotic failures, are where the scratch network loses its 20 points."
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 3.2),
+                               gridspec_kw={"width_ratios": [2, 1]})
+ax1.plot(range(1, 6), curve, marker="o", color="#2563eb")
+ax1.axhline(math.log(10), linestyle="--", color="#94a3b8")
+ax1.text(1.05, math.log(10) + 0.05, "ln(10) — uniform ignorance",
+         fontsize=8, color="#64748b")
+ax1.set_xlabel("epoch"); ax1.set_ylabel("mean cross-entropy")
+ax1.set_title("Your engine, learning")
+
+ax2.imshow(np.array(Xte[miss]).reshape(8, 8), cmap="gray_r")
+ax2.set_title(f"read a {yq[miss]} as a {preds[miss]}", fontsize=9)
+ax2.set_xticks([]); ax2.set_yticks([])
+plt.tight_layout()
+plt.show()
+```
+
+## The bill, and the ceiling
+
+Last measurement. Time one sample's full forward + backward, then
+extrapolate — honestly — to the real thing (MNIST: 60,000 images of
+28×28, a 784→128→10 network):
+
+```{pyodide}
+#| caption: "Why Chapter 11 exists, in two printed lines"
+t0 = time.time()
+for x, t in zip(Xs[:25], ys[:25]):
+    for p in params:
+        p.grad = 0.0
+    cross_entropy(net(x), t).backward()
+per_sample = (time.time() - t0) / 25
+
+node_scale = (784 * 128 + 128 * 10) / (64 * 16 + 16 * 10)
+mnist_hours = per_sample * node_scale * 60000 / 3600
+print(f"per sample here : {per_sample * 1000:.0f} ms "
+      f"(a {len(order)}-node graph, scalar Python)")
+print(f"one MNIST epoch : ~{node_scale:.0f}× the nodes × 60,000 samples "
+      f"≈ {mnist_hours:.0f} hours")
+```
+
+Tens of milliseconds per tiny sample; one MNIST epoch lands in the
+**tens-of-hours-to-days** range — and real training needs many
+epochs. The bottleneck isn't the math (your gradients are certified
+to 10⁻¹²); it's doing the math **one scalar at a time in Python**.
+The fixes are batching the arithmetic into tensors and running it on
+parallel hardware — which is precisely where this module's browser
+half ends and Chapter 11 begins.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Assembly, not new ideas**: Neuron/Layer/MLP are thin classes
+   over `Value` — 1,210 knobs, the same count as the sklearn net —
+   and `parameters()` exists because nothing else distinguishes a
+   knob from a pixel.
+2. **The first loss is a free bug-check**: 2.2627 printed against
+   ln(10) = 2.3026 predicted — near the uniform-ignorance fine means
+   "untrained, as expected"; far from it means "bug".
+3. **Five lines, each with a chapter behind it**: zero_grad (Ch9),
+   forward (Ch4), loss (Ch5), backward (Ch6/9), momentum step (Ch7)
+   — and the curve fell 2.261 → 0.410 with nothing imported doing
+   the learning.
+4. **80/100 on unseen digits** from 150 examples and five epochs —
+   and the first miss is a handwriting seam (a 9), the same failure
+   family the Ch5 audit found in the big net.
+5. **The measured ceiling**: 4,662 nodes and tens of milliseconds per
+   sample ⇒ one MNIST epoch ≈ days of scalar Python. The math
+   is right; the *form* of the computation is wrong — enter tensors
+   and GPUs (Ch11).
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic** — and Exercise 2 is graded by *property*
+checks (loss fell, weights moved), the style every training exercise
+uses from here on.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+The neuron's two working lines: accumulate the weighted sum, then
+gate it. Fill the blanks, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_neuron
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_neuron
+w = [Value(0.5), Value(-0.25)]
+b = Value(0.1)
+
+def neuron_call(x):
+    z = b
+    for wi, xi in zip(w, x):
+        z = ____               # TODO: add this input's weighted contribution
+    return ____                # TODO: apply the ReLU gate
+
+live = neuron_call([1.0, 2.0])     # 0.5·1 − 0.25·2 + 0.1 = 0.1 → gate open
+dead = neuron_call([-1.0, 0.0])    # −0.5 + 0.1 = −0.4        → gate shut
+
+run_tests([
+    ("gate open", round(live.data, 4), 0.1),
+    ("gate shut", round(dead.data, 4), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The sum line is `z = z + wi * xi` — the engine overloads `+` and `*`,
+so it reads like the math. The gate line is `return z.relu()`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+w = [Value(0.5), Value(-0.25)]
+b = Value(0.1)
+
+def neuron_call(x):
+    z = b
+    for wi, xi in zip(w, x):
+        z = z + wi * xi
+    return z.relu()
+
+live = neuron_call([1.0, 2.0])
+dead = neuron_call([-1.0, 0.0])
+```
+
+Chapter 1's recipe, in engine parts: weighted sum, bias, bend — and
+because every operation is a `Value` op, this neuron is *already*
+trainable; backward() would settle its blame with no further work.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+The loop's two housekeeping pieces, from spec: `zero_grad(params)`
+(reset every knob's blame) and `sgd_step(params, lr)` (walk each knob
+against its gradient). The training loop is provided — a tiny linear
+model fitting two points. Your functions either make it learn or
+don't.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_sgd
+from lib.grader import run_tests, decreased, changed, between
+```
+
+```{pyodide}
+#| exercise: ex_sgd
+def zero_grad(params):
+    ...  # TODO: set every parameter's grad to 0.0
+
+def sgd_step(params, lr):
+    ...  # TODO: move every parameter's data against its grad, scaled by lr
+
+w1, w2, b = Value(0.5), Value(-0.5), Value(0.0)
+params = [w1, w2, b]
+pts = [((1.0, 2.0), 3.0), ((2.0, 0.0), 2.0)]   # two (input, target) pairs
+
+losses = []
+for step in range(15):
+    zero_grad(params)
+    loss = Value(0.0)
+    for (xa, xb), t in pts:
+        pred = w1 * xa + w2 * xb + b
+        loss = loss + (pred - t) ** 2
+    loss = loss * 0.5
+    losses.append(loss.data)
+    loss.backward()
+    sgd_step(params, 0.1)
+
+run_tests([
+    decreased("training loss fell ≥90%", losses[0], losses[-1], min_drop=0.9),
+    changed("all three knobs moved", [0.5, -0.5, 0.0],
+            [p.data for p in params]),
+    between("final loss near zero", losses[-1], 0.0, 0.01),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Both are two-liners over the same loop: `for p in params: p.grad =
+0.0`, and `for p in params: p.data -= lr * p.grad`. Mind the sign —
+*minus* the gradient; `+=` here would climb the hill.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+from lib.grader import decreased, changed, between   # the property builders
+
+def zero_grad(params):
+    for p in params:
+        p.grad = 0.0
+
+def sgd_step(params, lr):
+    for p in params:
+        p.data -= lr * p.grad
+
+w1, w2, b = Value(0.5), Value(-0.5), Value(0.0)
+params = [w1, w2, b]
+pts = [((1.0, 2.0), 3.0), ((2.0, 0.0), 2.0)]
+
+losses = []
+for step in range(15):
+    zero_grad(params)
+    loss = Value(0.0)
+    for (xa, xb), t in pts:
+        pred = w1 * xa + w2 * xb + b
+        loss = loss + (pred - t) ** 2
+    loss = loss * 0.5
+    losses.append(loss.data)
+    loss.backward()
+    sgd_step(params, 0.1)
+```
+
+Measured run: the loss falls 6.625 → 0.0004 in fifteen steps — a
+99.99% drop — and all three knobs moved. Note what the graders
+checked: not exact weights (many weight-sets fit two points) but
+*properties* — loss fell, knobs moved, endpoint near zero. That is
+how training exercises are graded from here through the end of the
+school, because training's truth is behavioral.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈12 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Architecture is now
+a knob *you* hold. Rerun the chapter's training with hidden widths
+**4, 16, and 32** (same data, same momentum loop, 3 epochs each to
+keep it kind to your browser) and tabulate: parameter count, test
+accuracy, wall-clock time. Then answer two questions: which width
+wins *at this budget*, and what would you need to change to find out
+if 32 could beat 16 *eventually*?
+
+**Rubric — a good answer:**
+
+- Runs all three widths with identical data, loop, and epoch budget;
+  tabulates params / accuracy / seconds.
+- Finds the honest upset: at 3 epochs, hidden 4 is weak (~0.43),
+  hidden 16 wins (~0.64), and hidden **32 does worse (~0.59) while
+  costing double the time** — more capacity, undertrained, at a fixed
+  budget.
+- The diagnosis names the coupling: bigger nets need more steps (and
+  often different learning rates) — width, budget and optimizer are
+  one decision, not three.
+- The "what next" answer is concrete: more epochs for the 32-net
+  would settle it — and the fact that this experiment is
+  uncomfortable in a browser *is* Chapter 11's opening argument.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+def train_width(hidden, epochs=3):
+    random.seed(0)
+    nw = MLP([64, hidden, 10])
+    ps = nw.parameters()
+    vel = [0.0] * len(ps)
+    t0 = time.time()
+    for _ in range(epochs):
+        for s in range(0, N, 25):
+            xb, yb = Xs[s:s + 25], ys[s:s + 25]
+            for p in ps:
+                p.grad = 0.0
+            loss = cross_entropy(nw(xb[0]), yb[0])
+            for x, t in zip(xb[1:], yb[1:]):
+                loss = loss + cross_entropy(nw(x), t)
+            (loss * (1.0 / 25)).backward()
+            for i, p in enumerate(ps):
+                vel[i] = 0.9 * vel[i] + p.grad
+                p.data -= 0.2 * vel[i]
+    secs = time.time() - t0
+    acc = sum(max(range(10), key=lambda i: nw(xi)[i].data) == yi
+              for xi, yi in zip(Xq, yq)) / len(yq)
+    print(f"hidden {hidden:3d}: {len(ps):5d} params  "
+          f"acc {acc:.2f}  {secs:.0f}s")
+
+for h in (4, 16, 32):
+    train_width(h)
+```
+
+Measured: hidden 4 → 310 params, acc 0.43; hidden 16 → 1,210 params,
+acc 0.64; hidden 32 → 2,410 params, acc **0.59** at double the cost.
+The biggest net lost — not because capacity is bad, but because three
+epochs starved it. Fair comparisons fix the *budget question* first;
+and browsers make the follow-up experiment expensive, which is why
+the next chapter hands you a GPU.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch10.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The browser half of M5 is complete. You built the neuron, stacked it,
+derived its blame, automated the bookkeeping, and today trained the
+whole assembly to 80% on real digits — every gradient computed by
+code you wrote and verified. You have also *measured the wall*: scalar
+Python cannot reach MNIST. Chapter 11 is the handoff — why parallel
+hardware changes the game, and the ₹0 Colab/Kaggle workflow,
+step by step. From there, PyTorch: your engine's ideas,
+industrial-strength — and `loss.backward()` will already be an old
+friend.
