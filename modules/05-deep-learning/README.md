@@ -9,7 +9,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > [Ch2 — Activation functions](ch02-activation-functions.qmd) ·
 > [Ch3 — Layers & networks](ch03-layers-networks.qmd) ·
 > [Ch4 — The forward pass](ch04-forward-pass.qmd) ·
-> [Ch5 — Loss functions](ch05-loss-functions.qmd)
+> [Ch5 — Loss functions](ch05-loss-functions.qmd) ·
+> [Ch6 — Backpropagation, spelled out](ch06-backpropagation.qmd)
 
 ## Prerequisites
 

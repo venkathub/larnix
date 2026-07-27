@@ -1,0 +1,35 @@
+title: "Chapter 6 — quick check"
+id: "m5-ch06-backpropagation"
+questions:
+  - id: why-receipts
+    prompt: "Why must the forward pass keep every intermediate value (the receipts)?"
+    options:
+      - "To re-run the forward pass faster the second time"
+      - "Because each node's local derivative is computed from the values the forward pass saw — sigmoid_slope needs the activation, and a weight's blame needs the input it multiplied"
+      - "Only the final output is needed; the receipts are a debugging convenience"
+    answer: 1
+    explanation: "The backward pass is a chain of incoming-blame × local-derivative products, and every local derivative reads a receipt: out·(1−out) needs out, dL/dw needs the input the weight multiplied. Throw away the receipts and there is nothing to multiply."
+  - id: two-roads
+    prompt: "In the paper network, x₁ influences the loss through both hidden neurons. Its total blame dL/dx₁ is…"
+    options:
+      - "the sum of the blame along each path — paths multiply along their length, and parallel paths add"
+      - "the larger of the two path blames, since the stronger path dominates"
+      - "the product of the two path blames, by the chain rule"
+    answer: 0
+    explanation: "The chain rule multiplies derivatives along a single path; separate paths contribute independently and add. The chapter's two roads even disagreed in sign (−0.023 and +0.044), and the sum +0.0209 matched the finite-difference audit — this add-over-paths is micrograd's += in Chapter 9."
+  - id: the-bill
+    prompt: "For a network with n parameters, what does one training step cost under finite differences versus backprop?"
+    options:
+      - "Both cost about two forward passes; backprop wins only on memory"
+      - "Finite differences need about log(n) passes; backprop needs n"
+      - "Finite differences need about n+1 forward passes; backprop needs about two — a gap the chapter measured at ~540× on 1,210 knobs, and it grows with n"
+    answer: 2
+    explanation: "Wiggling each knob needs its own forward pass, so finite differences scale linearly with parameter count. Backprop settles every blame in one backward sweep costing about one forward pass. At a billion parameters the wiggle bill is a billion passes per step; backprop's is still two."
+  - id: weight-vs-input-transfer
+    prompt: "The blame dL/dz has arrived at a neuron computing z = w·h + b, where h came from an earlier layer. What are the blames for the weight w and for the activation h?"
+    options:
+      - "Both equal dL/dz — everything at one node shares the same blame"
+      - "dL/dw = dL/dz · h and dL/dh = dL/dz · w — each factor's local derivative is the other factor"
+      - "dL/dw = dL/dz · w and dL/dh = dL/dz · h — each keeps its own value"
+    answer: 1
+    explanation: "For a product w·h, the derivative with respect to one factor is the other factor. That is why receipts matter for weights (their blame carries the input's value) and why blame flows upstream through the weights (h's share is scaled by w — including w's sign, as station 4's flip showed)."

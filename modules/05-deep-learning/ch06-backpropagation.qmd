@@ -1,0 +1,549 @@
+---
+title: "Backpropagation, spelled out"
+module: "M5 — Deep Learning Foundations"
+chapter: 6
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch5 — Loss functions"
+  - "M2 Ch8 — The chain rule"
+learning_objectives:
+  - "Walk the blame game end to end: forward with receipts, backward settling blame by the chain rule"
+  - "Implement a neuron's backward pass and verify it against finite differences"
+  - "Derive the softmax + cross-entropy cancellation: the output blame is p − target"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 26
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - scikit-learn
+review_cards:
+  - id: backprop-two-passes
+    q: "What is backpropagation, in one sentence?"
+    a: "The chain rule plus bookkeeping: one forward pass that keeps every intermediate (the receipts), then one backward pass that settles each node's blame by multiplying the incoming blame with the node's local derivative — computing every parameter's gradient in roughly the cost of two passes instead of one pass per parameter."
+  - id: blame-sums-paths
+    q: "A quantity influences the loss through two different paths. What is its total blame?"
+    a: "The SUM of the blame arriving along each path. In the paper network, input x₁ reaches the loss through both hidden neurons, so dL/dx₁ = dL/dz₁·w₁₁ + dL/dz₂·w₂₁ — paths multiply along their length, and parallel paths add."
+  - id: p-minus-target
+    q: "What is the gradient of cross-entropy-with-softmax at the logits?"
+    a: "p − target (the probability vector minus the one-hot truth). The sigmoid/softmax slope cancels against the log's derivative, so the blame at the output IS the error — large exactly when the model is most wrong, which is why CE trains where MSE stalls."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+The loss is one number. The network has 1,210 knobs. Training's whole
+question: **how much of the miss is each knob's fault?**
+
+The naive answer works: nudge knob #1 by a whisker, re-run the network,
+see how the loss moved — that ratio is knob #1's blame. Then knob #2.
+Then… 1,210 forward passes *per training step*. We'll time exactly how
+bad that is.
+
+**Backpropagation** is the accounting trick that gets all 1,210 blames
+for the price of about **two** passes: one forward pass that *keeps
+receipts* (every intermediate value), then one backward pass that
+settles blame from the loss outward — each node computing its local
+slope from its receipts and passing blame upstream, multiplied through.
+It is nothing but M2 Ch8's **chain rule**, promoted from a math fact to
+the engine of deep learning — and today you run it entirely by hand, on
+a network small enough for paper, then verify every single blame
+against finite differences. No step will be skipped. That's the
+chapter's contract.
+
+> You'll need from before: the chain rule (M2 Ch8), `sigmoid_slope`
+> (Ch2 — called by name, as promised), losses (Ch5), and finite
+> differences (the M2 capstone skill).
+
+---
+
+## The paper network
+
+Two inputs, two sigmoid hidden neurons, one sigmoid output, squared
+error against target 1.0 — nine parameters, every value printable:
+
+```{pyodide}
+#| caption: "Forward, keeping every receipt"
+import math
+
+def sig(z):
+    return 1 / (1 + math.exp(-z))
+
+x = [1.0, 0.5]
+target = 1.0
+w1, b1 = [0.5, -0.5], 0.0     # hidden neuron 1
+w2, b2 = [1.0, 1.0], -1.0     # hidden neuron 2
+w3, b3 = [1.0, -1.0], 0.5     # output neuron
+
+z1 = w1[0] * x[0] + w1[1] * x[1] + b1;  h1 = sig(z1)
+z2 = w2[0] * x[0] + w2[1] * x[1] + b2;  h2 = sig(z2)
+z3 = w3[0] * h1 + w3[1] * h2 + b3;      out = sig(z3)
+loss = (out - target) ** 2
+
+print(f"receipts: z1={z1:.4f}  h1={h1:.4f}   z2={z2:.4f}  h2={h2:.4f}")
+print(f"          z3={z3:.4f}  out={out:.4f}   loss={loss:.4f}")
+```
+
+The network says 0.6082; the truth is 1.0; the miss costs 0.1535. Every
+intermediate is now on file — **the receipts matter**, because each
+node's local slope (like `sigmoid_slope(z) = h·(1−h)`) is computed
+*from the values the forward pass saw*. Forget the receipts and the
+backward pass has nothing to work with.
+
+## Backward: settling the blame
+
+Blame starts at the loss and flows against the arrows. At every node,
+one rule: **incoming blame × local derivative = outgoing blame.** Walk
+it, node by node, no skips.
+
+**Station 1 — the loss.** `loss = (out − target)²`, so
+d(loss)/d(out) = 2(out − target):
+
+```{pyodide}
+#| caption: "Blame enters the network"
+dL_dout = 2 * (out - target)
+print(f"dL/dout = 2·(0.6082 − 1) = {dL_dout:.4f}")
+```
+
+**Station 2 — the output activation.** `out = σ(z3)`; the local slope
+is Chapter 2's `sigmoid_slope`, computed from the receipt for `out`:
+
+```{pyodide}
+#| caption: "Through the squash: multiply by the local slope"
+dout_dz3 = out * (1 - out)            # sigmoid_slope, from the receipt
+dL_dz3 = dL_dout * dout_dz3
+print(f"dout/dz3 = {dout_dz3:.4f}   ->   dL/dz3 = {dL_dz3:.4f}")
+```
+
+**Station 3 — the output neuron's own knobs.** `z3 = w3[0]·h1 +
+w3[1]·h2 + b3`. Each weight's local derivative is *the input it
+multiplies* (that's why receipts include h1, h2); the bias's is 1:
+
+```{pyodide}
+#| caption: "The first three blames are settled"
+dL_dw3 = [dL_dz3 * h1, dL_dz3 * h2]
+dL_db3 = dL_dz3
+print(f"dL/dw3 = ({dL_dw3[0]:.4f}, {dL_dw3[1]:.4f})   dL/db3 = {dL_db3:.4f}")
+```
+
+**Station 4 — blame travels to the hidden layer.** `z3` also depends on
+h1 and h2; their local derivatives are the *weights* that multiply
+them:
+
+```{pyodide}
+#| caption: "The hidden neurons receive their share"
+dL_dh1 = dL_dz3 * w3[0]
+dL_dh2 = dL_dz3 * w3[1]
+print(f"dL/dh1 = {dL_dh1:.4f}   dL/dh2 = {dL_dh2:.4f}")
+```
+
+Note the sign flip: w3[1] is −1, so hidden neuron 2 — whose activity
+*lowered* the output — receives *positive* blame: "you should have said
+less." The algebra is doing real reasoning.
+
+**Station 5 — through each hidden squash, to the first-layer knobs.**
+Same two moves again — slope from receipts, then input-times-blame:
+
+```{pyodide}
+#| caption: "The remaining six blames, settled by the same rule"
+dL_dz1 = dL_dh1 * h1 * (1 - h1)
+dL_dz2 = dL_dh2 * h2 * (1 - h2)
+
+dL_dw1 = [dL_dz1 * x[0], dL_dz1 * x[1]];  dL_db1 = dL_dz1
+dL_dw2 = [dL_dz2 * x[0], dL_dz2 * x[1]];  dL_db2 = dL_dz2
+
+print(f"dL/dz1 = {dL_dz1:.5f}   dL/dz2 = {dL_dz2:.5f}")
+print(f"dL/dw1 = ({dL_dw1[0]:.5f}, {dL_dw1[1]:.5f})")
+print(f"dL/dw2 = ({dL_dw2[0]:.5f}, {dL_dw2[1]:.5f})")
+```
+
+All nine knobs blamed. One subtlety remains — the one everyone
+fumbles.
+
+### When blame arrives by two roads
+
+Ask a different question: how much is **input x₁** to blame? x₁ feeds
+*both* hidden neurons, so its influence reaches the loss along **two
+paths** — and the rule is: **paths multiply along their length;
+parallel paths add.**
+
+```{pyodide}
+#| caption: "Two roads to the loss: the blames add"
+dL_dx1 = dL_dz1 * w1[0] + dL_dz2 * w2[0]
+print(f"via neuron 1: {dL_dz1 * w1[0]:+.5f}")
+print(f"via neuron 2: {dL_dz2 * w2[0]:+.5f}")
+print(f"dL/dx1 (sum) = {dL_dx1:+.5f}")
+```
+
+The two roads even disagree in sign — and the *sum* is the truth. In a
+real network every hidden activation feeds many downstream neurons, so
+this add-over-paths step happens everywhere; micrograd's whole `+=` in
+Chapter 9 exists for it.
+
+## Trust nothing: the verification ritual
+
+Hand-derived gradients are exactly the kind of thing to be wrong about
+politely. So we check *all nine* against central finite differences —
+the M2 capstone skill, industrialized by the grader's own `grad_check`:
+
+```{pyodide}
+#| caption: "Every blame, audited by the wiggle test"
+from lib.grader import run_tests, grad_check
+
+def loss_of(params):
+    a, b, c, d, e, f, g, h, i = params
+    hh1 = sig(a * x[0] + b * x[1] + c)
+    hh2 = sig(d * x[0] + e * x[1] + f)
+    return (sig(g * hh1 + h * hh2 + i) - target) ** 2
+
+params = [w1[0], w1[1], b1, w2[0], w2[1], b2, w3[0], w3[1], b3]
+analytic = [dL_dw1[0], dL_dw1[1], dL_db1,
+            dL_dw2[0], dL_dw2[1], dL_db2,
+            dL_dw3[0], dL_dw3[1], dL_db3]
+
+run_tests([
+    grad_check("all nine hand-derived blames", loss_of, params, analytic),
+])
+```
+
+Max relative error around **10⁻¹⁰** — the hand algebra and the wiggle
+test agree to ten digits. Adopt this as a permanent reflex: *derive,
+then check numerically.* It costs one cell and catches the sign errors
+that cost afternoons.
+
+## Why bother? The bill, measured
+
+Finite differences verified nine gradients a moment ago — couldn't
+they *be* the method? For n parameters they need n+1 forward passes per
+step; backprop needs one forward plus one backward (about a forward's
+cost).
+On the Chapter 4 digits network — 1,210 knobs:
+
+```{pyodide}
+#| caption: "The accounting trick's receipt: ~540× on a toy network"
+import time
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+W1n, W2n = net.coefs_
+b1n, b2n = net.intercepts_
+batch = Xte[:32]
+
+def fwd():
+    return np.maximum(0, batch @ W1n + b1n) @ W2n + b2n
+
+t0 = time.perf_counter()
+for _ in range(1211):                   # finite differences: n+1 passes
+    fwd()
+t_fd = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+for _ in range(2):                      # backprop: ~forward + backward
+    fwd()
+t_bp = time.perf_counter() - t0
+
+print(f"finite differences: ~{t_fd * 1000:5.0f} ms per training step")
+print(f"backprop:           ~{t_bp * 1000:5.2f} ms per training step  "
+      f"(~{t_fd / t_bp:.0f}× cheaper)")
+```
+
+~**540×** on 1,210 knobs — and the gap scales with n. A modern
+billion-knob model would need a billion forward passes per step under
+finite differences; backprop still needs two. This is why the chain
+rule, with bookkeeping, runs the world.
+
+## Paying Chapter 5's IOU
+
+Chapter 5 promised the reason cross-entropy's push is `p − target`.
+Three lines, then a numeric audit. For softmax probabilities p and true
+class t, the loss is −log(p_t). Differentiate with respect to logit
+z_k; the softmax derivative and the log's derivative interlock, and
+everything cancels except:
+
+$$\frac{\partial L}{\partial z_k} = p_k - \text{target}_k$$
+
+— probability minus one-hot truth. **The blame at the output *is* the
+error.** No sigmoid slope attached, so it never saturates: most wrong ⇒
+strongest push, exactly Chapter 5's table. Audit it on the real logits:
+
+```{pyodide}
+#| caption: "The cancellation, wiggle-tested on real logits"
+z = np.array([5.2, 8.4, -12.4, -8.1, 5.4, -1.9, 2.2, -7.9, 6.8, -2.8])
+truth = 1
+
+e = np.exp(z - z.max())
+p = e / e.sum()
+onehot = np.zeros(10); onehot[truth] = 1.0
+
+def ce_of_logits(zv):
+    ev = np.exp(zv - zv.max())
+    return -math.log((ev / ev.sum())[truth])
+
+numeric = np.zeros(10)
+for k in range(10):
+    zp, zm = z.copy(), z.copy()
+    zp[k] += 1e-6; zm[k] -= 1e-6
+    numeric[k] = (ce_of_logits(zp) - ce_of_logits(zm)) / 2e-6
+
+print("p − onehot:", np.round(p - onehot, 4))
+print("numeric   :", np.round(numeric, 4))
+print("agree:", np.allclose(p - onehot, numeric, atol=1e-5))
+```
+
+Digit for digit. One honest scope note to close: today was *one
+example, scalar-style*. Real training batches this arithmetic and — the
+bigger burden — **automates the bookkeeping**: remembering every
+receipt, every local slope, every add-over-paths. Doing it by hand once
+was the point; doing it by hand forever is nobody's plan. A ~100-line
+engine that remembers for you is Chapters 8–9: micrograd. You've now
+done manually everything it will do automatically.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Backprop = chain rule + bookkeeping**: forward keeps receipts;
+   backward settles blame — incoming blame × local derivative, node by
+   node, loss to input.
+2. **Parallel paths add**: x₁'s blame arrived by two roads (−0.023 and
+   +0.044) and the sum is the truth — the `+=` at the heart of every
+   autograd engine.
+3. **Derive, then wiggle-test**: all nine hand gradients matched finite
+   differences to ~10⁻¹⁰ via `grad_check` — a permanent reflex, not a
+   one-off.
+4. **The bill**: finite differences cost n+1 passes per step, backprop
+   ~2 — measured at ~540× on 1,210 knobs, and the gap scales to the
+   billion-knob world.
+5. **Softmax+CE blame is `p − target`** — derived, then audited: the
+   output blame *is* the error, slope-free, which is why CE never
+   sleeps.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic** — and Exercise 2 is *additionally* audited by
+finite differences, the chapter's own ritual.
+
+### Exercise 1 — Guided (≈6 min) 🟢
+
+Settle two stations of the paper network's blame yourself. The receipts
+are prepared; fill the two chain-rule products. Replace the `____`s,
+then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_blame
+from lib.grader import run_tests
+import math
+
+def sig(z):
+    return 1 / (1 + math.exp(-z))
+
+x = [1.0, 0.5]; target = 1.0
+w1, b1 = [0.5, -0.5], 0.0
+w2, b2 = [1.0, 1.0], -1.0
+w3, b3 = [1.0, -1.0], 0.5
+z1 = w1[0]*x[0] + w1[1]*x[1] + b1;  h1 = sig(z1)
+z2 = w2[0]*x[0] + w2[1]*x[1] + b2;  h2 = sig(z2)
+z3 = w3[0]*h1 + w3[1]*h2 + b3;      out = sig(z3)
+```
+
+```{pyodide}
+#| exercise: ex_blame
+dL_dout = 2 * (out - target)
+dL_dz3 = ____                 # TODO: through the squash (use the receipt for out)
+dL_dw3_0 = ____               # TODO: the weight's local derivative is the input it multiplies
+
+run_tests([
+    ("blame after the squash", round(dL_dz3, 4), -0.1867),
+    ("the first weight's blame", round(dL_dw3_0, 4), -0.105),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Through the sigmoid: `dL_dz3 = dL_dout * out * (1 - out)` — the local
+slope comes from the receipt. Then `dL_dw3_0 = dL_dz3 * h1`, because
+z3 = w3[0]·h1 + …, and a weight's local derivative is whatever it
+multiplies.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+dL_dout = 2 * (out - target)
+dL_dz3 = dL_dout * out * (1 - out)
+dL_dw3_0 = dL_dz3 * h1
+```
+
+Two stations, one rule both times: incoming blame × local derivative.
+The other seven blames in the chapter fell to the same two moves.
+</details>
+
+### Exercise 2 — Implement (≈9 min) 🟡
+
+Backprop for one whole neuron, from the derived formulas:
+`backward_neuron(x, w, b, target)` — a sigmoid neuron under squared
+error — returns `(dw, db)` where `dw` is the list of weight blames.
+The chain, assembled: `dz = 2·(out − target) · out · (1 − out)`, then
+`dw[i] = dz · x[i]` and `db = dz`.
+
+Your grades come from **two juries**: exact asserts on hand-checkable
+fixtures, and the finite-difference audit via `grad_check` — if your
+algebra is wrong, the wiggle test will say so.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_backward
+from lib.grader import run_tests, grad_check
+import math
+```
+
+```{pyodide}
+#| exercise: ex_backward
+def sig(z):
+    return 1 / (1 + math.exp(-z))
+
+def backward_neuron(x, w, b, target):
+    """(dw, db) for a sigmoid neuron under squared error."""
+    ...  # TODO: forward for out, then dz, then the two blames
+
+dw_a, db_a = backward_neuron([1.0, 2.0], [0.5, -0.25], 0.0, 1.0)
+dw_b, db_b = backward_neuron([2.0, 0.0], [1.0, 1.0], -1.0, 0.0)
+
+def loss_wrt_w(wv):
+    o = sig(wv[0] * 1.0 + wv[1] * 2.0 + 0.0)
+    return (o - 1.0) ** 2
+
+run_tests([
+    ("z=0 neuron: blame is clean", [round(v, 4) for v in dw_a] + [round(db_a, 4)],
+     [-0.25, -0.5, -0.25]),
+    ("second fixture", [round(v, 4) for v in dw_b] + [round(db_b, 4)],
+     [0.5749, 0.0, 0.2875]),
+    grad_check("the wiggle-test jury", loss_wrt_w, [0.5, -0.25], dw_a),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Forward first: `out = sig(sum(xi*wi) + b)`. Then one line per blame:
+`dz = 2 * (out - target) * out * (1 - out)`, `dw = [dz * xi for xi in
+x]`, `db = dz`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def sig(z):
+    return 1 / (1 + math.exp(-z))
+
+def backward_neuron(x, w, b, target):
+    out = sig(sum(xi * wi for xi, wi in zip(x, w)) + b)
+    dz = 2 * (out - target) * out * (1 - out)
+    return [dz * xi for xi in x], dz
+
+dw_a, db_a = backward_neuron([1.0, 2.0], [0.5, -0.25], 0.0, 1.0)
+dw_b, db_b = backward_neuron([2.0, 0.0], [1.0, 1.0], -1.0, 0.0)
+
+def loss_wrt_w(wv):
+    o = sig(wv[0] * 1.0 + wv[1] * 2.0 + 0.0)
+    return (o - 1.0) ** 2
+```
+
+The first fixture is checkable in your head: z = 0, out = 0.5, so dz =
+2·(−0.5)·0.25 = −0.25, and the blames are −0.25·x. The third assert is
+the ritual itself grading you — analytic vs numeric, no trust
+required.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈10 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Grow the paper
+network: add a **second output neuron** (weights `w4 = [0.5, 0.5]`,
+`b4 = -0.25`, its own target 0.0; total loss = the sum of the two
+squared errors). Redo the backward pass — noting that h1 and h2 now
+receive blame from **two** outputs — and verify all your first-layer
+gradients with finite differences. Then answer: which parts of the
+bookkeeping scaled effortlessly, and which got tedious?
+
+**Rubric — a good answer:**
+
+- Forward computes both outputs and the summed loss.
+- dL/dh1 correctly **adds** blame from both output neurons (the
+  parallel-paths rule at layer scale).
+- Finite differences confirm the first-layer gradients (relative error
+  < 1e-6).
+- The reflection lands on the honest observation: the *rules* stayed
+  two moves, but tracking who-feeds-whom and remembering to `+=`
+  across paths is exactly the bookkeeping that begs for automation —
+  micrograd's job description, written by your own experience.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+w4, b4, target2 = [0.5, 0.5], -0.25, 0.0
+z4 = w4[0] * h1 + w4[1] * h2 + b4
+out2 = sig(z4)
+dL_dz4 = 2 * (out2 - target2) * out2 * (1 - out2)
+
+# blame from BOTH outputs, added:
+dL_dh1_total = dL_dz3 * w3[0] + dL_dz4 * w4[0]
+dL_dz1_new = dL_dh1_total * h1 * (1 - h1)
+print(f"dL/dh1 = {dL_dh1_total:.5f} (two outputs' blame, summed)")
+```
+
+The two-move rule never changed; what grew was the ledger — every new
+edge is one more receipt, one more multiply, one more +=. At nine
+parameters it's a pleasant puzzle; at 1,210 it's a job for a machine
+that never forgets. That machine is next.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch06.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The centrepiece is behind you: blame settled by hand across a whole
+network, audited to ten decimal places, the two-pass bill measured at
+540× cheaper than wiggling, and the `p − target` cancellation earned.
+Before automating it, one practical chapter: the downhill walk itself
+has upgrades — **SGD, momentum, Adam** — the same walk from M4 Ch3,
+with smarter steps. Then micrograd.
