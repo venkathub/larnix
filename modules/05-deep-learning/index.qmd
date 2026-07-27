@@ -28,7 +28,7 @@ you will have built every part of it yourself.
 | 2 | [Activation functions](ch02-activation-functions.qmd) | 🟡 | browser |
 | 3 | [Layers & networks](ch03-layers-networks.qmd) | 🟡 | browser |
 | 4 | [The forward pass](ch04-forward-pass.qmd) | 🟡 | browser |
-| 5 | Loss functions | 🟡 | browser |
+| 5 | [Loss functions](ch05-loss-functions.qmd) | 🟡 | browser |
 | 6 | Backpropagation, spelled out | 🟡 | browser |
 | 7 | Gradient-descent variants | 🟡 | browser |
 | 8 | Build micrograd I: the autograd engine | 🟡 | browser |

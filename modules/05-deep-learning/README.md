@@ -8,7 +8,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > Built so far: [Ch1 — From logistic regression to a neuron](ch01-logreg-to-neuron.qmd) ·
 > [Ch2 — Activation functions](ch02-activation-functions.qmd) ·
 > [Ch3 — Layers & networks](ch03-layers-networks.qmd) ·
-> [Ch4 — The forward pass](ch04-forward-pass.qmd)
+> [Ch4 — The forward pass](ch04-forward-pass.qmd) ·
+> [Ch5 — Loss functions](ch05-loss-functions.qmd)
 
 ## Prerequisites
 

@@ -1,0 +1,442 @@
+---
+title: "Loss functions"
+module: "M5 — Deep Learning Foundations"
+chapter: 5
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch4 — The forward pass"
+  - "M4 Ch3 — Cost functions & gradient descent"
+  - "M2 Ch9 — Probability basics"
+learning_objectives:
+  - "Implement stable softmax and explain the properties it guarantees"
+  - "Implement cross-entropy and read it as surprise at the truth"
+  - "Explain, with numbers, why cross-entropy beats MSE for classification"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 23
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: softmax-job
+    q: "What does softmax do, and what is the stability trick?"
+    a: "It converts a vector of logits into an honest probability distribution: exponentiate, then normalize — all positive, sums to 1, order preserved. Since softmax is shift-invariant, subtracting the max logit first changes nothing mathematically and prevents exp() overflow; every real library does it."
+  - id: ce-is-surprise
+    q: "What does cross-entropy loss measure?"
+    a: "Surprise at the truth: −log of the probability the model gave the correct class. Confidently right ≈ 0; hesitant ≈ moderate (−log 0.5 ≈ 0.69); confidently wrong → huge (−log 0.0001 ≈ 9.2). Its batch mean is the single number training descends on."
+  - id: why-ce-not-mse
+    q: "Why is cross-entropy preferred over MSE for classification?"
+    a: "Through a squashed output, MSE's gradient carries the activation's slope — so it VANISHES exactly when the model is most confidently wrong (saturation). Cross-entropy's gradient stays proportional to the error (p − target): most wrong ⇒ strongest correction."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 4 ended on a confession: we can *run* a network, not *train*
+one. Module 4 taught what training needs first — **one differentiable
+number that says how wrong we are** (Ch3's whole point), so the downhill
+walk has a landscape to descend.
+
+For regression that number is an old friend, MSE. But our network emits
+**ten logits** — `[5.2, 8.4, -12.4, …]` — and "how wrong is that, when
+the truth is class 1?" isn't obvious. The answer is a two-step machine,
+best pictured as a **betting shop**. First, **softmax** turns the ten
+judges' shouting into posted odds — an honest probability for each
+class. Then, when the truth comes in, **cross-entropy** fines the shop
+by how *surprised* it was. Confident and right: no fine. Hedged:
+moderate fine. Confident and wrong: ruinous.
+
+By the end you'll compute the exact number Chapter 6's blame game
+differentiates — and meet the single digit that surprises our trained
+network most.
+
+> You'll need from before: logits and `forward()` (Ch4), the
+> cost-landscape idea (M4 Ch3), probabilities (M2 Ch9), saturation (Ch2).
+
+---
+
+## MSE, one paragraph, no re-teaching
+
+For regression outputs — a price, a temperature — the loss is the MSE
+you built in M4 Ch3: mean of squared gaps, smooth landscape, done. It
+returns in Chapter 10's gradient checks. Classification is where new
+machinery is earned.
+
+## Softmax: from shouting to odds
+
+Take the real logits Chapter 4 produced for its first test digit (a
+handwritten 1) and convert:
+
+```{pyodide}
+#| caption: "Ten shouts become ten odds that sum to one"
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+
+digits = load_digits()
+Xtr, Xte, ytr, yte = train_test_split(
+    digits.data, digits.target, test_size=0.25,
+    random_state=42, stratify=digits.target)
+net = MLPClassifier(hidden_layer_sizes=(16,), activation="relu",
+                    random_state=0, max_iter=2000).fit(Xtr, ytr)
+W1, W2 = net.coefs_
+b1, b2 = net.intercepts_
+
+def forward(X):
+    return np.maximum(0, X @ W1 + b1) @ W2 + b2
+
+logits = forward(Xte[[0]])[0]
+
+exps = np.exp(logits)
+probs = exps / exps.sum()
+
+for k in range(10):
+    print(f"class {k}: logit {logits[k]:6.1f}  ->  p = {probs[k]:.3f}")
+print(f"\nsum of probabilities: {probs.sum():.6f}")
+```
+
+The recipe is two lines — **exponentiate, then normalize** — and it
+guarantees three properties by construction: every probability is
+positive (exp never isn't), they sum to 1 (we divided by the total), and
+the order of the logits survives (exp is increasing). Judge 1's `8.4`
+becomes `p = 0.763`; the buried `-12.4` becomes hard zero. Note the
+honest surprise: the network calls this digit a 1, but only at 76% —
+with 16% hedged on "8". Logits hid that; odds reveal it.
+
+## The trap, sprung on purpose
+
+Logits are unbounded. What happens to the recipe at logit 1000?
+
+```{pyodide}
+#| caption: "exp() overflows — and the free fix every library uses"
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    print(f"naive exp([1000, 999]) = {np.exp(np.array([1000.0, 999.0]))}")
+
+def softmax(z):
+    shifted = z - z.max()          # the trick: subtract the max first
+    e = np.exp(shifted)
+    return e / e.sum()
+
+print(f"stable softmax([1000, 999]) = "
+      f"{np.round(softmax(np.array([1000.0, 999.0])), 4)}")
+print(f"same answer on the real logits: "
+      f"{np.allclose(probs, softmax(logits))}")
+```
+
+`inf` — the naive recipe dies. The fix costs nothing: softmax is
+**shift-invariant** (add any constant to every logit and the ratios of
+exps are unchanged — the constant factors out of top and bottom), so
+subtracting the max makes the largest exponent exactly 0, overflow
+impossible, answer *identical* — `True` on our real vector. Every
+serious library does this silently; now you know what it's doing and
+why it's free.
+
+## Cross-entropy: the surprise fine
+
+The truth arrives — this digit is a **1** — and the shop posted
+`p = 0.763` on it. The fine is:
+
+$$\text{CE} = -\log(p_{\text{truth}})$$
+
+```{pyodide}
+#| caption: "The fine schedule: gentle on doubt, ruinous on confident error"
+#| fig-alt: "A curve of negative log p for p from 0.001 to 1. At p equals 1 the loss is 0; at p equals 0.5 it is about 0.69; below p equals 0.1 the curve climbs steeply, passing 4.6 at p equals 0.01 and heading toward infinity as p approaches 0."
+import matplotlib.pyplot as plt
+
+p_axis = np.linspace(0.001, 1, 300)
+fig, ax = plt.subplots(figsize=(4.6, 3))
+ax.plot(p_axis, -np.log(p_axis))
+for pt in (1.0, 0.5, 0.1):
+    ax.plot(pt, -np.log(pt), "o", color="crimson")
+    ax.annotate(f"p={pt}: {-np.log(pt):.2f}", (pt, -np.log(pt)),
+                textcoords="offset points", xytext=(6, 6), fontsize=8)
+ax.set_xlabel("probability given to the truth")
+ax.set_ylabel("loss  −log(p)")
+plt.show()
+
+print(f"our hesitant 1:  -log(0.763) = {-np.log(0.763):.3f}")
+```
+
+Read the fine schedule: right-and-certain pays ~0; a coin-flip hedge
+pays 0.69; and the left wall is the point — giving the truth `p = 0.0001`
+costs 9.2, *unboundedly* worse the more certain the error. The shop is
+fined for miscalibrated confidence, not only for wrong verdicts.
+
+Now grade the whole shop — and find its most embarrassing customer:
+
+```{pyodide}
+#| caption: "Every held-out digit graded — and the one that shocks the network"
+#| fig-alt: "A small grey-scale image of a sloppily handwritten 5 whose lower loop is closed, making it resemble a 9. The caption reports: true label 5, network's prediction 9, probability given to the truth 0.00001, cross-entropy loss 11.61."
+L = forward(Xte)
+P = np.exp(L - L.max(axis=1, keepdims=True))
+P = P / P.sum(axis=1, keepdims=True)
+losses = -np.log(P[np.arange(len(yte)), yte])
+
+print(f"mean loss over 450 digits: {losses.mean():.3f}")
+print(f"median digit's loss: {np.median(losses):.4f}  (supremely confident)")
+
+shock = int(np.argmax(losses))
+fig, ax = plt.subplots(figsize=(2, 2))
+ax.imshow(Xte[shock].reshape(8, 8), cmap="gray_r")
+ax.axis("off")
+plt.show()
+print(f"the shock: true {yte[shock]}, predicted "
+      f"{int(np.argmax(L[shock]))}, p(truth) = "
+      f"{P[shock, yte[shock]]:.5f}, loss = {losses[shock]:.2f}")
+```
+
+Mean loss `0.195`; the median digit costs essentially nothing (the
+network is right and certain on most). And the champion of surprise: a
+handwritten **5** the network calls a **9** with near-total conviction —
+`p(truth) = 0.00001`, loss **11.61** — one digit contributing as much
+loss as hundreds of easy ones. That's cross-entropy's character:
+training pressure concentrates exactly where confidence is most wrong.
+
+## Why not MSE for classification?
+
+You *could* square the gap between the probabilities and a one-hot
+truth. Here's the reason nobody does, at preview depth. For one squashed
+output `p` with target 1, compare the two losses' correction signals as
+`p` gets *more wrong*:
+
+```{pyodide}
+#| caption: "MSE falls asleep exactly when the model is most wrong"
+print("p(truth)   MSE's push        CE's push")
+for p_val in (0.5, 0.1, 0.001):
+    mse_push = (p_val - 1) * p_val * (1 - p_val)   # carries sigma's slope
+    ce_push = p_val - 1                            # error, plain
+    print(f"  {p_val:<8} {mse_push:+.6f}        {ce_push:+.3f}")
+```
+
+Follow the MSE column downward: as the model gets *more* confidently
+wrong, MSE's correction **shrinks** — `−0.125 → −0.001` — because its
+gradient drags the sigmoid's slope along (Chapter 2's saturation,
+striking again: the slope is dead in the tails). Cross-entropy's push is
+`p − 1`, the error itself: most wrong ⇒ strongest correction, no slope
+attached. The full derivation of that clean cancellation is Chapter 6's
+reward; today's takeaway is the behaviour: **CE stays awake where MSE
+falls asleep.** Hence the standard pairing you'll use for the rest of
+the school: softmax + cross-entropy for classification, plain MSE for
+regression.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Softmax = exponentiate, normalize**: logits become honest odds —
+   positive, sum to 1, order preserved. Our shouting judge (8.4) turned
+   out to mean only 76%.
+2. **The max-subtraction trick is free** (shift-invariance) and
+   mandatory (exp(1000) = inf) — every library does it silently.
+3. **Cross-entropy = −log p(truth) = surprise**: ~0 when right-and-
+   certain, 0.69 at a coin flip, ruinous when confidently wrong — our
+   worst digit (a 5 read as a 9) pays 11.61 alone.
+4. **CE beats MSE for classification** because MSE's push carries the
+   activation's dying slope (−0.001 when most wrong) while CE's push is
+   the error itself (−0.999).
+5. The **mean batch loss (0.195)** is the single number training
+   descends — Chapter 6 differentiates it.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: same seeds, same expected outputs, every run.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Post the odds, stably. Replace the `____`, then press **Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_softmax
+from lib.grader import run_tests
+import numpy as np
+
+logits = np.array([5.2, 8.4, -12.4, -8.1, 5.4, -1.9, 2.2, -7.9, 6.8, -2.8])
+```
+
+```{pyodide}
+#| exercise: ex_softmax
+shifted = ____                    # TODO: make the largest logit exactly 0
+e = np.exp(shifted)
+probs = e / e.sum()
+
+run_tests([
+    ("the odds sum to one", round(float(probs.sum()), 6), 1.0),
+    ("judge 1's shout, as a probability", round(float(probs[1]), 3), 0.763),
+    ("the buried judge", round(float(probs[2]), 6), 0.0),
+    ("overflow-proof by construction", float(shifted.max()), 0.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+`shifted = logits - logits.max()` — the shift changes nothing (softmax
+is shift-invariant) and pins the biggest exponent at exp(0) = 1.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+shifted = logits - logits.max()
+e = np.exp(shifted)
+probs = e / e.sum()
+```
+
+The fourth assert is the trick's whole point, checkable at a glance:
+with the max at exactly 0, no exponent can ever exceed 1 — overflow is
+not unlikely, it is impossible.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build both halves of the classification loss from spec:
+
+- `softmax(z)` — stable (max-subtracted), for a 1-D NumPy array.
+- `cross_entropy(probs, true_class)` — `-log` of the probability at the
+  true class's index.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_ce
+from lib.grader import run_tests
+import numpy as np
+```
+
+```{pyodide}
+#| exercise: ex_ce
+def softmax(z):
+    """Stable softmax for a 1-D array."""
+    ...  # TODO
+
+def cross_entropy(probs, true_class):
+    """Surprise at the truth: -log(probs[true_class])."""
+    ...  # TODO
+
+run_tests([
+    ("no opinion, equal odds", softmax(np.array([0.0, 0.0])).tolist(),
+     [0.5, 0.5]),
+    ("survives huge logits", round(float(
+        softmax(np.array([1000.0, 999.0]))[0]), 4), 0.7311),
+    ("ten-way total ignorance costs log(10)", round(
+        cross_entropy(np.full(10, 0.1), 3), 4), 2.3026),
+    ("right and nearly certain costs almost nothing", round(
+        cross_entropy(np.array([0.01, 0.99]), 1), 4), 0.0101),
+    ("confidently wrong is ruinous", round(
+        cross_entropy(np.array([0.999, 0.001]), 1), 4), 6.9078),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`softmax`: shift by `z.max()`, exponentiate, divide by the sum.
+`cross_entropy`: one line — `-np.log(probs[true_class])` (as a float).
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def softmax(z):
+    e = np.exp(z - z.max())
+    return e / e.sum()
+
+def cross_entropy(probs, true_class):
+    return float(-np.log(probs[true_class]))
+```
+
+The fixtures are the fine schedule made exact: total ignorance over ten
+classes costs precisely log(10) ≈ 2.30 — the loss an untrained network
+starts at, a number worth memorizing: Chapter 10's first training curve
+will begin there.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Find the network's
+**five most surprising** held-out digits (largest cross-entropy),
+render each with its true and predicted labels, and answer in one
+sentence: what do these failures have in common?
+
+**Rubric — a good answer:**
+
+- Computes per-digit losses over `Xte` (softmax rows + −log at the
+  truth) and takes the top five by loss (indices 242, 200, 255, 313,
+  331 on this seed).
+- Renders the five 8×8 images with true/pred titles.
+- The sentence observes honestly — these are genuinely sloppy
+  strokes (a closed 5 that mimics a 9, an 8 with a broken loop), i.e.
+  the network's worst surprises are near-legitimate confusions, not
+  random noise — and resists over-generalizing from five examples.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+L = forward(Xte)
+P = np.exp(L - L.max(axis=1, keepdims=True))
+P = P / P.sum(axis=1, keepdims=True)
+losses = -np.log(P[np.arange(len(yte)), yte])
+top5 = np.argsort(losses)[-5:][::-1]
+
+fig, axes = plt.subplots(1, 5, figsize=(7, 1.8))
+for ax, i in zip(axes, top5):
+    ax.imshow(Xte[i].reshape(8, 8), cmap="gray_r")
+    ax.set_title(f"true {yte[i]} / said {int(np.argmax(L[i]))}",
+                 fontsize=7)
+    ax.axis("off")
+plt.show()
+```
+
+All five are calligraphy accidents — loops closed or broken in exactly
+the way another digit writes them. The network's biggest fines come
+from honest ambiguity, which is both reassuring (it isn't failing at
+random) and a preview of why harder datasets need more capacity.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch05.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The scoreboard is installed: softmax posts the odds, cross-entropy
+fines the surprise, and the whole network's performance is now **one
+differentiable number** — 0.195 on our held-out digits, log(10) for a
+know-nothing. Everything is staged for the module's centrepiece. Next
+chapter: **backpropagation, spelled out** — the blame game that asks,
+for every one of the 1,210 knobs, "how much of that 0.195 is *your*
+fault?" — and answers with the chain rule you've owned since M2.

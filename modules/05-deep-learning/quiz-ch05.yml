@@ -1,0 +1,35 @@
+title: "Chapter 5 — quick check"
+id: "m5-ch05-loss-functions"
+questions:
+  - id: softmax-guarantees
+    prompt: "What three properties does softmax guarantee for its output?"
+    options:
+      - "All values positive, they sum to 1, and the logits' order is preserved"
+      - "All values between -1 and 1, centred on zero, sorted descending"
+      - "The largest output is always above 0.5"
+    answer: 0
+    explanation: "Exponentiation makes everything positive and preserves order; dividing by the total makes the sum exactly 1. Nothing forces a majority winner — our network's top class got only 0.763."
+  - id: read-the-fine
+    prompt: "Roughly what does cross-entropy charge when the truth's probability is 1.0, 0.5, and 0.01?"
+    options:
+      - "1.0, 0.5, and 0.01 — the loss equals the probability"
+      - "0, about 0.69, and about 4.6 — zero when certain-and-right, exploding as confident error grows"
+      - "0, 0.5, and 1.0 — capped at one"
+    answer: 1
+    explanation: "−log(1)=0, −log(0.5)≈0.69, −log(0.01)≈4.6, and the wall keeps climbing toward infinity as p→0. The fine schedule punishes miscalibrated confidence, not just wrong verdicts."
+  - id: why-shift-free
+    prompt: "Why is subtracting the max logit before exponentiating 'free'?"
+    options:
+      - "Because logits are always small enough that it rarely matters"
+      - "It isn't free — it changes the probabilities slightly but prevents crashes"
+      - "Softmax is shift-invariant: adding a constant to every logit multiplies top and bottom of the ratio by the same factor, so the result is bit-for-bit identical"
+    answer: 2
+    explanation: "exp(z−c) = exp(z)·exp(−c), and exp(−c) cancels in the normalization. The chapter verified allclose on real logits — same answer, with the largest exponent pinned at exp(0)=1 so overflow is impossible."
+  - id: calibration-transfer
+    prompt: "Two models score identical 96% accuracy, but model A's mean cross-entropy is 0.15 and model B's is 0.60. What does that tell you?"
+    options:
+      - "The measurement is inconsistent — same accuracy must mean same loss"
+      - "A is better calibrated: it assigns higher probability to the truths it gets right and hedges less wrongly — accuracy only counts verdicts, CE grades the confidence behind them"
+      - "B is overfitting the test set"
+    answer: 1
+    explanation: "Accuracy is argmax-only; cross-entropy reads the whole probability. B wins the same bets while posting worse odds — hesitant when right or cocky when wrong. For downstream decisions that consume probabilities, A is the better shop."
