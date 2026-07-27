@@ -25,7 +25,7 @@ you will have built every part of it yourself.
 | # | Chapter | Tier | Compute |
 |---|---------|------|---------|
 | 1 | [From logistic regression to a neuron](ch01-logreg-to-neuron.qmd) | 🟡 | browser |
-| 2 | Activation functions | 🟡 | browser |
+| 2 | [Activation functions](ch02-activation-functions.qmd) | 🟡 | browser |
 | 3 | Layers & networks | 🟡 | browser |
 | 4 | The forward pass | 🟡 | browser |
 | 5 | Loss functions | 🟡 | browser |

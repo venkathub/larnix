@@ -1,0 +1,35 @@
+title: "Chapter 2 — quick check"
+id: "m5-ch02-activation-functions"
+questions:
+  - id: why-collapse
+    prompt: "A network stacks five linear layers with no activations. What is its true expressive power?"
+    options:
+      - "Five times that of one linear layer"
+      - "Exactly one linear layer — the weight matrices multiply out into a single W and b"
+      - "It depends on the width of the hidden layers"
+    answer: 1
+    explanation: "W₅(…(W₁x+b₁)…)+b₅ expands into one weight matrix and one bias, at any depth and width — verified in the chapter to a disagreement of exactly 0.0. Nonlinearities are what make depth real."
+  - id: pick-by-personality
+    prompt: "You are building a binary classifier. Which activation goes where, by the working defaults?"
+    options:
+      - "Sigmoid in hidden layers (probability everywhere), ReLU on the output"
+      - "Tanh everywhere, for zero-centring"
+      - "ReLU in the hidden layers (non-saturating slope), sigmoid on the output (the probability voice)"
+    answer: 2
+    explanation: "Hidden layers want slopes that survive multiplication — ReLU's exact 1 for positive z. The output wants a probability scale for a yes/no answer — the sigmoid's (0,1). Personalities match jobs."
+  - id: saturation-slope
+    prompt: "A sigmoid neuron sits at z = 12. What does 'saturated' mean for it during training?"
+    options:
+      - "Its slope there is nearly zero (~10⁻⁵), so feedback multiplied through it all but vanishes — the neuron is confident and nearly deaf"
+      - "Its output has exceeded 1 and must be clipped"
+      - "It fires on every input, doubling the training signal"
+    answer: 0
+    explanation: "In the flat tails the derivative σ(z)(1−σ(z)) collapses — 0.0000454 at z=10. Since training signals travel through slopes, saturated neurons barely learn: the seed of vanishing gradients."
+  - id: dead-relu-transfer
+    prompt: "Inspecting a trained ReLU network, you find several hidden neurons whose output is exactly 0 for every input in the dataset. What is this?"
+    options:
+      - "Saturated sigmoids — the classic vanishing gradient"
+      - "Dead ReLUs — pushed permanently negative, they output 0 with slope 0 and can no longer learn"
+      - "Perfectly regularized neurons doing their job"
+    answer: 1
+    explanation: "ReLU's price for its perfect positive-side slope: a neuron whose z stays negative everywhere emits 0 forever, and its zero slope means no feedback can revive it. Named now; managed with initialization and learning-rate care later in the module."

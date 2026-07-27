@@ -1,0 +1,436 @@
+---
+title: "Activation functions"
+module: "M5 — Deep Learning Foundations"
+chapter: 2
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch1 — From logistic regression to a neuron"
+  - "M2 Ch6 — Derivatives & sensitivity"
+learning_objectives:
+  - "Prove by construction that stacked linear layers collapse into one"
+  - "Implement relu, tanh, and the sigmoid's slope, and read each activation's personality"
+  - "Show a bent two-layer network solving a task no straight boundary can"
+compute: "browser"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 22
+resources:
+  - ../../lib/grader.py
+pyodide:
+  packages:
+    - numpy
+    - matplotlib
+    - scikit-learn
+review_cards:
+  - id: why-bends-mandatory
+    q: "Why do neural networks need activation functions at all?"
+    a: "A stack of linear layers collapses into a single linear layer (W = W2·W1, b = W2·b1 + b2 — provable by multiplying out), so depth buys nothing. A nonlinearity between layers breaks the collapse and makes depth real."
+  - id: three-personalities
+    q: "Give the personalities of sigmoid, tanh, and ReLU."
+    a: "Sigmoid: outputs (0,1), reads as probability, saturates at both ends (slope ≤ 0.25). Tanh: zero-centred (−1,1), still saturates. ReLU: max(0, z) — cheap, slope exactly 1 for positive z (no saturation there), the modern hidden-layer default; its risk is dead neurons stuck at 0."
+  - id: saturation-meaning
+    q: "What is saturation, and why does it matter for training?"
+    a: "In an activation's flat tails the slope is nearly zero (sigmoid's slope at z=10 is 0.00005). Since training signals travel through these slopes, saturated neurons pass almost nothing back — the seed of the vanishing-gradient problem (Ch6, M6 Ch10)."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=browser >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 1 ended mid-sentence: neurons stack — but stacking *weighted
+sums* of weighted sums collapses back into one weighted sum. That
+sounded like a claim. It's a theorem, and it's short enough to *run*.
+
+Today you'll watch a two-layer "network" get flattened into a single
+layer with identical outputs, understand exactly why depth-without-bends
+is an illusion — and then meet the three bends that fix it: **sigmoid**
+(an old friend), **tanh**, and the unreasonably effective **ReLU**. By
+the end, a bent two-layer network will solve a task you have *proof* no
+straight boundary can touch.
+
+> You'll need from before: the neuron and its z (Ch1), and slopes as
+> sensitivity (M2 Ch6) — activations are about to be judged by their
+> derivatives.
+
+---
+
+## The collapse, executed
+
+Build two linear layers with random weights — 2 inputs → 3 hidden
+values → 1 output — then do the algebra: substitute layer 1 into layer 2
+and out falls a *single* weight matrix and bias.
+
+```{pyodide}
+#| caption: "Two layers in, one layer out — identical to the last bit"
+import numpy as np
+
+rng = np.random.default_rng(0)
+W1, b1 = rng.normal(size=(3, 2)), rng.normal(size=3)
+W2, b2 = rng.normal(size=(1, 3)), rng.normal(size=1)
+
+def two_linear_layers(x):
+    hidden = W1 @ x + b1          # layer 1: three weighted sums
+    return W2 @ hidden + b2       # layer 2: a weighted sum of those
+
+# The algebra: W2·(W1·x + b1) + b2  =  (W2·W1)·x + (W2·b1 + b2)
+W_merged = W2 @ W1
+b_merged = W2 @ b1 + b2
+
+worst = 0.0
+for probe in rng.normal(size=(5, 2)):
+    gap = float(np.abs(two_linear_layers(probe)
+                       - (W_merged @ probe + b_merged)).max())
+    worst = max(worst, gap)
+print(f"largest disagreement across 5 random inputs: {worst}")
+print(f"merged layer:  W = {np.round(W_merged, 3)},  b = {np.round(b_merged, 3)}")
+```
+
+`0.0`. Not small — zero. The three hidden neurons added parameters,
+computation, and *no expressive power whatsoever*: any linear stack, a
+hundred layers deep, is one linear layer in a trench coat. You cannot
+buy depth with linear money. What breaks the collapse is putting
+something **nonlinear** between the layers — a function the algebra
+can't push through. Enter the bends.
+
+## The gallery of bends
+
+```{pyodide}
+#| caption: "Three activations and — the part that decides everything — their slopes"
+#| fig-alt: "Two rows of three plots. Top row: sigmoid rising in an S from 0 to 1; tanh rising in an S from minus 1 to 1 through the origin; ReLU flat at zero for negative inputs then rising as a straight diagonal. Bottom row, each function's slope: sigmoid's slope is a low bump peaking at 0.25 and vanishing in both tails; tanh's slope a taller bump peaking at 1 with vanishing tails; ReLU's slope a step — exactly 0 for negatives, exactly 1 for positives."
+import matplotlib.pyplot as plt
+
+z = np.linspace(-6, 6, 300)
+sigmoid = 1 / (1 + np.exp(-z))
+tanh = np.tanh(z)
+relu = np.maximum(0, z)
+
+slopes = [sigmoid * (1 - sigmoid), 1 - tanh**2, (z > 0).astype(float)]
+names = ["sigmoid", "tanh", "ReLU"]
+
+fig, axes = plt.subplots(2, 3, figsize=(8, 4), sharex=True)
+for j, (f, s, name) in enumerate(zip([sigmoid, tanh, relu], slopes, names)):
+    axes[0, j].plot(z, f); axes[0, j].set_title(name, fontsize=9)
+    axes[1, j].plot(z, s, color="crimson")
+    axes[1, j].set_title(f"{name}'s slope", fontsize=8)
+plt.tight_layout()
+plt.show()
+
+sig = lambda v: 1 / (1 + np.exp(-v))
+print(f"sigmoid slope at z=0:  {float(sig(0) * (1 - sig(0))):.2f} (its max)")
+print(f"sigmoid slope at z=10: {float(sig(10) * (1 - sig(10))):.7f}")
+```
+
+Read each bend's personality — top row for the *shape*, bottom row for
+the *slope*, because training signals travel through slopes (M2 Ch6:
+sensitivity):
+
+- **Sigmoid** — outputs (0,1); the natural "probability" voice, which is
+  why it owns *output* layers for yes/no questions. Its flaw is in the
+  slope plot: a bump peaking at a mere **0.25**, vanishing in both tails.
+  At z=10 the slope is `0.0000454` — a neuron out there is **saturated**:
+  confident, and nearly deaf to feedback.
+- **Tanh** — sigmoid's zero-centred cousin, outputs (−1,1), slope peaks
+  at a healthier 1.0 — and still saturates in the tails.
+- **ReLU** — `max(0, z)`. Embarrassingly simple, dirt cheap, and its
+  slope is exactly **1** for every positive z: no saturation on that
+  whole side, feedback passes through undiminished. That one property
+  made it the modern default for hidden layers. Its known risk, one
+  line: a neuron pushed permanently negative outputs 0 forever with
+  slope 0 — a **dead ReLU** — noted now, managed in Ch15.
+
+Why slopes get top billing: when training arrives in Chapter 6, every
+neuron's feedback will be *multiplied by its activation's slope*.
+Chains of 0.25s shrink to nothing; chains of 1s survive. That sentence
+is the seed of the vanishing-gradient story (M6 Ch10 pays it in full).
+
+## The payoff: a bend beats the impossible task
+
+M4 Ch13 proved a dataset exists that **no straight line can cut** — the
+concentric rings — and cut it there with a kernel. Networks have their
+own answer. First, confirm the impossibility with Chapter 1's neuron:
+
+```{pyodide}
+#| caption: "One neuron vs the rings: a coin flip, as geometry demands"
+from sklearn.datasets import make_circles
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+Xc, yc = make_circles(n_samples=400, factor=0.4, noise=0.08, random_state=0)
+Xtr, Xte, ytr, yte = train_test_split(
+    Xc, yc, test_size=0.25, random_state=42, stratify=yc)
+
+one_neuron = LogisticRegression().fit(Xtr, ytr)
+print(f"single neuron: {accuracy_score(yte, one_neuron.predict(Xte)):.3f}")
+```
+
+`0.500` — exactly the coin flip the geometry guarantees. Now eight
+hidden ReLU neurons feeding one output neuron (sklearn's
+`MLPClassifier`, used here as a preview appliance — from Chapter 3 on we
+build our own):
+
+```{pyodide}
+#| caption: "Eight bent neurons: the impossible task, solved"
+#| fig-alt: "Two side-by-side scatter plots of the rings dataset. Left, titled single neuron 0.500: a straight boundary slices uselessly through both rings. Right, titled 8 ReLU neurons 1.000: the decision region is a polygon tightly wrapping the inner ring — built from straight pieces, curved in effect."
+from sklearn.neural_network import MLPClassifier
+
+net = MLPClassifier(hidden_layer_sizes=(8,), activation="relu",
+                    random_state=0, max_iter=3000).fit(Xtr, ytr)
+print(f"2-layer ReLU network: {accuracy_score(yte, net.predict(Xte)):.3f}")
+
+gx, gy = np.meshgrid(np.linspace(-1.4, 1.4, 200),
+                     np.linspace(-1.4, 1.4, 200))
+grid = np.c_[gx.ravel(), gy.ravel()]
+fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.4))
+for ax, model, title in [(axes[0], one_neuron, "single neuron: 0.500"),
+                         (axes[1], net, "8 ReLU neurons: 1.000")]:
+    zz = model.predict(grid).reshape(gx.shape)
+    ax.contourf(gx, gy, zz, alpha=0.15, cmap="coolwarm")
+    ax.scatter(Xc[:, 0], Xc[:, 1], c=yc, cmap="coolwarm", s=8)
+    ax.set_title(title, fontsize=9)
+plt.show()
+```
+
+`1.000`. Look closely at the winning region's border: it's a **polygon**
+— straight pieces, one per ReLU bend, joined into a shape that wraps the
+ring. Each hidden neuron still draws Chapter 1's straight boundary; the
+bends let the output neuron *combine* eight of them into curvature.
+That's the whole trick of neural networks, visible at toy scale: **many
+straight judges, bent and combined, approximate any shape.**
+
+Where each bend belongs, the working defaults: **hidden layers → ReLU**
+(the survivor slope); **binary output → sigmoid** (the probability
+voice); **regression output → none** (let z be the number). Multi-class
+outputs get softmax — Chapter 5's business.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Linear stacks collapse** — W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂),
+   demonstrated to a disagreement of exactly 0.0. Depth needs
+   nonlinearity to exist.
+2. The gallery: **sigmoid** (0,1; saturates; slope ≤ 0.25), **tanh**
+   (zero-centred; still saturates), **ReLU** (max(0,z); slope exactly 1
+   for z>0; dead-neuron risk).
+3. **Judge activations by their slopes** — training feedback is
+   multiplied through them; saturation (slope ≈ 0.00005 at z=10) is
+   deafness to feedback. Vanishing gradients grow from this seed.
+4. Eight bent neurons solved the ring task a single neuron flips coins
+   on (0.500 → 1.000) — **straight judges, bent and combined, make
+   curves**.
+5. Defaults: ReLU in hidden layers, sigmoid for binary outputs, nothing
+   for regression outputs; softmax awaits Chapter 5.
+:::
+
+---
+
+## Practice
+
+Each exercise is auto-graded by `run_tests`, loaded for you from
+`lib/grader.py`. This is a `browser` chapter, so grading is
+**seeded-deterministic**: fixed values, so your numbers must match
+exactly.
+
+### Exercise 1 — Guided (≈5 min) 🟢
+
+Collapse a two-layer linear stack by hand — small enough to check
+mentally. Replace the `____`s with the merge formulas, then press
+**Run**.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_collapse
+from lib.grader import run_tests
+import numpy as np
+
+W1 = np.array([[1.0, 2.0], [0.0, 1.0]])
+b1 = np.array([1.0, 0.0])
+W2 = np.array([[2.0, -1.0]])
+b2 = np.array([3.0])
+```
+
+```{pyodide}
+#| exercise: ex_collapse
+W_merged = ____          # TODO: the combined weight matrix
+b_merged = ____          # TODO: the combined bias
+
+x = np.array([1.0, 1.0])
+layered = float((W2 @ (W1 @ x + b1) + b2)[0])
+merged = float((W_merged @ x + b_merged)[0])
+
+run_tests([
+    ("merged weights", W_merged.tolist(), [[2.0, 3.0]]),
+    ("merged bias", b_merged.tolist(), [5.0]),
+    ("identical outputs at (1,1)", (layered, merged), (10.0, 10.0)),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Substitute and expand: W₂(W₁x + b₁) + b₂ = (W₂ @ W₁)x + (W₂ @ b₁ + b₂).
+The merge is those two parenthesized expressions.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import numpy as np
+
+W1 = np.array([[1.0, 2.0], [0.0, 1.0]])
+b1 = np.array([1.0, 0.0])
+W2 = np.array([[2.0, -1.0]])
+b2 = np.array([3.0])
+
+W_merged = W2 @ W1
+b_merged = W2 @ b1 + b2
+
+x = np.array([1.0, 1.0])
+layered = float((W2 @ (W1 @ x + b1) + b2)[0])
+merged = float((W_merged @ x + b_merged)[0])
+```
+
+Two layers, four extra parameters, zero extra power: both machines say
+10.0 at (1,1) — and at every other point, forever. This is the theorem
+you now own by hand.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Build the bends — and, crucially, one slope — from their formulas, in
+pure Python:
+
+- `relu(z)` — `max(0, z)`.
+- `tanh_act(z)` — via `math.tanh`.
+- `sigmoid_slope(z)` — the sigmoid's derivative, **σ(z)·(1−σ(z))**: the
+  quantity Chapter 6's backpropagation will multiply feedback through.
+
+```{pyodide}
+#| setup: true
+#| exercise: ex_bends
+from lib.grader import run_tests
+```
+
+```{pyodide}
+#| exercise: ex_bends
+import math
+
+def relu(z):
+    """max(0, z)"""
+    ...  # TODO
+
+def tanh_act(z):
+    """the hyperbolic tangent"""
+    ...  # TODO
+
+def sigmoid_slope(z):
+    """sigma(z) * (1 - sigma(z)) — the sigmoid's derivative"""
+    ...  # TODO
+
+run_tests([
+    ("ReLU kills negatives", relu(-2.5), 0),
+    ("ReLU passes positives untouched", relu(3.0), 3.0),
+    ("tanh is zero-centred", tanh_act(0.0), 0.0),
+    ("tanh at 1", round(tanh_act(1.0), 4), 0.7616),
+    ("the slope's famous maximum", sigmoid_slope(0.0), 0.25),
+    ("saturation: deaf at z=10", round(sigmoid_slope(10.0), 7), 4.54e-05),
+], tol=1e-9)
+```
+
+<details><summary>If you're stuck</summary>
+
+`relu` is `max(0, z)` verbatim. For the slope, compute
+`s = 1 / (1 + math.exp(-z))` once, return `s * (1 - s)`.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+import math
+
+def relu(z):
+    return max(0, z)
+
+def tanh_act(z):
+    return math.tanh(z)
+
+def sigmoid_slope(z):
+    s = 1 / (1 + math.exp(-z))
+    return s * (1 - s)
+```
+
+The last two fixtures are the chapter's warning in numbers: feedback
+through a sigmoid is scaled by at most 0.25 — and by 0.0000454 when the
+neuron is confidently saturated. Keep `sigmoid_slope`; Chapter 6 calls
+it by name.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈7 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Swap the bend: rerun
+the rings network with `activation="tanh"` and `activation="logistic"`
+(same seed, `max_iter=3000`), reporting accuracy **and `n_iter_`** for
+all three. One of them fails outright — explain which, and why, using
+this chapter's slope plots.
+
+**Rubric — a good answer:**
+
+- Runs all three activations with identical settings; tabulates accuracy
+  and iterations.
+- Finds relu and tanh at 1.000 while **logistic stalls at 0.470 after
+  only 15 iterations**.
+- The explanation reaches for the slope: sigmoid feedback is scaled by
+  ≤0.25 per layer and near-zero when saturated, so the optimizer's
+  early-stopping saw no progress and quit — saturation observed in the
+  wild, two chapters before its formal name.
+
+<details><summary>Show one possible answer</summary>
+
+```python
+for act in ("relu", "tanh", "logistic"):
+    m = MLPClassifier(hidden_layer_sizes=(8,), activation=act,
+                      random_state=0, max_iter=3000).fit(Xtr, ytr)
+    print(f"{act:9}: acc {accuracy_score(yte, m.predict(Xte)):.3f}  "
+          f"iterations {m.n_iter_}")
+```
+
+ReLU and tanh both reach 1.000 (in ~1,500–1,700 iterations); logistic
+gives up at 15 with a coin-flip score — its ≤0.25 slope throttled the
+feedback until the trainer concluded nothing was improving. The slope
+plots predicted this failure before we ever ran it.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch02.yml >}}
+
+---
+
+## Where this fits / what's next
+
+The collapse theorem is yours by construction, the three bends by
+personality, and the payoff by demonstration — eight straight judges,
+bent and combined, wrapped a ring no line can cut. And you've already
+seen a bend *fail training* (the stalled sigmoid), a scene this module
+revisits with proper tools. Next: stop treating the hidden layer as an
+appliance — **layers and networks**, what those rows of neurons actually
+hold, and the matrix view that makes them fast.
