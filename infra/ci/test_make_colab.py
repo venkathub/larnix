@@ -217,6 +217,52 @@ class NotebookTests(unittest.TestCase):
         self.assertIn("def grad_check", src)     # incl. the P2-D7 property helpers
         compile(src, "bootstrap", "exec")
 
+    def test_bootstrap_falls_back_when_fetched_grader_is_stale(self):
+        """Regression (found live on Colab, 2026-07-28): the raw-URL fetch can
+        SUCCEED yet return a grader too old to serve the companion's imports
+        (branch skew — main's grader predated the property builders). The
+        bootstrap must validate capability, not fetch success, and fall back
+        to the inlined copy."""
+        from unittest import mock
+
+        src = self._src("grader-bootstrap")
+        stale = b"def run_tests(*a, **k):\n    pass\n"   # no between/decreased/…
+
+        class _Resp:
+            def __enter__(self):
+                return self
+            def __exit__(self, *exc):
+                return False
+            def read(self):
+                return stale
+
+        cwd, argv_path = os.getcwd(), list(sys.path)
+        saved_mods = {k: sys.modules.pop(k) for k in ("lib", "lib.grader")
+                      if k in sys.modules}
+        with tempfile.TemporaryDirectory() as td:
+            try:
+                os.chdir(td)
+                sys.path.insert(0, td)
+                env = {k: v for k, v in os.environ.items() if k != "LARNIX_CI"}
+                with mock.patch.dict(os.environ, env, clear=True), \
+                        mock.patch("urllib.request.urlopen",
+                                   return_value=_Resp()):
+                    import contextlib
+                    import io
+                    ns: dict = {}
+                    with contextlib.redirect_stdout(io.StringIO()) as out:
+                        exec(src, ns)                 # must not raise
+                self.assertIn("inlined copy", out.getvalue())
+                self.assertFalse(ns["_fetched"])       # stale copy rejected
+                written = Path(td, "lib", "grader.py").read_text()
+                self.assertIn("def between", written)  # fallback won
+            finally:
+                os.chdir(cwd)
+                sys.path[:] = argv_path
+                for k in ("lib", "lib.grader"):
+                    sys.modules.pop(k, None)
+                sys.modules.update(saved_mods)
+
     def test_exercise_cell_carries_solution_metadata(self):
         meta = self.by_id["ex-ex_train"]["metadata"]["larnix"]
         self.assertEqual(meta["exercise"], "ex_train")

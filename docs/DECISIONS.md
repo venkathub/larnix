@@ -101,6 +101,13 @@
      substitution contract); the generator fails closed on a missing `LARNIX_CI` parameters
      cell, torch without `torch-floor:`, or a graded exercise without a solution; the
      bootstrap's raw-URL fetch is skipped under `LARNIX_CI` (offline-deterministic CI).
+     *Hardening (2026-07-28, found by the first real D0012 Colab run of M5 Ch11):* the
+     raw-URL fetch targets the publish branch, which can serve a **stale-but-fetchable**
+     grader during branch skew (main's copy predated the P2-D7 property builders →
+     `ImportError: cannot import name 'between'`). The bootstrap now validates
+     **capability, not fetch success** — after fetching it import-checks all five needed
+     names and falls back to the inlined copy if any are missing (27th unit test pins the
+     regression; companion regenerated).
   4. **P2-D9 = A — CPU-scaled companion execution in CI + recorded manual Colab run.** Every
      companion carries a parameters cell honouring `LARNIX_CI` (tiny epochs/subset, ≤ ~90 s per
      notebook); CI installs **exact-pinned CPU-only torch/torchvision** (official
