@@ -34,7 +34,7 @@ you will have built every part of it yourself.
 | 8 | [Build micrograd I: the autograd engine](ch08-micrograd-engine.qmd) | 🟡 | browser |
 | 9 | [Build micrograd II: backward through a graph](ch09-micrograd-backward.qmd) | 🟡 | browser |
 | 10 | [An MLP from scratch](ch10-mlp-from-scratch.qmd) | 🟡 | browser |
-| 11 | GPUs & your first Colab notebook | 🟡 | colab |
+| 11 | [GPUs & your first Colab notebook](ch11-gpus-first-colab.qmd) | 🟡 | colab |
 | 12 | Enter PyTorch: tensors & autograd | 🟡 | colab |
 | 13 | `nn.Module` & the training loop | 🟡 | colab |
 | 14 | Dropout & batch norm | 🟡 | colab |

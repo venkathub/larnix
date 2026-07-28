@@ -1,0 +1,475 @@
+---
+title: "GPUs & your first Colab notebook"
+module: "M5 — Deep Learning Foundations"
+chapter: 11
+difficulty: "intermediate"
+prereqs:
+  - "M5 Ch10 — An MLP from scratch"
+learning_objectives:
+  - "Explain the two levers that beat Ch10's wall: batch the arithmetic into tensors, run it on parallel hardware"
+  - "Run the free Colab GPU workflow end to end: open, attach a GPU, verify it, time it, shut it down"
+  - "Use Kaggle as the named alternate provider, and keep honest run records across sessions"
+compute: "colab"
+torch-floor: "2.2"
+status: "stable"
+last_reviewed: "2026-07-27"
+est_minutes: 30
+pyodide:
+  packages:
+    - numpy
+review_cards:
+  - id: two-levers
+    q: "Chapter 10 measured days per MNIST epoch. What are the two levers that fix it, and which did your browser prove?"
+    a: "Lever 1: change the SHAPE of the computation — batch scalar loops into tensor operations (one matmul call replaced ~200,000 Python steps and ran hundreds of times faster, measured in your own browser, no GPU involved). Lever 2: run those tensor ops on hardware built for them — a GPU's thousands of cores do the matmul's independent multiply-adds at once. The levers multiply."
+  - id: session-hygiene
+    q: "What three facts about free Colab sessions should shape how you work?"
+    a: "(1) Sessions are temporary: idle timeouts and usage caps recycle the VM, and every file on it vanishes — keep the notebook in Drive/GitHub and re-run setup cells. (2) The GPU must be attached deliberately (Runtime → Change runtime type) and verified in code, not assumed. (3) Free quota is shared and finite — close runtimes you're done with, and don't leave a GPU idling."
+  - id: floor-not-pin
+    q: "Why does the companion notebook assert a torch version FLOOR instead of pip-installing an exact pin?"
+    a: "Colab preinstalls torch and rolls its image forward (P2-D11): exact-pinning there means a multi-GB reinstall every session and fights the platform. The guard cell asserts torch >= 2.2 and fails fast with a clear message, while CI's CPU twin exact-pins (2.13.0+cpu) so the automated gate stays reproducible even when Colab moves."
+format:
+  live-html:
+    theme:
+      light:
+        - cosmo
+        - ../../theme/larnix.scss
+      dark:
+        - darkly
+        - ../../theme/larnix-dark.scss
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    include-after-body: ../../theme/_after-body.html
+execute:
+  enabled: false
+---
+
+{{< badge difficulty=intermediate >}} {{< badge compute=colab >}} {{< badge status=stable >}}
+
+## The hook
+
+Chapter 10 ended with a bill you measured yourself: tens of
+milliseconds per tiny digit, a 4,662-node graph at a time, one MNIST
+epoch extrapolating to **days**. The math was certified correct — the
+*form* of the computation was wrong.
+
+Two levers fix it, and they multiply:
+
+1. **Batch the arithmetic.** Stop feeding scalars through Python one
+   at a time; hand whole layers of multiply-adds to one tensor
+   operation. You'll measure this lever *right now, in this page* —
+   no GPU required.
+2. **Run it on parallel hardware.** A matmul is thousands of
+   independent multiply-adds — exactly what a GPU's thousands of
+   cores do at once. You'll measure this lever today too, on a
+   **free** GPU in the cloud.
+
+This is the module's seam. Everything before this page ran in your
+browser at ₹0. Everything after it runs in a free hosted notebook
+with a GPU attached — still ₹0, but a new workflow. This chapter's
+whole job is to walk you across, carefully, once.
+
+## Lever 1, measured in your browser
+
+Chapter 10's hidden layer did 100 samples × 64 inputs × 16 neurons of
+multiply-add, one scalar at a time. Here is that exact arithmetic,
+both ways:
+
+```{pyodide}
+#| caption: "The same multiply-adds: a Python loop vs one matmul"
+import time
+import numpy as np
+
+rng = np.random.default_rng(0)
+A = rng.standard_normal((100, 64))    # a batch of 100 "digits"
+W = rng.standard_normal((64, 16))     # a 64→16 layer's weights
+
+t0 = time.perf_counter()
+slow = [[sum(A[i][k] * W[k][j] for k in range(64)) for j in range(16)]
+        for i in range(100)]
+t_loop = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+fast = A @ W
+t_matmul = time.perf_counter() - t0
+
+print(f"scalar loops : {t_loop * 1000:7.1f} ms")
+print(f"one matmul   : {t_matmul * 1000:7.3f} ms   "
+      f"(~{t_loop / t_matmul:,.0f}× faster)")
+print("identical answers:", np.allclose(slow, fast))
+```
+
+Same numbers, **hundreds of times faster** (the exact ratio varies by
+machine — ours measured in the hundreds; yours will differ, the
+*scale* won't). No new hardware was involved: NumPy hands the whole
+block of arithmetic to optimized, vectorized machine code instead of
+grinding the Python interpreter through ~200,000 tiny steps. This is
+why every framework you'll ever use speaks *tensors*, not scalars —
+your micrograd was pedagogically perfect and computationally naive,
+by design.
+
+Now for lever 2: a matmul's multiply-adds don't depend on each other,
+so they can run *simultaneously*. A CPU offers a handful of powerful
+cores; a GPU offers **thousands** of simple ones plus memory built
+for feeding them — hardware shaped like the workload. Free-tier
+Colab typically hands you an NVIDIA **T4** (2,560 CUDA cores). You
+don't have to take anyone's word for what that buys: the notebook
+below times it, on hardware you'll be holding in about two minutes.
+
+## The workflow: your first cloud GPU, step by step
+
+You need a Google account and nothing else. No card, no install,
+₹0.
+
+1. **Open the notebook** with the button below. It lands in Google
+   Colab — a hosted Jupyter notebook, the same cells-and-outputs UX
+   as every chapter so far.
+2. **Save your own copy** (`File → Save a copy in Drive`), so your
+   edits and exercise answers persist. The original stays read-only.
+3. **Attach a GPU**: `Runtime → Change runtime type → T4 GPU → Save`.
+   This is deliberate, not automatic — a fresh notebook opens
+   CPU-only.
+4. **Run the cells top to bottom** (`Runtime → Run all`, or
+   Shift+Enter one at a time). The guard cell checks your torch
+   version, the device cell *verifies* the GPU is really attached,
+   and the timing cells print your own CPU-vs-GPU numbers.
+5. **When you're done, let go**: `Runtime → Disconnect and delete
+   runtime`. Free GPU quota is shared and finite; an idling notebook
+   burns yours.
+
+{{< colab modules/05-deep-learning/ch11-gpus-first-colab-colab.ipynb >}}
+
+**What "free" honestly means here.** Sessions are temporary: an idle
+notebook disconnects (typically within ~90 minutes), sessions cap out
+after some hours, and heavy use is throttled until quota recovers —
+Google adjusts these limits dynamically and does not publish exact
+numbers. Two working rules cover all of it: **anything worth keeping
+lives in Drive or GitHub, never only on the runtime's disk** (the
+VM's files vanish on recycle), and **long jobs must save progress**
+(checkpoints — Chapter 17's whole topic). The free tier is a
+generous, shared, revocable loan — treat it like one.
+
+### The named alternate: Kaggle
+
+Per our no-single-provider rule, the same notebook runs unchanged on
+**Kaggle** (also free): download the `.ipynb` (`File → Download
+.ipynb`), go to `kaggle.com → Create → Notebook → File → Import
+notebook`, then in the right-hand *Session options* switch the
+accelerator to a GPU. Two differences to expect: Kaggle requires
+phone verification before GPU use, and its free GPU quota is a
+weekly hours budget (~30 h/week, subject to change) rather than
+Colab's dynamic throttle. If a provider changes its free tier out
+from under you, the other is the exit — that's why this paragraph
+exists.
+
+## What's in the notebook
+
+The companion is generated from this page (single-sourced, like every
+Larnix notebook) and runs in CI on its CPU tier automatically — but
+its *point* is the GPU numbers only you can collect. Its cells, in
+order:
+
+```{.python companion="false"}
+# 1. guard cell (generated): asserts torch >= 2.2, prints your version
+# 2. parameters cell: sizes shrink automatically under CI (LARNIX_CI)
+# 3. hello-device: is a GPU really attached?
+# 4. CPU timing: a big matmul, timed
+# 5. GPU timing: the same matmul on the GPU — your first measured speedup
+# 6-8. exercises (two graded + your run record)
+```
+
+The three worked cells, so you know what you're running before you
+run it. First, the honest hello:
+
+```{.python}
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"torch {torch.__version__}   device: {device}")
+if device == "cuda":
+    print("GPU:", torch.cuda.get_device_name(0))
+else:
+    print("CPU-only runtime. Runtime -> Change runtime type -> T4 GPU, "
+          "then Runtime -> Run all again.")
+```
+
+```{.python parameters="true"}
+import os
+
+# CI runs this notebook CPU-scaled (LARNIX_CI=1): smaller matrices, fewer
+# repeats. On Colab you get the full sizes.
+LARNIX_CI = os.environ.get("LARNIX_CI") == "1"
+SIZE = 256 if LARNIX_CI else 2048
+REPEATS = 3 if LARNIX_CI else 10
+print(f"matmul size {SIZE}x{SIZE}, {REPEATS} repeats"
+      + ("  [CI-scaled]" if LARNIX_CI else ""))
+```
+
+The CPU baseline — note the warm-up call before timing, so one-time
+setup cost doesn't pollute the measurement:
+
+```{.python}
+import time
+
+a = torch.randn(SIZE, SIZE)
+b = torch.randn(SIZE, SIZE)
+_ = a @ b                                   # warm-up (untimed)
+
+t0 = time.perf_counter()
+for _ in range(REPEATS):
+    c = a @ b
+cpu_ms = (time.perf_counter() - t0) / REPEATS * 1000
+print(f"CPU : {SIZE}x{SIZE} matmul ~ {cpu_ms:.2f} ms")
+```
+
+And the moment this chapter exists for. One GPU subtlety, taught
+before it bites: GPU calls are **asynchronous** — Python gets control
+back before the GPU finishes — so honest timing must call
+`torch.cuda.synchronize()` (wait for the GPU to actually be done)
+before reading the clock:
+
+```{.python}
+if torch.cuda.is_available():
+    ag, bg = a.to("cuda"), b.to("cuda")     # copy the data to GPU memory
+    _ = ag @ bg                             # warm-up
+    torch.cuda.synchronize()
+
+    t0 = time.perf_counter()
+    for _ in range(REPEATS):
+        cg = ag @ bg
+    torch.cuda.synchronize()                # wait until the GPU is truly done
+    gpu_ms = (time.perf_counter() - t0) / REPEATS * 1000
+
+    print(f"GPU : same matmul ~ {gpu_ms:.2f} ms   "
+          f"({cpu_ms / gpu_ms:.0f}x faster than this VM's CPU)")
+else:
+    print("No GPU attached - this cell is waiting for lever 2.")
+```
+
+Two honesty notes on whatever speedup you measure. First, the
+comparison is against *Colab's modest VM CPU*, not your laptop —
+it's a fair "same machine, two devices" reading, not a universal
+constant. Second, **GPUs are not always faster**: `a.to("cuda")`
+copies data over a bus, and for small tensors the copy costs more
+than the compute saves. Feed a GPU tiny scalar work (your micrograd!)
+and it loses to a CPU; feed it big batched tensors and it wins by
+orders of magnitude. The GPU didn't repeal Chapter 10's lesson — it
+*rewards* it: batch first, then parallelize.
+
+## Key Takeaways
+
+::: {.key-takeaways}
+### Key Takeaways
+
+1. **Two multiplying levers beat Ch10's wall**: batch scalar loops
+   into tensor ops (measured live in your browser: one matmul ran
+   the same arithmetic hundreds of times faster), then run those ops
+   on parallel hardware.
+2. **The workflow is five steps**: open via the button → save a copy
+   to Drive → attach the GPU deliberately → verify it in code
+   (`torch.cuda.is_available()`) → disconnect when done.
+3. **Sessions are loans**: idle timeouts, session caps, dynamic
+   quotas; runtime disk vanishes on recycle. Keep work in
+   Drive/GitHub; long jobs checkpoint (Ch17).
+4. **Honest GPU timing needs `synchronize()`** (calls are async), a
+   warm-up run, and the caveat that small transfers can cost more
+   than they save — GPUs reward batching, they don't replace it.
+5. **Floor, not pin, on Colab** (P2-D11): the guard asserts
+   torch ≥ 2.2 and fails fast; CI's CPU tier exact-pins so the
+   automated gate stays reproducible. Kaggle is the documented
+   alternate (P2-D10) if either free tier shifts.
+:::
+
+---
+
+## Practice
+
+The exercises live **in the companion notebook** — they need real
+hardware to be interesting. Both graded ones are auto-checked by
+`run_tests` (fetched automatically in the notebook's setup cell) and
+are written to pass on CPU *or* GPU, so you can even solve them
+before flipping the runtime — but do collect your GPU numbers.
+
+### Exercise 1 — Guided (≈4 min) 🟢
+
+Two blanks: pick the device honestly, then move a tensor there.
+
+```{.python exercise="ex_device"}
+device = ____        # "cuda" if a GPU is attached, else "cpu" - ask torch
+x = torch.arange(6.0).reshape(2, 3)
+x_dev = ____         # move x to that device
+
+run_tests([
+    ("a real destination", device in ("cuda", "cpu"), True),
+    ("the tensor moved", x_dev.device.type, device),
+    ("values survive the move", x_dev.sum().item(), 15.0),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+The device line is the notebook's own hello cell:
+`"cuda" if torch.cuda.is_available() else "cpu"`. Moving is
+`x.to(device)` — it returns a *new* tensor living there.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+device = "cuda" if torch.cuda.is_available() else "cpu"
+x = torch.arange(6.0).reshape(2, 3)
+x_dev = x.to(device)
+
+run_tests([
+    ("a real destination", device in ("cuda", "cpu"), True),
+    ("the tensor moved", x_dev.device.type, device),
+    ("values survive the move", x_dev.sum().item(), 15.0),
+])
+```
+
+The ask-don't-assume pattern (`is_available()`) is the one you'll
+write at the top of every notebook from here on — code that runs
+correctly on whatever hardware it lands on.
+</details>
+
+### Exercise 2 — Implement (≈8 min) 🟡
+
+Package the chapter's timing discipline into a reusable tool:
+`matmul_seconds(n, device)` — mean seconds for one n×n matmul on
+`device`, with a warm-up first and `synchronize()` in the right
+places. The checks are properties (times are positive and sane; 8×
+the work costs more), so they grade fairly on any hardware.
+
+```{.python exercise="ex_matmul"}
+def matmul_seconds(n, device, repeats=REPEATS):
+    """Mean seconds per n x n matmul on `device` (warm up, sync, then time)."""
+    ...  # TODO: build a and b on the device, warm up, sync, time the loop, sync
+
+t_small = matmul_seconds(SIZE // 2, "cpu")
+t_big = matmul_seconds(SIZE, "cpu")
+print(f"CPU {SIZE // 2}: {t_small * 1000:.3f} ms   "
+      f"CPU {SIZE}: {t_big * 1000:.3f} ms")
+if torch.cuda.is_available():
+    t_gpu = matmul_seconds(SIZE, "cuda")
+    print(f"GPU {SIZE}: {t_gpu * 1000:.3f} ms   ({t_big / t_gpu:.0f}x)")
+
+run_tests([
+    between("smaller matmul time (s)", t_small, 0.0, 30.0),
+    between("bigger matmul time (s)", t_big, 0.0, 60.0),
+    ("8x the work costs more time", t_big > t_small, True),
+])
+```
+
+<details><summary>If you're stuck</summary>
+
+Five steps inside the function: create `a` and `b` with
+`torch.randn(n, n, device=device)`; do one untimed `a @ b`; if
+`device == "cuda"`, `torch.cuda.synchronize()`; time the
+`repeats`-loop; synchronize again *before* reading the end time.
+Return elapsed ÷ repeats.
+</details>
+
+<details><summary>Show solution</summary>
+
+```python
+def matmul_seconds(n, device, repeats=REPEATS):
+    """Mean seconds per n x n matmul on `device` (warm up, sync, then time)."""
+    a = torch.randn(n, n, device=device)
+    b = torch.randn(n, n, device=device)
+    _ = a @ b                                # warm-up (untimed)
+    if device == "cuda":
+        torch.cuda.synchronize()
+    t0 = time.perf_counter()
+    for _ in range(repeats):
+        _ = a @ b
+    if device == "cuda":
+        torch.cuda.synchronize()
+    return (time.perf_counter() - t0) / repeats
+
+t_small = matmul_seconds(SIZE // 2, "cpu")
+t_big = matmul_seconds(SIZE, "cpu")
+print(f"CPU {SIZE // 2}: {t_small * 1000:.3f} ms   "
+      f"CPU {SIZE}: {t_big * 1000:.3f} ms")
+if torch.cuda.is_available():
+    t_gpu = matmul_seconds(SIZE, "cuda")
+    print(f"GPU {SIZE}: {t_gpu * 1000:.3f} ms   ({t_big / t_gpu:.0f}x)")
+
+run_tests([
+    between("smaller matmul time (s)", t_small, 0.0, 30.0),
+    between("bigger matmul time (s)", t_big, 0.0, 60.0),
+    ("8x the work costs more time", t_big > t_small, True),
+])
+```
+
+Both `synchronize()` calls matter: skip the first and setup drifts
+into your timing; skip the second and you clock how fast Python
+*queued* the work, not how fast the GPU did it — flattering and
+wrong. You'll reuse this tool in Chapter 15's tuning experiments.
+</details>
+
+### Exercise 3 — Stretch (optional, ≈15 min) 🔴
+
+Open-ended, **rubric-graded** (not auto-checked). Run this same
+notebook on **both providers** — Colab, then Kaggle (import steps
+above) — and keep your first honest run record. Fill the template
+cell in each session:
+
+```{.python exercise="ex_record"}
+# Your run record - fill in once per session, keep both:
+provider = "..."          # "colab" or "kaggle"
+gpu_name = "..."          # torch.cuda.get_device_name(0), or "none"
+torch_version = torch.__version__
+cpu_big_ms = None         # your CPU timing for SIZE x SIZE
+gpu_big_ms = None         # your GPU timing (None if no GPU)
+print(provider, "|", gpu_name, "|", torch_version, "|",
+      cpu_big_ms, "ms CPU |", gpu_big_ms, "ms GPU")
+```
+
+**Rubric — a good answer:**
+
+- Two completed records (provider, GPU model, torch version, both
+  timings), collected in separate sessions.
+- Notes at least one *operational* difference discovered first-hand
+  (attach flow, quota display, session behaviour — not copied from
+  this page).
+- The speedups are compared with the honest framing: same notebook,
+  different VMs — differences reflect the *hosts*, not your code.
+- Bonus: a one-line answer to "which provider would you reach for
+  first, and what would make you switch?" — the R13 question every
+  practitioner eventually answers from experience.
+
+<details><summary>Example of a completed record (yours will differ)</summary>
+
+| field | session 1 | session 2 |
+|---|---|---|
+| provider | colab | kaggle |
+| gpu_name | Tesla T4 | Tesla P100 *(varies)* |
+| torch_version | *(as printed)* | *(as printed)* |
+| cpu_big_ms | *(yours)* | *(yours)* |
+| gpu_big_ms | *(yours)* | *(yours)* |
+
+The point is the habit, not the specific numbers: every serious
+training effort keeps run records (Chapter 18 industrializes this
+into a harness), and you've now kept your first two.
+</details>
+
+---
+
+## Check yourself
+
+{{< quiz quiz-ch11.yml >}}
+
+---
+
+## Where this fits / what's next
+
+You've crossed the seam: the browser built your understanding, and a
+free GPU will now build your models. The handoff cost one chapter,
+on purpose — from here, every M5 chapter assumes this workflow and
+spends its pages on ideas instead. Next, the reward for building
+micrograd by hand: **PyTorch's tensors and autograd** — your
+engine's exact design, industrial-strength, with `requires_grad`,
+`.backward()` and `.grad` waiting exactly where your intuition says
+they should be. And MNIST — the real 28×28 handwriting your 8×8
+digits have been rehearsing for — finally enters.

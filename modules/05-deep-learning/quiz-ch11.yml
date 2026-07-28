@@ -1,0 +1,35 @@
+title: "Chapter 11 — quick check"
+id: "m5-ch11-gpus-first-colab"
+questions:
+  - id: which-lever
+    prompt: "The in-browser demo ran the same multiply-adds hundreds of times faster with no GPU involved. Which lever was that, and why did it work?"
+    options:
+      - "Lever 2 (parallel hardware): the browser secretly used the machine's GPU"
+      - "Lever 1 (batching): one matmul call hands the whole block of arithmetic to optimized vectorized machine code, instead of grinding ~200,000 tiny steps through the Python interpreter"
+      - "Caching: NumPy remembered the answer from the loop version"
+    answer: 1
+    explanation: "The speedup came purely from changing the computation's SHAPE — scalars to tensors. That's why frameworks speak tensors, and why the GPU lever multiplies on top: parallel hardware accelerates batched work, it doesn't rescue scalar loops."
+  - id: verify-not-assume
+    prompt: "You selected 'T4 GPU' in Colab's runtime menu. Why does the notebook still check torch.cuda.is_available() in code?"
+    options:
+      - "The menu setting only requests a GPU — quota limits, reconnects, or a fresh runtime can leave you CPU-only, and code that assumes silently produces wrong timings or crashes later"
+      - "is_available() switches the GPU on; the menu alone does nothing"
+      - "It's only needed on Kaggle, not Colab"
+    answer: 0
+    explanation: "Ask, don't assume: sessions get recycled, GPU quota runs dry, and 'Run all' on a reconnected runtime may be on different hardware than yesterday. The one-line check makes the notebook honest about where it's actually running — the first line of every hardware-touching notebook from here on."
+  - id: sync-timing
+    prompt: "Timing GPU code without torch.cuda.synchronize() before reading the clock gives numbers that are…"
+    options:
+      - "correct, because Python waits for each GPU call to finish"
+      - "too slow, because synchronize() speeds up the kernels"
+      - "flattering and wrong: GPU calls are asynchronous, so you'd clock how fast Python queued the work, not how fast the GPU actually did it"
+    answer: 2
+    explanation: "The GPU runs on its own timeline; control returns to Python immediately. synchronize() blocks until the queued work is truly done — only then is the elapsed time a measurement rather than a wish. Warm-up first, sync before both clock reads."
+  - id: small-transfer-transfer
+    prompt: "A colleague moves Ch10's scalar micrograd loop to a Colab GPU and reports it got SLOWER. Most likely explanation?"
+    options:
+      - "The free-tier GPU is defective; a paid tier would fix it"
+      - "The workload is thousands of tiny dependent scalar ops — each with launch and transfer overhead the GPU can't amortize. GPUs reward big batched tensor work; they don't repeal the batching lesson"
+      - "torch versions below 3.0 can't accelerate loops"
+    answer: 1
+    explanation: "Copying data over the bus and launching a kernel has fixed costs; for tiny operations those costs dwarf the compute saved. The levers multiply in one order: batch first (lever 1), then parallelize (lever 2). Scalar work on a GPU pays overhead without collecting the reward."

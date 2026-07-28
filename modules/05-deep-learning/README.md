@@ -14,7 +14,8 @@ understanding into idiomatic PyTorch on a free Colab/Kaggle GPU.
 > [Ch7 — Gradient-descent variants](ch07-gradient-descent-variants.qmd) ·
 > [Ch8 — Build micrograd I: the autograd engine](ch08-micrograd-engine.qmd) ·
 > [Ch9 — Build micrograd II: backward through a graph](ch09-micrograd-backward.qmd) ·
-> [Ch10 — An MLP from scratch](ch10-mlp-from-scratch.qmd)
+> [Ch10 — An MLP from scratch](ch10-mlp-from-scratch.qmd) ·
+> [Ch11 — GPUs & your first Colab notebook](ch11-gpus-first-colab.qmd)
 
 ## Prerequisites
 
