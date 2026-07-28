@@ -21,6 +21,9 @@ Authoring convention (documented in infra/ci/README.md):
     ```{.python parameters="true"}      → the LARNIX_CI parameters cell (exactly one; P2-D9)
     ```{.python exercise="ex_id"}       → exercise starter; paired with the next
                                           <details> solution (P1 pattern)
+    ::: {.companion-prose} … :::        → page prose ALSO copied into the companion
+                                          as a markdown cell (single-sourced narration;
+                                          may not contain <details>)
 
   Plain ```python fences (e.g. inside <details> solutions) are prose, never cells.
 
@@ -28,13 +31,17 @@ Fail-closed rules (build errors, never silent):
   - exactly one parameters cell, and it must reference LARNIX_CI;
   - any torch-importing chapter must declare `torch-floor:` front-matter
     (emitted as the P2-D11 version-floor guard cell);
-  - an auto-graded exercise (calls run_tests) must have a <details> solution.
+  - an auto-graded exercise (calls run_tests) must have a <details> solution;
+  - a companion-prose div may not contain a <details> block.
 
-Companion structure: front-matter raw cell → header (badge; generated-do-not-
-edit note) → torch guard → parameters → grader bootstrap (repo raw-URL fetch
-with an inlined fallback embedded at generation time — so a grader change
+Companion structure: header (badge; generated-do-not-edit note; front-matter
+travels in notebook metadata.larnix.frontmatter — Colab shows raw cells as
+"Unsupported Cell Type") → torch guard → parameters → grader bootstrap (repo
+raw-URL fetch, capability-validated, with an inlined fallback embedded at
+generation time — so a grader change
 drifts every companion and the gate forces regeneration) → worked + exercise
-cells. Exercise cells carry `metadata.larnix.solution` so the CI runner
+cells interleaved with companion-prose markdown. Exercise cells carry
+`metadata.larnix.solution` so the CI runner
 (P2-D9) can substitute solutions when executing the scaled notebook; rubric
 exercises (no run_tests) carry `metadata.larnix.rubric` instead and are
 skipped by CI.
@@ -62,7 +69,6 @@ from make_twin import (  # noqa: E402  (single-source the shared plumbing)
     _as_source,
     _code_cell,
     _md_cell,
-    _raw_cell,
     _run_tests_block,
     _solution_code,
     _yaml_list,
@@ -74,6 +80,10 @@ DEFAULT_GLOBS = ["modules/**/*.qmd"]
 # A Pandoc-attribute python fence: ```{.python key="value" ...}
 _FENCE_RE = re.compile(r"^```\{\.python([^}\n]*)\}[ \t]*\n(.*?)\n```", re.S | re.M)
 _ATTR_RE = re.compile(r'([\w-]+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))')
+# A prose div copied into the companion as a markdown cell (2026-07-28, learner
+# feedback: notebooks need the page's explanations, single-sourced). Must NOT
+# contain <details> blocks (those pair with exercises via _DETAILS_RE).
+_PROSE_RE = re.compile(r"^:{3,}\s*\{\.companion-prose\}\s*\n(.*?)\n:{3,}\s*$", re.S | re.M)
 
 _COLAB_BADGE = "https://colab.research.google.com/assets/colab-badge.svg"
 
@@ -127,14 +137,30 @@ def parse_chapter(text: str, source: str = "<chapter>") -> dict:
         events.append((m.start(), "cell", (m.group(1), m.group(2))))
     for m in _DETAILS_RE.finditer(text):
         events.append((m.start(), "sol", m.group(0)))
+    for m in _PROSE_RE.finditer(text):
+        if _DETAILS_RE.search(m.group(1)):
+            raise ValueError(
+                f"{source}: a companion-prose div may not contain <details> "
+                "(solution pairing would break) — keep hints/solutions outside"
+            )
+        events.append((m.start(), "prose", m.group(1)))
     events.sort(key=lambda e: e[0])
 
     parameters: list[str] = []
     cells: list[dict] = []
     worked_n = 0
+    prose_n = 0
     pending: dict | None = None  # an exercise awaiting its <details> solution
 
     for _pos, kind, payload in events:
+        if kind == "prose":
+            prose_n += 1
+            cells.append({
+                "kind": "prose",
+                "id": f"prose-{prose_n}",
+                "markdown": str(payload).strip(),
+            })
+            continue
         if kind == "cell":
             attrs_raw, body = payload  # type: ignore[misc]
             attrs = _parse_attrs(str(attrs_raw))
@@ -326,7 +352,9 @@ def build_notebook(qmd_path: str) -> dict:
     )
 
     cells = [
-        _raw_cell("frontmatter", "\n".join(_frontmatter_lines(fm))),
+        # No raw front-matter cell: Colab renders raw cells as "Unsupported
+        # Cell Type" above the title (learner feedback 2026-07-28). The
+        # front-matter travels in notebook metadata.larnix.frontmatter instead.
         _md_cell("colab-header", _header_md(fm, name, badge_url)),
     ]
     if torch_floor:
@@ -338,7 +366,7 @@ def build_notebook(qmd_path: str) -> dict:
             cells.append(_code_cell(item["id"], item["code"]))
         elif item["kind"] == "exercise":
             cells.append(_exercise_cell(item))
-        elif item["kind"] == "solution":
+        elif item["kind"] in ("solution", "prose"):
             cells.append(_md_cell(item["id"], item["markdown"]))
 
     return {
@@ -350,7 +378,11 @@ def build_notebook(qmd_path: str) -> dict:
                 "language": "python",
                 "name": "python3",
             },
-            "larnix": {"compute": "colab", "generated_by": "infra/ci/make_colab.py"},
+            "larnix": {
+                "compute": "colab",
+                "generated_by": "infra/ci/make_colab.py",
+                "frontmatter": "\n".join(_frontmatter_lines(fm)),
+            },
         },
         "nbformat": 4,
         "nbformat_minor": 5,

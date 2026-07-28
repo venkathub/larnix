@@ -107,7 +107,12 @@
      `ImportError: cannot import name 'between'`). The bootstrap now validates
      **capability, not fetch success** — after fetching it import-checks all five needed
      names and falls back to the inlined copy if any are missing (27th unit test pins the
-     regression; companion regenerated).
+     regression; companion regenerated). *Same-day learner-feedback fixes:* companions no
+     longer carry a raw front-matter cell (Colab renders raw cells as "Unsupported Cell
+     Type"; the YAML moved to notebook `metadata.larnix.frontmatter`), and a new
+     `::: {.companion-prose}` div copies marked page prose into the companion as markdown
+     cells at document position (single-sourced narration — notebooks were code-only and
+     hard to follow standalone; the div may not contain `<details>`, enforced fail-closed).
   4. **P2-D9 = A — CPU-scaled companion execution in CI + recorded manual Colab run.** Every
      companion carries a parameters cell honouring `LARNIX_CI` (tiny epochs/subset, ≤ ~90 s per
      notebook); CI installs **exact-pinned CPU-only torch/torchvision** (official

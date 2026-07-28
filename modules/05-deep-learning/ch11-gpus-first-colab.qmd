@@ -167,32 +167,24 @@ exists.
 
 The companion is generated from this page (single-sourced, like every
 Larnix notebook) and runs in CI on its CPU tier automatically — but
-its *point* is the GPU numbers only you can collect. Its cells, in
-order:
+its *point* is the GPU numbers only you can collect. Its shape, top
+to bottom:
 
 ```{.python companion="false"}
+# (title & badge)
 # 1. guard cell (generated): asserts torch >= 2.2, prints your version
 # 2. parameters cell: sizes shrink automatically under CI (LARNIX_CI)
-# 3. hello-device: is a GPU really attached?
-# 4. CPU timing: a big matmul, timed
-# 5. GPU timing: the same matmul on the GPU — your first measured speedup
-# 6-8. exercises (two graded + your run record)
+# 3. grader bootstrap (generated): fetches the auto-grader
+# 4. hello-device: is a GPU really attached?
+# 5. CPU timing: a big matmul, timed
+# 6. GPU timing: the same matmul on the GPU — your first measured speedup
+# 7-9. exercises (two graded + your run record)
 ```
 
-The three worked cells, so you know what you're running before you
-run it. First, the honest hello:
-
-```{.python}
-import torch
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"torch {torch.__version__}   device: {device}")
-if device == "cuda":
-    print("GPU:", torch.cuda.get_device_name(0))
-else:
-    print("CPU-only runtime. Runtime -> Change runtime type -> T4 GPU, "
-          "then Runtime -> Run all again.")
-```
+The first code cell after the guard is the **parameters cell** — one
+place where every knob lives. When CI executes this notebook on its
+CPU tier, `LARNIX_CI` shrinks the workload; on Colab you get the
+full sizes:
 
 ```{.python parameters="true"}
 import os
@@ -206,8 +198,39 @@ print(f"matmul size {SIZE}x{SIZE}, {REPEATS} repeats"
       + ("  [CI-scaled]" if LARNIX_CI else ""))
 ```
 
-The CPU baseline — note the warm-up call before timing, so one-time
-setup cost doesn't pollute the measurement:
+Then the three worked cells — each narrated below exactly as it is in
+the notebook, so the page and the notebook read as one document.
+
+::: {.companion-prose}
+### Hello, hardware — ask, don't assume
+
+Selecting "T4 GPU" in the runtime menu is a *request*, not a
+guarantee — quota limits, reconnects, or a fresh runtime can leave
+you CPU-only. So the first working cell asks `torch` what is
+actually attached, and tells you how to fix it if the answer is
+"nothing":
+:::
+
+```{.python}
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"torch {torch.__version__}   device: {device}")
+if device == "cuda":
+    print("GPU:", torch.cuda.get_device_name(0))
+else:
+    print("CPU-only runtime. Runtime -> Change runtime type -> T4 GPU, "
+          "then Runtime -> Run all again.")
+```
+
+::: {.companion-prose}
+### The CPU baseline
+
+A big matmul on this VM's CPU. Note the **warm-up call before
+timing** — the first run of anything pays one-time setup costs
+(memory allocation, code paths warming), and an honest measurement
+excludes them:
+:::
 
 ```{.python}
 import time
@@ -223,11 +246,16 @@ cpu_ms = (time.perf_counter() - t0) / REPEATS * 1000
 print(f"CPU : {SIZE}x{SIZE} matmul ~ {cpu_ms:.2f} ms")
 ```
 
-And the moment this chapter exists for. One GPU subtlety, taught
-before it bites: GPU calls are **asynchronous** — Python gets control
-back before the GPU finishes — so honest timing must call
-`torch.cuda.synchronize()` (wait for the GPU to actually be done)
-before reading the clock:
+::: {.companion-prose}
+### The GPU, honestly timed
+
+The moment this chapter exists for — with one GPU subtlety taught
+before it bites: GPU calls are **asynchronous**. Python gets control
+back before the GPU finishes, so honest timing must call
+`torch.cuda.synchronize()` (wait until the queued work is truly
+done) before reading the clock. Skip it and you'd clock how fast
+Python *queued* the work — flattering and wrong:
+:::
 
 ```{.python}
 if torch.cuda.is_available():
@@ -247,6 +275,7 @@ else:
     print("No GPU attached - this cell is waiting for lever 2.")
 ```
 
+::: {.companion-prose}
 Two honesty notes on whatever speedup you measure. First, the
 comparison is against *Colab's modest VM CPU*, not your laptop —
 it's a fair "same machine, two devices" reading, not a universal
@@ -256,6 +285,7 @@ than the compute saves. Feed a GPU tiny scalar work (your micrograd!)
 and it loses to a CPU; feed it big batched tensors and it wins by
 orders of magnitude. The GPU didn't repeal Chapter 10's lesson — it
 *rewards* it: batch first, then parallelize.
+:::
 
 ## Key Takeaways
 
@@ -286,14 +316,24 @@ orders of magnitude. The GPU didn't repeal Chapter 10's lesson — it
 ## Practice
 
 The exercises live **in the companion notebook** — they need real
-hardware to be interesting. Both graded ones are auto-checked by
-`run_tests` (fetched automatically in the notebook's setup cell) and
-are written to pass on CPU *or* GPU, so you can even solve them
-before flipping the runtime — but do collect your GPU numbers.
+hardware to be interesting. They are shown below exactly as they
+appear there, and are written to pass on CPU *or* GPU, so you can
+even solve them before flipping the runtime — but do collect your
+GPU numbers.
+
+::: {.companion-prose}
+## Practice
+
+Both graded exercises are auto-checked by `run_tests` (set up by the
+grader cell earlier) and are written to pass on CPU *or* GPU.
+Replace the blanks, run the cell, and the checks tell you how you
+did — peek at the solution under each exercise only after an honest
+attempt.
 
 ### Exercise 1 — Guided (≈4 min) 🟢
 
 Two blanks: pick the device honestly, then move a tensor there.
+:::
 
 ```{.python exercise="ex_device"}
 device = ____        # "cuda" if a GPU is attached, else "cpu" - ask torch
@@ -333,6 +373,7 @@ write at the top of every notebook from here on — code that runs
 correctly on whatever hardware it lands on.
 </details>
 
+::: {.companion-prose}
 ### Exercise 2 — Implement (≈8 min) 🟡
 
 Package the chapter's timing discipline into a reusable tool:
@@ -340,6 +381,7 @@ Package the chapter's timing discipline into a reusable tool:
 `device`, with a warm-up first and `synchronize()` in the right
 places. The checks are properties (times are positive and sane; 8×
 the work costs more), so they grade fairly on any hardware.
+:::
 
 ```{.python exercise="ex_matmul"}
 def matmul_seconds(n, device, repeats=REPEATS):
@@ -408,12 +450,16 @@ into your timing; skip the second and you clock how fast Python
 wrong. You'll reuse this tool in Chapter 15's tuning experiments.
 </details>
 
+::: {.companion-prose}
 ### Exercise 3 — Stretch (optional, ≈15 min) 🔴
 
 Open-ended, **rubric-graded** (not auto-checked). Run this same
-notebook on **both providers** — Colab, then Kaggle (import steps
-above) — and keep your first honest run record. Fill the template
-cell in each session:
+notebook on **both providers** — Colab, then Kaggle (File → Download
+.ipynb, then kaggle.com → Create → Notebook → File → Import
+notebook, and switch the accelerator in Session options). Keep your
+first honest run record: fill the template cell once per session,
+and keep both records.
+:::
 
 ```{.python exercise="ex_record"}
 # Your run record - fill in once per session, keep both:
@@ -453,6 +499,15 @@ The point is the habit, not the specific numbers: every serious
 training effort keeps run records (Chapter 18 industrializes this
 into a harness), and you've now kept your first two.
 </details>
+
+::: {.companion-prose}
+### Done — let go of the GPU
+
+`Runtime → Disconnect and delete runtime`. Free quota is shared;
+an idling notebook burns yours. Head back to the chapter page for
+the quiz and what's next — Chapter 12 turns this hardware into a
+PyTorch training ground.
+:::
 
 ---
 

@@ -49,6 +49,12 @@ N_SAMPLES = 2000 if CI else None
 
 ## Worked
 
+::: {.companion-prose}
+### Warm up the tensors
+
+One line of narration that should travel into the notebook.
+:::
+
 ```{.python}
 import torch
 x = torch.ones(3)
@@ -181,11 +187,36 @@ class NotebookTests(unittest.TestCase):
     def _src(self, cell_id):
         return "".join(self.by_id[cell_id]["source"])
 
-    def test_frontmatter_raw_cell_marks_compute_colab(self):
-        cell = self.by_id["frontmatter"]
-        self.assertEqual(cell["cell_type"], "raw")
-        self.assertIn('compute: "colab"', self._src("frontmatter"))
-        self.assertIn("(Colab companion)", self._src("frontmatter"))
+    def test_frontmatter_travels_in_notebook_metadata_not_a_raw_cell(self):
+        # Colab renders raw cells as "Unsupported Cell Type" above the title
+        # (learner feedback 2026-07-28) — companions carry no raw cell at all.
+        self.assertNotIn("frontmatter", self.by_id)
+        self.assertFalse([c for c in self.nb["cells"]
+                          if c["cell_type"] == "raw"])
+        fm_text = self.nb["metadata"]["larnix"]["frontmatter"]
+        self.assertIn('compute: "colab"', fm_text)
+        self.assertIn("(Colab companion)", fm_text)
+
+    def test_companion_prose_div_becomes_markdown_cell_in_position(self):
+        cell = self.by_id["prose-1"]
+        self.assertEqual(cell["cell_type"], "markdown")
+        src = self._src("prose-1")
+        self.assertIn("### Warm up the tensors", src)
+        self.assertIn("travel into the notebook", src)
+        ids = [c["id"] for c in self.nb["cells"]]
+        # Document position: after the generated preamble, before the worked cell.
+        self.assertLess(ids.index("grader-bootstrap"), ids.index("prose-1"))
+        self.assertLess(ids.index("prose-1"), ids.index("worked-1"))
+
+    def test_companion_prose_may_not_contain_details(self):
+        text = SAMPLE_QMD.replace(
+            "### Warm up the tensors",
+            "<details><summary>hidden</summary>x</details>\n### Warm up the tensors",
+        )
+        with tempfile.TemporaryDirectory() as td:
+            with self.assertRaises(ValueError) as cm:
+                make_colab.build_notebook(write_chapter(td, text))
+        self.assertIn("companion-prose", str(cm.exception))
 
     def test_notebook_metadata_marks_larnix_colab(self):
         self.assertEqual(self.nb["metadata"]["larnix"]["compute"], "colab")
