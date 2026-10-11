@@ -6,6 +6,8 @@ Phase 1 defines the learning plan; application development and lesson implementa
 
 Start with the [curriculum specification](docs/curriculum/README.md), then browse the [42 module plans](docs/curriculum/INDEX.md), [primary source register](docs/curriculum/SOURCES.md), and [coverage audit](docs/curriculum/AUDIT.md).
 
+The [teaching design](docs/curriculum/TEACHING_DESIGN.md) specifies visual explanations, interactive experiments, worked examples and inline checks, informed by the user's linearalgebra.info reference.
+
 The AI Engineering Playbook supplied by the user is a background reference only. This repository does not fork it or import its code, prose, questions, diagrams, or interface.
 
 ## Maintaining the plan

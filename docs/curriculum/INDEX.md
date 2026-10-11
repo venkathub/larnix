@@ -2,7 +2,7 @@
 
 168 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
 
-[Overview](README.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)
+[Overview](README.md) · [Teaching design](TEACHING_DESIGN.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)
 
 The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. All content below is planned, not implemented.
 

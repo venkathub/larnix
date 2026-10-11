@@ -11092,5 +11092,29 @@
       "track": "T7",
       "status": "planned"
     }
-  ]
+  ],
+  "teaching_design": {
+    "specification": "TEACHING_DESIGN.md",
+    "reference_url": "https://linearalgebra.info/",
+    "applies_to": "all lessons",
+    "status": "adopted requirement; interactive lessons not yet implemented",
+    "sequence": [
+      "concrete problem",
+      "prediction",
+      "interactive exploration",
+      "mechanism explanation",
+      "worked example",
+      "understanding check",
+      "failure investigation",
+      "production and interview application"
+    ],
+    "minimum_interactive_explanations_per_lesson": 1,
+    "minimum_inline_checks_per_lesson": 2,
+    "required_alternatives": [
+      "keyboard controls",
+      "reduced motion",
+      "static explanation"
+    ],
+    "originality": "Original Larnix prose, examples, visuals, code and branding; reference is teaching and visual direction only."
+  }
 }

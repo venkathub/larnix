@@ -162,10 +162,10 @@ def render(curriculum, source_data):
         mid = module["id"]
         prereqs = ", ".join(lesson_link(p, True) for p in module["prerequisites"]) or "Entry module; see the readiness guide in the curriculum overview."
         lines = [f"# {mid} — {module['title']}", "",
-                 "[All modules](../INDEX.md) · [Learning path](../LEARNING_PATH.md) · [Source register](../SOURCES.md)", "",
+                 "[All modules](../INDEX.md) · [Learning path](../LEARNING_PATH.md) · [Source register](../SOURCES.md) · [Teaching design](../TEACHING_DESIGN.md)", "",
                  f"**Status:** planned · **Depth:** {module['depth']} · **Track:** {module['track']}", "",
                  f"**Entry prerequisites:** {prereqs}", "",
-                 "Four lesson specifications follow. Complete the evidence package for each exercise; live deployment is not required. Later lessons may introduce an additional cross-module prerequisite.", "",
+                 "Four lesson specifications follow. Each lesson will use a concrete problem, prediction, interactive explanation, worked example, inline checks and failure investigation before production and interview practice. Follow the teaching design for accessibility and original visual treatment. These interactions are planned, not implemented. Complete the evidence package for each exercise; live deployment is not required. Later lessons may introduce an additional cross-module prerequisite.", "",
                  "## Module outcomes", ""]
         lines += [f"- {l['outcome']}" for l in module["lessons"]]
         for lesson in module["lessons"]:
@@ -195,7 +195,7 @@ def render(curriculum, source_data):
 
     lines = ["# Larnix — 42-module lesson index", "",
              "168 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.", "",
-             "[Overview](README.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)", "",
+             "[Overview](README.md) · [Teaching design](TEACHING_DESIGN.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)", "",
              "The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. All content below is planned, not implemented."]
     for track in curriculum["tracks"]:
         lines += ["", f"## {track['id']} — {track['title']}", ""]

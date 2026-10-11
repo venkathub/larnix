@@ -4,6 +4,8 @@ The approved 42-module scope is now broken into **168 original lessons**. Every 
 
 Start with the [lesson index](INDEX.md). Use the [learning path](LEARNING_PATH.md) for prerequisite order, the [coverage map](COVERAGE.md) to inspect scope, the [source register](SOURCES.md) for research, and the [validation report](AUDIT.md) for structural checks.
 
+The [visual and interactive teaching specification](TEACHING_DESIGN.md) governs how all 168 lessons should explain these concepts. It adopts the user's linearalgebra.info reference as a direction for visual explanation, manipulation, worked examples and inline checks, using original Larnix content and design.
+
 ## What Phase 1 delivers
 
 | Deliverable | Contents |
@@ -39,12 +41,14 @@ M34 (preference and reinforcement learning) and M36 (distributed training) are a
 Every completed lesson should contain the following material, based on its Phase 1 specification:
 
 1. **Problem and outcome:** a concrete situation and a result the learner can demonstrate.
-2. **Explanation:** the mechanism, a worked example, assumptions and tradeoffs.
-3. **Implementation or analysis:** an original, reproducible artifact with explicit inputs and environment requirements.
-4. **Failure investigation:** at least one misleading result, invalid input, resource limit or recovery scenario.
-5. **Interview practice:** the planned question, a reasoned answer and a counterexample or limitation.
-6. **Production review:** acceptance results, baseline comparison, resource costs, boundaries and operating implications.
-7. **Attribution:** source links, version notes and any reused-asset provenance.
+2. **Prediction and interaction:** a learner prediction followed by a manipulable visual, simulator, trace or decision exercise with visible inputs and outputs.
+3. **Explanation:** the mechanism, a worked example, assumptions and tradeoffs, tied to the state the learner just changed.
+4. **Checks:** at least two inline checks per lesson, including prediction and transfer/diagnosis, with explanatory feedback.
+5. **Implementation or analysis:** an original, reproducible artifact with explicit inputs and environment requirements.
+6. **Failure investigation:** at least one misleading result, invalid input, resource limit or recovery scenario.
+7. **Interview practice:** the planned question, a reasoned answer and a counterexample or limitation.
+8. **Production review:** acceptance results, baseline comparison, resource costs, boundaries and operating implications.
+9. **Attribution:** source links, version notes and any reused-asset provenance.
 
 The four lessons in a module progress from mechanism to engineering decisions and operation. Lessons are not required to use a single framework or provider. Implement a simple baseline before introducing a framework where it improves the learning objective.
 
