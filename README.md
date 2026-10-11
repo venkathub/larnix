@@ -2,7 +2,7 @@
 
 An original AI Engineering curriculum for interview preparation and production practice.
 
-Phase 1 defines the learning plan; application development and lesson implementation have not started.
+Phase 1 defines the learning plan. One original interactive sample, [M03-L01 — Reason with vectors](samples/vector-similarity/index.html), is now implemented for review. See the [sample guide](samples/vector-similarity/README.md) for local preview and checks; the full learning platform remains planned.
 
 Start with the [curriculum specification](docs/curriculum/README.md), then browse the [42 module plans](docs/curriculum/INDEX.md), [primary source register](docs/curriculum/SOURCES.md), and [coverage audit](docs/curriculum/AUDIT.md).
 

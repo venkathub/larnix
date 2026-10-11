@@ -6,6 +6,8 @@ Start with the [lesson index](INDEX.md). Use the [learning path](LEARNING_PATH.m
 
 The [visual and interactive teaching specification](TEACHING_DESIGN.md) governs how all 168 lessons should explain these concepts. It adopts the user's linearalgebra.info reference as a direction for visual explanation, manipulation, worked examples and inline checks, using original Larnix content and design.
 
+A subsequent implementation sample is available: [M03-L01 — Reason with vectors](../../samples/vector-similarity/index.html), with a [preview and verification guide](../../samples/vector-similarity/README.md). The Phase 1 records below remain the planning baseline; this sample has not been marked as a released curriculum lesson.
+
 ## What Phase 1 delivers
 
 | Deliverable | Contents |
