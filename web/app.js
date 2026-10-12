@@ -18,6 +18,15 @@
  function list(items){const ul=e('ul');items.forEach(item=>ul.append(e('li',item)));return ul;}
  function notice(){if(!P.isPersistent())main.append(e('p','Browser storage is unavailable. Progress will last only while this page remains open.','storage-notice'));}
  function bookmark(id){const b=e('button',undefined,'bookmark');b.type='button';const update=()=>{const yes=P.load().lessons[id]?.bookmarked===true;b.textContent=yes?'Bookmarked ✓':'Bookmark lesson';b.setAttribute('aria-pressed',String(yes));};update();b.addEventListener('click',()=>{P.update(id,{bookmarked:!P.load().lessons[id]?.bookmarked});update();notice();});return b;}
+ function home(){
+  main.append(document.getElementById('home-template').content.cloneNode(true));
+  const last=P.load().lastLesson;
+  main.querySelector('.home-availability').textContent=`${Object.keys(D.previews).length} lessons available · ${D.modules.length}-module roadmap`;
+  if(last&&D.previews[last]){
+   const resume=main.querySelector('.home-resume');resume.hidden=false;
+   resume.append(e('span','Pick up your notebook'),link('Continue: '+D.previews[last].title+' →',previewURL(last)));
+  }
+ }
  function catalog(params){
   const stageNames=['Foundations','Models & safety','Connect knowledge','RAG & agents','Operate systems','Adapt & optimize','Design & specialize'];
   const stageNotes=['Build the mathematical, data and software foundations.','Evaluate and secure systems before working with language models.','Shape outputs, supply context and retrieve useful evidence.','Turn knowledge into grounded answers and controlled actions.','Connect agents, observe failures and ship reliable systems.','Choose, govern, adapt and serve models efficiently.','Work across modalities and defend engineering decisions.'];
@@ -113,6 +122,6 @@
   const reset=e('section',undefined,'reset-area');reset.append(e('p','Clear saved readings, checks, exercise flags, bookmarks and theme on this browser. This cannot be undone.'));const first=e('button','Clear local progress'),confirm=e('button','Confirm clear'),cancel=e('button','Keep my progress');confirm.hidden=true;cancel.hidden=true;first.addEventListener('click',()=>{first.hidden=true;confirm.hidden=false;cancel.hidden=false;confirm.focus();});cancel.addEventListener('click',()=>{first.hidden=false;confirm.hidden=true;cancel.hidden=true;first.focus();});confirm.addEventListener('click',()=>{P.reset();theme();render();});reset.append(first,confirm,cancel);main.append(reset);
  }
  function missing(){main.append(intro('Page not found','This lesson is not in the catalogue.','Use the curriculum to find a valid module or lesson.'),link('Back to curriculum','#/catalog','primary-action'));}
- function render(){const [path,query='']=(location.hash.slice(1)||'/catalog').split('?'),parts=path.split('/').filter(Boolean),params=new URLSearchParams(query);main.replaceChildren();if(parts[0]==='catalog')catalog(params);else if(parts[0]==='module')showModule(parts[1]);else if(parts[0]==='lesson')showLesson(parts[1],['interview','production'].includes(params.get('view'))?params.get('view'):'learn');else if(parts[0]==='progress')progressPage();else missing();document.querySelectorAll('.app-header nav a').forEach(a=>{if(a.hash===(parts[0]==='progress'?'#/progress':'#/catalog'))a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});notice();document.title=(parts[0]==='lesson'&&lessons.has(parts[1])?lessons.get(parts[1]).title+' · ':'')+'Larnix · AI engineering';window.scrollTo(0,0);}
+ function render(){const [path,query='']=(location.hash.slice(1)||'/').split('?'),parts=path.split('/').filter(Boolean),params=new URLSearchParams(query),isHome=!parts.length||parts[0]==='home';main.replaceChildren();main.classList.toggle('home-page',isHome);if(isHome)home();else if(parts[0]==='catalog')catalog(params);else if(parts[0]==='module')showModule(parts[1]);else if(parts[0]==='lesson')showLesson(parts[1],['interview','production'].includes(params.get('view'))?params.get('view'):'learn');else if(parts[0]==='progress')progressPage();else missing();const current=isHome?'#/':parts[0]==='progress'?'#/progress':['catalog','module','lesson'].includes(parts[0])?'#/catalog':null;document.querySelectorAll('.app-header nav a').forEach(a=>{if(a.hash===current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});notice();document.title=(isHome?'Learn one idea at a time · ':parts[0]==='lesson'&&lessons.has(parts[1])?lessons.get(parts[1]).title+' · ':'')+'Larnix · AI engineering';window.scrollTo(0,0);}
  window.addEventListener('hashchange',()=>{render();main.focus({preventScroll:true});});window.addEventListener('storage',()=>{theme();render();});theme();render();
 })();
