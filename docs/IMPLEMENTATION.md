@@ -5,6 +5,7 @@
 Implemented through the rebuild branch and published from `main`. The reference repository has not been forked or imported.
 
 - Catalogue of all 42 modules and 168 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
+- The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.
 - Search across titles, topics and outcomes; Interview and Production views additionally search their respective question/exercise fields.
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
 - The separate preview showcase is removed in the catalogue draft. Available lessons open directly from their modules; planned lessons open their blueprints. On mobile the roadmap starts collapsed and closes after a stage is selected.

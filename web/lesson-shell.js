@@ -21,6 +21,6 @@
  if(order[position+1]){const next=order[position+1];nav.append(a(next.id+' · '+next.title+suffix(next)+' →',destination(next)));}tools.append(nav);
  const completion=document.querySelector('.completion');
  if(completion){const continuation=nav.cloneNode(true);continuation.setAttribute('aria-label','Continue learning');completion.after(continuation);}
- const brand=document.querySelector('.topbar .brand');brand.href=root+'#/catalog';brand.setAttribute('aria-label','Larnix curriculum');
+ const brand=document.querySelector('.topbar .brand');brand.href=root;brand.setAttribute('aria-label','Larnix home');
  // Fixed curriculum navigation stays outside the lesson's own section anchors.
 })();

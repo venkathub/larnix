@@ -27,7 +27,7 @@ def build():
     (OUT / '.nojekyll').touch()
     assets = OUT / 'assets'
     assets.mkdir(exist_ok=True)
-    for name in ['app.js', 'app.css', 'roadmap.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:
+    for name in ['app.js', 'app.css', 'home.css', 'roadmap.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:
         shutil.copy2(ROOT / 'web' / name, assets / name)
     shutil.copy2(ROOT / 'samples/shared/lesson-ui.js', assets / 'lesson-ui.js')
     for name in ['quick-lesson.css', 'notebook.css', 'notebook.js']:

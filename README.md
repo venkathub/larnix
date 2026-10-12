@@ -2,7 +2,7 @@
 
 An original AI Engineering curriculum for interview preparation and production practice.
 
-**[Open the classroom](https://venkathub.github.io/larnix/)** · [Start M01](https://venkathub.github.io/larnix/lessons/M01-L01/)
+**[Open the classroom](https://venkathub.github.io/larnix/)** · [Curriculum](https://venkathub.github.io/larnix/#/catalog) · [Start M01](https://venkathub.github.io/larnix/lessons/M01-L01/)
 
 The 42-module plan now has **26 authored interactive previews**: all 24 lessons in **M01–M06**, plus RAG and agent recovery.
 
