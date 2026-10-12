@@ -1,0 +1,193 @@
+/* Larnix field notebook: shared by the platform and every authored lesson. */
+@font-face{font-family:Caveat;src:url('fonts/Caveat.ttf') format('truetype');font-weight:400 700;font-style:normal;font-display:swap}
+:root,:root[data-theme=dark]{--bg:#202822;--surface:#29332b;--surface-2:#344137;--text:#f4efdd;--muted:#bdc6b6;--line:#566558;--accent:#b9dcad;--accent-ink:#203024;--a:#b9dcad;--query:#d1c1ef;--b:#edc18e;--danger:#ffb6ab;--paper-grid:#bdc6b612;--paper-margin:#edc18e28;--highlight:#d9bd5030;--shadow:#0a150f55;--hand:Caveat,'Segoe Print',cursive;--serif:var(--hand);--notebook-radius:5px 12px 7px 15px}
+:root[data-theme=light]{--bg:#f5f0e3;--surface:#fffcf3;--surface-2:#ebe9d9;--text:#293a32;--muted:#596454;--line:#a8af99;--accent:#376344;--accent-ink:#fffdf5;--a:#376344;--query:#66518e;--b:#855122;--danger:#a52e26;--paper-grid:#61745919;--paper-margin:#af6a4d30;--highlight:#efd67b80;--shadow:#4a503014}
+body,.catalogue-app{background-color:var(--bg);background-image:radial-gradient(var(--paper-grid) .8px,transparent .8px);background-size:20px 20px;color:var(--text)}
+::selection{background:var(--highlight);color:var(--text)}
+h1,h2,.catalogue-app h1,.catalogue-app h2{font-family:var(--hand);font-weight:650;letter-spacing:-.015em;line-height:1.08}
+h3,.catalogue-app h3{font-family:var(--hand);font-size:27px;font-weight:650;line-height:1.2}
+.app-header,.topbar{background:var(--surface);border-bottom:1.5px solid var(--line);box-shadow:0 3px 0 var(--shadow)}
+.app-brand,.brand{font:700 35px/1 var(--hand);letter-spacing:-1px}.app-mark,.brand-mark{transform:rotate(-5deg);border-radius:5px 9px 4px 8px}
+.app-header nav a,.lesson-nav nav a{font-family:var(--hand);font-size:22px;font-weight:650;line-height:1.2}
+.app-header nav a[aria-current=page],.lesson-nav nav a.active{background:linear-gradient(transparent 60%,var(--highlight) 60%,var(--highlight) 92%,transparent 92%)}
+.header-caption{font:600 15px var(--hand);letter-spacing:.03em}.breadcrumb{font-size:12px}
+.overline,.eyebrow,.section-number,.hero-kicker{letter-spacing:.1em}
+.app-footer,.lesson-footer{border-top:1.5px dashed var(--line)}
+.catalogue-app :is(button,input,select),button,select,input[type=number]{border-color:var(--line);border-radius:var(--notebook-radius)}
+button,.catalogue-app button{font-family:var(--hand);font-weight:650;font-size:21px;line-height:1.2;min-height:44px}
+:is(button,a,summary,input,select):focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.catalogue-app .primary-action,.primary{border:1px solid var(--accent);border-radius:var(--notebook-radius);box-shadow:2px 3px 0 var(--shadow);font:650 22px/1.3 var(--hand)}
+.app-header>button,.quiet{font-size:20px}.app-header>button{padding:8px 14px}
+.page-intro{padding:42px 0 30px}.catalogue-app .page-intro h1{font-size:clamp(42px,5.2vw,68px)}
+.page-intro .lead{font-size:16px;line-height:1.8;max-width:65ch}
+.roadmap-intro{position:relative}.catalogue-app .roadmap-intro h1{font-size:clamp(38px,4.2vw,57px)}
+.roadmap-intro h1::after,.hero h1 em::after{content:'';display:block;width:170px;height:7px;margin-top:5px;border-bottom:3px solid var(--accent);border-radius:50%;transform:rotate(-2deg)}
+.roadmap-actions{gap:8px}.catalogue-app .command-trigger{font:650 21px var(--hand);box-shadow:2px 3px 0 var(--shadow)}.command-trigger kbd{font-size:11px}
+.roadmap-layout{border-top:1.5px dashed var(--line)}
+.roadmap-map{background-color:var(--surface);background-image:radial-gradient(var(--paper-grid) 1px,transparent 1px);border:1.5px solid var(--line);box-shadow:3px 4px 0 var(--shadow);position:relative}
+.roadmap-map::before,.detail-panel::before,.concept-sketch::before{content:'';position:absolute;pointer-events:none;top:-9px;left:24px;width:58px;height:18px;background:var(--highlight);border-inline:1px dashed var(--line);transform:rotate(-4deg)}
+.catalogue-app .roadmap-map h2{font-size:35px}.catalogue-app .stage-heading h2{font-size:39px}
+.roadmap-module{border-radius:var(--notebook-radius);border-color:var(--line);box-shadow:2px 2px 0 var(--shadow)}
+.module-name{font:650 23px/1.12 var(--hand)}.module-number{font-size:11px}.module-count{font-size:11px}.roadmap-stop .stop-count{font-size:10px}.roadmap-stop .stop-title{font-size:25px}
+.roadmap-module[open]>summary{background:var(--surface-2);border-radius:var(--notebook-radius)}
+.stage-navigation button{font:650 21px var(--hand)!important;padding:8px 13px!important}.roadmap-lesson-list .lesson-entry{font-size:14px}
+.stage-description,.roadmap-subtitle{font-size:14px}.roadmap-note{font-size:21px;font-weight:600}
+.catalogue-app .command-palette{background:var(--surface);border:2px solid var(--line);border-radius:var(--notebook-radius)}
+.catalogue-app .command-heading h2{font:650 34px var(--hand)}.command-palette .view-tabs button,.command-heading button,.command-footer button{font:650 20px/1.2 var(--hand)}
+.command-palette label{font-size:12px}.command-palette input,.command-palette select{font-size:15px!important;min-height:44px}.command-results a{font-size:15px;min-height:44px}
+.detail-panel,.progress-item,.empty-state,.resume-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--notebook-radius);box-shadow:3px 4px 0 var(--shadow);position:relative}
+.detail-stack{gap:28px}.detail-panel h2,.progress-item h2{font-size:36px}.detail-panel p,.detail-panel li{font-size:15px;line-height:1.75}.detail-panel h3{margin-top:20px}
+.blueprint-note,.core-rule,.takeaway,.callout,.lab-guide,.production-note{background:var(--highlight);border-radius:3px 8px 5px 2px}
+.topic-list li,.progress-flags span,.state-label{border-radius:var(--notebook-radius)}
+.back-link,.module-overview,.resume-compact{font:600 20px var(--hand)}.view-tabs a{min-height:44px}.catalogue-app .bookmark{font-size:21px}
+/* Lessons use the same paper, ink, marginal notes and outlined experiments. */
+.page-shell{background:var(--surface)}
+.lesson-nav{background:var(--bg);border-right:1.5px solid var(--line)}.lesson-nav nav{gap:8px}.lesson-nav nav a{padding:8px 0;font-size:21px}.nav-title{font:650 26px/1.2 var(--hand)}
+#main{background-image:linear-gradient(90deg,transparent 24px,var(--paper-margin) 24px,var(--paper-margin) 25px,transparent 25px)}
+.hero{padding-top:38px}.hero h1{font-family:var(--hand);font-weight:650;letter-spacing:-.025em;font-size:clamp(52px,5.8vw,84px);line-height:1.02}.hero h1 em{font-style:normal;color:var(--accent);display:inline-block}.hero h1 em::after{width:90%;margin-top:-1px}
+.hero-copy{max-width:58ch;line-height:1.75}.hero-annotation{font-family:var(--hand)}
+.reading{color:var(--text);line-height:1.85}.reading.section h2{font-size:clamp(36px,4vw,49px)}
+.quick-path{border:1.5px solid var(--line);border-radius:var(--notebook-radius);box-shadow:2px 3px 0 var(--shadow)}.quick-path a{font:650 24px/1.2 var(--hand);min-height:80px;color:var(--text)}.quick-path b{font-size:12px}
+.concept-sketch{position:relative;border:1.5px solid var(--line);box-shadow:3px 4px 0 var(--shadow);margin-top:32px;padding-top:24px;background-image:radial-gradient(var(--paper-grid) 1px,transparent 1px)}.concept-sketch text{font-size:25px}.concept-sketch figcaption{font-size:14px}
+.quiz,.lab,.rag-lab,.recovery-lab,.lesson-extra,.completion,.quick-comparison>div,.vector-cards article,.worked{border:1.5px solid var(--line);border-radius:var(--notebook-radius);box-shadow:2px 3px 0 var(--shadow)}
+.quiz legend{font:650 26px/1.25 var(--hand);max-width:100%}.quiz .eyebrow{font-family:var(--sans);font-size:10px}.answers button{font-size:22px}.feedback{font-size:14px;line-height:1.7}.feedback.success{border-left:3px solid var(--accent);padding-left:12px}
+.lesson-extra>summary{font:650 25px/1.2 var(--hand);min-height:54px}.quick-comparison strong,.pipeline strong{font:650 24px/1.2 var(--hand)}
+.course-shell{border-bottom-style:dashed}.course-links a,.course-actions button,.lesson-neighbors a{font:650 20px/1.3 var(--hand)}.course-actions input{accent-color:var(--accent)}
+.section-tag,.section-transition,.completion,.formula-box{border-radius:var(--notebook-radius)}.recall-prompt{font:650 29px/1.35 var(--hand)}
+.scenario-bar button,.scenario-controls button,.step-controls button{font-size:21px}.recovery-timeline li,.pipeline li{border-radius:var(--notebook-radius)}
+code,pre,kbd,.equation,.score,.tick-text,.axis-label,.coordinate-controls input{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+/* Motion is finite feedback: no loops, parallax or delayed reading. */
+@media(prefers-reduced-motion:no-preference){
+ .page-intro,.roadmap-intro,.hero{animation:note-arrive 240ms ease-out both}
+ details[open]>.roadmap-lesson-list,details[open]>.extra-body,.command-palette[open]{animation:note-arrive 180ms ease-out both}
+ button,.primary,.primary-action{transition:background-color 150ms ease,border-color 150ms ease,box-shadow 150ms ease}
+ button:not(:disabled):hover,.primary:hover,.primary-action:hover{box-shadow:2px 3px 0 var(--line)}
+ .module-expand,.lesson-extra>summary>span{transition:transform 180ms ease}
+ .ink-visible .sketch-line{stroke-dasharray:1600;animation:ink-draw 650ms ease-out both}
+ .feedback.success{animation:note-arrive 180ms ease-out}
+ @keyframes note-arrive{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+ @keyframes ink-draw{from{stroke-dashoffset:1600}to{stroke-dashoffset:0}}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:1100px){.module-name{font-size:22px}.roadmap-stop .stop-title{font-size:23px}.app-header{gap:20px}.header-caption{display:none}}
+@media(max-width:760px){.app-header nav{gap:22px}.app-header nav a{font-size:23px}.app-header>button{font-size:19px}.roadmap-map{margin-top:5px}.catalogue-app .roadmap-intro h1{font-size:42px}.roadmap-stop .stop-title{font-size:25px}.roadmap-stop .stop-count{font-size:10px}.catalogue-app .command-trigger{font-size:21px}.roadmap-module>summary{grid-template-columns:29px minmax(0,1fr) 12px;gap:9px}.module-count{grid-column:2;grid-row:2}.module-expand{grid-column:3;grid-row:1/3}.module-number{grid-row:1/3}.detail-panel{padding:23px}.page-intro{padding-top:30px}.command-heading{align-items:start}.catalogue-app .command-heading h2{font-size:29px}.command-footer{flex-wrap:wrap}.command-footer button{font-size:19px}.command-palette .view-tabs button{font-size:20px}.hero h1{font-size:54px}.topbar{padding-inline:18px}.brand{font-size:32px}.quick-path a{font-size:23px}.lesson-extra>summary{font-size:24px}#main{background-image:none}.reading{font-size:16px}.course-links a{font-size:19px}}
+@media print{body,.catalogue-app,.page-shell{background:#fff;color:#111}.topbar,.app-header,.lesson-nav,.course-shell,.app-footer,.hero-actions{display:none}.page-shell{display:block}#main{background:none}.concept-sketch,.detail-panel,.quiz{break-inside:avoid;box-shadow:none}}
+/* Two-line stage labels retain room for the module count. */
+.roadmap-drawing{grid-template-rows:repeat(4,78px)}.roadmap-stop .stop-title{font-size:23px;line-height:1.02}.roadmap-stop .stop-count{margin-top:4px}
+@media(min-width:1101px){.roadmap-drawing{grid-template-rows:repeat(4,72px)}}
+
+/* Student revision notes: handwriting is the reading face, not only decoration. */
+:root{--sans:var(--hand)}
+body,.catalogue-app{font:500 24px/1.45 var(--hand)}
+body :is(p,li,label,figcaption,summary,button,select,input[type=search],a){font-family:var(--hand)}
+.catalogue-app :is(.lead,.detail-panel p,.detail-panel li,.blueprint-note,.progress-item p,.empty-state p,.reset-area p){font-size:24px;line-height:1.45}
+.catalogue-app :is(.roadmap-subtitle,.stage-description,.map-instruction,.roadmap-footnote,.active-filter-note){font-size:21px;line-height:1.35}
+.catalogue-app :is(.overline,.stage-results-heading p,.module-count,.item-note,.track-label,.state-label,.progress-flags span,.command-count,.command-results small){font:600 17px/1.25 var(--hand);letter-spacing:.01em}
+.catalogue-app .module-number,.roadmap-stop .stop-number{font:600 17px/1.2 var(--hand)}
+.roadmap-stop .stop-count{font:500 16px/1.1 var(--hand)}
+.roadmap-drawing{grid-template-rows:repeat(4,82px);gap:17px 14%}
+.catalogue-app .roadmap-map .overline{font:600 16px/1.2 var(--hand);letter-spacing:.01em}
+.catalogue-app .roadmap-module>summary{padding-block:12px;grid-template-columns:32px minmax(0,1fr) auto 12px}
+.catalogue-app .roadmap-lesson-list .lesson-entry,.command-results a{font:600 24px/1.25 var(--hand)}
+.catalogue-app .topic-list li{font-size:21px}.catalogue-app .detail-panel summary{font-size:24px}
+.catalogue-app .command-palette label{font-size:20px}.catalogue-app .command-palette :is(input,select){font:500 22px/1.25 var(--hand)!important}
+.catalogue-app .command-results a>span:last-child{font:500 17px/1.2 var(--hand)}.command-footer>span{font:500 17px/1.2 var(--hand)}
+.app-footer{font-size:18px}.header-caption{font-size:17px}.catalogue-app .progress-item a,.lesson-plan-link{font-size:22px}.catalogue-app .storage-notice{font-size:19px!important}
+.hero-copy,body .reading,.production-grid{font:500 25px/1.45 var(--hand)}
+body .reading p,body .reading li,.production-grid p,.production-grid li,.quick-comparison p,.details-body p,.details-body li{font:500 25px/1.45 var(--hand);color:var(--text)}
+body .reading :is(.section-number,.eyebrow),.eyebrow,.section-number,.hero-kicker,.hero-meta,.section-tag{font:600 17px/1.25 var(--hand);letter-spacing:.015em}
+body .reading :is(.prerequisite-note,.essential-limit,.feedback),.concept-sketch figcaption,.pace-note,.help,.lab-guide p,.lab-caption,.lab-footer,.result-reason{font:500 21px/1.4 var(--hand)}
+body .reading strong,.reading b{font-weight:700;background:linear-gradient(transparent 60%,var(--highlight) 60%,var(--highlight) 93%,transparent 93%)}
+body .reading p{margin-bottom:.9em}.reading.section{padding-block:32px}
+body .reading .core-rule{font-size:26px;border-left-width:4px}.reading .recall-prompt{font-size:28px;color:var(--accent);border-top:1px dashed var(--line);padding-top:18px}
+.quick-path b,.lesson-nav nav a span{font:600 18px/1.2 var(--hand)}
+.breadcrumb,.progress-label,.nav-note,.nav-note p,.course-shell,.course-actions label,.course-shell .progress-explanation{font:500 18px/1.3 var(--hand);letter-spacing:0}
+.course-actions button,.course-links a,.lesson-neighbors a{font-size:21px}.lesson-footer,.lesson-footer h3{font-size:21px}
+.hero-meta,.hero-kicker{flex-wrap:wrap}.text-link{font-size:23px}
+.quiz legend{font-size:27px}.quiz .eyebrow{font-size:17px}.answers button{font-size:23px}
+.completion p{font-size:21px}.completion .eyebrow{font-size:17px}.lesson-extra>summary{font-size:26px}
+.plot-caption,.plot-legend,.edit-row,.lab-settings>label,.lab-settings>.validity,.recovery-settings label,.recovery-limit,.state-cards p,.recovery-timeline li,.pipeline li,.source-card p,.answer-panel p,.answer-panel li,.question-banner,.trace-table{font:500 21px/1.3 var(--hand)}
+.lab-toolbar .segmented button,.lab-toolbar .quiet,.scenario-bar button,.scenario-controls button,.step-controls button{font-size:22px}.lab-toolbar{flex-wrap:wrap;gap:12px}
+.state-cards h3,.pipeline strong{font-size:26px}.recovery-outcome #event{font:600 24px/1.4 var(--hand)}
+body :is(code,pre,kbd),.equation>span,.score,.coordinate-controls input{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+code{font-size:16px;line-height:1.65}.reading code{background:var(--surface-2);padding:2px 4px;border-radius:3px}
+/* A compact, optional recap before the full teaching path. */
+.revision-sheet{margin:25px 0 20px;border:1.5px solid var(--accent);border-radius:var(--notebook-radius);background:var(--surface);box-shadow:3px 4px 0 var(--shadow)}
+.revision-sheet>summary{padding:16px 21px;font:650 28px/1.2 var(--hand);align-items:center;list-style:none;gap:16px}
+.revision-sheet>summary::after{content:'＋';font-size:26px;color:var(--accent)}.revision-sheet[open]>summary::after{content:'−'}
+.revision-sheet>summary::-webkit-details-marker{display:none}.revision-sheet[open]>summary{border-bottom:1px dashed var(--line)}
+.revision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:7px 22px}
+.revision-grid>div{padding:17px 15px}.revision-grid>div:nth-child(odd){border-right:1px dashed var(--line)}.revision-grid>div:nth-child(n+3){border-top:1px dashed var(--line)}
+.revision-grid h3{font:700 23px/1.3 var(--hand);color:var(--accent);margin-bottom:8px}.revision-grid p{font:500 25px/1.35 var(--hand);margin:0}
+.revision-grid .exam-trap h3{color:var(--b)}.revision-grid mark{color:inherit;background:var(--highlight);padding:0 3px}.revision-sheet .revision-next{margin:0;padding:14px 25px;border-top:1px dashed var(--line);font:600 22px/1.3 var(--hand)}
+@media(prefers-reduced-motion:no-preference){.revision-sheet[open]>.revision-grid{animation:note-arrive 180ms ease-out both}}
+@media(max-width:1100px){.catalogue-app .roadmap-module>summary{grid-template-columns:29px minmax(0,1fr) 12px}.catalogue-app .module-count{grid-column:2;grid-row:2}.catalogue-app .module-expand{grid-column:3;grid-row:1/3}.catalogue-app .module-number{grid-row:1/3}.roadmap-stop .stop-title{font-size:23px}}
+@media(max-width:760px){
+ .hero-copy,body .reading,body .reading p,body .reading li,.production-grid p,.production-grid li{font-size:24px;line-height:1.4}
+ body .reading :is(.section-number,.eyebrow){font-size:16px}body .reading :is(.prerequisite-note,.essential-limit,.feedback){font-size:21px}
+ .header-actions .quiet{font-size:18px;padding:8px}.progress-label{font-size:16px;max-width:90px}.topbar{height:auto;min-height:78px;gap:8px;padding-block:10px}.header-actions{gap:8px}.breadcrumb{display:none}
+ .catalogue-app .roadmap-map .overline{font-size:15px}.roadmap-drawing{gap:17px 10%;grid-template-rows:repeat(4,85px)}.roadmap-stop .stop-count{font-size:15px}.roadmap-stop .stop-number{font-size:15px}
+ .catalogue-app .command-palette{padding:17px}.command-heading{margin-bottom:12px}.command-palette .view-tabs{gap:6px}.catalogue-app .command-palette select{font-size:20px!important}.command-results{max-height:24dvh}
+ .revision-sheet>summary{font-size:26px;padding:15px}.revision-grid{grid-template-columns:1fr;padding:0 16px}.revision-grid>div{padding:16px 0}.revision-grid>div:nth-child(odd){border-right:0}.revision-grid>div+div{border-top:1px dashed var(--line)}.revision-grid p{font-size:24px}
+ .catalogue-app .command-trigger{white-space:normal;justify-content:space-between;width:100%}.command-trigger kbd{white-space:nowrap}.roadmap-actions{width:100%}
+ .plot-legend{gap:10px}.pipeline{grid-template-columns:1fr 1fr}.pipeline li{font-size:20px}.pipeline li::after{display:none}.pipeline strong{font-size:24px}
+}
+.lesson-nav{overflow-y:auto}
+.document-card :is(label,p),.trace-list li,.trace-list li p,.context-passage,.context-passage p,.support-row,.support-row a,.outcome-strip>p:not(.eyebrow),.production-note p,.callout p,.lesson-footer p,.download-links a{font:500 22px/1.4 var(--hand)}
+.document-card .help,.status-chip,.validity-warning{font:500 19px/1.3 var(--hand)}
+.lab-settings select,.recovery-settings select{font:500 22px/1.25 var(--hand)}
+.stage-number,.step-controls span{font:600 18px/1.2 var(--hand)}
+@media(max-width:760px){
+ .command-palette .view-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.command-palette .view-tabs button{font-size:20px;padding:7px 4px;min-width:0}
+ .command-heading button{white-space:nowrap;flex-shrink:0;font-size:18px;padding:8px}
+ .command-results{max-height:21dvh}.command-footer{gap:9px}.command-footer button{font-size:19px;padding:8px}
+}
+
+/* Upright personal handwriting for reading; cursive ink for titles and annotations. */
+@font-face{font-family:'Patrick Hand';src:url('fonts/PatrickHand-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+:root,:root[data-theme=dark],:root[data-theme=light]{--hand:'Patrick Hand',Caveat,'Segoe Print',cursive;--note:Caveat,'Segoe Print',cursive;--sans:var(--hand);--serif:var(--note)}
+body,.catalogue-app{font-weight:400;font-size:22px}
+h1,h2,h3,.catalogue-app h1,.catalogue-app h2,.catalogue-app h3,.brand,.app-brand,.revision-title h1,.roadmap-note,.nav-title{font-family:var(--note)}
+body .reading p,body .reading li,.production-grid p,.production-grid li,.details-body p,.details-body li,.catalogue-app :is(.lead,.detail-panel p,.detail-panel li,.blueprint-note,.progress-item p,.empty-state p,.reset-area p){font-family:var(--hand);font-size:22px;font-weight:400;line-height:1.5}
+body .reading strong,.reading b{font-weight:600}.reading.section{max-width:700px}
+.course-shell{padding:12px 0;display:flex;align-items:start;justify-content:space-between;gap:15px;font-size:17px}.course-links{margin:0;gap:16px}.course-links a{font:400 18px/1.4 var(--hand)}
+.course-tools{margin:0;border:0;max-width:650px}.course-tools>summary{padding:0;min-height:30px;font:400 18px/1.4 var(--hand);white-space:nowrap;justify-content:end;list-style:revert;display:list-item}
+.course-tools[open]{flex:1}.course-tools[open]>summary{margin-bottom:15px}.course-tools .course-actions{padding-top:5px}
+.revision-title{padding:18px 0 14px}.revision-title .hero-kicker{margin:0 0 8px;font-size:15px}.revision-title h1{font-size:clamp(36px,4.3vw,53px);line-height:1.05;font-weight:650}.revision-title h1 em{font-style:normal;color:var(--accent)}
+.revision-first{margin:0 0 16px;padding:0;scroll-margin-top:94px;border-color:var(--line);background-image:repeating-linear-gradient(transparent,transparent 31px,var(--paper-grid) 31px,var(--paper-grid) 32px)}
+.revision-idea{display:flex;gap:15px;align-items:start;padding:16px 23px;background:var(--highlight);border-bottom:1px solid var(--line);border-radius:5px 12px 0 0}
+.note-index{font:600 23px var(--note);color:var(--accent);border:1.5px solid var(--accent);border-radius:50%;padding:0 7px;transform:rotate(-6deg);margin-top:4px}
+.revision-first h2{font:650 25px/1.15 var(--note);margin:0 0 7px}.revision-first h2>span{font:600 17px var(--note);margin-right:7px;color:var(--muted)}
+.revision-first p{font:400 21px/1.35 var(--hand);margin:0;color:var(--text)}
+.revision-board{display:grid;grid-template-columns:1.05fr 1fr;align-items:start;padding:18px 23px;gap:24px}
+.revision-picture{min-width:0}.revision-picture .concept-sketch{margin:12px 0 0;padding:12px 4px 5px;border:0;background:transparent;box-shadow:none}.revision-picture .concept-sketch::before{display:none}.revision-picture .concept-sketch svg{max-height:310px}.revision-picture .concept-sketch figcaption{font:400 18px/1.3 var(--hand);margin-top:12px}
+.revision-notes{border-left:1.5px dashed var(--line);padding-left:22px;min-width:0}.revision-notes>div+div{border-top:1px dashed var(--line);padding-top:14px;margin-top:14px}.revision-notes .exam-trap h2{color:var(--b)}
+.revision-first mark{background:var(--highlight);color:inherit;padding:0 2px}.recall-answer{margin:9px 0 0;border:0}.recall-answer>summary{font:400 18px/1.3 var(--hand);color:var(--accent);padding:6px 0;text-decoration:underline;text-underline-offset:4px;list-style:revert;display:list-item;min-height:36px}
+.recall-answer[open]>summary{margin-bottom:8px}.recall-answer p{font-size:19px;background:var(--surface-2);padding:12px;border-radius:var(--notebook-radius)}
+.revision-actions{display:flex;align-items:center;gap:24px;border-top:1px dashed var(--line);padding:13px 23px}.revision-actions .primary{font:600 24px/1.2 var(--note);padding:9px 16px}.revision-actions .text-link{font-size:21px}
+.study-route{border:0;margin:0 0 20px}.study-route>summary{font:400 18px/1.4 var(--hand);color:var(--muted);padding:8px 0;list-style:revert;display:list-item}.study-route .quick-path{margin-top:8px}.study-route .pace-note{font-size:18px}.sketch-return{font-size:19px!important}.sketch-return a{color:var(--accent);text-decoration:underline}
+.revision-first .concept-sketch text{font-family:var(--note)}
+@media(min-width:1200px){.page-shell{grid-template-columns:195px minmax(0,1fr)}.lesson-nav{padding-inline:23px 15px}.lesson-nav nav a{font-size:20px}.nav-title{font-size:25px}.course-shell .course-links{gap:13px}}
+@media(max-width:1000px){.revision-board{grid-template-columns:1fr;gap:18px}.revision-picture .concept-sketch svg{max-height:290px}.revision-notes{border-left:0;padding-left:0;border-top:1px dashed var(--line);padding-top:17px}.course-shell{display:block}.course-tools{margin-top:9px}.course-tools>summary{text-align:left}.revision-title h1{font-size:43px}}
+@media(max-width:600px){.revision-title{padding-top:20px}.revision-title h1{font-size:39px}.revision-title .hero-kicker{font-size:14px;gap:10px}.revision-idea{padding:16px;gap:10px}.revision-board{padding:16px}.revision-first p{font-size:21px}.revision-first h2{font-size:25px}.revision-actions{padding:15px;gap:15px;flex-wrap:wrap}.revision-actions .primary{font-size:23px}.course-links a{font-size:17px}.course-links{gap:8px 16px}.course-shell{padding-block:10px}.revision-picture .concept-sketch{padding-inline:0}.revision-picture .concept-sketch figcaption{font-size:18px}.revision-picture .concept-sketch svg{max-height:none}.revision-first{scroll-margin-top:90px}.revision-notes .recall-answer p{font-size:19px}.catalogue-app .module-name{font-family:var(--note)}}
+/* Learner review: orient early, keep cause and effect adjacent, reveal complexity on demand. */
+.lesson-orientation{font:400 20px/1.4 var(--hand);max-width:80ch;margin:9px 0 0;color:var(--muted)}
+.revision-title h1{font-size:clamp(34px,3.6vw,47px)}
+.revision-notes .recall-card p{font-size:20px}.revision-notes .recall-answer p{font-size:19px}
+.lab-section{padding-top:26px}.lab-section .section-heading h2{font-size:36px;margin-bottom:12px}.lab-section .section-heading{margin-bottom:12px}.lab-section .section-number{margin-bottom:8px}
+.lab-guide{padding:12px 16px;margin:12px 0 16px}.lab-guide p{font:400 19px/1.35 var(--hand);margin:0}
+.guided-lab{scroll-margin-top:95px}.scenario-bar,.scenario-controls{padding:13px 16px;gap:8px;margin:0}.scenario-bar button,.scenario-controls button{font:400 20px/1.2 var(--hand)}
+.lab-feedback{padding:13px 18px;background:var(--surface-2);border-left:4px solid var(--accent);border-block:1px solid var(--line)}
+.lab-feedback p{font:400 20px/1.3 var(--hand);margin:0}.lab-feedback .feedback-label{font:650 21px/1.2 var(--note);color:var(--accent);margin:0 0 4px}.lab-feedback .feedback-label:not(:first-child){margin-top:9px}
+.lab-explore{margin:0;border:0;border-bottom:1px solid var(--line);padding:0 17px;background:var(--surface)}.lab-explore>summary{font:400 18px/1.35 var(--hand);padding:12px 0;display:list-item;list-style:revert;min-height:44px}.lab-policy-note{font:400 18px/1.35 var(--hand);margin:0;padding:0 5px 16px}.lab-explore .lab-settings,.lab-explore .recovery-settings{padding:12px 0 18px}
+.recovery-lab .recovery-outcome{margin:0;padding:14px 18px}.recovery-lab .recovery-outcome #event{font:400 21px/1.3 var(--hand)}.recovery-lab .recovery-outcome .help{font:400 18px/1.3 var(--hand)}.recovery-lab .recovery-outcome p{margin:0 0 7px}.step-controls{padding:12px 16px;gap:8px}.step-controls button{font-size:19px}
+@media(max-width:760px){.lesson-orientation{font-size:19px}.revision-title h1{font-size:37px}.lab-section .section-heading h2{font-size:32px}.lab-section .section-tag{font-size:14px;margin-bottom:8px}.lab-section .section-heading{margin-bottom:0}.scenario-bar,.scenario-controls{padding:10px;gap:6px}.scenario-bar button,.scenario-controls button{font-size:19px;padding:8px}.lab-feedback{padding:12px 13px}.lab-feedback p{font-size:19px}.lab-guide{padding:10px 13px}.lab-guide p{font-size:18px}.revision-picture .concept-sketch text{font-size:28px}.revision-picture .concept-sketch .sketch-small{font-size:25px}}
+
+/* Round 3: question before controls; make found-versus-sent evidence visible. */
+.lab-guide p+p{margin-top:5px;color:var(--muted)}
+.lab-feedback .evidence-route{font:500 20px/1.3 var(--note);border-bottom:1px dashed var(--line);padding-bottom:7px;margin-bottom:8px;overflow-wrap:anywhere}
+.transfer-check{border-block:1px dashed var(--line);padding:18px 0;margin:20px 0}.transfer-check h3{font:600 25px/1.2 var(--note)}
+
+.lab-feedback #vector-inputs{font-size:18px;margin-bottom:4px;padding-bottom:4px}.lab-feedback #vector-scores{font-size:22px}
+.recovery-lab .recovery-outcome .evidence-route{font:500 20px/1.3 var(--note);border-bottom:1px dashed var(--line);padding-bottom:8px;margin-bottom:10px}
+.lab-toolbar>.switch{font:400 19px/1.3 var(--hand);display:flex;align-items:center;gap:7px}

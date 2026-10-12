@@ -84,7 +84,10 @@
     else if (tie) explanation = `The ${metric === 'dot' ? 'dot products' : 'cosine similarities'} are equal. Keep the tie explicit; neither document wins on this metric.`;
     else if (metric === 'cosine' || normalized) explanation = `${label(valid[0].key)} aligns more closely with q. Positive vector length does not affect this comparison.`;
     else explanation = `${label(valid[0].key)} has the larger dot product with q. The score reflects both alignment and vector magnitude.`;
+    $('vector-inputs').textContent = `Raw arrows: q=${vectorText(vectors.q)} · A=${vectorText(vectors.a)} · B=${vectorText(vectors.b)}`;
+    $('vector-scores').textContent = `${metric === 'dot' ? (normalized ? 'Normalized dot' : 'Dot') : 'Cosine'} scores: A = ${fmt(M.score(vectors.q,vectors.a,metric,normalized))} · B = ${fmt(M.score(vectors.q,vectors.b,metric,normalized))}`;
     $('ranking-explanation').textContent = explanation;
+    $('vector-nearby-result').textContent = `${$('winner').textContent}. ${explanation}`;
     $('rank-list').replaceChildren();
     ranked.forEach((item,index) => {
       const li=document.createElement('li');

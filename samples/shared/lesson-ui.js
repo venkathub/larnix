@@ -19,8 +19,8 @@
   });
   revealAnchor();
   function progress(){
-   $('check-progress').textContent=`${checked.size} / ${Object.keys(questions).length} checks understood`;
-   $('completion-title').textContent=`${checked.size} of ${Object.keys(questions).length} understood`;
+   $('check-progress').textContent=`${checked.size} / ${Object.keys(questions).length} checks correct`;
+   $('completion-title').textContent=`${checked.size} of ${Object.keys(questions).length} answered correctly`;
    if($('completion-text'))$('completion-text').textContent=checked.size===Object.keys(questions).length?'You completed the concept checks. Production practice still needs your implementation and evidence.':'Correct answers unlock a short recap. Production practice is a separate step.';
    if($('recap'))$('recap').hidden=checked.size!==Object.keys(questions).length;
   }
@@ -41,7 +41,7 @@
    if(store)store.update(id,{answers:{}});progress();
   });
   function theme(value){document.documentElement.dataset.theme=value;const light=value==='light';$('theme-toggle').textContent=light?'Dark mode ◑':'Light mode ◐';$('theme-toggle').setAttribute('aria-label',`Switch to ${light?'dark':'light'} theme`);}
-  if(store)theme(store.load().theme);
+  theme(store?store.load().theme:document.documentElement.dataset.theme);
   $('theme-toggle').addEventListener('click',()=>{const value=document.documentElement.dataset.theme==='light'?'dark':'light';theme(value);if(store)store.setTheme(value);});
   if(store){const answers=store.load().lessons[id]?.answers||{};document.querySelectorAll('[data-quiz]').forEach(quiz=>{const saved=answers[quiz.dataset.quiz];const button=[...quiz.querySelectorAll('button')].find(b=>b.dataset.answer===saved);if(button)button.click();});}
   progress();

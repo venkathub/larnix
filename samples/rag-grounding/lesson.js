@@ -28,6 +28,16 @@
   if(!result.candidates.length)$('trace').append(el('li','No available passages.'));
   $('context').replaceChildren(...result.context.map(d=>{const passage=el('div',undefined,'context-passage');passage.id='context-'+d.id;passage.tabIndex=-1;passage.append(el('strong','['+d.id+'] '+d.title),el('p',d.text));return passage;}));
   if(!result.context.length)$('context').append(el('p','No passages supplied.'));
+  const found=result.candidates.map(d=>d.id),packed=result.context.map(d=>d.id);
+  $('nearby-trace').textContent=`Found: ${found.join(' + ')||'none'} → Sent to model: ${packed.join(' + ')||'none'}`;
+  let nearbyResult,nearbyWhy;
+  if(result.stale.length&&result.status==='answer'){nearbyResult='A cited answer includes expired evidence.';nearbyWhy='The source is traceable but out of date. Check policy validity before trusting the answer.';}
+  else if(result.status==='conflict'){nearbyResult='Conflicting policies: the lab withholds a definitive answer.';nearbyWhy='Visible sources disagree. Resolve authority or precedence; retrieval order is not a policy rule.';}
+  else if(result.status==='answer'){nearbyResult=result.claims.map(c=>c.text).join(' ');nearbyWhy='The needed facts reached context. The lab can cite each claim; a real generator still needs evaluation.';}
+  else if(state.question==='return'&&found.includes('F1')&&!packed.includes('F1')){nearbyResult='The fee disappeared. This lab withholds a complete answer.';nearbyWhy='F1 was retrieved but dropped from context. Inspect selection and packing, not retrieval alone.';}
+  else if(state.question==='return'&&!found.includes('F1')){nearbyResult='The fee never reached the answer.';nearbyWhy='F1 was not retrieved. Inspect source availability, query and ranking; a larger context alone cannot help.';}
+  else {nearbyResult='Required evidence is missing: the lab withholds a complete answer.';nearbyWhy='Compare the source folder, retrieved candidates and supplied context to find where the required fact is missing.';}
+  $('nearby-result').textContent=nearbyResult;$('nearby-why').textContent=nearbyWhy;
   $('answer').textContent=result.answer;
   $('quick-outcome').textContent=result.answer+(result.stale.length?' Warning: expired evidence is in context.':'');
   $('answer-status').textContent=result.status==='answer'?'Cited answer':result.status==='conflict'?'Conflict — abstain':'Missing evidence — abstain';
@@ -40,7 +50,7 @@
    result.claims.forEach(c=>{const row=el('div',undefined,'support-row');row.append(el('span',c.text));c.citations.forEach(id=>{const link=el('a','['+id+']');link.href='#context-'+id;link.setAttribute('aria-label','Inspect citation '+id);row.append(link);});$('support').append(row);});
   }else $('support').append(el('p','No unambiguous supported claims to display.','help'));
   document.querySelectorAll('[data-scenario]').forEach(b=>{const config=scenarios[b.dataset.scenario]();const match=['question','topK','slots','currentOnly'].every(k=>config[k]===state[k])&&config.available.join(',')===state.available.join(',');b.setAttribute('aria-pressed',String(match));});
-  if(announce)$('lab-announcement').textContent=$('answer-status').textContent+'. '+result.answer;
+
  }
  ['question','top-k','slots','current-only'].forEach(id=>$(id).addEventListener('change',()=>{
   state.question=$('question').value;state.topK=Number($('top-k').value);state.slots=Number($('slots').value);state.currentOnly=$('current-only').checked;render(true);

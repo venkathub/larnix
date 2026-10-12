@@ -27,7 +27,7 @@ class Page(HTMLParser):
             if key in attrs:
                 self.refs.append(attrs[key])
         if tag == 'script' and 'src' in attrs:
-            self.scripts.append(attrs['src'])
+            self.scripts.append(urlsplit(attrs['src']).path)
 
 
 class SiteBuildTest(unittest.TestCase):

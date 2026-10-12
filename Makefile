@@ -10,6 +10,7 @@ check:
 	$(NODE) --check web/app.js
 	$(NODE) --check web/lesson-shell.js
 	$(NODE) --check samples/shared/lesson-ui.js
+	$(NODE) --check samples/shared/notebook.js
 	$(NODE) --check samples/vector-similarity/lesson.js
 	$(NODE) --check samples/rag-grounding/lesson.js
 	$(NODE) --check samples/agent-recovery/lesson.js

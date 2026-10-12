@@ -3,6 +3,9 @@
 from pathlib import Path
 import json
 import shutil
+import hashlib
+import re
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
@@ -20,10 +23,11 @@ def build():
     OUT.mkdir(exist_ok=True)
     assets = OUT / 'assets'
     assets.mkdir(exist_ok=True)
-    for name in ['app.js', 'app.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:
+    for name in ['app.js', 'app.css', 'roadmap.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:
         shutil.copy2(ROOT / 'web' / name, assets / name)
     shutil.copy2(ROOT / 'samples/shared/lesson-ui.js', assets / 'lesson-ui.js')
-    shutil.copy2(ROOT / 'samples/shared/quick-lesson.css', assets / 'quick-lesson.css')
+    for name in ['quick-lesson.css', 'notebook.css', 'notebook.js']:
+        shutil.copy2(ROOT / 'samples/shared' / name, assets / name)
     shutil.copytree(ROOT / 'samples/shared/fonts', assets / 'fonts', dirs_exist_ok=True)
     shutil.copy2(ROOT / 'samples/vector-similarity/styles.css', assets / 'lesson.css')
     shutil.copy2(ROOT / 'web/index.html', OUT / 'index.html')
@@ -43,16 +47,30 @@ def build():
         document = document.replace('href="../vector-similarity/styles.css"', 'href="../../assets/lesson.css"')
         document = document.replace('src="../shared/lesson-ui.js"', 'src="../../assets/lesson-ui.js"')
         document = document.replace('href="../shared/quick-lesson.css"', 'href="../../assets/quick-lesson.css"')
+        document = document.replace('href="../shared/fonts/PatrickHand-Regular.ttf"', 'href="../../assets/fonts/PatrickHand-Regular.ttf"')
+        document = document.replace('src="../shared/notebook.js"', 'src="../../assets/notebook.js"')
+        document = document.replace('<link rel="stylesheet" href="../shared/notebook.css">', '')
         for other_id, other in previews.items():
             document = document.replace(f'href="../{other["directory"]}/"', f'href="../{other_id}/"')
         document = document.replace('<script ', '<script src="../../assets/progress.js" defer></script><script src="../../assets/data.js" defer></script><script ', 1)
-        document = document.replace('</head>', '<link rel="stylesheet" href="../../assets/app.css"><script src="../../assets/lesson-shell.js" defer></script></head>')
+        document = document.replace('</head>', '<link rel="stylesheet" href="../../assets/app.css"><link rel="stylesheet" href="../../assets/notebook.css"><script src="../../assets/lesson-shell.js" defer></script></head>')
         shell = '<div id="course-shell" class="course-shell" aria-label="Course navigation and progress"></div>'
         document = document.replace('<main id="main">', '<main id="main">'+shell)
         document = document.replace('Checks track this page session only.', 'Checks are saved in this browser when storage is available.')
         document = document.replace('This is a standalone sample. The remaining lessons are planned.', 'This interactive preview is part of the Larnix curriculum. The remaining lessons are planned.')
         document = document.replace('That lesson is planned. This is the second standalone sample.', 'That lesson is planned. Return to the catalogue to explore its lesson plan.')
         (target / 'index.html').write_text(document)
+    # Content-version assets so a rebuilt page cannot reuse an earlier lesson runtime.
+    for page in OUT.rglob('*.html'):
+        def version_asset(match):
+            ref = match.group(2)
+            url = urlsplit(ref)
+            asset = page.parent / url.path
+            if url.scheme or asset.suffix not in {'.js', '.css'} or not asset.is_file():
+                return match.group(0)
+            version = hashlib.sha256(asset.read_bytes()).hexdigest()[:12]
+            return f'{match.group(1)}="{url.path}?v={version}"'
+        page.write_text(re.sub(r'(src|href)="([^"]+)"', version_asset, page.read_text()))
     print(f'Built {len(curriculum["modules"])} modules, {len(lesson_ids)} lesson plans and {len(previews)} interactive previews → {OUT}')
 
 

@@ -6,6 +6,11 @@
  function element(tag,text,className){const el=document.createElement(tag);el.textContent=text;if(className)el.className=className;return el;}
  function render(){
   const s=run.frames[cursor],end=cursor===run.frames.length-1;
+  document.querySelectorAll('[data-scenario]').forEach(button=>{
+   const c={...E.defaults,...scenarios[button.dataset.scenario]};
+   const selected=c.crash===$('crash-point').value&&c.policy===$('recovery-policy').value&&c.lookupOnline===$('lookup-online').checked&&c.payloadChanged===$('payload-changed').checked;
+   button.setAttribute('aria-pressed',String(selected));
+  });
   $('step-count').textContent=`Step ${cursor+1} / ${run.frames.length}`;
   $('step-back').disabled=cursor===0;$('step-next').disabled=end;
   $('timeline').replaceChildren(...run.frames.map((f,i)=>{const li=element('li',f.status==='crashed'?'Crash':i===0?'Save intent':i===run.frames.length-1?'Recover':i===1?'Dispatch':i===2?'Commit':i===3?'Receive':'Save receipt',i===cursor?'current':i<cursor?'past':'');if(i===cursor)li.setAttribute('aria-current','step');return li;}));
@@ -16,11 +21,12 @@
   $('effect-count').textContent=String(s.ledger.length)+' effect'+(s.ledger.length===1?'':'s');
   $('total').textContent='₹'+s.ledger.reduce((sum,r)=>sum+r.amount,0)+' recorded · '+s.calls+' tool call'+(s.calls===1?'':'s');
   $('ledger').replaceChildren(...s.ledger.map(r=>element('p',`${r.id} · ₹${r.amount} · ${r.key}`,'ledger-row')));
+  $('recovery-evidence').textContent=`Agent saved: ${s.checkpoint.receipt ? 'receipt' : 'pending, no receipt'} · Provider recorded: ${s.ledger.length} refund${s.ledger.length===1?'':'s'}, ₹${s.ledger.reduce((sum,r)=>sum+r.amount,0)} (observer view)`;
   $('event').textContent=s.event;
   $('outcome').dataset.status=s.status;
   const labels={running:'IN PROGRESS',crashed:'STOPPED · READY TO RECOVER',complete:'COMPLETE · ONE BUSINESS EFFECT',duplicate:'DUPLICATE · TWO BUSINESS EFFECTS',incorrect:'INCORRECT · WRONG AMOUNT',held:'HELD · COMPLETION UNKNOWN',blocked:'BLOCKED · CHANGED PARAMETERS'};
   $('outcome-label').textContent=labels[s.status];
-  $('invariant').textContent=end?(s.status==='complete'?'One ₹500 effect is recorded, and the checkpoint contains its receipt.':s.status==='duplicate'?'The agent saved a completion record, but the provider recorded two effects. Local success hid the duplicate.':s.status==='incorrect'?'Only one effect occurred, but it is ₹700 against an authorized ₹500 intent. Counting effects alone misses the incorrect parameters.':'The agent has not claimed completion. Inspect the provider ledger as the lab observer; the agent cannot use this view as evidence.'):'The three panels show different places where information can live. Watch which ones survive the crash.';
+  $('invariant').textContent=end?(s.status==='complete'?'One ₹500 effect is recorded, and the checkpoint contains its receipt.':s.status==='duplicate'?'The agent saved a completion record, but the provider recorded two effects. Local success hid the duplicate.':s.status==='incorrect'?'Only one effect occurred, but it is ₹700 against an authorized ₹500 intent. Counting effects alone misses the incorrect parameters.':'The agent has not claimed completion. Inspect the provider ledger as the lab observer; the agent cannot use this view as evidence.'):'Observer view shows what happened outside the agent. The agent must obtain a matching receipt before claiming completion.';
  }
  function configure(atStart=false){
   run=E.run({crash:$('crash-point').value,policy:$('recovery-policy').value,lookupOnline:$('lookup-online').checked,payloadChanged:$('payload-changed').checked});

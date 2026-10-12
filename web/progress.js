@@ -2,7 +2,7 @@
 (function(root){
  'use strict';
  const KEY='larnix.progress.v1';
- const empty=()=>({version:1,lessons:{},theme:'dark',lastLesson:null});
+ const empty=()=>({version:1,lessons:{},theme:'light',lastLesson:null});
  function clean(input){
   const data=empty();
   if(!input||input.version!==1||typeof input.lessons!=='object'||!input.lessons)return data;
