@@ -4,7 +4,7 @@
     "title": "When similarity changes its mind",
     "description": "Move vectors and discover why dot product and cosine can disagree.",
     "kind": "Interactive preview",
-    "reading_minutes": "25–35",
+    "reading_minutes": "10",
     "checks": 3,
     "answers": {
       "prediction": "b",
@@ -17,7 +17,7 @@
     "title": "An answer needs evidence",
     "description": "Trace policy evidence through retrieval, context, citations and abstention.",
     "kind": "Interactive preview",
-    "reading_minutes": "30",
+    "reading_minutes": "10",
     "checks": 3,
     "answers": {
       "source": "source",
@@ -30,7 +30,7 @@
     "title": "The refund that happened twice",
     "description": "Crash an agent and compare blind retries with stable intent and receipt reconciliation.",
     "kind": "Interactive preview",
-    "reading_minutes": "30",
+    "reading_minutes": "10",
     "checks": 3,
     "answers": {
       "prediction": "unknown",

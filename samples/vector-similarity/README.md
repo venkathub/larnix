@@ -47,3 +47,7 @@ The tests cover ranking reversal, normalization, scale invariance, zero/negative
 - `exercise.py`: original five-document learner scaffold.
 
 The reference sites informed teaching direction and concepts. No reference implementation, assets or course content were copied.
+
+## Short visual core
+
+The default route targets about 10 minutes: see the idea (2), try three lab changes (4), explain/check (3), recall (1). Original handwritten-style SVGs accompany the mechanism. Longer explanations, glossary, interview guides and production exercises remain available in optional sections. Time is guidance, not a mastery guarantee. All three checks remain in the core; deep links open optional content. The shared Caveat font is served locally under its bundled OFL license.

@@ -42,3 +42,7 @@ python3 scripts/curriculum.py check
 Tests cover baseline facts/citations, retrieval versus context failures, stale-source applicability, visible/unseen contradictions, unsupported queries, empty sources, valid citation targets and invalid configuration. The downloadable expected cases are also checked against the browser engine. Browser QA covers scenarios, controls, citation navigation, quiz/reset, themes and mobile/desktop layout. This is not a full accessibility audit or learner study.
 
 Research sources are linked in the lesson. The reference projects informed teaching direction only; no external lesson content, interface assets or implementation was copied.
+
+## Short visual core
+
+The default route targets about 10 minutes: see the idea (2), try three lab changes (4), explain/check (3), recall (1). Original handwritten-style SVGs accompany the mechanism. Longer explanations, glossary, interview guides and production exercises remain available in optional sections. Time is guidance, not a mastery guarantee. All three checks remain in the core; deep links open optional content. The shared Caveat font is served locally under its bundled OFL license.

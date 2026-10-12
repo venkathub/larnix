@@ -20,3 +20,7 @@ Run `make check` from the repository root. Engine tests compare ten independent 
 The Python starter is intentionally unfinished. Learners must implement it and extend it to two SQLite stores with process termination, racing attempts, delayed replies and migration tests. Browser results do not establish those production guarantees.
 
 Sources reviewed October 12, 2026: [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [Temporal workflow execution](https://docs.temporal.io/workflow-execution), [Stripe idempotent requests](https://docs.stripe.com/api/idempotent_requests). The mock lookup contract and rental story are original teaching fixtures, not a vendor API tutorial.
+
+## Short visual core
+
+The default route targets about 10 minutes: see the idea (2), try three lab changes (4), explain/check (3), recall (1). Original handwritten-style SVGs accompany the mechanism. Longer explanations, glossary, interview guides and production exercises remain available in optional sections. Time is guidance, not a mastery guarantee. All three checks remain in the core; deep links open optional content. The shared Caveat font is served locally under its bundled OFL license.

@@ -20,11 +20,21 @@ Apply the following editorial requirements to every authored lesson, including a
 - Carry one original example through the explanation, worked calculation or execution trace, interactive exploration and failure analysis. Introduce equations after their meaning; name every symbol and show intermediate steps. Introduce code after explaining its inputs, expected behavior and purpose.
 - Address the questions a learner is likely to ask, such as why a simpler approach fails and when the method is appropriate. Explain assumptions, counterexamples and tradeoffs without hiding essential caveats in optional sections.
 - Finish the main narrative with three to five specific takeaways, a short glossary of newly introduced terms and a bridge to the next lesson. Keep the existing understanding checks, sources, interview reasoning and production exercise.
-- Preserve depth through clearly signposted derivations and implementation detail. Advanced lessons may rely on linked prerequisites; they should still explain each new reasoning step. Let lesson length follow the concept rather than a fixed word quota.
+- Preserve depth through clearly signposted derivations and implementation detail. Advanced lessons may rely on linked prerequisites; they should still explain each new reasoning step. Design the core concept for about 10 minutes; move extended derivations and production work into optional sections. Split a broad concept across the planned lesson sequence rather than growing the core indefinitely.
 
 Before publication, review whether a learner with the stated prerequisites can explain why the mechanism works, reproduce the worked example and recognize a failure case. A prose outline or a collection of bullets does not satisfy the authored explanation requirement. The 168 existing lesson plans are authoring blueprints, not completed narrative chapters.
 
 The vector-similarity sample has been revised against this standard with a continuous rental-help-desk story, explicit prerequisites, worked normalization, common questions, takeaways and glossary. Use it as the first reviewable example of the narrative format; further prototypes must still validate the approach for evidence flow and agent recovery.
+
+## Ten-minute core and handwritten diagrams
+
+The latest approved direction is a short visual core for every lesson. All three previews implement this format: 2 minutes for the situation and sketch, 4 minutes for three deliberate lab changes, 3 minutes for explanation and checks, and 1 minute for recall. These are pacing targets, not a guarantee of understanding or a timer-based completion rule.
+
+- Use an original handwritten-style SVG wherever a diagram makes the mechanism clearer. Keep labels readable, provide a title and text alternative, and adapt to narrow screens and both themes.
+- Prefer a short story, one visual mechanism and a compact worked comparison to repeated paragraphs. Define unfamiliar terms inline. Essential limitations stay visible.
+- Keep prediction and transfer checks in the core route. Preserve full worked details, failure discussions, glossary, interview preparation and production tasks as optional disclosures.
+- Deep links must open their containing disclosure, including citations and the Interview/Production views. Diagrams and core explanations remain available without JavaScript.
+- The shared local Caveat font supplies handwritten labels; irregular SVG strokes supply the sketch treatment. This adds no external font requests. See `samples/shared/fonts/OFL.txt` for the font license.
 
 ## Teaching sequence for every lesson
 

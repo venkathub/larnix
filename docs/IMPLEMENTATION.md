@@ -9,6 +9,7 @@ Implemented on the rebuild branch. Main remains the empty baseline. The referenc
 - Combined topic-group, availability and bookmark filters, URL-preserved filter state, explicit no-result states.
 - Module pages, lesson blueprints, direct prerequisite links, primary readings and next-lesson navigation.
 - Three integrated interactive previews: vector similarity (M03-L01), RAG evidence flow (M17-L01), and agent crash recovery (M21-L02).
+- Each preview has a suggested 10-minute core, original handwritten-style SVG, three checks, and optional deeper explanation/interview/production sections. Direct links reveal optional content automatically.
 - Shared quiz/theme component plus course navigation, bookmarks and independent reading/check/practice records.
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
@@ -26,7 +27,7 @@ Visit `http://127.0.0.1:8775/`. This is a static build with no runtime package d
 
 With Node.js on PATH, `make check` runs the curriculum validation, platform tests, lesson arithmetic/evidence/recovery tests, syntax checks and generated-route checks. Override `NODE=/absolute/path/to/node` if needed. `make build` builds; `make serve` builds and serves on port 8775.
 
-Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by origin: switching port or domain starts a separate local record. The UI has a two-step reset. No analytics, tracking requests, external fonts or model calls are used. External source links open only when selected.
+Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by origin: switching port or domain starts a separate local record. The UI has a two-step reset. No analytics, tracking requests, external font requests or model calls are used. External source links open only when selected.
 
 ## Source map
 
@@ -39,7 +40,8 @@ Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by
 | `web/catalog.js` | Search/filter and check-summary rules |
 | `web/progress.js` | Versioned browser state, sanitization and memory fallback |
 | `web/lesson-shell.js` | Course navigation and self-reported progress controls in authored lessons |
-| `samples/shared/lesson-ui.js` | Shared explanation checks, feedback, retry and theme behavior |
+| `samples/shared/lesson-ui.js` | Shared explanation checks, feedback, retry, theme and disclosure deep links |
+| `samples/shared/quick-lesson.css`, `samples/shared/fonts/` | Short learning path, sketch diagrams and locally served OFL-licensed Caveat font |
 | `samples/vector-similarity/`, `samples/rag-grounding/`, `samples/agent-recovery/` | Original lesson prose, labs and learner artifacts |
 | `scripts/build_site.py` | Generates platform data, copies assets and integrates authored lessons |
 | `tests/` | Platform logic, persistence and generated asset/navigation checks |

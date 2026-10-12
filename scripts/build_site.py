@@ -23,6 +23,8 @@ def build():
     for name in ['app.js', 'app.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:
         shutil.copy2(ROOT / 'web' / name, assets / name)
     shutil.copy2(ROOT / 'samples/shared/lesson-ui.js', assets / 'lesson-ui.js')
+    shutil.copy2(ROOT / 'samples/shared/quick-lesson.css', assets / 'quick-lesson.css')
+    shutil.copytree(ROOT / 'samples/shared/fonts', assets / 'fonts', dirs_exist_ok=True)
     shutil.copy2(ROOT / 'samples/vector-similarity/styles.css', assets / 'lesson.css')
     shutil.copy2(ROOT / 'web/index.html', OUT / 'index.html')
     data = {'modules': curriculum['modules'], 'tracks': curriculum['tracks'],
@@ -40,6 +42,7 @@ def build():
         document = document.replace('href="styles.css"', 'href="../../assets/lesson.css"')
         document = document.replace('href="../vector-similarity/styles.css"', 'href="../../assets/lesson.css"')
         document = document.replace('src="../shared/lesson-ui.js"', 'src="../../assets/lesson-ui.js"')
+        document = document.replace('href="../shared/quick-lesson.css"', 'href="../../assets/quick-lesson.css"')
         for other_id, other in previews.items():
             document = document.replace(f'href="../{other["directory"]}/"', f'href="../{other_id}/"')
         document = document.replace('<script ', '<script src="../../assets/progress.js" defer></script><script src="../../assets/data.js" defer></script><script ', 1)

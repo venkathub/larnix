@@ -8,6 +8,8 @@ Phase 1 defines the learning plan. Three original interactive samples are implem
 - [M17-L01 — Assemble a grounded answer pipeline](samples/rag-grounding/index.html) · [preview guide](samples/rag-grounding/README.md)
 - [M21-L02 — Resume without repeating effects](samples/agent-recovery/index.html) · [preview guide](samples/agent-recovery/README.md)
 
+Each preview offers a suggested **10-minute core** with handwritten-style diagrams, three quick checks and optional deeper reading, interview preparation and production practice.
+
 The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for the three previews. The remaining 165 lesson narratives and labs are planned.
 
 ## Run the platform

@@ -4,6 +4,20 @@
  window.LessonUI={init({id,questions}){
   const $=id=>document.getElementById(id),checked=new Set();
   const store=document.documentElement.dataset.platformLesson?window.LarnixProgress:null;
+  // Optional sections still open when reached through a course or citation link.
+  function revealAnchor(){
+   let anchor;try{anchor=decodeURIComponent(location.hash.slice(1));}catch{return;}
+   const target=document.getElementById(anchor);if(!target)return;
+   let node=target,opened=false;
+   while(node){if(node.tagName==='DETAILS'&&!node.open){node.open=true;opened=true;}node=node.parentElement;}
+   if(opened)target.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('hashchange',revealAnchor);
+  document.addEventListener('click',event=>{
+   const link=event.target.closest('a[href^="#"]');
+   if(link&&link.hash===location.hash)revealAnchor();
+  });
+  revealAnchor();
   function progress(){
    $('check-progress').textContent=`${checked.size} / ${Object.keys(questions).length} checks understood`;
    $('completion-title').textContent=`${checked.size} of ${Object.keys(questions).length} understood`;
