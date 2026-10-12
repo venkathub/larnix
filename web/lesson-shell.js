@@ -15,8 +15,12 @@
  tools.append(actions);
  const note=el('p',P.isPersistent()?'Saved on this browser. Check answers restore on return; reading and practice are self-reported, not a mastery score.':'Browser storage is unavailable. Progress lasts only while this page remains open.');note.className='progress-explanation';tools.append(note);
  const nav=el('div');nav.className='lesson-neighbors';const order=D.order.flatMap(mid=>D.modules.find(m=>m.id===mid).lessons),position=order.findIndex(l=>l.id===id);
- if(position>0){const previous=order[position-1];nav.append(a('← '+previous.id+' · '+previous.title+' (plan)',root+'#/lesson/'+previous.id));}
- if(order[position+1]){const next=order[position+1];nav.append(a(next.id+' · '+next.title+' (plan) →',root+'#/lesson/'+next.id));}tools.append(nav);
+ const destination=l=>D.previews[l.id]?root+'lessons/'+l.id+'/':root+'#/lesson/'+l.id;
+ const suffix=l=>D.previews[l.id]?'':' (plan)';
+ if(position>0){const previous=order[position-1];nav.append(a('← '+previous.id+' · '+previous.title+suffix(previous),destination(previous)));}
+ if(order[position+1]){const next=order[position+1];nav.append(a(next.id+' · '+next.title+suffix(next)+' →',destination(next)));}tools.append(nav);
+ const completion=document.querySelector('.completion');
+ if(completion){const continuation=nav.cloneNode(true);continuation.setAttribute('aria-label','Continue learning');completion.after(continuation);}
  const brand=document.querySelector('.topbar .brand');brand.href=root+'#/catalog';brand.setAttribute('aria-label','Larnix curriculum');
  // Fixed curriculum navigation stays outside the lesson's own section anchors.
 })();

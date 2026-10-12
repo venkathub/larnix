@@ -1,4 +1,116 @@
 {
+  "M01-L01": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Frame a useful decision",
+    "description": "Choose the decision and cost of being wrong before choosing the model.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "0",
+      "check2": "1",
+      "check3": "2"
+    }
+  },
+  "M01-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Specify quality and economics",
+    "description": "Count the full cost per successful outcome, including human review and failures.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M01-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Design human control",
+    "description": "Match the assistant’s action to the evidence and make recovery easy.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M01-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Choose a delivery boundary",
+    "description": "Release the smallest useful capability whose failures you can observe and contain.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "0",
+      "check2": "1",
+      "check3": "2"
+    }
+  },
+  "M02-L01": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Build reproducible Python components",
+    "description": "Make inputs, dependencies and failures visible instead of relying on notebook memory.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M02-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Design service contracts",
+    "description": "Receiving a response and receiving valid business data are different successes.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M02-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Control concurrent work",
+    "description": "Bound active work and release its slot when a request completes or is cancelled.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M02-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Persist and test behavior",
+    "description": "Keep related writes atomic, and handle duplicate requests separately from rollback.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
   "M03-L01": {
     "directory": "vector-similarity",
     "title": "When similarity changes its mind",
@@ -10,6 +122,216 @@
       "prediction": "b",
       "scale": "dot",
       "zero": "undefined"
+    }
+  },
+  "M03-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Understand optimization",
+    "description": "A downhill direction helps only when the step size is suitable.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "0",
+      "check2": "1",
+      "check3": "2"
+    }
+  },
+  "M03-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Model uncertainty",
+    "description": "An alert’s meaning depends on both detector behaviour and how common the underlying problem is.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M03-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Compare experiments honestly",
+    "description": "A small observed win needs uncertainty and sampling context before it supports a release.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M04-L01": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Establish supervised baselines",
+    "description": "Judge a model against a simple baseline on the decision you actually need.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "0",
+      "check2": "1",
+      "check3": "2"
+    }
+  },
+  "M04-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Protect the evaluation boundary",
+    "description": "Protect the evaluation boundary before trusting a good score.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M04-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Handle imperfect predictions",
+    "description": "Choose an action threshold by inspecting its mistakes and workload.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M04-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Discover structure and diagnose fit",
+    "description": "A beautiful training result is useful only if it survives new cases.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "0",
+      "check2": "2",
+      "check3": "1"
+    }
+  },
+  "M05-L01": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Trace a learning step",
+    "description": "Backward computes gradients; the optimizer uses them to change parameters.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M05-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Stabilize optimization",
+    "description": "Change one factor at a time so a failed learning run has an explainable cause.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "0",
+      "check3": "2"
+    }
+  },
+  "M05-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Control generalization",
+    "description": "Use the right layer mode and gradient mode, then judge on untouched examples.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
+  "M05-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Choose representations and architectures",
+    "description": "Choose an architecture for the structure of the evidence, then test its assumptions.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "0",
+      "check3": "2"
+    }
+  },
+  "M06-L01": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Define dataset contracts",
+    "description": "Validate both the record and the time when the system could know it.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M06-L02": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Curate reliable labels",
+    "description": "Agreement is useful evidence about consistency, but it is not proof of truth.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "0",
+      "check3": "2"
+    }
+  },
+  "M06-L03": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Version and trace data",
+    "description": "A model result needs a traceable data snapshot and transformation, not just a filename.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "2",
+      "check2": "0",
+      "check3": "1"
+    }
+  },
+  "M06-L04": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Operate the data lifecycle",
+    "description": "Follow a data change through its derived copies and report unfinished work honestly.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "0",
+      "check3": "2"
     }
   },
   "M17-L01": {

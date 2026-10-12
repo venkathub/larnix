@@ -6,6 +6,7 @@ import shutil
 import hashlib
 import re
 from urllib.parse import urlsplit
+from render_foundations import load_notes, render as render_foundation, validate_notes
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
@@ -15,6 +16,8 @@ def build():
     curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
     sources = json.loads((ROOT / 'docs/curriculum/sources.json').read_text())['sources']
     previews = json.loads((ROOT / 'web/lessons.json').read_text())
+    foundation_notes = load_notes()
+    validate_notes(foundation_notes, curriculum)
     lesson_ids = {lesson['id'] for module in curriculum['modules'] for lesson in module['lessons']}
     if not set(previews) <= lesson_ids:
         raise ValueError('Preview manifest contains unknown lessons')
@@ -40,8 +43,18 @@ def build():
         target.mkdir(parents=True, exist_ok=True)
         for path in source.iterdir():
             if path.is_file() and path.suffix in ['.js', '.css', '.py', '.json']:
+                if preview.get('format') == 'foundation' and path.suffix == '.json':
+                    continue  # Emit only this lesson's notes in lesson-data.js below.
                 shutil.copy2(path, target / path.name)
-        document = (source / 'index.html').read_text()
+        if preview.get('format') == 'foundation':
+            module = next(m for m in curriculum['modules'] if any(l['id'] == lesson_id for l in m['lessons']))
+            lesson = next(l for l in module['lessons'] if l['id'] == lesson_id)
+            note = foundation_notes[lesson_id]
+            document = render_foundation(note, lesson, module)
+            (target / 'lesson-data.js').write_text('window.FoundationLesson = ' + json.dumps(note, ensure_ascii=False).replace('<', '\\u003c') + ';\n')
+            (target / 'starter.txt').write_text(note['practice']['starter'] + '\n')
+        else:
+            document = (source / 'index.html').read_text()
         document = document.replace('<html lang="en"', f'<html data-platform-lesson="{lesson_id}" lang="en"')
         document = document.replace('href="styles.css"', 'href="../../assets/lesson.css"')
         document = document.replace('href="../vector-similarity/styles.css"', 'href="../../assets/lesson.css"')

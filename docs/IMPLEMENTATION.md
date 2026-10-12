@@ -1,6 +1,6 @@
 # Larnix implementation
 
-## Current milestone: local platform and three representative lessons
+## Current milestone: M01–M06 foundations and two advanced previews
 
 Implemented on the rebuild branch. Main remains the empty baseline. The reference repository has not been forked or imported.
 
@@ -9,13 +9,13 @@ Implemented on the rebuild branch. Main remains the empty baseline. The referenc
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
 - The separate preview showcase is removed in the catalogue draft. Available lessons open directly from their modules; planned lessons open their blueprints. On mobile the roadmap starts collapsed and closes after a stage is selected.
 - Module pages, lesson blueprints, direct prerequisite links, primary readings and next-lesson navigation.
-- Three integrated interactive previews: vector similarity (M03-L01), RAG evidence flow (M17-L01), and agent crash recovery (M21-L02).
+- Twenty-six authored previews: all 24 foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
 - Each preview has a suggested 10-minute core, original handwritten-style SVG, three checks, and optional deeper explanation/interview/production sections. Direct links reveal optional content automatically.
 - Shared quiz/theme component plus course navigation, bookmarks and independent reading/check/practice records.
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
 
-This milestone does not implement account synchronization, backend APIs, a release/assessment system, or 165 additional narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
+This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 142 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
 
 ## Run and check
 
@@ -44,7 +44,8 @@ Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by
 | `samples/shared/lesson-ui.js` | Shared explanation checks, feedback, retry, theme and disclosure deep links |
 | `samples/shared/quick-lesson.css`, `samples/shared/fonts/` | Short learning path, sketch diagrams and locally served OFL-licensed Caveat font |
 | `samples/vector-similarity/`, `samples/rag-grounding/`, `samples/agent-recovery/` | Original lesson prose, labs and learner artifacts |
-| `scripts/build_site.py` | Generates platform data, copies assets and integrates authored lessons |
+| `scripts/build_site.py`, `scripts/render_foundations.py` | Generates platform data and static lesson HTML; validates foundation topic coverage and fixtures |
+| `samples/foundations/` | Original M01–M06 notes, case explorer and tested local math experiments |
 | `tests/` | Platform logic, persistence and generated asset/navigation checks |
 
 The three authored lesson pages retain their specialist lab engines. Shared components handle repeatable teaching UI. The current base lesson stylesheet comes from the vector sample and is emitted once as `assets/lesson.css`; the RAG and recovery labs add their own layout rules. This keeps the approved visual treatment without adding a framework solely for the prototype.
@@ -65,8 +66,8 @@ The curriculum status is a planning baseline. Preview availability comes from a 
 
 ## Remaining implementation sequence
 
-1. Refine the shared lesson components using the three prototypes, including accessibility and learner review.
-2. Author M01–M06 in reviewed module batches, with full narrative, meaningful interactions and exercise evidence.
+1. Validate the foundation lessons with first-time learners, including accessibility, transfer and the ten-minute core pace.
+2. Review learner-produced exercise evidence; the authored practice instructions are not completed production implementations.
 3. Expand retrieval, agents, evaluation/security, operations and advanced branches in curriculum order.
 4. Decide on accounts, cross-device progress, search indexing and publication requirements when their use cases are concrete.
 
@@ -136,3 +137,20 @@ All three entries in the preview manifest now use the same question-first, evide
 Walkthrough evidence: vector dot, cosine and normalized-dot comparisons; opposite and zero-vector cases; recovery blind retry, reconciliation, unavailable lookup, changed amount and pre-dispatch replay; all six graded checks in the two updated previews, including deliberate wrong answers and corrective feedback. Both lessons began with no selected quiz answers and were restored to that state. Mobile checks used 390 × 844 with no horizontal overflow. The feedback and controls remain adjacent; the existing diagrams and handwritten fonts are preserved.
 
 Honest review: vectors gives the most concrete entry point, although interpreting coordinates still needs basic math. RAG clearly distinguishes where evidence disappears, but its fixed ranking and mock generator do not demonstrate real retrieval quality. Recovery remains the most demanding preview because it requires reasoning about separate records and uncertainty; it is appropriate after the listed agent/state prerequisite, not as a first programming lesson. All three need first-time learner trials to validate transfer and the proposed ten-minute pace. Reviewer familiarity with the answers prevents calling these blind assessment results.
+
+
+## Foundation delivery — M01–M06
+
+All 24 foundation lessons now open as authored previews. Twenty-three use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 24 of the 26 available previews; 142 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
+
+Each new lesson includes definitions, a handwritten mechanism sketch, a worked example, a misconception, three original illustrated cases with adjacent feedback and numerical evidence, three checks, two concealed-answer transfer prompts, every approved topic as an expanded note, verified primary sources, and a downloadable practice starter with acceptance criteria. The ten-minute route introduces one central mechanism; broader notes and production practice require additional time.
+
+The case explorer switches between fixed synthetic fixtures and labels that limitation explicitly before the controls and below the visual. It does not pretend to run Python, train a model, call an API or measure production results. M03-L02 and M05-L02 additionally provide a computed quadratic-loss chart and step controls; M04-L03 provides a computed threshold slider with six per-ticket decisions, confusion counts, precision and recall. Undefined precision at zero alerts is preserved.
+
+The build rejects missing topic coverage, malformed checks, incomplete cases and inconsistent chart scales. Tests independently calculate threshold counts, baseline mistakes, scalar gradient updates and shared-filter outputs; the page checks enforce 24-lesson foundation availability and match saved quiz keys to authored answers. Previous/next navigation opens authored lessons directly and stays visible after completion checks.
+
+Authoring sources were rechecked against primary documentation, including Python, RFC 9110, PostgreSQL, D2L, SciPy, scikit-learn, PyTorch 2.9, Google ML framing, Microsoft HAX, Feast and Hugging Face. Individual lessons link the exact relevant pages. The reference GitHub project was not forked or imported. Coding starters are exercises for learners to develop and verify; they are not a claim that all described services or pipelines have been built.
+
+Foundation acceptance evidence: browser-tested all 69 case selections across the 23 new pages at 390 × 844; each produced a distinct expected state and no horizontal overflow. Opened topic notes and practice starters in a representative lesson from each module. Verified correct checks, wrong-answer explanation, persistence after reload and reset in six representative lessons, restoring their initially unanswered state. Tested the threshold slider by keyboard at no-alert and .7 cutoffs; verified local gradient-step values. The desktop revision sheet, restored light/dark preference, direct next-lesson link and catalogue counts (24 foundation lessons / 26 total previews) were checked. No browser console errors were observed.
+
+This is implementation and informed content review, not an independent learner trial or a comprehensive accessibility audit. The dense mathematics and systems modules still require the stated prerequisites; ten-minute comprehension and later retention remain to be validated with first-time learners.
