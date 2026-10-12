@@ -1,6 +1,6 @@
 # Larnix — visual and interactive teaching direction
 
-Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 168 lessons in the [curriculum](INDEX.md). The vector-similarity and RAG evidence-pipeline samples are implemented; the remaining lessons are planned. The narrative standard below also applies when revising the existing sample.
+Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 168 lessons in the [curriculum](INDEX.md). The vector-similarity, RAG evidence-pipeline and agent recovery samples are implemented; the remaining lessons are planned. The narrative standard below also applies when revising the existing sample.
 
 ## Reference and interpretation
 

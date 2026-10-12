@@ -2,12 +2,13 @@
 
 An original AI Engineering curriculum for interview preparation and production practice.
 
-Phase 1 defines the learning plan. Two original interactive samples are implemented for review:
+Phase 1 defines the learning plan. Three original interactive samples are implemented for review:
 
 - [M03-L01 — Reason with vectors](samples/vector-similarity/index.html) · [preview guide](samples/vector-similarity/README.md)
 - [M17-L01 — Assemble a grounded answer pipeline](samples/rag-grounding/index.html) · [preview guide](samples/rag-grounding/README.md)
+- [M21-L02 — Resume without repeating effects](samples/agent-recovery/index.html) · [preview guide](samples/agent-recovery/README.md)
 
-The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for the two previews. The remaining 166 lesson narratives and labs are planned.
+The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for the three previews. The remaining 165 lesson narratives and labs are planned.
 
 ## Run the platform
 

@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "contract": "Synthetic INR 500 refund for R-104, key refund-R104-01. Provider atomically stores effect and receipt; keys do not expire. Unknown lookup is held. Changed pending intent is blocked. No real payments.",
+  "cases": [
+    {
+      "name": "blind-after-commit",
+      "config": {
+        "crash": "commit",
+        "policy": "blind"
+      },
+      "expected": {
+        "status": "duplicate",
+        "effectCount": 2,
+        "total": 1000,
+        "calls": 2,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-2"
+      }
+    },
+    {
+      "name": "reconcile-after-commit",
+      "config": {
+        "crash": "commit"
+      },
+      "expected": {
+        "status": "complete",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-1"
+      }
+    },
+    {
+      "name": "before-dispatch",
+      "config": {
+        "crash": "before"
+      },
+      "expected": {
+        "status": "complete",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-1"
+      }
+    },
+    {
+      "name": "receipt-was-only-in-memory",
+      "config": {
+        "crash": "receipt"
+      },
+      "expected": {
+        "status": "complete",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-1"
+      }
+    },
+    {
+      "name": "receipt-already-saved",
+      "config": {
+        "crash": "saved",
+        "lookupOnline": false
+      },
+      "expected": {
+        "status": "complete",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-1"
+      }
+    },
+    {
+      "name": "lookup-unavailable",
+      "config": {
+        "lookupOnline": false
+      },
+      "expected": {
+        "status": "held",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "pending",
+        "receiptId": null
+      }
+    },
+    {
+      "name": "unavailable-before-dispatch",
+      "config": {
+        "crash": "before",
+        "lookupOnline": false
+      },
+      "expected": {
+        "status": "held",
+        "effectCount": 0,
+        "total": 0,
+        "calls": 0,
+        "checkpointStatus": "pending",
+        "receiptId": null
+      }
+    },
+    {
+      "name": "changed-intent",
+      "config": {
+        "payloadChanged": true
+      },
+      "expected": {
+        "status": "blocked",
+        "effectCount": 1,
+        "total": 500,
+        "calls": 1,
+        "checkpointStatus": "pending",
+        "receiptId": null
+      }
+    },
+    {
+      "name": "blind-changed-intent",
+      "config": {
+        "policy": "blind",
+        "payloadChanged": true
+      },
+      "expected": {
+        "status": "duplicate",
+        "effectCount": 2,
+        "total": 1200,
+        "calls": 2,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-2"
+      }
+    },
+    {
+      "name": "blind-wrong-amount-before-dispatch",
+      "config": {
+        "crash": "before",
+        "policy": "blind",
+        "payloadChanged": true
+      },
+      "expected": {
+        "status": "incorrect",
+        "effectCount": 1,
+        "total": 700,
+        "calls": 1,
+        "checkpointStatus": "done",
+        "receiptId": "receipt-1"
+      }
+    }
+  ]
+}

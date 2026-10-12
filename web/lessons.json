@@ -4,7 +4,7 @@
     "title": "When similarity changes its mind",
     "description": "Move vectors and discover why dot product and cosine can disagree.",
     "kind": "Interactive preview",
-    "reading_minutes": "25\u201335",
+    "reading_minutes": "25–35",
     "checks": 3,
     "answers": {
       "prediction": "b",
@@ -23,6 +23,19 @@
       "source": "source",
       "context": "context",
       "unknown": "abstain"
+    }
+  },
+  "M21-L02": {
+    "directory": "agent-recovery",
+    "title": "The refund that happened twice",
+    "description": "Crash an agent and compare blind retries with stable intent and receipt reconciliation.",
+    "kind": "Interactive preview",
+    "reading_minutes": "30",
+    "checks": 3,
+    "answers": {
+      "prediction": "unknown",
+      "identity": "same",
+      "outage": "hold"
     }
   }
 }
