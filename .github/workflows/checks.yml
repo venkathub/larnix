@@ -1,8 +1,3 @@
-# Content & code quality gates (extended task by task through P0).
-#
-# Tasks 4 + 7 add the schema gates; task 8 adds the R10 notebook-execution gate;
-# task 9 adds the prose/spell/link gates. Later: a11y (task 10), R1/R3/R6 (task 11).
-
 name: Checks
 
 on:
@@ -10,177 +5,79 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   schema:
     name: Schema, a11y & unit tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Install CI deps
-        run: pip install -r infra/ci/requirements.txt
-
-      - name: Unit tests (schema linters)
-        working-directory: infra/ci
-        run: python -m unittest test_frontmatter_lint test_quiz_lint test_a11y_check test_r_gates test_review_cards_lint test_make_twin test_assets_check test_chapter_structure_lint test_ai_review -v
-
-      - name: Unit tests (grader)
-        working-directory: lib
-        run: python -m unittest -v
-
-      - name: Lint chapter front-matter
-        run: python infra/ci/frontmatter_lint.py
-
-      - name: Varsity-contract structure (P1-D4)
-        run: python infra/ci/chapter_structure_lint.py
-
-      - name: Lint quizzes
-        run: python infra/ci/quiz_lint.py
-
-      - name: Accessibility (alt-text + theme contrast)
-        run: python infra/ci/a11y_check.py
-
-      - name: R1 — currency check
-        run: python infra/ci/currency_check.py
-
-      - name: R3 — browser-import lint
-        run: python infra/ci/browser_import_lint.py
-
-      - name: R6 — free-fallback check
-        run: python infra/ci/free_fallback_check.py
-
-      - name: Review-cards schema (spaced-repetition seeding)
-        run: python infra/ci/review_cards_lint.py
-
-      - name: Twin drift check (R10 / P1-D10)
-        run: python infra/ci/make_twin.py --check
-
-      - name: Dataset license ledger (R11 / P1-D8)
-        run: python infra/ci/assets_check.py
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: make check
 
   notebooks:
+    # Retain the required check name across the rebuild. The current labs run
+    # in JavaScript; unfinished learner Python starters are not executables.
     name: Notebook execution (R10)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Install notebook deps
-        run: pip install -r infra/ci/requirements-notebooks.txt
-
-      - name: Register Jupyter kernel
-        run: python -m ipykernel install --user --name python3
-
-      - name: Unit tests (R10 runner)
-        working-directory: infra/ci
-        run: python -m unittest test_run_notebooks -v
-
-      - name: Execute notebooks (R10)
-        run: python infra/ci/run_notebooks.py
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Execute the shipped interactive lesson engines
+        run: node --test tests/foundation-math.test.cjs samples/*/tests/*.test.cjs
+      - name: Execute notebooks if any are authored
+        shell: bash
+        run: |
+          mapfile -d '' notebooks < <(git ls-files -z '*.ipynb')
+          if [ "${#notebooks[@]}" -eq 0 ]; then
+            echo 'No .ipynb notebooks are authored in this rebuild; JavaScript lab tests ran above.'
+          else
+            python -m pip install nbconvert==7.16.6 ipykernel==6.29.5
+            for notebook in "${notebooks[@]}"; do
+              jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=300 --output-dir=/tmp/larnix-notebooks "$notebook"
+            done
+          fi
 
   prose:
     name: Prose, spelling & links
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.12'
+      - run: python -m pip install codespell==2.4.2
+      - name: Spelling (HAX is the Microsoft toolkit's name)
+        run: codespell README.md docs samples web scripts tests --skip='*.ttf,OFL.txt,PatrickHand-OFL.txt,__pycache__' --ignore-words-list=hax
+      - name: Curriculum, source records and generated prose consistency
+        run: python scripts/curriculum.py check
+      - name: Rendered links, anchors and project-site paths
+        run: python -m unittest discover -s tests -p test_site_build.py
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install tools (pinned)
-        run: |
-          set -euo pipefail
-          curl -sSfL https://github.com/errata-ai/vale/releases/download/v3.9.1/vale_3.9.1_Linux_64-bit.tar.gz \
-            | sudo tar xz -C /usr/local/bin vale
-          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
-            | sudo tar xz -C /usr/local/bin lychee
-          pip install codespell==2.4.2
-          npm install -g markdownlint-cli2@0.18.1
-
-      - name: Vale (tone / banned words)
-        # `.` already includes modules/ — listing it twice double-scanned every chapter.
-        run: vale --glob='!**/_extensions/**' .
-
-      - name: markdownlint
-        run: markdownlint-cli2
-
-      - name: codespell
-        run: codespell .
-
-      - name: Link check (lychee)
-        run: lychee --config lychee.toml --no-progress 'docs/**/*.md' '*.qmd' 'modules/**/*.qmd' 'modules/**/*.md' '**/README.md' README.md CLAUDE.md
-
-  # Render gate + rendered-site link check (added 2026-07-19, P0/P1 review).
-  # Why: rendering previously happened only in pr-preview/publish, so a
-  # render-breaking change could merge if branch protection required only
-  # `Checks`; and source-level lychee cannot see broken *rendered* paths (the
-  # capstone.md-served-as-raw-text bug shipped exactly this way — module pages
-  # linked a file the site never rendered, and every source link resolved).
-  render:
-    name: Site renders + rendered links resolve
+  preview:
+    name: preview
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          version: "1.8.27"
-
-      - name: Render site
-        uses: quarto-dev/quarto-actions/render@v2
+          python-version: '3.12'
+      - run: python scripts/build_site.py
+      - name: Upload the static preview for review
+        uses: actions/upload-artifact@v4
         with:
-          path: "."
-
-      - name: Install lychee (pinned)
-        run: |
-          set -euo pipefail
-          curl -sSfL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.18.1/lychee-x86_64-unknown-linux-gnu.tar.gz \
-            | sudo tar xz -C /usr/local/bin lychee
-
-      # --offline: only file/anchor links inside _site are checked here —
-      # external URLs are already covered by the source-level lychee job above.
-      # --config is explicit: without it lychee auto-loads ./lychee.toml, whose
-      # `exclude_path = ["_site"]` reduces this check to 0 links (verified).
-      - name: Rendered-site internal link check
-        run: lychee --config lychee-site.toml --offline --no-progress --root-dir "$(pwd)/_site" '_site/**/*.html'
-
-      # e2e smoke (review 2026-07-19, E1): the quiz engine, chapter progress,
-      # and one real in-browser Pyodide execution. Converts the previously
-      # manual "₹0 browser sweep" verification into a repeatable gate.
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: infra/e2e/package-lock.json
-
-      - name: Install e2e deps
-        working-directory: infra/e2e
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
-
-      - name: Learner-path smoke tests (Playwright)
-        working-directory: infra/e2e
-        run: npm test
+          name: larnix-preview
+          path: dist/
+          retention-days: 7

@@ -1,0 +1,29 @@
+/* Hand-drawn case notes. Text stays in HTML for responsive sizing and selection. */
+.foundation-lab{border:1px solid var(--line);border-radius:5px 12px 7px 15px;overflow:hidden;background:var(--surface)}
+.foundation-lesson .scenario-controls{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.foundation-lesson .scenario-controls button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.foundation-lesson .case-stages{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;gap:20px;margin:18px 0}
+.foundation-lesson .case-stages li{position:relative;min-width:0;min-height:92px;padding:15px 10px;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:5px}
+.foundation-lesson .case-stages svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.foundation-lesson .case-stages path{fill:var(--surface);stroke:var(--accent);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.foundation-lesson .case-stages span,.foundation-lesson .case-stages strong{position:relative;font:600 24px/1.2 var(--note);overflow-wrap:anywhere}
+.foundation-lesson .case-stages .stage-number{font-size:16px;color:var(--muted)}
+.foundation-lesson .case-stages li:not(:last-child):after{content:'→';position:absolute;right:-19px;top:32%;color:var(--accent);font:30px var(--note)}
+.foundation-lesson .revision-picture .case-stages{grid-template-columns:1fr;gap:24px;margin:22px 10px}.foundation-lesson .revision-picture .case-stages li{min-height:76px}
+.foundation-lesson .revision-picture .case-stages li:not(:last-child):after{content:'↓';right:49%;top:auto;bottom:-28px}
+.foundation-lesson .sketch-caption{font-size:20px;line-height:1.4}
+.case-visual{padding:8px 20px 20px}.case-bars{display:grid;gap:13px;margin:22px 0}.case-bar>div{display:flex;align-items:baseline;justify-content:space-between;gap:20px;font:400 20px/1.3 var(--hand)}
+.case-bar strong{font:500 19px ui-monospace,monospace}.bar-track{display:block;height:13px;border:1px solid var(--line);border-radius:3px 6px 4px 6px;margin-top:6px;overflow:hidden;background:var(--surface-2)}.bar-track>span{display:block;background:var(--accent);height:100%;border-radius:2px 5px 3px 2px}
+.case-evidence{margin:22px 0 0;display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:15px}.case-evidence>div{display:grid;grid-template-columns:1fr 1.5fr;gap:14px;font:400 20px/1.35 var(--hand)}.case-evidence dt{color:var(--muted)}.case-evidence dd{margin:0;overflow-wrap:anywhere}
+.foundation-lesson .topic-note{border-bottom:1px dashed var(--line);padding:16px 0}.foundation-lesson .topic-note h3{margin:0 0 8px;text-transform:none}.foundation-lesson .topic-note p{margin:0}.practice-code{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);background:var(--surface-2);padding:18px;border-radius:5px 12px 7px 15px;font:14px/1.7 ui-monospace,monospace}
+.foundation-lesson .source-list a{color:var(--accent);text-decoration:underline;overflow-wrap:anywhere}.foundation-lesson .lesson-extra{scroll-margin-top:100px}
+@media(max-width:600px){.foundation-lesson .case-stages{gap:10px}.foundation-lesson .case-stages strong{font-size:21px}.foundation-lesson .case-stages li{padding:10px 7px;min-height:100px}.foundation-lesson .case-stages li:not(:last-child):after{right:-13px;font-size:23px}.case-visual{padding:8px 12px 15px}.case-evidence>div{grid-template-columns:1fr;gap:3px}.case-evidence{gap:13px}}
+@media(prefers-reduced-motion:no-preference){.case-bars{animation:case-ink-in .22s ease-out}@keyframes case-ink-in{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}}
+
+.foundation-lesson .fixture-label{font:400 17px/1.3 var(--hand);color:var(--muted);margin:0 0 6px}
+
+.foundation-lesson .live-math{margin-top:18px}.live-math .extra-body{font:400 21px/1.45 var(--hand)}.math-controls{display:flex;flex-wrap:wrap;align-items:end;gap:12px}.math-controls label{display:grid;gap:5px}.math-controls select{font:400 20px var(--hand);background:var(--surface);color:var(--text);padding:9px;border:1px solid var(--line)}
+.live-math input[type=range]{display:block;width:100%;min-height:44px;accent-color:var(--accent)}.live-math #live-result{border-left:3px solid var(--accent);background:var(--surface-2);padding:14px;min-height:65px}
+.descent-chart{width:100%;max-height:310px;background:var(--surface);border:1px dashed var(--line);border-radius:9px}.descent-chart text{font:500 24px var(--note);fill:var(--text)}.plot-axis{fill:none;stroke:var(--muted);stroke-width:1}.loss-curve{fill:none;stroke:var(--accent);stroke-width:2.5}#descent-point{fill:var(--b);stroke:var(--text);stroke-width:1.5}
+.score-tickets{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.score-tickets li{display:grid;gap:4px;padding:10px;border:1px dashed var(--line);border-radius:5px 12px 7px 15px;font-size:18px}.score-tickets li[data-flag=true]{border-style:solid;border-color:var(--accent);background:var(--highlight)}
+@media(max-width:600px){.score-tickets{grid-template-columns:1fr 1fr}.math-controls{display:grid;grid-template-columns:1fr 1fr;align-items:start}.math-controls label{grid-column:1/-1}.math-controls button{font-size:19px}}

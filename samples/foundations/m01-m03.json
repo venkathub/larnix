@@ -1,0 +1,2463 @@
+[
+  {
+    "id": "M01-L01",
+    "orientation": "AI product engineering starts with a useful decision. A baseline is the simple existing approach that a new system must improve.",
+    "idea": "Choose the decision and cost of being wrong before choosing the model.",
+    "story": [
+      "Meera handles equipment-rental messages. Her manager asks for an AI assistant, but the immediate problem is smaller: urgent breakdown reports wait behind routine return questions. The user job is to get each ticket to the right queue quickly.",
+      "A keyword rule looks for “broken”. It is cheap and understandable, but “the drill stopped working” slips through. A model may help with phrasing; that still does not prove it reduces the expensive misses. First compare both on the same labelled tickets."
+    ],
+    "example": "On a fictional batch of 20 tickets, a rule gets 18 routes right but misses 2 urgent cases. A model gets 19 right and misses 1 urgent case. That is a useful lead, not proof of readiness: inspect which case failed and test more representative messages.",
+    "trap": "A fluent reply is not evidence of correct routing. Judge the action the support desk needs, including the mistakes it cannot afford.",
+    "sketch": [
+      "Customer need",
+      "Routing decision",
+      "Cost of mistakes"
+    ],
+    "lab": {
+      "question": "Which approach best fits a desk that cannot afford missed breakdown reports?",
+      "limitation": "Fixed synthetic case explorer: these are invented routing outcomes for the same 20 tickets, not a running rule engine or model benchmark.",
+      "scenarios": [
+        {
+          "label": "1 · Keyword rule",
+          "steps": [
+            "20 tickets",
+            "Check “broken”",
+            "Inspect misses"
+          ],
+          "evidence": [
+            [
+              "Correct routes",
+              "18 of 20"
+            ],
+            [
+              "Urgent cases",
+              "4 total"
+            ],
+            [
+              "Urgent misses",
+              "2 of 4"
+            ]
+          ],
+          "result": "The rule misses two urgent tickets.",
+          "why": "Overall accuracy hides which errors hurt the desk; review the two missed breakdowns.",
+          "bars": [
+            {
+              "label": "Correct routes · tickets",
+              "value": 18,
+              "max": 20
+            },
+            {
+              "label": "Urgent misses · tickets",
+              "value": 2,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "2 · Mock model",
+          "steps": [
+            "Same 20 tickets",
+            "Classify wording",
+            "Inspect misses"
+          ],
+          "evidence": [
+            [
+              "Correct routes",
+              "19 of 20"
+            ],
+            [
+              "Urgent cases",
+              "4 total"
+            ],
+            [
+              "Urgent misses",
+              "1 of 4"
+            ]
+          ],
+          "result": "The mock model improves this batch but still misses one urgent case.",
+          "why": "One additional correct route is evidence about these fixtures only; deployment needs a defined acceptance rule.",
+          "bars": [
+            {
+              "label": "Correct routes · tickets",
+              "value": 19,
+              "max": 20
+            },
+            {
+              "label": "Urgent misses · tickets",
+              "value": 1,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "3 · Route all urgent",
+          "steps": [
+            "Same 20 tickets",
+            "Use urgent queue",
+            "Inspect overload"
+          ],
+          "evidence": [
+            [
+              "Correct routes",
+              "4 of 20"
+            ],
+            [
+              "Urgent misses",
+              "0 of 4"
+            ],
+            [
+              "Unneeded urgent routes",
+              "16"
+            ]
+          ],
+          "result": "No urgent case is missed, but the urgent queue is flooded.",
+          "why": "A one-sided metric can reward a useless system. Track false alarms and handling capacity alongside missed urgent cases.",
+          "bars": [
+            {
+              "label": "Correct routes · tickets",
+              "value": 4,
+              "max": 20
+            },
+            {
+              "label": "Unneeded urgent · tickets",
+              "value": 16,
+              "max": 20
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Write one sentence naming the person, decision and benefit: “Help a support agent route urgent breakdowns promptly.” This keeps the evaluation tied to a real workflow.",
+      "Compare a manual or rules baseline and the candidate on the same inputs. Record costly error types separately; a single average can hide an unacceptable tradeoff.",
+      "Choose an acceptance boundary before inspecting results. If evidence is too limited, retain human triage and collect more labelled cases instead of treating a demo as a release decision."
+    ],
+    "transfer": [
+      {
+        "question": "An assistant writes beautiful refund replies but still sends tickets to the wrong team. Has it solved this lesson’s user job?",
+        "answer": "No. Writing quality is a different outcome from correct routing. Measure routing and its consequences, or explicitly redefine the job."
+      },
+      {
+        "question": "The model wins on all 20 fixtures. Does that prove it will win next month?",
+        "answer": "No. The fixtures may omit new wording, languages or rare urgent events. They support a bounded observation, not a guarantee."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What should be written first?",
+        "options": [
+          "The user decision and success measure",
+          "The largest model name",
+          "A prompt for every possible ticket"
+        ],
+        "answer": 0,
+        "explanation": "The decision determines what to measure and whether a model is needed."
+      },
+      {
+        "question": "Why is 95% correct insufficient by itself?",
+        "options": [
+          "It always means failure",
+          "The remaining errors may be disproportionately costly",
+          "Accuracy cannot be calculated"
+        ],
+        "answer": 1,
+        "explanation": "The kind and consequence of the errors matter, as well as their count."
+      },
+      {
+        "question": "What makes a fair baseline comparison?",
+        "options": [
+          "Use easier tickets for the model",
+          "Compare only fluent replies",
+          "Use the same representative cases and decision criteria"
+        ],
+        "answer": 2,
+        "explanation": "Changing the cases or criteria confounds the comparison."
+      }
+    ],
+    "topics": [
+      {
+        "title": "user jobs",
+        "explanation": "A user job describes progress someone needs to make, not a feature name. “Route a broken drill report quickly” is more testable than “add AI to support”."
+      },
+      {
+        "title": "failure costs",
+        "explanation": "Different mistakes consume different resources or cause different harm. A routine ticket in the urgent queue costs attention; an urgent ticket in the routine queue delays help, so count both separately."
+      },
+      {
+        "title": "rules versus ML versus generation",
+        "explanation": "Rules encode explicit conditions, ML learns patterns, and generation produces content. A fixed return-date calculation may need only rules, while varied wording may justify a classifier; generating a paragraph does not automatically improve either decision."
+      },
+      {
+        "title": "baseline",
+        "explanation": "A baseline is a simple comparison point with measured behaviour. Keep its inputs and scoring aligned with the candidate, and include the current human workflow where relevant."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google: framing an ML problem",
+        "url": "https://developers.google.com/machine-learning/problem-framing/ml-framing"
+      },
+      {
+        "title": "Full Stack Deep Learning: when to use ML",
+        "url": "https://fullstackdeeplearning.com/course/2022/lecture-1-course-vision-and-when-to-use-ml/"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Create six fictional tickets: two obvious breakdowns, two indirect breakdowns and two routine questions. Label the desired queue before testing your rule.",
+        "Apply a keyword rule and record missed urgent cases and unnecessary urgent routes separately. Ask a second person to challenge ambiguous labels if available.",
+        "Write a three-sentence decision brief naming the user, acceptance boundary and one reason to keep human triage."
+      ],
+      "starter": "ticket,expected_queue,rule_queue\n\"Drill broken\",urgent,\n\"It stopped halfway through drilling\",urgent,\n\"When is my return due?\",routine,\n\nDecision: ___\nCostliest error: ___\nDo not release if: ___"
+    }
+  },
+  {
+    "id": "M01-L02",
+    "orientation": "A quality metric scores system behaviour. A business metric measures whether the workflow helps, while unit economics asks what one useful outcome costs.",
+    "idea": "Count the full cost per successful outcome, including human review and failures.",
+    "story": [
+      "Meera’s rental desk receives a proposal: an assistant that costs only ₹2 per ticket. The quote sounds attractive, until she learns that some replies need a staff review and some still fail to resolve the request.",
+      "She writes down the denominator: successfully resolved cases. Paying less for each attempted answer can still cost more for each resolution. Now she can compare alternatives using the same fictional batch and a clearly stated success definition."
+    ],
+    "example": "For 100 attempts, model calls cost 100 × ₹2 = ₹200. Reviewing 20 replies costs 20 × ₹15 = ₹300. Total cost is ₹500. If 80 cases are resolved, cost per resolution is ₹500 ÷ 80 = ₹6.25. Unresolved cases still contributed to the bill.",
+    "trap": "Do not divide only by generated replies and call it cost per resolution. An attempted response, a reviewed response and a resolved customer problem are different events.",
+    "sketch": [
+      "All workflow costs",
+      "Verified resolutions",
+      "Cost per resolution"
+    ],
+    "lab": {
+      "question": "How does review burden change cost per resolved rental-support case?",
+      "limitation": "Fixed synthetic case explorer: all prices and resolution counts are invented. This is accounting over fixed scenarios, not a pricing quote or a live forecast.",
+      "scenarios": [
+        {
+          "label": "1 · Light review",
+          "steps": [
+            "100 attempts",
+            "Review 20",
+            "80 resolved"
+          ],
+          "evidence": [
+            [
+              "Model cost",
+              "₹200"
+            ],
+            [
+              "Review cost",
+              "₹300"
+            ],
+            [
+              "Cost per resolution",
+              "₹500 / 80 = ₹6.25"
+            ]
+          ],
+          "result": "Total cost is ₹500 for 80 resolutions.",
+          "why": "The numerator includes costs of unresolved attempts too. These figures exclude fixed engineering and support costs.",
+          "bars": [
+            {
+              "label": "Model cost · ₹",
+              "value": 200,
+              "max": 800
+            },
+            {
+              "label": "Review cost · ₹",
+              "value": 300,
+              "max": 800
+            }
+          ]
+        },
+        {
+          "label": "2 · Heavy review",
+          "steps": [
+            "100 attempts",
+            "Review 40",
+            "80 resolved"
+          ],
+          "evidence": [
+            [
+              "Model cost",
+              "₹200"
+            ],
+            [
+              "Review cost",
+              "₹600"
+            ],
+            [
+              "Cost per resolution",
+              "₹800 / 80 = ₹10"
+            ]
+          ],
+          "result": "The same 80 resolutions now cost ₹800.",
+          "why": "Review doubled, even though resolution count did not improve. Lower model-call prices alone would miss this cost driver.",
+          "bars": [
+            {
+              "label": "Model cost · ₹",
+              "value": 200,
+              "max": 800
+            },
+            {
+              "label": "Review cost · ₹",
+              "value": 600,
+              "max": 800
+            }
+          ]
+        },
+        {
+          "label": "3 · Fewer resolutions",
+          "steps": [
+            "100 attempts",
+            "Review 20",
+            "50 resolved"
+          ],
+          "evidence": [
+            [
+              "Model cost",
+              "₹200"
+            ],
+            [
+              "Review cost",
+              "₹300"
+            ],
+            [
+              "Cost per resolution",
+              "₹500 / 50 = ₹10"
+            ]
+          ],
+          "result": "The same ₹500 spend now costs ₹10 per resolution.",
+          "why": "The denominator fell. Measuring only spend per attempted ticket would hide the deterioration.",
+          "bars": [
+            {
+              "label": "Model cost · ₹",
+              "value": 200,
+              "max": 800
+            },
+            {
+              "label": "Review cost · ₹",
+              "value": 300,
+              "max": 800
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Define “resolved” before counting. For this toy desk, a staff-labelled case is resolved only if the reply correctly settles the customer’s issue; sending text is not enough.",
+      "List variable costs over the same period: model calls, review and rework. Add fixed development and operating costs for a full decision, with an explicit allocation assumption.",
+      "Set both quality and operational acceptance criteria. A cheaper workflow that mishandles urgent breakdowns can fail the release gate even when its average cost looks good."
+    ],
+    "transfer": [
+      {
+        "question": "A new model halves call cost to ₹100, but review rises to ₹600 and only 50 cases resolve. Is it cheaper than the baseline scenario?",
+        "answer": "No. Its stated cost is ₹700 / 50 = ₹14 per resolution, versus ₹6.25. Other uncounted costs could change both totals further."
+      },
+      {
+        "question": "Does the cheapest scenario necessarily deserve release?",
+        "answer": "No. It must also meet quality, capacity and user-outcome criteria. The fixed examples do not measure those criteria for a real service."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which denominator matches cost per resolution?",
+        "options": [
+          "All tokens",
+          "Successfully resolved cases",
+          "All generated replies"
+        ],
+        "answer": 1,
+        "explanation": "Use the outcome named by the metric; unsuccessful attempts still cost money."
+      },
+      {
+        "question": "What happened between light and heavy review?",
+        "options": [
+          "Model cost doubled",
+          "Resolution count increased",
+          "Review cost rose without more resolutions"
+        ],
+        "answer": 2,
+        "explanation": "Both have 100 calls and 80 resolutions, but review costs rise from ₹300 to ₹600."
+      },
+      {
+        "question": "Which statement is an acceptance criterion?",
+        "options": [
+          "At least 90 of 100 preselected routine cases must resolve correctly",
+          "The system should be impressive",
+          "Use a popular model"
+        ],
+        "answer": 0,
+        "explanation": "It names observable behaviour and a threshold. The threshold remains a fictional example, not a universal target."
+      }
+    ],
+    "topics": [
+      {
+        "title": "acceptance criteria",
+        "explanation": "Acceptance criteria specify observable conditions for deciding whether a change is acceptable. “No unsupported promises in the test fixtures” is inspectable; “the bot feels smart” is not."
+      },
+      {
+        "title": "quality metrics",
+        "explanation": "Quality metrics describe output behaviour, such as correct routing or supported answers. Always state the sample and denominator; a score on routine cases says little about rare urgent reports."
+      },
+      {
+        "title": "business metrics",
+        "explanation": "Business metrics track outcomes such as resolution time or repeat contacts. They can move differently from answer accuracy because review effort and workflow friction also affect users."
+      },
+      {
+        "title": "unit economics",
+        "explanation": "Unit economics assigns costs and value to one meaningful unit. Include review and unsuccessful attempts in the numerator, and distinguish variable operating cost from total cost including development."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Google: framing an ML problem",
+        "url": "https://developers.google.com/machine-learning/problem-framing/ml-framing"
+      },
+      {
+        "title": "Microsoft HAX: support efficient correction",
+        "url": "https://www.microsoft.com/en-us/haxtoolkit/guideline/support-efficient-correction/"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Copy the cost table and calculate total variable cost and cost per resolved case for each row. State that all prices are hypothetical.",
+        "Add a scenario with 0 resolutions and explain why cost per resolution is undefined rather than zero.",
+        "Write one measurable quality gate and one business gate; explain why passing only the cost gate is insufficient."
+      ],
+      "starter": "scenario,attempts,call_cost,reviewed,review_cost,resolved\nlight,100,2,20,15,80\nheavy,100,2,40,15,80\nlow_resolution,100,2,20,15,50\n\ntotal = attempts * call_cost + reviewed * review_cost\ncost_per_resolution = total / resolved  # only if resolved > 0"
+    }
+  },
+  {
+    "id": "M01-L03",
+    "orientation": "Human control means giving people useful ways to clarify, correct or take over. Abstaining means declining to make an unsupported claim; escalation hands the case to someone able to act.",
+    "idea": "Match the assistant’s action to the evidence and make recovery easy.",
+    "story": [
+      "A customer asks Meera’s rental assistant when a replacement drill will arrive. The order has two addresses and no confirmed dispatch scan. “Tomorrow” would sound helpful, but the assistant does not yet have the facts to promise it.",
+      "The useful next action is to ask which address applies. If the carrier records later conflict, the assistant should explain the uncertainty and pass the case to dispatch, carrying the order context so the customer need not repeat everything."
+    ],
+    "example": "One order has a confirmed carrier date, one lacks a delivery address, and one has conflicting tracking records. The appropriate paths are answer with its source, ask a focused question, and hold the promise while escalating. The same friendly tone can accompany all three paths.",
+    "trap": "A confident voice or a self-reported “95% sure” is not verified evidence. Show what supports the answer and give the customer a practical correction path.",
+    "sketch": [
+      "Inspect evidence",
+      "Choose next action",
+      "Let people correct"
+    ],
+    "lab": {
+      "question": "What should the assistant do before promising a replacement delivery date?",
+      "limitation": "Fixed synthetic case explorer: the evidence and chosen policy paths are authored examples, not a live assistant or a calibrated uncertainty model.",
+      "scenarios": [
+        {
+          "label": "1 · Verified date",
+          "steps": [
+            "Confirmed tracking",
+            "Show source",
+            "Answer date"
+          ],
+          "evidence": [
+            [
+              "Order evidence",
+              "Carrier confirms 14 Oct"
+            ],
+            [
+              "Address",
+              "Customer confirms"
+            ],
+            [
+              "Next action",
+              "Answer with date source"
+            ]
+          ],
+          "result": "Answer: “The carrier currently lists 14 Oct.”",
+          "why": "A sourced current estimate can be useful without becoming a guarantee. Keep the correction and contact paths available.",
+          "bars": [
+            {
+              "label": "Available facts · count",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Missing facts · count",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · Missing address",
+          "steps": [
+            "Two addresses",
+            "Ask which one",
+            "Wait for reply"
+          ],
+          "evidence": [
+            [
+              "Order evidence",
+              "No destination selected"
+            ],
+            [
+              "Address",
+              "Two possibilities"
+            ],
+            [
+              "Next action",
+              "Ask one focused question"
+            ]
+          ],
+          "result": "Ask which saved address should receive the replacement.",
+          "why": "The customer can supply the missing fact. Asking is more useful than guessing or escalating every incomplete request.",
+          "bars": [
+            {
+              "label": "Available facts · count",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Missing facts · count",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · Conflicting dates",
+          "steps": [
+            "Two tracking dates",
+            "Hold promise",
+            "Contact dispatch"
+          ],
+          "evidence": [
+            [
+              "Record A",
+              "14 Oct"
+            ],
+            [
+              "Record B",
+              "16 Oct"
+            ],
+            [
+              "Next action",
+              "Escalate conflict"
+            ]
+          ],
+          "result": "Explain the conflict and send the case to dispatch.",
+          "why": "Both records exist, but their disagreement is unresolved. More records do not automatically mean stronger evidence.",
+          "bars": [
+            {
+              "label": "Conflicting records · count",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Resolved conflicts · count",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Start by separating missing information from conflicting information. A customer can clarify an address, while dispatch may need to investigate inconsistent carrier records.",
+      "Make the next action specific: answer the supported part, ask one useful question, abstain from the unsupported promise, or escalate with the relevant context. These actions can be combined.",
+      "Correction should change the workflow, not merely trigger an apology. After the customer fixes an address, confirm what changed and recheck the delivery estimate before sending a new promise."
+    ],
+    "transfer": [
+      {
+        "question": "The customer corrects “Tuesday” to “Thursday”, but the system still schedules Tuesday. Has it supported correction?",
+        "answer": "No. The visible acknowledgement did not update the consequential state. Confirm the corrected value and verify the schedule before proceeding."
+      },
+      {
+        "question": "Should every uncertain request immediately go to a human?",
+        "answer": "No. A focused clarification can resolve some gaps. Escalate when policy, authority or unresolved evidence requires it, and make that boundary explicit."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Two records disagree about a delivery date. What is justified?",
+        "options": [
+          "Choose the more confident wording",
+          "Promise the earlier date",
+          "Explain the conflict and investigate"
+        ],
+        "answer": 2,
+        "explanation": "Conflicting evidence needs reconciliation, not a confident guess."
+      },
+      {
+        "question": "What makes a correction useful?",
+        "options": [
+          "The relevant state and next action reflect it",
+          "An apology appears",
+          "The confidence label increases"
+        ],
+        "answer": 0,
+        "explanation": "A correction must affect the outcome that matters to the customer."
+      },
+      {
+        "question": "Which uncertainty can the customer often resolve directly?",
+        "options": [
+          "Which carrier record is authoritative",
+          "Which delivery address they want",
+          "Whether a hidden provider outage occurred"
+        ],
+        "answer": 1,
+        "explanation": "Ask the person who can actually supply the missing information."
+      }
+    ],
+    "topics": [
+      {
+        "title": "uncertainty",
+        "explanation": "Uncertainty can come from missing facts, contradictory sources or imperfect predictions. Name the actual gap; an unvalidated confidence percentage does not resolve it."
+      },
+      {
+        "title": "user expectations",
+        "explanation": "Tell users what the assistant can do and where its information comes from. A carrier estimate should not be presented as a guaranteed arrival time."
+      },
+      {
+        "title": "correction",
+        "explanation": "Make mistaken inputs and outputs easy to correct. After an address correction, show the new address and recompute dependent decisions instead of preserving the old plan."
+      },
+      {
+        "title": "abstention",
+        "explanation": "Abstention means withholding an unsupported conclusion. The assistant can still explain the gap and provide a next step, such as requesting an order number."
+      },
+      {
+        "title": "escalation",
+        "explanation": "Escalation transfers the case to someone with suitable evidence or authority. Include context and a clear handoff state; silently placing a case in a queue is not the same as having a human resolve it."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft HAX: support efficient correction",
+        "url": "https://www.microsoft.com/en-us/haxtoolkit/guideline/support-efficient-correction/"
+      },
+      {
+        "title": "Microsoft HAX: scope services when in doubt",
+        "url": "https://www.microsoft.com/en-us/haxtoolkit/guideline/scope-services-when-in-doubt/"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Draw three boxes for answer, ask and escalate using the replacement-delivery scenario. Add the evidence needed to enter each box.",
+        "Write a customer correction and the exact state change it should cause. Include a confirmation message.",
+        "Walk through one unavailable-human case and define an honest waiting message plus an owner for follow-up."
+      ],
+      "starter": "Case | Evidence gap | Action | Owner | Observable next state\nConfirmed carrier estimate | none for estimate | answer with source | assistant | customer sees estimate\nTwo addresses | destination | ask | customer | chosen address confirmed\nConflicting tracking | authoritative date | escalate | dispatch | investigation acknowledged"
+    }
+  },
+  {
+    "id": "M01-L04",
+    "orientation": "A delivery boundary defines which actions a system may take. A staged rollout exposes a change gradually, with an owner and a way to stop future use.",
+    "idea": "Release the smallest useful capability whose failures you can observe and contain.",
+    "story": [
+      "Meera’s team can buy a hosted assistant or build a routing component. A working demo settles neither choice. Both options need support, data access, operating costs and a way to switch when requirements change.",
+      "They start with draft replies for a small staff group. Humans still decide what to send. This boundary helps them inspect mistakes before expanding authority, while recording that stopping the feature cannot recall a message already sent."
+    ],
+    "example": "A pilot creates 20 reply drafts and sends none automatically. Staff reject 4 drafts before customers see them. If automatic sending had been enabled on the same fictional outputs, 4 unsuitable replies would have reached customers. The model output is unchanged; the release boundary changes exposure.",
+    "trap": "“We can roll back the code” does not mean every consequence can be reversed. Disabling future sends does not erase messages already delivered.",
+    "sketch": [
+      "Choose ownership",
+      "Limit exposure",
+      "Observe then expand"
+    ],
+    "lab": {
+      "question": "How does the same set of 20 drafts affect customers under different delivery boundaries?",
+      "limitation": "Fixed synthetic case explorer: these are assumed review decisions for invented drafts, not measured rollout safety or a real vendor comparison.",
+      "scenarios": [
+        {
+          "label": "1 · Staff-only pilot",
+          "steps": [
+            "Generate 20 drafts",
+            "Review internally",
+            "Send none"
+          ],
+          "evidence": [
+            [
+              "Drafts",
+              "20"
+            ],
+            [
+              "Unsuitable drafts",
+              "4"
+            ],
+            [
+              "Customer sends",
+              "0"
+            ]
+          ],
+          "result": "The team can inspect failures without sending these drafts to customers.",
+          "why": "This tests draft usefulness, not the full customer workflow or the cost of sustained review.",
+          "bars": [
+            {
+              "label": "Customer sends · count",
+              "value": 0,
+              "max": 20
+            },
+            {
+              "label": "Rejected drafts · count",
+              "value": 4,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "2 · Approval gate",
+          "steps": [
+            "Generate 20 drafts",
+            "Reject four",
+            "Send approved 16"
+          ],
+          "evidence": [
+            [
+              "Reviewed drafts",
+              "20"
+            ],
+            [
+              "Approved sends",
+              "16"
+            ],
+            [
+              "Unsuitable sends",
+              "0 in this fixture"
+            ]
+          ],
+          "result": "Staff approval blocks four unsuitable drafts in this example.",
+          "why": "A human gate adds work and can itself fail. The zero here is a fixed fixture outcome, not a promise about reviewers.",
+          "bars": [
+            {
+              "label": "Customer sends · count",
+              "value": 16,
+              "max": 20
+            },
+            {
+              "label": "Unsuitable sends · count",
+              "value": 0,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "3 · Auto-send",
+          "steps": [
+            "Generate 20 drafts",
+            "Send all 20",
+            "Stop future sends"
+          ],
+          "evidence": [
+            [
+              "Customer sends",
+              "20"
+            ],
+            [
+              "Unsuitable sends",
+              "4"
+            ],
+            [
+              "Rollback effect",
+              "Stops later sends only"
+            ]
+          ],
+          "result": "Four unsuitable messages already reached customers.",
+          "why": "Stopping the feature contains future exposure; existing effects need a separate recovery plan.",
+          "bars": [
+            {
+              "label": "Customer sends · count",
+              "value": 20,
+              "max": 20
+            },
+            {
+              "label": "Unsuitable sends · count",
+              "value": 4,
+              "max": 20
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Compare build and buy against the same requirements: task quality, acceptable data handling, integration effort, total cost and who will operate the service. A vendor demo is only one input.",
+      "Define the release boundary in terms of permissions and users. “Draft for five trained staff” is more concrete than “small launch”, because it identifies what the system can actually do.",
+      "Choose a pilot gate and rollback owner before expansion. Monitor both output quality and the workflow; document how to disable future work and how to recover from actions already taken."
+    ],
+    "transfer": [
+      {
+        "question": "A hosted model becomes unavailable. Which preparation helps more: a favourite provider name or a tested fallback path?",
+        "answer": "A tested fallback path. A stable application contract and retained input/output fixtures help evaluate another provider or return to manual work."
+      },
+      {
+        "question": "The draft-only pilot succeeds. Is automatic sending now proven safe?",
+        "answer": "No. Automatic sending changes the authority boundary. Review-free operation needs its own evidence, monitoring and recovery design."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What does a useful pilot boundary specify?",
+        "options": [
+          "Users, allowed actions and stop conditions",
+          "Only the model name",
+          "Only a launch date"
+        ],
+        "answer": 0,
+        "explanation": "These details make the exposure and responsibility inspectable."
+      },
+      {
+        "question": "What can code rollback usually not do by itself?",
+        "options": [
+          "Stop later requests",
+          "Recall every already-sent customer message",
+          "Restore the previous application version"
+        ],
+        "answer": 1,
+        "explanation": "External effects often require separate recovery even after software rollback."
+      },
+      {
+        "question": "Which build-versus-buy claim is strongest?",
+        "options": [
+          "Build always costs less",
+          "Buy removes all operating responsibility",
+          "Compare requirements, full costs and exit options"
+        ],
+        "answer": 2,
+        "explanation": "Both choices carry integration and operating responsibilities; evaluate them for the actual workflow."
+      }
+    ],
+    "topics": [
+      {
+        "title": "build versus buy",
+        "explanation": "Building gives control but requires sustained engineering and operations. Buying can shorten integration work, but the team still owns customer outcomes and must evaluate the service against its requirements."
+      },
+      {
+        "title": "feasibility",
+        "explanation": "Feasibility asks whether the necessary data, skills and operating conditions exist. A polished demo does not establish that daily latency, review capacity or quality targets can be met."
+      },
+      {
+        "title": "vendor dependency",
+        "explanation": "Dependency grows when prompts, data formats and workflows assume one provider’s behaviour. Keep an explicit application contract and representative fixtures so replacement decisions can be tested rather than guessed."
+      },
+      {
+        "title": "staged rollout",
+        "explanation": "A staged rollout expands exposure after predefined evidence gates. Draft-only, human-approved and automatic modes have different failure consequences, so passing one stage does not automatically justify the next."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Full Stack Deep Learning: when to use ML",
+        "url": "https://fullstackdeeplearning.com/course/2022/lecture-1-course-vision-and-when-to-use-ml/"
+      },
+      {
+        "title": "Google: framing an ML problem",
+        "url": "https://developers.google.com/machine-learning/problem-framing/ml-framing"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Write a one-page decision table comparing a hosted service, a self-operated component and a manual fallback using the same requirements.",
+        "Define a staff-only pilot with a named owner, allowed actions, 20 fixtures and a measurable go/no-go rule.",
+        "Simulate one bad already-sent reply: write both the disable procedure and the separate customer-recovery action."
+      ],
+      "starter": "Option | Quality evidence | Operating owner | Full cost assumptions | Exit path\nHosted | ___ | ___ | ___ | ___\nSelf-operated | ___ | ___ | ___ | ___\nManual fallback | ___ | ___ | ___ | ___\n\nPilot audience: ___\nAllowed actions: draft only\nStop condition: ___\nRollback owner: ___"
+    }
+  },
+  {
+    "id": "M02-L01",
+    "orientation": "A Python component is a reusable function or module with clear inputs and outputs. Reproducibility means another person can recreate its documented behaviour from the same code, environment and inputs.",
+    "idea": "Make inputs, dependencies and failures visible instead of relying on notebook memory.",
+    "story": [
+      "Meera normalizes ticket text in a notebook before routing it. One cell reads a global queue prefix left behind by an earlier experiment. The displayed result looks right, but restarting the notebook changes what happens.",
+      "She moves normalization into a function that receives both text and prefix. Now a colleague can see the whole contract. Type hints explain the expected values; explicit checks still need to reject invalid values at runtime."
+    ],
+    "example": "With text “  Drill STOPPED  ” and prefix “urgent”, normalization produces “urgent:drill stopped”. Passing prefix “routine” intentionally changes the output. A hidden prefix makes this dependency easy to miss; a declared parameter makes it inspectable and testable in a clean process.",
+    "trap": "A Python annotation such as text: str does not enforce the input type at runtime. Add validation where untrusted data enters, and preserve useful failure information.",
+    "sketch": [
+      "Explicit inputs",
+      "Small function",
+      "Repeatable output"
+    ],
+    "lab": {
+      "question": "Can another developer explain this normalizer’s output without access to the old notebook session?",
+      "limitation": "Fixed synthetic case explorer: displayed outputs and failures are authored snapshots. This page does not execute Python or recreate an environment.",
+      "scenarios": [
+        {
+          "label": "1 · Explicit inputs",
+          "steps": [
+            "Text + prefix",
+            "Validate fields",
+            "Normalize"
+          ],
+          "evidence": [
+            [
+              "Text",
+              "“  Drill STOPPED  ”"
+            ],
+            [
+              "Prefix",
+              "“urgent”, passed explicitly"
+            ],
+            [
+              "Output",
+              "urgent:drill stopped"
+            ]
+          ],
+          "result": "Both required fields are explicit valid strings.",
+          "why": "Given this fixture and function, the result can be reconstructed without notebook history.",
+          "bars": [
+            {
+              "label": "Valid explicit fields · count",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Hidden or invalid fields · count",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · Hidden prefix",
+          "steps": [
+            "Text only",
+            "Read notebook global",
+            "Different prefix"
+          ],
+          "evidence": [
+            [
+              "Text",
+              "“  Drill STOPPED  ”"
+            ],
+            [
+              "Hidden prefix",
+              "“routine” from old cell"
+            ],
+            [
+              "Output",
+              "routine:drill stopped"
+            ]
+          ],
+          "result": "The output depends on a value the caller cannot see.",
+          "why": "The text did not change; hidden configuration did. Pass the prefix explicitly and document its meaning.",
+          "bars": [
+            {
+              "label": "Valid explicit fields · count",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Hidden or invalid fields · count",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · Hints alone",
+          "steps": [
+            "Text is 42",
+            "No runtime check",
+            "Call .strip()"
+          ],
+          "evidence": [
+            [
+              "Text",
+              "42, an integer"
+            ],
+            [
+              "Annotation",
+              "text: str"
+            ],
+            [
+              "Outcome",
+              "AttributeError at .strip()"
+            ]
+          ],
+          "result": "The annotation does not reject 42 before the function runs.",
+          "why": "A boundary check could raise a clear TypeError instead of a later, less helpful method failure.",
+          "bars": [
+            {
+              "label": "Valid explicit fields · count",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Hidden or invalid fields · count",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Name each input and output, then isolate the transformation in a function. Keep environment access and network calls outside this small core where practical, so fixtures remain easy to reason about.",
+      "Validate external inputs deliberately and catch only failures you can handle. Returning an empty string for every exception hides whether a customer supplied bad data or the program is broken.",
+      "Record the Python version, dependency versions and configuration names with a clean reproduction command. Commit the code and fixtures, not secrets or the virtual environment directory."
+    ],
+    "transfer": [
+      {
+        "question": "Two developers use identical code but different dependency versions. Is identical behaviour established?",
+        "answer": "No. Dependencies can change behaviour. Recreate the documented environment and compare the same fixtures before claiming reproduction."
+      },
+      {
+        "question": "Does locking dependencies guarantee identical results for every AI service?",
+        "answer": "No. External APIs, hardware, random choices and changing data may also matter. State what the reproduction recipe controls and what it does not."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which change removes the hidden prefix dependency?",
+        "options": [
+          "Run the notebook twice",
+          "Pass prefix as a named input",
+          "Add a longer comment above the old cell"
+        ],
+        "answer": 1,
+        "explanation": "A parameter exposes the dependency to callers and tests."
+      },
+      {
+        "question": "What does text: str do by itself?",
+        "options": [
+          "Reject every integer at runtime",
+          "Convert integers to strings",
+          "Describe the expected type for tools and readers"
+        ],
+        "answer": 2,
+        "explanation": "Python does not enforce ordinary type annotations at runtime."
+      },
+      {
+        "question": "Which item belongs in the repository?",
+        "options": [
+          "A small fixture and reproduction instructions",
+          "A production API secret",
+          "The entire copied virtual environment"
+        ],
+        "answer": 0,
+        "explanation": "Commit the recipe and safe fixtures; recreate environments and supply secrets separately."
+      }
+    ],
+    "topics": [
+      {
+        "title": "Python types",
+        "explanation": "Types describe the kinds of values a function expects and returns. A static checker can flag misuse, but Python annotations alone do not validate an incoming JSON field."
+      },
+      {
+        "title": "exceptions",
+        "explanation": "Exceptions report failures such as invalid input or unavailable files. Catch a specific failure when you have a recovery path; swallowing every exception can turn broken ticket processing into silent data loss."
+      },
+      {
+        "title": "modules",
+        "explanation": "A module groups reusable Python definitions in a file. Move ticket normalization out of notebook execution order so another entry point can import it without repeating exploratory cells."
+      },
+      {
+        "title": "environments",
+        "explanation": "A virtual environment isolates installed packages for a project. Recreate it from documented versions rather than checking its directory into Git; isolation alone does not pin dependencies."
+      },
+      {
+        "title": "configuration",
+        "explanation": "Configuration holds choices that vary between runs, such as a queue prefix or endpoint. Make required values explicit and validate them at startup; secret values should not appear in committed fixtures or logs."
+      },
+      {
+        "title": "Git",
+        "explanation": "Git records versions of tracked files so changes can be reviewed and compared. A commit identifies code, but untracked data, secrets and an undocumented runtime remain outside that reproducibility record."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Python: type annotations",
+        "url": "https://docs.python.org/3/library/typing.html"
+      },
+      {
+        "title": "Python 3.12: virtual environments",
+        "url": "https://docs.python.org/3.12/library/venv.html"
+      },
+      {
+        "title": "Python 3.12: modules",
+        "url": "https://docs.python.org/3.12/tutorial/modules.html"
+      },
+      {
+        "title": "Python 3.12: exceptions",
+        "url": "https://docs.python.org/3.12/tutorial/errors.html"
+      },
+      {
+        "title": "Pro Git: version control",
+        "url": "https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the starter as normalize.py and run it in a clean Python 3.12 environment. Record the interpreter version and command.",
+        "Add cases for whitespace, an empty prefix and integer input; specify which are accepted and which should raise a clear error.",
+        "Create a small README listing inputs, output and configuration. Inspect your proposed Git changes to exclude secrets and .venv."
+      ],
+      "starter": "def normalize(text: str, prefix: str) -> str:\n    if not isinstance(text, str) or not isinstance(prefix, str):\n        raise TypeError(\"text and prefix must be strings\")\n    if not prefix.strip():\n        raise ValueError(\"prefix must not be empty\")\n    return prefix.strip().lower() + \":\" + text.strip().lower()\n\nif __name__ == \"__main__\":\n    print(normalize(\"  Drill STOPPED  \", \"urgent\"))"
+    }
+  },
+  {
+    "id": "M02-L02",
+    "orientation": "A service contract defines what requests and responses mean. HTTP carries the message, JSON represents data, and application validation checks whether that data is usable.",
+    "idea": "Receiving a response and receiving valid business data are different successes.",
+    "story": [
+      "The rental desk adds an API that accepts new tickets. A browser sends a request body, but the service cannot assume the body is valid just because bytes arrived. It must parse the document and check the fields before creating a ticket.",
+      "One client sends broken JSON; another sends valid JSON with text set to a number. These are different failures. Meera wants an explicit response for each, plus a client that avoids blindly retrying bad input."
+    ],
+    "example": "The body {\"text\":42} is valid JSON because numbers are allowed. It still violates this endpoint’s contract, which requires a non-empty string. A TypeScript assertion cannot repair that mismatch: the service and client boundary need real checks on the received values.",
+    "trap": "A 200 response, valid JSON, and a TypeScript type assertion do not each prove the data obeys your contract. Inspect status, structure and meaning separately.",
+    "sketch": [
+      "HTTP response",
+      "JSON structure",
+      "Application contract"
+    ],
+    "lab": {
+      "question": "At which boundary should this ticket request stop?",
+      "limitation": "Fixed synthetic case explorer: status codes and gate results are authored for this illustrative API contract. No HTTP requests or TypeScript validation run in this page.",
+      "scenarios": [
+        {
+          "label": "1 · Malformed JSON",
+          "steps": [
+            "Receive bytes",
+            "JSON parse fails",
+            "Return 400"
+          ],
+          "evidence": [
+            [
+              "Body",
+              "{\"text\":"
+            ],
+            [
+              "Contract decision",
+              "Cannot parse document"
+            ],
+            [
+              "Illustrative response",
+              "400 Bad Request"
+            ]
+          ],
+          "result": "Stop before field validation: the JSON document is incomplete.",
+          "why": "Resending the same malformed body does not fix it. The client must correct its serialization.",
+          "bars": [
+            {
+              "label": "Passed gates · count",
+              "value": 1,
+              "max": 3
+            },
+            {
+              "label": "Unpassed gates · count",
+              "value": 2,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · Wrong field type",
+          "steps": [
+            "Receive bytes",
+            "Parse JSON",
+            "Reject text type"
+          ],
+          "evidence": [
+            [
+              "Body",
+              "{\"text\":42}"
+            ],
+            [
+              "Contract decision",
+              "text must be a string"
+            ],
+            [
+              "Illustrative response",
+              "422 Unprocessable Content"
+            ]
+          ],
+          "result": "JSON parsing succeeds, but application validation rejects the field.",
+          "why": "422 is this lesson’s documented choice for valid syntax with unusable content; other APIs may document 400.",
+          "bars": [
+            {
+              "label": "Passed gates · count",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Unpassed gates · count",
+              "value": 1,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "3 · Valid ticket",
+          "steps": [
+            "Receive bytes",
+            "Parse JSON",
+            "Validate fields"
+          ],
+          "evidence": [
+            [
+              "Body",
+              "{\"text\":\"Drill stopped\"}"
+            ],
+            [
+              "Contract decision",
+              "Non-empty string accepted"
+            ],
+            [
+              "Illustrative response",
+              "201 Created + ticket ID"
+            ]
+          ],
+          "result": "The request passes the three shown gates and a ticket is created.",
+          "why": "The response must still be checked by the client. Success status is not permission to assume any arbitrary response shape.",
+          "bars": [
+            {
+              "label": "Passed gates · count",
+              "value": 3,
+              "max": 3
+            },
+            {
+              "label": "Unpassed gates · count",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Separate transport outcome from response content. A connection failure may leave no response; an HTTP error response is still a response. Parse the body only according to the documented content type and contract.",
+      "At the boundary, check field presence, type and relevant constraints. Treat external data as unknown until validation succeeds; a cast tells the compiler what you claim, not what the server actually sent.",
+      "Classify recovery by cause and operation. Fix invalid input; handle documented temporary failures with bounded retries only when repeating the operation is safe. A timed-out create may already have committed."
+    ],
+    "transfer": [
+      {
+        "question": "A ticket-create request times out after the server commits. Does the timeout prove no ticket exists?",
+        "answer": "No. The client lacks a response, not necessarily a result. Use a documented idempotency or lookup mechanism before repeating the create."
+      },
+      {
+        "question": "Can every API use exactly the three status choices shown here?",
+        "answer": "No. Status semantics come from HTTP, but endpoint contracts choose details within those semantics. Read and test the actual API’s documented errors and versions."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Why does {\"text\":42} fail this endpoint?",
+        "options": [
+          "It is not JSON",
+          "HTTP forbids numbers",
+          "It violates the required field type"
+        ],
+        "answer": 2,
+        "explanation": "The syntax is valid; the endpoint requires a string."
+      },
+      {
+        "question": "What does a TypeScript assertion validate at runtime?",
+        "options": [
+          "Nothing by itself",
+          "Every required field",
+          "HTTP status codes only"
+        ],
+        "answer": 0,
+        "explanation": "Assertions are removed during compilation and do not check incoming data."
+      },
+      {
+        "question": "What is the safe inference after a create timeout?",
+        "options": [
+          "The create certainly failed",
+          "The outcome may be unknown",
+          "The server certainly committed"
+        ],
+        "answer": 1,
+        "explanation": "A lost response cannot by itself distinguish failure before work from success before the response was lost."
+      }
+    ],
+    "topics": [
+      {
+        "title": "HTTP",
+        "explanation": "HTTP defines request methods, response status semantics and other message rules. A timeout and a received error status represent different observations; neither should be flattened into a generic empty response."
+      },
+      {
+        "title": "JSON",
+        "explanation": "JSON encodes values such as objects, arrays, strings and numbers. Parsing {\"text\":42} produces structured data, but says nothing about whether 42 is an acceptable ticket description."
+      },
+      {
+        "title": "status codes",
+        "explanation": "Status codes summarize the response semantics. This lesson uses 400 for malformed input, 422 for semantically invalid content and 201 for creation; document the choices your endpoint actually implements."
+      },
+      {
+        "title": "API versioning",
+        "explanation": "Versioning makes incompatible contract changes explicit. If text is renamed to description, retain compatibility or expose a documented new contract instead of silently breaking older clients."
+      },
+      {
+        "title": "TypeScript boundaries",
+        "explanation": "TypeScript types help reason about known values during development. Treat network data as unknown and validate it before narrowing; writing value as Ticket does not add a runtime check."
+      }
+    ],
+    "sources": [
+      {
+        "title": "RFC 9110: HTTP semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html"
+      },
+      {
+        "title": "RFC 8259: JSON",
+        "url": "https://www.rfc-editor.org/rfc/rfc8259.html"
+      },
+      {
+        "title": "TypeScript: assertions",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Write an endpoint contract with method, path, required fields, successful response and three explicit error cases.",
+        "Run the starter against a string, numeric text and missing text; compare parsing with field validation. Add an incompatible-version fixture.",
+        "Describe recovery for malformed input and for a timeout after possible creation. State which repetition guarantees your endpoint would need."
+      ],
+      "starter": "import json\n\ndef validate_ticket(raw: str) -> dict:\n    value = json.loads(raw)\n    if not isinstance(value, dict):\n        raise ValueError(\"object required\")\n    if not isinstance(value.get(\"text\"), str) or not value[\"text\"].strip():\n        raise ValueError(\"non-empty text string required\")\n    return value\n\nprint(validate_ticket('{\"text\":\"Drill stopped\"}'))"
+    }
+  },
+  {
+    "id": "M02-L03",
+    "orientation": "Concurrency lets work overlap while tasks wait. A task is a scheduled unit of async work; a concurrency limit controls how many may use a scarce resource at once.",
+    "idea": "Bound active work and release its slot when a request completes or is cancelled.",
+    "story": [
+      "Five rental tickets need a response from a slow mock provider. Starting all five together seems fast, but the provider has capacity for only two active requests. Meera needs a waiting area as well as an active-work limit.",
+      "When a customer closes the page, their active request should stop consuming local capacity. Cleanup releases the slot so another ticket can proceed. Cancellation does not prove that a remote provider has undone work already accepted."
+    ],
+    "example": "With five arrived tickets and two slots, two requests are active and three wait. Cancel one active request and finish its cleanup; the next waiting request enters. The new snapshot has two active, two waiting and one cancelled request. The total still accounts for all five.",
+    "trap": "A semaphore limits entry to a protected section; it does not automatically limit how many tasks you create. A large waiting population can still exhaust memory.",
+    "sketch": [
+      "Waiting tickets",
+      "Two active slots",
+      "Release on exit"
+    ],
+    "lab": {
+      "question": "Where are the five requests when capacity is limited to two?",
+      "limitation": "Fixed synthetic case explorer: counts are predetermined scheduling snapshots, not a running event loop, timing benchmark or proof of remote cancellation.",
+      "scenarios": [
+        {
+          "label": "1 · Two slots",
+          "steps": [
+            "Five arrive",
+            "Admit two",
+            "Three wait"
+          ],
+          "evidence": [
+            [
+              "Total requests",
+              "5"
+            ],
+            [
+              "Active limit",
+              "2"
+            ],
+            [
+              "Snapshot",
+              "2 active, 3 waiting"
+            ]
+          ],
+          "result": "The active count stays at two while three requests wait.",
+          "why": "The limit protects active access. A production design must also bound the queue and choose what happens when it is full.",
+          "bars": [
+            {
+              "label": "Active · requests",
+              "value": 2,
+              "max": 5
+            },
+            {
+              "label": "Waiting · requests",
+              "value": 3,
+              "max": 5
+            },
+            {
+              "label": "Cancelled · requests",
+              "value": 0,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "2 · No active limit",
+          "steps": [
+            "Five arrive",
+            "Admit all five",
+            "Capacity exceeded"
+          ],
+          "evidence": [
+            [
+              "Total requests",
+              "5"
+            ],
+            [
+              "Provider capacity",
+              "2 assumed"
+            ],
+            [
+              "Snapshot",
+              "5 active, 0 waiting"
+            ]
+          ],
+          "result": "All five become active despite the assumed capacity of two.",
+          "why": "Concurrency is not free capacity. This snapshot demonstrates overload risk, not a measured failure probability.",
+          "bars": [
+            {
+              "label": "Active · requests",
+              "value": 5,
+              "max": 5
+            },
+            {
+              "label": "Waiting · requests",
+              "value": 0,
+              "max": 5
+            },
+            {
+              "label": "Cancelled · requests",
+              "value": 0,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "3 · Cancel + cleanup",
+          "steps": [
+            "Cancel one active",
+            "Release its slot",
+            "Admit next waiting"
+          ],
+          "evidence": [
+            [
+              "Before",
+              "2 active, 3 waiting"
+            ],
+            [
+              "Cancelled locally",
+              "1 request"
+            ],
+            [
+              "After",
+              "2 active, 2 waiting"
+            ]
+          ],
+          "result": "Cleanup makes the freed slot available to another request.",
+          "why": "Propagate cancellation after cleanup. Releasing local capacity is distinct from confirming a remote side effect stopped.",
+          "bars": [
+            {
+              "label": "Active · requests",
+              "value": 2,
+              "max": 5
+            },
+            {
+              "label": "Waiting · requests",
+              "value": 2,
+              "max": 5
+            },
+            {
+              "label": "Cancelled · requests",
+              "value": 1,
+              "max": 5
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Async code makes progress when a task yields while waiting. A blocking sleep or long synchronous calculation inside the event-loop thread can prevent other tasks from progressing.",
+      "Use a bounded queue to control waiting work and a semaphore or fixed worker pool to control active work. Define a full-queue policy such as reject, wait within a deadline or reduce admission.",
+      "Put resource cleanup in finally blocks or async context managers. A timeout should trigger a deliberate cancellation path; swallowing cancellation can leave work running longer than the caller expects."
+    ],
+    "transfer": [
+      {
+        "question": "You create a million tasks behind a semaphore of two. Is memory use bounded to two requests?",
+        "answer": "No. Only active access is bounded. The waiting tasks still exist; use bounded admission or a queue with a fixed worker pool."
+      },
+      {
+        "question": "A local task is cancelled. Can you promise a remote email was not sent?",
+        "answer": "No. Local cancellation does not establish the provider’s outcome. A side-effecting operation needs a separate reconciliation or deduplication design."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What does a two-slot semaphore directly bound?",
+        "options": [
+          "All memory in the process",
+          "Active entries to its protected section",
+          "The provider’s total global traffic"
+        ],
+        "answer": 1,
+        "explanation": "Its scope is the code using that semaphore, not all tasks or other service instances."
+      },
+      {
+        "question": "What should cleanup do after cancellation?",
+        "options": [
+          "Hide the cancellation forever",
+          "Acquire another slot",
+          "Release resources and usually propagate cancellation"
+        ],
+        "answer": 2,
+        "explanation": "Cleanup prevents leaks; propagation lets callers and structured concurrency observe cancellation."
+      },
+      {
+        "question": "Why can async code still stall?",
+        "options": [
+          "Blocking work can occupy the event-loop thread",
+          "All async code is automatically parallel",
+          "Every await creates a new process"
+        ],
+        "answer": 0,
+        "explanation": "Async overlap depends on yielding; it does not make arbitrary synchronous work non-blocking."
+      }
+    ],
+    "topics": [
+      {
+        "title": "asyncio",
+        "explanation": "asyncio coordinates asynchronous Python work, commonly around I/O waits. It does not turn a CPU-heavy loop into parallel computation simply because the surrounding function uses async def."
+      },
+      {
+        "title": "tasks",
+        "explanation": "A task schedules a coroutine so it can make progress with other work. Keep track of task lifetimes and failures; creating unlimited tasks can consume memory even behind a semaphore."
+      },
+      {
+        "title": "timeouts",
+        "explanation": "A timeout sets a waiting boundary for an operation or caller. Expiration can trigger cancellation, but cleanup may take time and a remote operation may already have produced an effect."
+      },
+      {
+        "title": "cancellation",
+        "explanation": "Cancellation asks a task to stop at a cancellation opportunity. Use finally or async with for cleanup, and normally propagate CancelledError after cleanup so the caller sees the cancellation."
+      },
+      {
+        "title": "queues",
+        "explanation": "A bounded queue limits waiting items and exposes overload at admission. A semaphore and queue solve different problems: active access versus waiting backlog."
+      },
+      {
+        "title": "streaming",
+        "explanation": "Streaming delivers pieces before the whole result is complete. Treat partial output separately from a successful final result, and close the stream when the caller cancels or the deadline expires."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Python: tasks and cancellation",
+        "url": "https://docs.python.org/3/library/asyncio-task.html"
+      },
+      {
+        "title": "Python 3.12: semaphore",
+        "url": "https://docs.python.org/3.12/library/asyncio-sync.html#semaphore"
+      },
+      {
+        "title": "Python 3.12: queues",
+        "url": "https://docs.python.org/3.12/library/asyncio-queue.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Use the starter around a mocked awaitable provider; instrument entry and exit to record active requests. Run five tasks and verify the observed maximum is two.",
+        "Cancel an active task and verify its exit cleanup runs and another request can enter. Include a test that fails if the active counter leaks.",
+        "Replace unlimited task creation with a bounded queue and fixed workers. Document the full-queue and partial-stream policies."
+      ],
+      "starter": "import asyncio\n\nslots = asyncio.Semaphore(2)\n\nasync def request(ticket_id):\n    async with slots:\n        try:\n            await asyncio.sleep(0.1)  # mocked I/O wait\n            return ticket_id\n        finally:\n            print(\"leaving slot\", ticket_id)\n\n# Run inside an async main; record active counts and test cancellation."
+    }
+  },
+  {
+    "id": "M02-L04",
+    "orientation": "A database transaction groups writes into one committed change or no committed change. Tests check that intended behaviour, including failures, using repeatable fixtures.",
+    "idea": "Keep related writes atomic, and handle duplicate requests separately from rollback.",
+    "story": [
+      "Creating a rental-support ticket requires both a ticket row and an audit row. If the process fails between them, a half-written record can confuse the next person investigating the case. Meera wraps the two writes in one transaction.",
+      "A different failure happens after commit: the response never reaches the browser. The rows are safely stored, but the customer clicks submit again. Atomic writes did not prevent that duplicate request; the service also needs a stable request key and a defined repeat policy."
+    ],
+    "example": "A transaction inserts ticket T7 and its audit event. Failure before commit rolls both back. If commit succeeds but the response is lost, both rows remain. Repeating request key K7 should find or reuse the existing logical request, rather than create a second ticket.",
+    "trap": "Rollback and duplicate prevention solve different problems. A transaction cannot tell a disconnected client whether commit happened, and it does not automatically deduplicate a retry.",
+    "sketch": [
+      "Related writes",
+      "Commit or rollback",
+      "Recognize a retry"
+    ],
+    "lab": {
+      "question": "Which rows remain when ticket creation fails at different points?",
+      "limitation": "Fixed synthetic case explorer: table counts are authored snapshots of the stated transaction semantics. This page does not run SQL or test a database.",
+      "scenarios": [
+        {
+          "label": "1 · Separate writes",
+          "steps": [
+            "Insert ticket",
+            "Commit ticket",
+            "Audit write fails"
+          ],
+          "evidence": [
+            [
+              "Ticket rows",
+              "1"
+            ],
+            [
+              "Audit rows",
+              "0"
+            ],
+            [
+              "Write boundary",
+              "Separate commits"
+            ]
+          ],
+          "result": "A ticket remains without its required audit row.",
+          "why": "Each write committed independently, so the second failure cannot roll back the earlier committed insert.",
+          "bars": [
+            {
+              "label": "Ticket rows · count",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Audit rows · count",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · One transaction",
+          "steps": [
+            "Begin + insert",
+            "Audit write fails",
+            "Roll back both"
+          ],
+          "evidence": [
+            [
+              "Ticket rows",
+              "0"
+            ],
+            [
+              "Audit rows",
+              "0"
+            ],
+            [
+              "Write boundary",
+              "One transaction"
+            ]
+          ],
+          "result": "Neither row is committed.",
+          "why": "The failed transaction is rolled back as a unit. The application must report failure and handle the connection state correctly.",
+          "bars": [
+            {
+              "label": "Ticket rows · count",
+              "value": 0,
+              "max": 2
+            },
+            {
+              "label": "Audit rows · count",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · Lost response",
+          "steps": [
+            "Write both rows",
+            "Commit succeeds",
+            "Response is lost"
+          ],
+          "evidence": [
+            [
+              "Ticket rows",
+              "1"
+            ],
+            [
+              "Audit rows",
+              "1"
+            ],
+            [
+              "Client observation",
+              "Timeout; result unknown"
+            ]
+          ],
+          "result": "Both rows exist even though the client sees a timeout.",
+          "why": "Use the same non-null unique request key and documented retry handling to avoid a second logical ticket.",
+          "bars": [
+            {
+              "label": "Ticket rows · count",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Audit rows · count",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Define the invariant first: every committed ticket creation has its matching audit event. Group the database writes that must preserve that invariant into one transaction.",
+      "Give retryable create requests a stable key and enforce uniqueness in the database. Reusing a key with different content needs a conflict policy; a key is not permission to silently overwrite an existing request.",
+      "Test failure points, not just the happy path. Inspect committed rows after rollback, duplicate submission and lost-response recovery, then run those tests automatically when the relevant code changes."
+    ],
+    "transfer": [
+      {
+        "question": "A ticket joins to three audit events. Must the joined result contain only one row because there is one ticket?",
+        "answer": "No. A join can produce one row per matching event. Aggregate or select deliberately before counting tickets, and test one-to-many fixtures."
+      },
+      {
+        "question": "The database transaction rolls back. Does it also unsend an email already sent inside the operation?",
+        "answer": "No. A separate email provider is outside the database transaction. External effects need a separate delivery and recovery design."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What preserves the ticket-plus-audit invariant on an intermediate failure?",
+        "options": [
+          "An index on ticket text",
+          "A faster network",
+          "One transaction with rollback"
+        ],
+        "answer": 2,
+        "explanation": "Related writes must share the atomic boundary; speed and indexing do not supply atomicity."
+      },
+      {
+        "question": "What can a lost response after commit mean?",
+        "options": [
+          "The data exists although the client is unsure",
+          "The database must be empty",
+          "A rollback is guaranteed"
+        ],
+        "answer": 0,
+        "explanation": "The commit and delivery of its response are separate events."
+      },
+      {
+        "question": "What should a duplicate request key enforce?",
+        "options": [
+          "Unlimited new rows",
+          "A documented one-logical-request policy",
+          "A fresh key on every retry"
+        ],
+        "answer": 1,
+        "explanation": "Stable keys let the service recognize a repeated logical request; conflicting payloads require explicit handling."
+      }
+    ],
+    "topics": [
+      {
+        "title": "SQL joins",
+        "explanation": "Joins combine matching rows from tables. One ticket with three audit events can produce three joined rows, so COUNT(*) may count events rather than distinct tickets."
+      },
+      {
+        "title": "transactions",
+        "explanation": "Transactions group changes under a commit or rollback boundary. They protect database changes inside that boundary, not arbitrary external API calls or messages."
+      },
+      {
+        "title": "indexes",
+        "explanation": "Indexes can speed selected lookups but add storage and write work. A unique index or constraint can enforce a request-key invariant; an ordinary index alone does not prevent duplicates."
+      },
+      {
+        "title": "tests",
+        "explanation": "Tests compare observed behaviour with explicit expectations. Include failures before commit, repeated keys and lost responses, because a passing happy-path insert cannot demonstrate recovery."
+      },
+      {
+        "title": "fixtures",
+        "explanation": "Fixtures provide known starting data and expected outcomes. Include a ticket with multiple audit events and reset state between cases so hidden leftovers do not make tests misleading."
+      },
+      {
+        "title": "CI",
+        "explanation": "Continuous integration runs chosen checks automatically on repository events. A green run means those checks passed in that environment; it does not prove untested production behaviour."
+      }
+    ],
+    "sources": [
+      {
+        "title": "PostgreSQL: transactions",
+        "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+      },
+      {
+        "title": "PostgreSQL: joins",
+        "url": "https://www.postgresql.org/docs/current/tutorial-join.html"
+      },
+      {
+        "title": "PostgreSQL: constraints",
+        "url": "https://www.postgresql.org/docs/current/ddl-constraints.html"
+      },
+      {
+        "title": "PostgreSQL: indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes-intro.html"
+      },
+      {
+        "title": "GitHub: understanding Actions",
+        "url": "https://docs.github.com/en/actions/get-started/understand-github-actions"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "In a disposable PostgreSQL database, create the two starter tables. Insert a ticket and its audit row in one transaction, then inspect both tables.",
+        "Repeat with an intentional failure before commit and verify rollback leaves neither row. Retry a committed key and verify the uniqueness constraint prevents another ticket.",
+        "Add one ticket with three audit rows and test your join count. Record the client behaviour expected after a lost commit response."
+      ],
+      "starter": "CREATE TABLE tickets (\n  id integer PRIMARY KEY,\n  request_key text NOT NULL UNIQUE,\n  body text NOT NULL\n);\nCREATE TABLE audit (\n  id integer PRIMARY KEY,\n  ticket_id integer NOT NULL REFERENCES tickets(id),\n  event text NOT NULL\n);\nBEGIN;\nINSERT INTO tickets VALUES (7, 'K7', 'Drill stopped');\nINSERT INTO audit VALUES (1, 7, 'created');\nCOMMIT;"
+    }
+  },
+  {
+    "id": "M03-L02",
+    "orientation": "Optimization adjusts a parameter to reduce a loss, a number that measures an error. A derivative tells us the local slope; the learning rate controls the size of an update.",
+    "idea": "A downhill direction helps only when the step size is suitable.",
+    "story": [
+      "Meera tries a tiny model that predicts the same preparation time for every rental ticket. For one training example, the target is 3 hours. The parameter w is the model’s guess, and the squared error is L(w) = (w − 3)².",
+      "Starting at 0 hours, the slope is negative, so moving right reduces the error at first. But “move right” is not enough instruction. A small step makes progress; an oversized step crosses the target and can leave an even larger error."
+    ],
+    "example": "At w = 0, the derivative is 2(w − 3) = −6. With learning rate 0.1, the update is w_new = 0 − 0.1 × (−6) = 0.6. Loss falls from 9 to (0.6 − 3)² = 5.76. Subtracting a negative slope moves right.",
+    "trap": "A negative gradient direction does not make every step safe. A large learning rate can increase loss, and low training loss does not establish good predictions on new tickets.",
+    "sketch": [
+      "Measure slope",
+      "Choose step size",
+      "Check new loss"
+    ],
+    "lab": {
+      "question": "Starting at w = 0, what happens after one gradient step toward the target of 3 hours?",
+      "limitation": "Fixed synthetic case explorer: these are precomputed one-step calculations for L(w) = (w − 3)², not live training or a guarantee for other objectives.",
+      "scenarios": [
+        {
+          "label": "1 · Small step",
+          "steps": [
+            "w = 0; slope = −6",
+            "Rate = 0.1",
+            "New w = 0.6"
+          ],
+          "evidence": [
+            [
+              "Update",
+              "0 − 0.1 × (−6) = 0.6"
+            ],
+            [
+              "Old loss",
+              "9 hours²"
+            ],
+            [
+              "New loss",
+              "5.76 hours²"
+            ]
+          ],
+          "result": "The loss decreases, but the estimate is still short of the target.",
+          "why": "This step moves in the helpful direction without travelling far. Further steps would be needed for this rate.",
+          "bars": [
+            {
+              "label": "Before · hours²",
+              "value": 9,
+              "max": 13
+            },
+            {
+              "label": "After · hours²",
+              "value": 5.76,
+              "max": 13
+            }
+          ]
+        },
+        {
+          "label": "2 · Exact toy step",
+          "steps": [
+            "w = 0; slope = −6",
+            "Rate = 0.5",
+            "New w = 3"
+          ],
+          "evidence": [
+            [
+              "Update",
+              "0 − 0.5 × (−6) = 3"
+            ],
+            [
+              "Old loss",
+              "9 hours²"
+            ],
+            [
+              "New loss",
+              "0 hours²"
+            ]
+          ],
+          "result": "This particular quadratic reaches its minimum in one step.",
+          "why": "The rate 0.5 works exactly because of this chosen function’s curvature. It is not a universal best learning rate.",
+          "bars": [
+            {
+              "label": "Before · hours²",
+              "value": 9,
+              "max": 13
+            },
+            {
+              "label": "After · hours²",
+              "value": 0,
+              "max": 13
+            }
+          ]
+        },
+        {
+          "label": "3 · Overshoot",
+          "steps": [
+            "w = 0; slope = −6",
+            "Rate = 1.1",
+            "New w = 6.6"
+          ],
+          "evidence": [
+            [
+              "Update",
+              "0 − 1.1 × (−6) = 6.6"
+            ],
+            [
+              "Old loss",
+              "9 hours²"
+            ],
+            [
+              "New loss",
+              "12.96 hours²"
+            ]
+          ],
+          "result": "The step crosses the target and makes the error worse.",
+          "why": "The direction was locally useful, but the step was too large. Repeated updates at this rate diverge for this quadratic.",
+          "bars": [
+            {
+              "label": "Before · hours²",
+              "value": 9,
+              "max": 13
+            },
+            {
+              "label": "After · hours²",
+              "value": 12.96,
+              "max": 13
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Separate the objective from the update rule. Here the objective is squared error on one example; it is deliberately simple enough to calculate by hand. Real training objectives may aggregate many examples.",
+      "Differentiate to obtain 2(w − 3), then subtract learning rate times that slope. In several dimensions, the gradient collects one partial derivative per parameter and the same update idea applies.",
+      "Check both the calculation and the outcome. A finite-difference approximation can expose a wrong analytic gradient, while held-out examples test whether reducing this training objective helps the actual task."
+    ],
+    "transfer": [
+      {
+        "question": "At w = 5, the slope is +4. With rate 0.1, does the next value move left or right?",
+        "answer": "Left: 5 − 0.1 × 4 = 4.6. It moves toward 3 in this example because the positive slope is subtracted."
+      },
+      {
+        "question": "Does the rate 0.5 reaching zero loss here prove it is a good rate for a neural network?",
+        "answer": "No. This is a one-parameter quadratic with known curvature. Other scales, objectives and model geometries change suitable step sizes."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What is the slope of (w − 3)² at w = 0?",
+        "options": [
+          "−6",
+          "3",
+          "9"
+        ],
+        "answer": 0,
+        "explanation": "The derivative is 2(w − 3); substitute zero to get −6."
+      },
+      {
+        "question": "Why did rate 1.1 increase loss?",
+        "options": [
+          "The target changed",
+          "The update overshot too far",
+          "Negative slopes are always wrong"
+        ],
+        "answer": 1,
+        "explanation": "A locally downhill direction can become harmful when the step is too large."
+      },
+      {
+        "question": "What does lower training loss alone establish?",
+        "options": [
+          "Generalization is guaranteed",
+          "The code has no bugs",
+          "The chosen training objective decreased"
+        ],
+        "answer": 2,
+        "explanation": "Correct implementation and usefulness on new data require additional checks."
+      }
+    ],
+    "topics": [
+      {
+        "title": "derivatives",
+        "explanation": "A derivative measures the local rate of change of a scalar function. For squared error, 2(w − 3) says which direction initially raises loss; it does not describe every distant point."
+      },
+      {
+        "title": "gradients",
+        "explanation": "A gradient is the vector of partial derivatives with respect to several parameters. If a model has a slope and an intercept, each receives an update based on its own derivative."
+      },
+      {
+        "title": "chain rule",
+        "explanation": "The chain rule tracks derivatives through composed operations. Writing u = w − 3 and L = u² gives dL/dw = (2u) × 1, making the dependency explicit."
+      },
+      {
+        "title": "numerical stability",
+        "explanation": "Finite-precision arithmetic can distort a mathematically valid calculation. A finite-difference step that is too tiny can lose useful digits when nearly equal losses are subtracted; compare several sensible step sizes."
+      },
+      {
+        "title": "learning rate",
+        "explanation": "The learning rate scales the gradient update. Its useful size depends on the objective and parameter scale, so a rate that works for this toy loss is not a general recipe."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Dive into Deep Learning: calculus",
+        "url": "https://d2l.ai/chapter_preliminaries/calculus.html"
+      },
+      {
+        "title": "Dive into Deep Learning: gradient descent",
+        "url": "https://d2l.ai/chapter_optimization/gd.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Run the starter for rates 0.1, 0.5 and 1.1, recording five updates and losses for each. Explain the sign of the first step.",
+        "At w = 1, compare the analytic derivative with central finite differences for h = 0.1, 0.0001 and 1e-12. Record differences without assuming smaller h is always better.",
+        "Change the target or rescale the loss and repeat. State why this demonstration does not measure generalization to new rental tickets."
+      ],
+      "starter": "def loss(w):\n    return (w - 3) ** 2\n\ndef grad(w):\n    return 2 * (w - 3)\n\nw, rate = 0.0, 0.1\nfor step in range(5):\n    w = w - rate * grad(w)\n    print(step + 1, w, loss(w))\n\nh = 0.0001\nprint(\"numerical gradient at 1:\", (loss(1+h)-loss(1-h))/(2*h))"
+    }
+  },
+  {
+    "id": "M03-L03",
+    "orientation": "Conditional probability asks how likely an event is after some information is known. A base rate is how common the event was before that new information.",
+    "idea": "An alert’s meaning depends on both detector behaviour and how common the underlying problem is.",
+    "story": [
+      "Meera’s desk tests an urgent-ticket detector. It flags 90% of truly urgent tickets, which sounds reassuring. But she needs a different answer: among the tickets it flags, how many actually need the urgent queue?",
+      "The two questions reverse the condition. When urgent tickets are rare, even a modest false-alert rate can produce many more false alarms than true ones. Count both groups before interpreting a positive flag."
+    ],
+    "example": "Among 1,000 tickets, suppose 10 are urgent. The detector catches 9 of them. Of the remaining 990 routine tickets, it incorrectly flags 99. Only 9 of 108 flagged tickets are urgent: about 8.3%, despite catching 90% of urgent cases.",
+    "trap": "“Flags 90% of urgent cases” is not “90% of flags are urgent”. The first conditions on true urgency; the second conditions on receiving a flag.",
+    "sketch": [
+      "Count base groups",
+      "Apply flag rates",
+      "Inspect all flags"
+    ],
+    "lab": {
+      "question": "With the same detector rates, how does the urgent-ticket base rate change the meaning of a flag?",
+      "limitation": "Fixed synthetic case explorer: each cohort has 1,000 tickets, a 90% true-positive rate and a 10% false-positive rate by assumption. These are invented counts, not calibrated model measurements.",
+      "scenarios": [
+        {
+          "label": "1 · Rare urgency",
+          "steps": [
+            "10 urgent",
+            "9 true + 99 false",
+            "9 of 108 flags"
+          ],
+          "evidence": [
+            [
+              "Base rate",
+              "10 / 1,000 = 1% urgent"
+            ],
+            [
+              "Flagged tickets",
+              "9 urgent + 99 routine"
+            ],
+            [
+              "Urgent among flags",
+              "9 / 108 ≈ 8.3%"
+            ]
+          ],
+          "result": "Most flags are false alarms in this rare-urgency cohort.",
+          "why": "The routine group is 99 times larger than the urgent group. Ten percent of it contributes many false flags.",
+          "bars": [
+            {
+              "label": "True alerts · tickets",
+              "value": 9,
+              "max": 500
+            },
+            {
+              "label": "False alerts · tickets",
+              "value": 99,
+              "max": 500
+            }
+          ]
+        },
+        {
+          "label": "2 · More urgency",
+          "steps": [
+            "100 urgent",
+            "90 true + 90 false",
+            "90 of 180 flags"
+          ],
+          "evidence": [
+            [
+              "Base rate",
+              "100 / 1,000 = 10% urgent"
+            ],
+            [
+              "Flagged tickets",
+              "90 urgent + 90 routine"
+            ],
+            [
+              "Urgent among flags",
+              "90 / 180 = 50%"
+            ]
+          ],
+          "result": "Half the flags are urgent, with unchanged detector rates.",
+          "why": "Changing the population changes the posterior meaning of the flag, even when sensitivity and false-positive rate stay fixed.",
+          "bars": [
+            {
+              "label": "True alerts · tickets",
+              "value": 90,
+              "max": 500
+            },
+            {
+              "label": "False alerts · tickets",
+              "value": 90,
+              "max": 500
+            }
+          ]
+        },
+        {
+          "label": "3 · Urgency common",
+          "steps": [
+            "500 urgent",
+            "450 true + 50 false",
+            "450 of 500 flags"
+          ],
+          "evidence": [
+            [
+              "Base rate",
+              "500 / 1,000 = 50% urgent"
+            ],
+            [
+              "Flagged tickets",
+              "450 urgent + 50 routine"
+            ],
+            [
+              "Urgent among flags",
+              "450 / 500 = 90%"
+            ]
+          ],
+          "result": "Now nine out of ten flags are urgent.",
+          "why": "This improvement comes from a changed base rate in the toy population, not a better detector.",
+          "bars": [
+            {
+              "label": "True alerts · tickets",
+              "value": 450,
+              "max": 500
+            },
+            {
+              "label": "False alerts · tickets",
+              "value": 50,
+              "max": 500
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Draw the whole population before computing percentages. Split tickets into urgent and routine groups, then apply the flag rate separately to each group. This keeps the denominators visible.",
+      "Collect every flag and divide true alerts by all alerts. Bayes’ rule expresses the same bookkeeping algebraically: posterior probability depends on the prior base rate and the likelihood of the observed flag.",
+      "Separate this population calculation from a model’s self-reported confidence. Interpreting a score as a probability requires calibration evidence on relevant data, and a population change can weaken that interpretation."
+    ],
+    "transfer": [
+      {
+        "question": "A detector moves from a specialist breakdown queue to all customer messages. Its flag rates stay fixed, but urgency is rarer. What happens to urgent cases among flags?",
+        "answer": "The fraction decreases under these assumptions because routine tickets contribute a larger share of false alerts. Recalculate with the new base rate."
+      },
+      {
+        "question": "Does a model output of 0.9 guarantee this individual ticket is urgent?",
+        "answer": "No. Even a well-calibrated 0.9 group contains some non-urgent cases. Calibration describes frequencies over relevant groups, not certainty about one example."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which denominator gives urgent cases among flags?",
+        "options": [
+          "All urgent cases",
+          "All flagged cases",
+          "All routine cases"
+        ],
+        "answer": 1,
+        "explanation": "The question conditions on receiving a flag, so use true plus false alerts."
+      },
+      {
+        "question": "What changed between the three lab cases?",
+        "options": [
+          "The detector became more accurate",
+          "The total cohort size",
+          "The base rate of urgency"
+        ],
+        "answer": 2,
+        "explanation": "The cohort size and both detector rates stay fixed; the urgent population share changes."
+      },
+      {
+        "question": "What does good calibration mean approximately?",
+        "options": [
+          "Among cases scored near 0.8, about 80% are positive",
+          "Every score of 0.8 is correct",
+          "The model never encounters new populations"
+        ],
+        "answer": 0,
+        "explanation": "Calibration compares score groups with observed frequencies on relevant data."
+      }
+    ],
+    "topics": [
+      {
+        "title": "conditional probability",
+        "explanation": "P(flag | urgent) describes flags among urgent tickets; P(urgent | flag) describes urgency among flags. Reversing the condition changes the denominator and usually the answer."
+      },
+      {
+        "title": "Bayes",
+        "explanation": "Bayes’ rule updates a prior probability using evidence. The count-based example computes the same posterior without hiding the false alarms in a formula."
+      },
+      {
+        "title": "expectation",
+        "explanation": "An expectation is a probability-weighted average of possible values. If a fictional error costs 10 units with probability 0.2 and zero otherwise, its expected cost is 2 units, not a promise about the next case."
+      },
+      {
+        "title": "entropy",
+        "explanation": "Entropy summarizes uncertainty in a probability distribution. A 50/50 binary distribution has more entropy than a 90/10 distribution, but low entropy does not prove a forecast is accurate."
+      },
+      {
+        "title": "cross-entropy",
+        "explanation": "Cross-entropy penalizes probabilities assigned to observed outcomes. Assigning only 0.1 probability to the event that occurs incurs a larger log loss than assigning 0.9; confident mistakes are costly under this score."
+      },
+      {
+        "title": "KL divergence",
+        "explanation": "KL divergence measures a directional discrepancy between distributions and is not generally symmetric. It is zero for matching distributions under the usual assumptions; a small value does not by itself establish business usefulness."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Dive into Deep Learning: probability",
+        "url": "https://d2l.ai/chapter_preliminaries/probability.html"
+      },
+      {
+        "title": "scikit-learn: probability calibration",
+        "url": "https://scikit-learn.org/stable/modules/calibration.html"
+      },
+      {
+        "title": "Dive into Deep Learning: information theory",
+        "url": "https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Recreate the three cohorts with the starter and verify true-alert, false-alert and posterior calculations by hand.",
+        "Change the false-positive rate while holding prevalence fixed. Explain which quantity you changed and which denominator stays relevant.",
+        "Write a short release note distinguishing measured detector rates, assumed prevalence and unverified calibration. Do not describe the fixture as production accuracy."
+      ],
+      "starter": "total, sensitivity, false_positive_rate = 1000, 0.9, 0.1\nfor prevalence in (0.01, 0.1, 0.5):\n    urgent = total * prevalence\n    true_alerts = urgent * sensitivity\n    false_alerts = (total - urgent) * false_positive_rate\n    posterior = true_alerts / (true_alerts + false_alerts)\n    print(prevalence, true_alerts, false_alerts, posterior)"
+    }
+  },
+  {
+    "id": "M03-L04",
+    "orientation": "An experiment compares alternatives using observations. Sampling uncertainty means the observed difference can change when a different set of cases is drawn; paired comparison keeps both systems attached to the same case.",
+    "idea": "A small observed win needs uncertainty and sampling context before it supports a release.",
+    "story": [
+      "Meera compares two routing systems on the same 20 rental tickets. A gets 14 right and B gets 16 right. The apparent gain is 10 percentage points, but the team should inspect which tickets account for that difference.",
+      "B alone is correct on four tickets; A alone is correct on two. On fourteen, they tie. If this tiny sample had included different cases, the gain could change. Resampling paired rows makes that sensitivity visible without pretending to collect new evidence."
+    ],
+    "example": "The per-ticket difference is +1 when only B is correct, −1 when only A is correct and 0 for ties. Four +1 values, two −1 values and fourteen zeros give (4 − 2) / 20 = 0.10, a 10-percentage-point gain for B.",
+    "trap": "Resampling the same 20 cases thousands of times does not create thousands of independent observations. It explores variability conditional on the original sample.",
+    "sketch": [
+      "Same cases for A/B",
+      "Resample whole pairs",
+      "Inspect gain variation"
+    ],
+    "lab": {
+      "question": "Can selected resamples of the same paired tickets change the apparent winner?",
+      "limitation": "Fixed synthetic case explorer: the page shows an original 20-row fixture and two deliberately selected valid resamples. It does not run a bootstrap or estimate a confidence interval from these three snapshots.",
+      "scenarios": [
+        {
+          "label": "1 · Original sample",
+          "steps": [
+            "20 paired rows",
+            "4 wins; 2 losses",
+            "Gain = +10 points"
+          ],
+          "evidence": [
+            [
+              "B-only correct",
+              "4 rows"
+            ],
+            [
+              "A-only correct",
+              "2 rows"
+            ],
+            [
+              "Ties",
+              "14 rows"
+            ]
+          ],
+          "result": "B leads by 10 percentage points on the original fixture.",
+          "why": "Every row retains both A and B outcomes. The net gain is (4 − 2) divided by 20.",
+          "bars": [
+            {
+              "label": "B-only correct · rows",
+              "value": 4,
+              "max": 20
+            },
+            {
+              "label": "A-only correct · rows",
+              "value": 2,
+              "max": 20
+            },
+            {
+              "label": "Tied · rows",
+              "value": 14,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "2 · Resample A",
+          "steps": [
+            "Draw with replacement",
+            "2 wins; 3 losses",
+            "Gain = −5 points"
+          ],
+          "evidence": [
+            [
+              "B-only correct",
+              "2 draws of a B-win row"
+            ],
+            [
+              "A-only correct",
+              "3 draws of an A-win row"
+            ],
+            [
+              "Ties",
+              "15 draws of tied rows"
+            ]
+          ],
+          "result": "This possible resample favours A by 5 percentage points.",
+          "why": "Sampling with replacement repeats some rows and omits others. A single selected resample is not an estimate of how often A wins.",
+          "bars": [
+            {
+              "label": "B-only correct · rows",
+              "value": 2,
+              "max": 20
+            },
+            {
+              "label": "A-only correct · rows",
+              "value": 3,
+              "max": 20
+            },
+            {
+              "label": "Tied · rows",
+              "value": 15,
+              "max": 20
+            }
+          ]
+        },
+        {
+          "label": "3 · Resample B",
+          "steps": [
+            "Draw with replacement",
+            "6 wins; 1 loss",
+            "Gain = +25 points"
+          ],
+          "evidence": [
+            [
+              "B-only correct",
+              "6 draws of a B-win row"
+            ],
+            [
+              "A-only correct",
+              "1 draw of an A-win row"
+            ],
+            [
+              "Ties",
+              "13 draws of tied rows"
+            ]
+          ],
+          "result": "Another possible resample favours B by 25 percentage points.",
+          "why": "Both selected resamples are compatible with the original rows. A full procedure uses many random resamples and stated assumptions, not cherry-picked examples.",
+          "bars": [
+            {
+              "label": "B-only correct · rows",
+              "value": 6,
+              "max": 20
+            },
+            {
+              "label": "A-only correct · rows",
+              "value": 1,
+              "max": 20
+            },
+            {
+              "label": "Tied · rows",
+              "value": 13,
+              "max": 20
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Pair outcomes by ticket before subtracting. This controls which case each score came from and reveals wins, losses and ties that two aggregate percentages hide.",
+      "For a paired bootstrap, sample row indices with replacement and use the same indices for both systems. Recompute the mean difference for each resample; independently shuffling A and B destroys the pairing.",
+      "Interpret uncertainty alongside practical value and data quality. A narrow interval on a biased sample can still mislead, while related tickets may require resampling whole customer groups rather than treating rows as independent."
+    ],
+    "transfer": [
+      {
+        "question": "Someone duplicates every benchmark ticket ten times. Does the apparent sample size of 200 provide ten times as much independent evidence?",
+        "answer": "No. It still contains only 20 unique cases. Treating duplicates as independent can make uncertainty look artificially small."
+      },
+      {
+        "question": "A confidence interval includes zero. Does that prove the systems are equally good?",
+        "answer": "No. It means the procedure and data have not separated a zero difference from other compatible effects at that level. More informative data or a planned equivalence analysis may be needed."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What must stay together in a paired bootstrap?",
+        "options": [
+          "Only successful cases",
+          "Only system A outputs",
+          "Both systems’ outcomes for the same ticket"
+        ],
+        "answer": 2,
+        "explanation": "Resampling whole pairs preserves the shared-case comparison."
+      },
+      {
+        "question": "What is the original gain in the fixture?",
+        "options": [
+          "10 percentage points",
+          "2 percentage points",
+          "100 percentage points"
+        ],
+        "answer": 0,
+        "explanation": "Two extra correct outcomes divided by 20 is 0.10, or 10 percentage points."
+      },
+      {
+        "question": "Why keep a final test set untouched during model selection?",
+        "options": [
+          "To make the dataset larger",
+          "To reduce selection based on the test answers",
+          "To guarantee production success"
+        ],
+        "answer": 1,
+        "explanation": "Repeatedly choosing models on test results can overfit that test set; an untouched test is still not a production guarantee."
+      }
+    ],
+    "topics": [
+      {
+        "title": "sampling",
+        "explanation": "A sample is a selected subset of the population of interest. Twenty routine English tickets cannot establish behaviour for all languages or urgent breakdowns, regardless of how carefully their average is computed."
+      },
+      {
+        "title": "confidence intervals",
+        "explanation": "A confidence interval comes from a procedure with a repeated-sampling coverage interpretation under assumptions. It is not a statement that a fixed interval has a specified probability of containing a fixed true effect."
+      },
+      {
+        "title": "bootstrap",
+        "explanation": "Bootstrap resamples observed data with replacement to approximate variability of a statistic. Small, biased or dependent samples can make naive intervals unreliable; the two selected resamples here do not constitute an interval."
+      },
+      {
+        "title": "paired tests",
+        "explanation": "Paired comparisons analyse related observations together, such as both systems on the same ticket. Appropriate paired tests use the within-pair differences and their assumptions, rather than pretending the systems saw unrelated cases."
+      },
+      {
+        "title": "power",
+        "explanation": "Power describes how often a planned test detects a specified effect under stated assumptions. Failure to find a clear difference may reflect limited information, so decide the smallest useful effect and data needs before collecting results."
+      },
+      {
+        "title": "multiple comparisons",
+        "explanation": "Trying many candidates and reporting only the largest observed gain invites selection noise. Use validation for selection, preserve final evaluation data and account for the planned comparison procedure rather than repeatedly peeking for a win."
+      }
+    ],
+    "sources": [
+      {
+        "title": "SciPy: bootstrap and paired resampling",
+        "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html"
+      },
+      {
+        "title": "scikit-learn: cross-validation and test-set selection",
+        "url": "https://scikit-learn.org/stable/modules/cross_validation.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Construct the twenty paired outcomes described above and verify the observed 10-point gain. Keep ticket IDs attached to both systems.",
+        "Run the seeded starter to obtain an illustrative percentile interval. Explain that this tiny fixture and simple method do not establish reliable population coverage.",
+        "Write a release decision that states practical gain, uncertainty, sampling limitations and an untouched final-evaluation plan. Identify any repeated-customer groups before choosing a real resampling unit."
+      ],
+      "starter": "import random\n\n# B correctness minus A correctness, one value per paired ticket.\ndifferences = [0]*12 + [1]*4 + [-1]*2 + [0]*2\nrng = random.Random(7)\nn = len(differences)\ngains = sorted(sum(rng.choices(differences, k=n))/n\n               for _ in range(2000))\nprint(\"observed percentage-point gain\", 100*sum(differences)/n)\nprint(\"illustrative percentile endpoints\", 100*gains[50], 100*gains[1949])\n# A teaching approximation, not a small-sample coverage guarantee."
+    }
+  }
+]

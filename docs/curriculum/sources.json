@@ -1,0 +1,596 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-11",
+  "sources": [
+    {
+      "id": "FRAME",
+      "title": "Google ML problem framing",
+      "url": "https://developers.google.com/machine-learning/problem-framing",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Problem suitability, objectives, success metrics",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "HAX",
+      "title": "Microsoft human AI interaction guidelines",
+      "url": "https://www.microsoft.com/en-us/haxtoolkit/ai-guidelines/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "User expectations, corrections, feedback, recovery",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "PY",
+      "title": "Python asyncio",
+      "url": "https://docs.python.org/3/library/asyncio.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Tasks, cancellation, queues, streams",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "SQL",
+      "title": "PostgreSQL tutorial",
+      "url": "https://www.postgresql.org/docs/current/tutorial.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Queries, joins, transactions, window functions",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "MATH",
+      "title": "Dive into Deep Learning preliminaries",
+      "url": "https://d2l.ai/chapter_preliminaries/index.html",
+      "type": "author textbook or course",
+      "reviewed_on": "2026-10-11",
+      "focus": "Linear algebra, calculus, automatic differentiation, probability",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "SK",
+      "title": "scikit-learn model selection",
+      "url": "https://scikit-learn.org/stable/model_selection.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Splitting, cross-validation, metrics, tuning",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "LEAK",
+      "title": "scikit-learn common pitfalls",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Leakage, preprocessing consistency, reproducibility",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "PT",
+      "title": "PyTorch learning basics",
+      "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Tensors, data loaders, autograd, optimization, persistence",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "ML",
+      "title": "Made With ML course",
+      "url": "https://madewithml.com/courses/mlops/",
+      "type": "author textbook or course",
+      "reviewed_on": "2026-10-11",
+      "focus": "Product and systems design, data, training, tracking, tests, versioning, operations",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "LLM",
+      "title": "Hugging Face LLM course",
+      "url": "https://huggingface.co/learn/llm-course/en/chapter1/1",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Transformer architectures, tokenizers, fine-tuning, NLP, limitations",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "ATTN",
+      "title": "Attention Is All You Need",
+      "url": "https://arxiv.org/abs/1706.03762",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "Original transformer architecture and attention mechanism",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "CHAT",
+      "title": "Hugging Face chat templates",
+      "url": "https://huggingface.co/docs/transformers/main/en/chat_templating",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Role serialization, generation prompts, template compatibility",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "STRUCT",
+      "title": "OpenAI structured outputs",
+      "url": "https://developers.openai.com/api/docs/guides/structured-outputs",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Schema constraints, refusals, parsing, tool versus response schemas",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "CONTEXT",
+      "title": "Anthropic context engineering",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Context selection, compaction, long tasks, external memory",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "DATA",
+      "title": "Hugging Face Datasets",
+      "url": "https://huggingface.co/docs/datasets/index",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Loading, mapping, streaming, dataset processing",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "DOC",
+      "title": "Docling documentation",
+      "url": "https://docling-project.github.io/docling/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Document parsing, layout, tables, OCR, structured representations",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "SEARCH",
+      "title": "Sentence Transformers retrieve and rerank",
+      "url": "https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Bi-encoder candidates and cross-encoder ranking",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "FAISS",
+      "title": "Faiss research and documentation",
+      "url": "https://github.com/facebookresearch/faiss/wiki",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Similarity metrics, approximate indexes, IVF, HNSW, quantization",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "PGVECTOR",
+      "title": "pgvector documentation",
+      "url": "https://github.com/pgvector/pgvector",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Postgres vector search, filtering, approximate indexes, hybrid search",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "TENANT",
+      "title": "Qdrant multitenancy",
+      "url": "https://qdrant.tech/documentation/manage-data/multitenancy/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Payload isolation, sharding, tiered tenant placement",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "RAG",
+      "title": "Retrieval Augmented Generation paper",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "Combining parametric generation with retrieved evidence",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "GRAPH",
+      "title": "Microsoft GraphRAG documentation",
+      "url": "https://microsoft.github.io/graphrag/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Graph extraction, community summaries, local and global retrieval",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "AGENT",
+      "title": "Anthropic building effective agents",
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Workflow patterns, autonomy, tool design, complexity tradeoffs",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "STATE",
+      "title": "LangGraph persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Checkpoints, threads, replay, persistent state",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "TEMPORAL",
+      "title": "Temporal workflow execution",
+      "url": "https://docs.temporal.io/workflow-execution",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Durable execution, workflow lifecycle, failure recovery",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "MCP",
+      "title": "Model Context Protocol specification",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Versioned protocol, tools, resources, prompts, capabilities, authorization",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Planning baseline: specification 2026-07-28. Explicitly verify host and server support before implementing."
+    },
+    {
+      "id": "A2A",
+      "title": "A2A specification",
+      "url": "https://a2a-protocol.org/latest/specification/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Agent discovery, messages, tasks, artifacts, transports, authentication",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "The latest URL is mutable. Select and record a concrete protocol version before implementation."
+    },
+    {
+      "id": "EVAL",
+      "title": "OpenAI evaluation best practices",
+      "url": "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Task-specific datasets, graders, human calibration, continuous evaluation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "TAU",
+      "title": "tau-bench original paper",
+      "url": "https://arxiv.org/abs/2406.12045",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "Stateful tool-agent-user tasks and repeated reliability",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "SWE",
+      "title": "SWE-bench datasets",
+      "url": "https://www.swebench.com/SWE-bench/guides/datasets/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Repository tasks, benchmark variants, reproducible coding evaluation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "OTEL",
+      "title": "OpenTelemetry GenAI observability",
+      "url": "https://opentelemetry.io/blog/2026/genai-observability/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Model and tool spans, usage, latency, telemetry content",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "MLFLOW",
+      "title": "MLflow evaluating production traces",
+      "url": "https://www.mlflow.org/docs/latest/genai/eval-monitor/running-evaluation/traces/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Ground truth, scorers, trace reuse, quality investigation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "SRE",
+      "title": "Google SRE book",
+      "url": "https://sre.google/sre-book/table-of-contents/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Service objectives, overload, monitoring, incident response, reliability testing",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "DOCKER",
+      "title": "Docker getting started",
+      "url": "https://docs.docker.com/get-started/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Containers, images, reproducible environments",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "K8S",
+      "title": "Kubernetes deployments",
+      "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Rollouts, replicas, rollout status and rollback",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "CI",
+      "title": "GitHub Actions concepts",
+      "url": "https://docs.github.com/en/actions/get-started/understand-github-actions",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Workflows, jobs, runners, events, artifacts",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "OWASP",
+      "title": "OWASP LLM application risks",
+      "url": "https://genai.owasp.org/llm-top-10/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Injection, disclosure, supply chain, poisoning, outputs, agency, consumption",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "NIST",
+      "title": "NIST AI risk management framework",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Governance, risk identification, measurement and management",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "LORA",
+      "title": "LoRA original paper",
+      "url": "https://arxiv.org/abs/2106.09685",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "Low-rank updates, frozen weights, parameter efficiency",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "PEFT",
+      "title": "Hugging Face PEFT",
+      "url": "https://huggingface.co/docs/peft/index",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Adapters, efficient tuning, quantization integration",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "TRL",
+      "title": "Hugging Face TRL",
+      "url": "https://huggingface.co/docs/trl/index",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "SFT, reward modeling, DPO, GRPO, distillation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "VLLM",
+      "title": "vLLM documentation",
+      "url": "https://docs.vllm.ai/en/latest/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Serving, batching, quantization, caching, speculative decoding, parallelism",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "PAGED",
+      "title": "PagedAttention original paper",
+      "url": "https://arxiv.org/abs/2309.06180",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "KV memory management and serving throughput",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "FSDP",
+      "title": "PyTorch FSDP2 tutorial",
+      "url": "https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Sharded training, initialization, mixed precision, memory behavior",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "ZERO",
+      "title": "DeepSpeed ZeRO tutorial",
+      "url": "https://www.deepspeed.ai/tutorials/zero/",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Optimizer, gradient and parameter sharding",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "VISION",
+      "title": "Hugging Face image text to text",
+      "url": "https://huggingface.co/docs/transformers/main/en/tasks/image_text_to_text",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Multimodal processors, image inputs, vision language inference",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "VOICE",
+      "title": "OpenAI voice agent guide",
+      "url": "https://developers.openai.com/api/docs/guides/voice-agents",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Chained and speech-to-speech architectures, interruptions, task evaluation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "DIFF",
+      "title": "Hugging Face diffusion course",
+      "url": "https://huggingface.co/learn/diffusion-course/en/unit1/1",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Noise schedules, denoising, conditioning, generation",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "FSDL",
+      "title": "Full Stack Deep Learning curriculum",
+      "url": "https://fullstackdeeplearning.com/course/2022/",
+      "type": "author textbook or course",
+      "reviewed_on": "2026-10-11",
+      "focus": "Experiment management, testing, data, deployment, monitoring, project design",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "DECODE",
+      "title": "Transformers generation strategies",
+      "url": "https://huggingface.co/docs/transformers/main/en/generation_strategies",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Greedy decoding, beam search, sampling, generation configuration",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "RECSYS",
+      "title": "Google recommendation systems course",
+      "url": "https://developers.google.com/machine-learning/recommendation",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Candidate generation, scoring, re-ranking and collaborative filtering",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "FORECAST",
+      "title": "Forecasting: Principles and Practice, author textbook",
+      "url": "https://otexts.com/fpp3/",
+      "type": "author textbook or course",
+      "reviewed_on": "2026-10-11",
+      "focus": "Time-series patterns, temporal evaluation, forecasting baselines and uncertainty",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "VIDEO",
+      "title": "Transformers video classification",
+      "url": "https://huggingface.co/docs/transformers/main/en/tasks/video_classification",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Frame preprocessing, temporal sampling and video classification",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "ASR",
+      "title": "Transformers automatic speech recognition",
+      "url": "https://huggingface.co/docs/transformers/main/en/tasks/asr",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Audio preprocessing, transcription models and word error rate",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable."
+    },
+    {
+      "id": "C2PA",
+      "title": "C2PA specifications 2.4",
+      "url": "https://spec.c2pa.org/specifications/specifications/2.4/index.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-11",
+      "focus": "Content credentials, media provenance, implementation and AI guidance",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Planning reading: specifications 2.4. Pin the selected implementation and credential profile."
+    },
+    {
+      "id": "HTTP",
+      "title": "RFC 9110: HTTP Semantics",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "type": "official specification",
+      "reviewed_on": "2026-10-11",
+      "focus": "Methods, status codes, idempotency and request semantics",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior."
+    },
+    {
+      "id": "APIS",
+      "title": "OpenAI Responses API migration and contracts",
+      "url": "https://developers.openai.com/api/docs/guides/migrate-to-responses",
+      "type": "official documentation",
+      "reviewed_on": "2026-10-11",
+      "focus": "Request/response structures, items, state and API contract differences",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior."
+    },
+    {
+      "id": "STREAM",
+      "title": "OpenAI streaming responses",
+      "url": "https://developers.openai.com/api/docs/guides/streaming-responses",
+      "type": "official documentation",
+      "reviewed_on": "2026-10-11",
+      "focus": "Typed stream events, incremental output, completion and error handling",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior."
+    },
+    {
+      "id": "FLOW",
+      "title": "Flow Matching for Generative Modeling",
+      "url": "https://arxiv.org/abs/2210.02747",
+      "type": "original research paper",
+      "reviewed_on": "2026-10-11",
+      "focus": "Continuous flow models, probability paths and flow-matching objectives",
+      "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
+      "version_policy": "Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior."
+    }
+  ]
+}

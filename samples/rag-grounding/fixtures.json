@@ -1,0 +1,288 @@
+{
+  "version": 1,
+  "synthetic": true,
+  "asOf": "2026-10-12",
+  "documents": [
+    {
+      "id": "R1",
+      "title": "Return window · v1",
+      "version": "1",
+      "from": "2026-01-01",
+      "to": "2026-09-30",
+      "field": "days",
+      "value": 7,
+      "text": "Standard camera rentals must be returned within 7 calendar days of pickup."
+    },
+    {
+      "id": "R2",
+      "title": "Return window · v2",
+      "version": "2",
+      "from": "2026-10-01",
+      "to": null,
+      "field": "days",
+      "value": 3,
+      "text": "Standard camera rentals must be returned within 3 calendar days of pickup."
+    },
+    {
+      "id": "F1",
+      "title": "Late fee · v1",
+      "version": "1",
+      "from": "2026-01-01",
+      "to": null,
+      "field": "fee",
+      "value": 200,
+      "text": "For standard camera rentals, the late fee is ₹200 for each calendar day beyond the return window."
+    },
+    {
+      "id": "H1",
+      "title": "Help desk hours · v1",
+      "version": "1",
+      "from": "2026-01-01",
+      "to": null,
+      "field": "hours",
+      "value": "09:00–18:00",
+      "text": "The camera-rental help desk is open from 09:00 to 18:00, Monday to Saturday."
+    },
+    {
+      "id": "R3",
+      "title": "Return window · conflicting bulletin",
+      "version": "1",
+      "from": "2026-10-01",
+      "to": null,
+      "field": "days",
+      "value": 5,
+      "text": "Standard camera rentals must be returned within 5 calendar days of pickup."
+    }
+  ],
+  "questions": {
+    "return": {
+      "text": "For a standard camera rental picked up today, what is the return window and daily late fee?",
+      "needs": [
+        "days",
+        "fee"
+      ],
+      "order": [
+        "R1",
+        "R2",
+        "F1",
+        "R3",
+        "H1"
+      ]
+    },
+    "hours": {
+      "text": "What are the camera-rental help desk opening hours?",
+      "needs": [
+        "hours"
+      ],
+      "order": [
+        "H1",
+        "R1",
+        "R2",
+        "F1",
+        "R3"
+      ]
+    },
+    "damage": {
+      "text": "What is the damage deposit for a standard camera rental?",
+      "needs": [
+        "deposit"
+      ],
+      "order": [
+        "R1",
+        "R2",
+        "F1",
+        "H1",
+        "R3"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "current-policy",
+      "config": {
+        "question": "return",
+        "available": [
+          "R1",
+          "R2",
+          "F1",
+          "H1"
+        ],
+        "topK": 3,
+        "slots": 2,
+        "currentOnly": true
+      },
+      "expected": {
+        "status": "answer",
+        "context": [
+          "R2",
+          "F1"
+        ],
+        "claimCitations": [
+          [
+            "R2"
+          ],
+          [
+            "F1"
+          ]
+        ],
+        "missing": [],
+        "conflicts": [],
+        "stale": []
+      }
+    },
+    {
+      "name": "tight-context",
+      "config": {
+        "question": "return",
+        "available": [
+          "R1",
+          "R2",
+          "F1",
+          "H1"
+        ],
+        "topK": 3,
+        "slots": 1,
+        "currentOnly": true
+      },
+      "expected": {
+        "status": "abstain",
+        "context": [
+          "R2"
+        ],
+        "claimCitations": [
+          [
+            "R2"
+          ]
+        ],
+        "missing": [
+          "fee"
+        ],
+        "conflicts": [],
+        "stale": []
+      }
+    },
+    {
+      "name": "retrieval-miss",
+      "config": {
+        "question": "return",
+        "available": [
+          "R1",
+          "R2",
+          "F1",
+          "H1"
+        ],
+        "topK": 2,
+        "slots": 2,
+        "currentOnly": true
+      },
+      "expected": {
+        "status": "abstain",
+        "context": [
+          "R2"
+        ],
+        "claimCitations": [
+          [
+            "R2"
+          ]
+        ],
+        "missing": [
+          "fee"
+        ],
+        "conflicts": [],
+        "stale": []
+      }
+    },
+    {
+      "name": "expired-but-cited",
+      "config": {
+        "question": "return",
+        "available": [
+          "R1",
+          "F1",
+          "H1"
+        ],
+        "topK": 3,
+        "slots": 2,
+        "currentOnly": false
+      },
+      "expected": {
+        "status": "answer",
+        "context": [
+          "R1",
+          "F1"
+        ],
+        "claimCitations": [
+          [
+            "R1"
+          ],
+          [
+            "F1"
+          ]
+        ],
+        "missing": [],
+        "conflicts": [],
+        "stale": [
+          "R1"
+        ]
+      }
+    },
+    {
+      "name": "conflict",
+      "config": {
+        "question": "return",
+        "available": [
+          "R2",
+          "R3",
+          "F1",
+          "H1"
+        ],
+        "topK": 4,
+        "slots": 3,
+        "currentOnly": true
+      },
+      "expected": {
+        "status": "conflict",
+        "context": [
+          "R2",
+          "F1",
+          "R3"
+        ],
+        "claimCitations": [],
+        "missing": [],
+        "conflicts": [
+          "days"
+        ],
+        "stale": []
+      }
+    },
+    {
+      "name": "unsupported",
+      "config": {
+        "question": "damage",
+        "available": [
+          "R1",
+          "R2",
+          "F1",
+          "H1"
+        ],
+        "topK": 5,
+        "slots": 5,
+        "currentOnly": true
+      },
+      "expected": {
+        "status": "abstain",
+        "context": [
+          "R2",
+          "F1",
+          "H1"
+        ],
+        "claimCitations": [],
+        "missing": [
+          "deposit"
+        ],
+        "conflicts": [],
+        "stale": []
+      }
+    }
+  ]
+}

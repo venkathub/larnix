@@ -1,12 +1,3 @@
-# Build the Quarto site and publish it to GitHub Pages (production).
-#
-# Trigger: every push to main, plus a manual run from the Actions tab.
-# Strategy (P0-D9, see DECISIONS.md): deploy the rendered site to the ROOT of the
-# gh-pages branch. PR previews live under gh-pages/pr-preview/ (see pr-preview.yml),
-# so both production and previews share one branch and one ₹0 in-repo mechanism.
-#
-# Repo setting required once: Settings -> Pages -> "Deploy from a branch" -> gh-pages / (root).
-
 name: Publish site
 
 on:
@@ -14,40 +5,45 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Only one production deploy at a time; let an in-progress run finish.
+permissions:
+  contents: read
+
 concurrency:
   group: pages-publish
   cancel-in-progress: false
 
-permissions:
-  contents: write
-
 jobs:
-  build-deploy:
+  build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          version: "1.8.27"
-
-      - name: Render site
-        uses: quarto-dev/quarto-actions/render@v2
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
         with:
-          path: "."
-
-      - name: Deploy to gh-pages (root)
-        uses: JamesIves/github-pages-deploy-action@v4
+          node-version: '22'
+      - run: make check
+      - run: make build
+      - name: Record the deployed source revision
+        run: |
+          python -c 'import json, os; from pathlib import Path; Path("dist/deployment.json").write_text(json.dumps({"commit": os.environ["GITHUB_SHA"]}) + "\n")'
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: _site
-          # Keep PR previews living under gh-pages/pr-preview/ intact on production deploys:
-          # exclude that umbrella dir from cleanup, and rebase instead of force-pushing
-          # (force-push would clobber in-flight previews — see pr-preview-action docs).
-          clean: true
-          clean-exclude: |
-            pr-preview/
-          force: false
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

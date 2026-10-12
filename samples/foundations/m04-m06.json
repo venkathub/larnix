@@ -1,0 +1,2655 @@
+[
+  {
+    "id": "M04-L01",
+    "orientation": "Supervised learning uses examples with known answers to learn a prediction rule. A baseline is the simple comparison that a more complicated model must earn its way past.",
+    "idea": "Judge a model against a simple baseline on the decision you actually need.",
+    "story": [
+      "A rental team wants reminders before returns become late. Meera brings a classifier; Arun proposes predicting “on time” for everybody. Eight of ten example rentals are on time, immediately giving Arun 80% accuracy.",
+      "Then the team asks how many late returns it caught: none. Before choosing a model, specify which mistakes matter and which information exists when the reminder must be sent."
+    ],
+    "example": "In ten evaluation records, two returns are late. Predicting “on time” for all ten gives eight correct answers and misses both late returns. A reminder rule that catches both late returns but flags two on-time returns also gets eight correct: identical accuracy, different operational behavior.",
+    "trap": "“More accurate” does not automatically mean more useful. Count the particular mistakes, and compare on the same held-out records.",
+    "sketch": [
+      "Known examples",
+      "Simple rule",
+      "Check new records"
+    ],
+    "lab": {
+      "question": "Which predictor would help catch late returns in this ten-record fixture?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Majority guess",
+          "steps": [
+            "10 labeled rentals",
+            "Always on time",
+            "Count mistakes"
+          ],
+          "evidence": [
+            [
+              "Actual late",
+              "2 of 10"
+            ],
+            [
+              "Predicted late",
+              "0 of 10"
+            ],
+            [
+              "Accuracy",
+              "8/10 = 80%"
+            ]
+          ],
+          "result": "Both late returns are missed.",
+          "why": "The common class dominates accuracy. This is a useful baseline, but it cannot trigger a reminder.",
+          "bars": [
+            {
+              "label": "Correct records",
+              "value": 8,
+              "max": 10
+            },
+            {
+              "label": "Missed late records",
+              "value": 2,
+              "max": 10
+            },
+            {
+              "label": "False alarms: records",
+              "value": 0,
+              "max": 10
+            }
+          ]
+        },
+        {
+          "label": "2 · Reminder rule",
+          "steps": [
+            "10 same rentals",
+            "Flag 4 records",
+            "Count mistakes"
+          ],
+          "evidence": [
+            [
+              "Actual late",
+              "2 of 10"
+            ],
+            [
+              "Predicted late",
+              "4 of 10"
+            ],
+            [
+              "Accuracy",
+              "8/10 = 80%"
+            ]
+          ],
+          "result": "Both late returns are caught; two reminders are unnecessary.",
+          "why": "The rule trades false alarms for coverage. Whether that trade is worthwhile depends on reminder cost and capacity.",
+          "bars": [
+            {
+              "label": "Correct records",
+              "value": 8,
+              "max": 10
+            },
+            {
+              "label": "Missed late records",
+              "value": 0,
+              "max": 10
+            },
+            {
+              "label": "False alarms: records",
+              "value": 2,
+              "max": 10
+            }
+          ]
+        },
+        {
+          "label": "3 · Stricter rule",
+          "steps": [
+            "10 same rentals",
+            "Flag 1 record",
+            "Count mistakes"
+          ],
+          "evidence": [
+            [
+              "Actual late",
+              "2 of 10"
+            ],
+            [
+              "Predicted late",
+              "1 of 10"
+            ],
+            [
+              "Accuracy",
+              "9/10 = 90%"
+            ]
+          ],
+          "result": "One late return is caught and one is missed.",
+          "why": "Higher accuracy here comes with lower late-return coverage. These are fixed predictions, not a claim that a particular algorithm wins.",
+          "bars": [
+            {
+              "label": "Correct records",
+              "value": 9,
+              "max": 10
+            },
+            {
+              "label": "Missed late records",
+              "value": 1,
+              "max": 10
+            },
+            {
+              "label": "False alarms: records",
+              "value": 0,
+              "max": 10
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Features are inputs, such as elapsed time since a reminder. The target is the outcome to predict. An eventual return timestamp cannot inform a prediction made earlier.",
+      "Training adjusts a rule using labeled examples. Evaluation checks the frozen rule on separate examples. Compare models on the same records so the scores describe comparable decisions.",
+      "Start with majority prediction, then an interpretable learned baseline. Compare errors, runtime and maintenance cost. Additional complexity needs useful measured improvement."
+    ],
+    "transfer": [
+      {
+        "question": "A damage detector gets 98% accuracy when only 2% of items are damaged. What baseline should you check?",
+        "answer": "Always predict undamaged: it also gets 98% on that distribution. Compare caught damage and false alarms before celebrating."
+      },
+      {
+        "question": "The reminder rule wins on these ten rows. Is it ready to deploy?",
+        "answer": "No. The fixture explains a tradeoff; it does not estimate performance on representative future rentals or establish reminder costs."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What is the target for a late-return classifier?",
+        "options": [
+          "Whether the item was returned late",
+          "The model library name",
+          "The reminder button color"
+        ],
+        "answer": 0,
+        "explanation": "The target is the outcome the model tries to predict; input features must precede that outcome."
+      },
+      {
+        "question": "Two rules have 80% accuracy. What should you inspect next?",
+        "options": [
+          "Choose the more complicated rule",
+          "Which false alarms and missed late returns each makes",
+          "Assume they behave identically"
+        ],
+        "answer": 1,
+        "explanation": "Equal accuracy can hide completely different operational errors."
+      },
+      {
+        "question": "Which feature is unsuitable at booking time?",
+        "options": [
+          "Booked duration",
+          "Item category",
+          "Actual return timestamp"
+        ],
+        "answer": 2,
+        "explanation": "The actual return happens later, so including it gives the model information unavailable at the decision time."
+      }
+    ],
+    "topics": [
+      {
+        "title": "linear and logistic regression",
+        "explanation": "Linear regression predicts a number through a weighted combination of inputs, such as expected return delay. Logistic regression converts a weighted score into a class probability estimate; the estimate still needs evaluation and a decision threshold."
+      },
+      {
+        "title": "trees",
+        "explanation": "A decision tree asks a sequence of feature questions, such as whether a rental exceeds seven days. Small trees can be inspected, but a deep tree may memorize noisy exceptions."
+      },
+      {
+        "title": "boosting",
+        "explanation": "Boosting builds a sequence of models that progressively improve an objective, often using small trees on structured records. It can capture interactions that a simple linear rule misses, but additional capacity does not repair leaked inputs."
+      },
+      {
+        "title": "task metrics",
+        "explanation": "A metric measures a chosen aspect of prediction or decision quality. For reminder routing, report missed late returns and unnecessary reminders alongside accuracy so the cost tradeoff stays visible."
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: metrics and baseline estimators",
+        "url": "https://scikit-learn.org/stable/modules/model_evaluation.html"
+      },
+      {
+        "title": "scikit-learn: common pitfalls",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the ten labels and three prediction lists below as a versioned fixture.",
+        "Count correct predictions, missed late returns and false alarms for each rule; state a reminder capacity.",
+        "Choose a provisional baseline, list feature availability times, and reserve separate rows for the eventual final evaluation."
+      ],
+      "starter": "truth    = [1,1,0,0,0,0,0,0,0,0]\nmajority = [0,0,0,0,0,0,0,0,0,0]\nreminder = [1,1,1,1,0,0,0,0,0,0]\nstrict   = [1,0,0,0,0,0,0,0,0,0]\n# 1 means late / predicted late; compare the same rows."
+    }
+  },
+  {
+    "id": "M04-L02",
+    "orientation": "An evaluation boundary separates the examples used to build a model from those used to judge it. Leakage means information crosses that boundary in a way the real prediction would not allow.",
+    "idea": "Protect the evaluation boundary before trusting a good score.",
+    "story": [
+      "Meera’s ticket classifier gets excellent test results. Then she notices that messages from the same rental conversation appear in both training and evaluation. The model might simply recognize familiar cases.",
+      "She first defines the real question: new messages from known customers, previously unseen customers, or future events? Different claims need different boundaries; shuffling rows cannot decide the intended claim."
+    ],
+    "example": "Three customers each have two tickets. A row split puts one ticket from A, B and C into training and the other into evaluation: all three evaluation customers are already known. Grouping by customer can keep C entirely outside training, testing a different and harder question.",
+    "trap": "A random split is not automatically fair. Related examples and future information can cross it even when row IDs are different.",
+    "sketch": [
+      "Choose boundary",
+      "Fit on training",
+      "Judge unseen cases"
+    ],
+    "lab": {
+      "question": "Which information crosses the boundary in these three fixed inspections?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Row split",
+          "steps": [
+            "A B C in train",
+            "A B C in test",
+            "Inspect overlap"
+          ],
+          "evidence": [
+            [
+              "Training customers",
+              "A, B, C"
+            ],
+            [
+              "Evaluation customers",
+              "A, B, C"
+            ],
+            [
+              "Shared customers",
+              "3"
+            ]
+          ],
+          "result": "All evaluation customers are familiar.",
+          "why": "For a claim about unseen customers, this split cannot support the claim. It may suit another target if that target is stated.",
+          "bars": [
+            {
+              "label": "Customer identity leak paths",
+              "value": 3,
+              "max": 3
+            },
+            {
+              "label": "Future-feature leak paths",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · Group split",
+          "steps": [
+            "A B in train",
+            "C only in test",
+            "Inspect overlap"
+          ],
+          "evidence": [
+            [
+              "Training customers",
+              "A, B"
+            ],
+            [
+              "Evaluation customers",
+              "C"
+            ],
+            [
+              "Shared customers",
+              "0"
+            ]
+          ],
+          "result": "The evaluation customer is genuinely outside training.",
+          "why": "Grouping by customer protects this identity boundary. It does not automatically fix future-derived features or preprocessing leakage.",
+          "bars": [
+            {
+              "label": "Customer identity leak paths",
+              "value": 0,
+              "max": 3
+            },
+            {
+              "label": "Future-feature leak paths",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "3 · Future feature",
+          "steps": [
+            "Predict at booking",
+            "Use actual return",
+            "Inspect availability"
+          ],
+          "evidence": [
+            [
+              "Prediction time",
+              "Booking"
+            ],
+            [
+              "Forbidden feature",
+              "Actual return time"
+            ],
+            [
+              "Leaked fields",
+              "1"
+            ]
+          ],
+          "result": "A future outcome still leaks, despite the group split.",
+          "why": "A split cannot make an unavailable feature legitimate. Remove the field and refit the complete training pipeline.",
+          "bars": [
+            {
+              "label": "Customer identity leak paths",
+              "value": 0,
+              "max": 3
+            },
+            {
+              "label": "Future-feature leak paths",
+              "value": 1,
+              "max": 3
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Define the generalization target first. Another message from a familiar customer and a new customer’s first message are different questions; a split must match the intended claim.",
+      "Learn imputation values, scaling statistics and feature selection from training data only. Apply that fitted transformation to validation and test data without refitting.",
+      "Inside cross-validation, fit preprocessing separately within each training fold. Pipelines help preserve that boundary. Keep the final holdout untouched while choosing a repair."
+    ],
+    "transfer": [
+      {
+        "question": "A product appears in several photographs. How would you test performance on previously unseen products?",
+        "answer": "Group photographs by product ID and keep each product on only one side. A random photo split can expose another view of the same product."
+      },
+      {
+        "question": "Does a customer-group split prevent every kind of leakage?",
+        "answer": "No. A future timestamp or preprocessing fitted on all records can still leak information across a correctly grouped split."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What should happen before fitting a scaler?",
+        "options": [
+          "Scale all rows to make them comparable",
+          "Remove every numeric column",
+          "Create the intended training/evaluation split"
+        ],
+        "answer": 2,
+        "explanation": "The scaler must learn its statistics from the training portion, not the evaluation records."
+      },
+      {
+        "question": "When is a time-based split especially relevant?",
+        "options": [
+          "When deployment must predict later events from earlier data",
+          "Only when the dataset has no labels",
+          "Whenever alphabetical order is convenient"
+        ],
+        "answer": 0,
+        "explanation": "The split should represent the future-facing decision and feature availability."
+      },
+      {
+        "question": "What does cross-validation require for preprocessing?",
+        "options": [
+          "Fit it once on all records",
+          "Refit it within each training fold",
+          "Skip preprocessing on validation folds"
+        ],
+        "answer": 1,
+        "explanation": "Fit on each fold’s training rows and use that fitted transformation on its validation rows."
+      }
+    ],
+    "topics": [
+      {
+        "title": "splits",
+        "explanation": "Training, validation and test sets have different jobs: learn, choose, and finally assess. A held-out set stops being an untouched test if repeated inspection drives model changes."
+      },
+      {
+        "title": "cross-validation",
+        "explanation": "Cross-validation rotates which subset supplies validation evidence while keeping each fitting step inside its training fold. It estimates variability across those folds; it does not cure a fundamentally wrong grouping strategy."
+      },
+      {
+        "title": "leakage",
+        "explanation": "Leakage includes future features, duplicate examples and information learned from evaluation data. An unusually good score is a reason to inspect the data path, not proof that a leak exists."
+      },
+      {
+        "title": "preprocessing",
+        "explanation": "Imputation, scaling and feature selection can learn from data even before a model is trained. Put these operations inside the training pipeline so validation records influence neither their statistics nor their choices."
+      },
+      {
+        "title": "temporal and group splits",
+        "explanation": "Temporal splits preserve the direction from past to future; group splits keep related entities together. Some rental systems require both, especially when customers recur and source records arrive late."
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: common pitfalls",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html"
+      },
+      {
+        "title": "scikit-learn: cross-validation",
+        "url": "https://scikit-learn.org/stable/modules/cross_validation.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Create two tickets per customer with a shared conversation keyword; record the intended unseen-customer claim.",
+        "Compare row and customer-group splits, listing shared identities rather than inventing a model score.",
+        "Fit any scaler only inside training; reserve a final holdout and document both the removed leak and the remaining timing assumptions."
+      ],
+      "starter": "ticket,customer,conversation,label\n1,A,alpha,refund\n2,A,alpha,refund\n3,B,beta,return\n4,B,beta,return\n5,C,gamma,damage\n6,C,gamma,damage\n# Group split example: train A/B; evaluate C."
+    }
+  },
+  {
+    "id": "M04-L03",
+    "orientation": "A score ranks or estimates how likely a case is; a threshold turns that score into an action. Precision counts correct alerts, while recall counts how many real positive cases were caught.",
+    "idea": "Choose an action threshold by inspecting its mistakes and workload.",
+    "story": [
+      "Six rental-support tickets arrive with urgency scores. The team can review four now. Arun selects a high threshold to limit false alarms, but a genuinely urgent ticket has a middling score.",
+      "Meera lowers the threshold and catches it. She has changed which existing scores trigger action, not improved the model’s ranking or calibrated its probabilities. The distinction guides the next repair."
+    ],
+    "example": "Scores are .9, .8, .7, .4, .3 and .1; actual urgent labels are 1, 0, 1, 1, 0 and 0. At threshold .8, two tickets are reviewed: one truly urgent and one false alarm. At .4, four are reviewed and all three urgent tickets are caught.",
+    "trap": "A score of .8 is not an 80% guarantee for this ticket. Calibration is checked across enough comparable scored cases.",
+    "sketch": [
+      "Score tickets",
+      "Choose threshold",
+      "Count workload/errors"
+    ],
+    "lab": {
+      "question": "How does the threshold change the review queue for the same six tickets?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Threshold .8",
+          "steps": [
+            "Keep score ≥ .8",
+            "Review 2 tickets",
+            "Count actual urgency"
+          ],
+          "evidence": [
+            [
+              "True / false alerts",
+              "1 / 1"
+            ],
+            [
+              "Missed urgent",
+              "2"
+            ],
+            [
+              "Precision / recall",
+              "1/2 / 1/3"
+            ]
+          ],
+          "result": "Two reviews catch one of the three urgent tickets.",
+          "why": "A high cutoff reduces workload but leaves two urgent cases below the line.",
+          "bars": [
+            {
+              "label": "Reviewed tickets",
+              "value": 2,
+              "max": 10
+            },
+            {
+              "label": "Caught urgent tickets",
+              "value": 1,
+              "max": 10
+            },
+            {
+              "label": "Missed urgent tickets",
+              "value": 2,
+              "max": 10
+            }
+          ]
+        },
+        {
+          "label": "2 · Threshold .4",
+          "steps": [
+            "Keep score ≥ .4",
+            "Review 4 tickets",
+            "Count actual urgency"
+          ],
+          "evidence": [
+            [
+              "True / false alerts",
+              "3 / 1"
+            ],
+            [
+              "Missed urgent",
+              "0"
+            ],
+            [
+              "Precision / recall",
+              "3/4 / 3/3"
+            ]
+          ],
+          "result": "Four reviews catch all three urgent tickets in this fixture.",
+          "why": "This uses the full four-ticket capacity. It is a candidate operating point, not a universal best threshold.",
+          "bars": [
+            {
+              "label": "Reviewed tickets",
+              "value": 4,
+              "max": 10
+            },
+            {
+              "label": "Caught urgent tickets",
+              "value": 3,
+              "max": 10
+            },
+            {
+              "label": "Missed urgent tickets",
+              "value": 0,
+              "max": 10
+            }
+          ]
+        },
+        {
+          "label": "3 · Threshold .1",
+          "steps": [
+            "Keep score ≥ .1",
+            "Review all 6",
+            "Compare capacity"
+          ],
+          "evidence": [
+            [
+              "True / false alerts",
+              "3 / 3"
+            ],
+            [
+              "Review capacity",
+              "4 tickets"
+            ],
+            [
+              "Precision / recall",
+              "3/6 / 3/3"
+            ]
+          ],
+          "result": "Reviewing everything exceeds capacity without catching more urgent tickets here.",
+          "why": "The extra two low-scoring cases are nonurgent in this fixture. Future data can behave differently.",
+          "bars": [
+            {
+              "label": "Reviewed tickets",
+              "value": 6,
+              "max": 10
+            },
+            {
+              "label": "Caught urgent tickets",
+              "value": 3,
+              "max": 10
+            },
+            {
+              "label": "Over capacity: tickets",
+              "value": 2,
+              "max": 10
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "True positives are urgent tickets reviewed; false positives are nonurgent tickets reviewed. False negatives are urgent tickets missed. Naming the action makes these terms concrete.",
+      "Precision divides true positives by all alerts. Recall divides true positives by all actual urgent cases. For zero denominators, report undefined or disclose the convention.",
+      "Choose thresholds on validation data and operational constraints. Evaluate the frozen choice on held-out data, including meaningful slices such as language or new customers."
+    ],
+    "transfer": [
+      {
+        "question": "At a threshold of .7, how many of these tickets are reviewed?",
+        "answer": "Three: .9, .8 and .7. Two are urgent, giving precision 2/3 and recall 2/3."
+      },
+      {
+        "question": "Would lowering the threshold repair an overconfident probability estimate?",
+        "answer": "No. It changes actions. Calibration asks whether observed event frequencies match predicted probabilities across comparable cases."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What does recall answer here?",
+        "options": [
+          "How many reviews fit on screen",
+          "What fraction of actual urgent tickets were caught",
+          "Whether scores are calibrated"
+        ],
+        "answer": 1,
+        "explanation": "Recall uses actual urgent tickets as its denominator, including those the system missed."
+      },
+      {
+        "question": "Where should the operating threshold be chosen?",
+        "options": [
+          "On the final test set after every deployment trial",
+          "By always taking .5",
+          "On validation evidence and operational costs/capacity"
+        ],
+        "answer": 2,
+        "explanation": "Threshold selection is a model decision, so protect the final evaluation from that tuning."
+      },
+      {
+        "question": "Why can 99% accuracy be useless for a rare class?",
+        "options": [
+          "Always predicting the common class may already score 99%",
+          "Accuracy always equals recall",
+          "Rare cases never matter"
+        ],
+        "answer": 0,
+        "explanation": "The majority baseline can appear excellent while missing every positive case."
+      }
+    ],
+    "topics": [
+      {
+        "title": "imbalance",
+        "explanation": "Imbalance means one class appears much less frequently than another. On a queue with few urgent tickets, majority accuracy conceals the system’s ability to catch urgency."
+      },
+      {
+        "title": "calibration",
+        "explanation": "A calibrated score near .8 corresponds to about 80% positives among many similarly scored examples. Six toy tickets cannot establish this property, and a low Brier score alone does not isolate calibration from other qualities."
+      },
+      {
+        "title": "thresholds",
+        "explanation": "A threshold converts a score into a yes/no action without changing the underlying score. Choose it for the intended workload and error costs rather than assuming .5 is always correct."
+      },
+      {
+        "title": "precision and recall",
+        "explanation": "Precision asks how many alerts were right; recall asks how many real positives were found. Lowering a threshold generally adds alerts, but precision need not move monotonically on every finite dataset."
+      },
+      {
+        "title": "error slices",
+        "explanation": "An error slice examines a meaningful subset, such as new customers or a language. Report its sample size alongside errors so a tiny slice is not mistaken for strong evidence."
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: probability calibration",
+        "url": "https://scikit-learn.org/stable/modules/calibration.html"
+      },
+      {
+        "title": "scikit-learn: classification metrics",
+        "url": "https://scikit-learn.org/stable/modules/model_evaluation.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Copy the six scored labels and compute confusion counts for cutoffs .8, .7, .4 and .1.",
+        "Choose a threshold with a four-ticket review capacity and an explicit cost for missed urgency.",
+        "Create a separate held-out fixture, apply the frozen threshold, and report slice counts and the small-sample limitation."
+      ],
+      "starter": "score,urgent\n0.9,1\n0.8,0\n0.7,1\n0.4,1\n0.3,0\n0.1,0\n# Alert when score >= threshold; capacity = 4."
+    }
+  },
+  {
+    "id": "M04-L04",
+    "orientation": "Fit describes how well a model captures useful patterns. Underfitting misses structure; overfitting follows training-specific details that fail to carry to new cases.",
+    "idea": "A beautiful training result is useful only if it survives new cases.",
+    "story": [
+      "Meera predicts rental delays. One model ignores useful features and performs poorly everywhere. Another remembers every training record but makes many validation mistakes. The middle option generalizes better in their fixture.",
+      "They also cluster support tickets, finding tidy groups that mostly reflect message length. A neat mathematical pattern still needs a connection to the problem the rental team wants to solve."
+    ],
+    "example": "Three illustrative models make 30, 10 and 0 errors on the same 100 training records. On 100 validation records they make 32, 14 and 28 errors. The memorizer wins training but loses validation; the middle model is the strongest candidate on these fixed snapshots.",
+    "trap": "Clustering creates groups, not automatically meaningful labels. Check whether groups answer an operational question and remain stable when the data changes.",
+    "sketch": [
+      "Learn patterns",
+      "Compare new cases",
+      "Inspect useful structure"
+    ],
+    "lab": {
+      "question": "Which fixed model snapshot suggests the most useful next step?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Too simple",
+          "steps": [
+            "Train: 100 records",
+            "Validate: 100 records",
+            "Compare errors"
+          ],
+          "evidence": [
+            [
+              "Training errors",
+              "30 of 100"
+            ],
+            [
+              "Validation errors",
+              "32 of 100"
+            ],
+            [
+              "Gap",
+              "2 records"
+            ]
+          ],
+          "result": "Both errors are high; inspect missing signal and model limits.",
+          "why": "A small gap does not mean good performance. A weak representation can fail on both sets.",
+          "bars": [
+            {
+              "label": "Training errors: records",
+              "value": 30,
+              "max": 100
+            },
+            {
+              "label": "Validation errors: records",
+              "value": 32,
+              "max": 100
+            }
+          ]
+        },
+        {
+          "label": "2 · Useful candidate",
+          "steps": [
+            "Train: 100 records",
+            "Validate: 100 records",
+            "Compare errors"
+          ],
+          "evidence": [
+            [
+              "Training errors",
+              "10 of 100"
+            ],
+            [
+              "Validation errors",
+              "14 of 100"
+            ],
+            [
+              "Gap",
+              "4 records"
+            ]
+          ],
+          "result": "This candidate has the lowest validation error of the three.",
+          "why": "It merits further evaluation on the intended task. These illustrative snapshots do not establish uncertainty or future performance.",
+          "bars": [
+            {
+              "label": "Training errors: records",
+              "value": 10,
+              "max": 100
+            },
+            {
+              "label": "Validation errors: records",
+              "value": 14,
+              "max": 100
+            }
+          ]
+        },
+        {
+          "label": "3 · Memorizer",
+          "steps": [
+            "Train: 100 records",
+            "Validate: 100 records",
+            "Compare errors"
+          ],
+          "evidence": [
+            [
+              "Training errors",
+              "0 of 100"
+            ],
+            [
+              "Validation errors",
+              "28 of 100"
+            ],
+            [
+              "Gap",
+              "28 records"
+            ]
+          ],
+          "result": "Perfect training fit has not carried across the boundary.",
+          "why": "Inspect overfitting, duplicates, distribution differences and validation quality before choosing a repair. A gap is a diagnostic clue, not a unique diagnosis.",
+          "bars": [
+            {
+              "label": "Training errors: records",
+              "value": 0,
+              "max": 100
+            },
+            {
+              "label": "Validation errors: records",
+              "value": 28,
+              "max": 100
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "High training and validation errors suggest missing signal or capacity. Low training error with much worse validation needs investigation, including checks for distribution and label differences.",
+      "Regularization discourages certain forms of complexity, such as large coefficients. Too much can suppress useful patterns as well as noise. Compare strengths using validation evidence.",
+      "Clustering groups examples by their representation; PCA finds directions of variation. Neither method automatically knows the team’s desired support categories."
+    ],
+    "transfer": [
+      {
+        "question": "A cluster separates short and long tickets perfectly. Is it useful for routing damage reports?",
+        "answer": "Only if that separation helps damage routing. Inspect representative tickets and routing errors; mathematical separation is not the business objective."
+      },
+      {
+        "question": "Does a train/validation gap prove overfitting is the only problem?",
+        "answer": "No. Distribution differences, leakage in one set, small samples or label problems can also affect the comparison."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which snapshot has the lowest validation error?",
+        "options": [
+          "The useful candidate with 14 errors",
+          "The memorizer with zero training errors",
+          "The too-simple model"
+        ],
+        "answer": 0,
+        "explanation": "The relevant comparison is validation error on the same records, not training perfection."
+      },
+      {
+        "question": "What does PCA optimize directly?",
+        "options": [
+          "Whether support agents like the groups",
+          "The correctness of damage labels",
+          "Directions that capture variation in the inputs"
+        ],
+        "answer": 2,
+        "explanation": "High input variation may be unrelated to the prediction or routing target."
+      },
+      {
+        "question": "What can excessive regularization cause?",
+        "options": [
+          "Guaranteed perfect validation",
+          "Loss of useful patterns and underfitting",
+          "More reliable labels automatically"
+        ],
+        "answer": 1,
+        "explanation": "Restricting complexity too strongly can prevent the model from representing real signal."
+      }
+    ],
+    "topics": [
+      {
+        "title": "clustering",
+        "explanation": "Clustering groups examples according to a representation and similarity rule. A cluster of long rental messages might be stable but useless for refund-versus-damage routing."
+      },
+      {
+        "title": "PCA",
+        "explanation": "Principal component analysis projects inputs onto directions of high variation. It can compress correlated numeric features, but a high-variance direction is not necessarily predictive of the target."
+      },
+      {
+        "title": "feature engineering",
+        "explanation": "Feature engineering creates useful inputs from available records, such as elapsed hours since the latest reminder. Evaluate the feature at the decision time; using the eventual outcome creates leakage instead of useful signal."
+      },
+      {
+        "title": "regularization",
+        "explanation": "Regularization expresses a preference for some solutions over others, often penalizing complexity. Compare several strengths on validation data because both too little and too much can hurt."
+      },
+      {
+        "title": "bias and variance",
+        "explanation": "Bias describes systematic limitations in what a model can capture; variance concerns sensitivity to the particular training sample. Train/validation curves provide clues, but a single pair of scores cannot uniquely measure those underlying causes."
+      }
+    ],
+    "sources": [
+      {
+        "title": "scikit-learn: validation and learning curves",
+        "url": "https://scikit-learn.org/stable/modules/learning_curve.html"
+      },
+      {
+        "title": "scikit-learn: preprocessing leakage including PCA",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Record the three illustrative error pairs; explain one plausible cause and one alternative cause for each.",
+        "Create six original support messages, group them manually by length and by issue, and compare routing usefulness.",
+        "Propose a regularization comparison using a fixed validation split; include sample sizes and a final untouched evaluation plan."
+      ],
+      "starter": "model,train_errors,train_count,validation_errors,validation_count\nsimple,30,100,32,100\ncandidate,10,100,14,100\nmemorizer,0,100,28,100\n# Illustrative snapshots, not measurements from fitted models."
+    }
+  },
+  {
+    "id": "M05-L01",
+    "orientation": "A learning step makes a prediction, measures its error, computes how parameters affect that error, and updates those parameters. A gradient is the local direction and rate of change, not the updated parameter itself.",
+    "idea": "Backward computes gradients; the optimizer uses them to change parameters.",
+    "story": [
+      "Meera starts with one input multiplied by one adjustable weight. Think of a normalized rental-duration feature predicting a toy delay score. This tiny model makes each learning operation visible.",
+      "Its prediction is too low. Meera computes a gradient, then applies an update. Keeping these actions separate prevents the mistaken belief that calculating a derivative already changes the model."
+    ],
+    "example": "Let input x=2, target y=6 and weight w=1. Prediction wx=2; squared loss (2−6)²=16. The gradient is 2(wx−y)x=−16. With learning rate .1, the update gives w=1−.1(−16)=2.6; the new prediction is 5.2 and loss is .64.",
+    "trap": "A negative gradient does not mean “decrease the weight.” Gradient descent subtracts the gradient, so subtracting a negative value increases the weight.",
+    "sketch": [
+      "Predict",
+      "Differentiate loss",
+      "Update weight"
+    ],
+    "lab": {
+      "question": "What changes at each stage of this one-weight example?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Forward",
+          "steps": [
+            "x=2 and w=1",
+            "Predict 2",
+            "Compare target 6"
+          ],
+          "evidence": [
+            [
+              "Weight",
+              "1"
+            ],
+            [
+              "Prediction",
+              "2"
+            ],
+            [
+              "Gradient buffer",
+              "Not computed"
+            ]
+          ],
+          "result": "The prediction is four units below the target.",
+          "why": "The forward pass computes the loss and records needed operations; it has not changed the weight.",
+          "bars": [
+            {
+              "label": "Current squared loss",
+              "value": 16,
+              "max": 16
+            },
+            {
+              "label": "Reference squared loss",
+              "value": 16,
+              "max": 16
+            }
+          ]
+        },
+        {
+          "label": "2 · Backward",
+          "steps": [
+            "Loss=16",
+            "Compute gradient −16",
+            "Leave weight alone"
+          ],
+          "evidence": [
+            [
+              "Weight",
+              "Still 1"
+            ],
+            [
+              "Prediction",
+              "Still 2"
+            ],
+            [
+              "Gradient buffer",
+              "−16"
+            ]
+          ],
+          "result": "The gradient is available, but the prediction is unchanged.",
+          "why": "Backward computes the derivative. Updating parameters requires a separate optimizer step.",
+          "bars": [
+            {
+              "label": "Current squared loss",
+              "value": 16,
+              "max": 16
+            },
+            {
+              "label": "Reference squared loss",
+              "value": 16,
+              "max": 16
+            }
+          ]
+        },
+        {
+          "label": "3 · Update",
+          "steps": [
+            "Subtract .1 × −16",
+            "New weight 2.6",
+            "Predict again"
+          ],
+          "evidence": [
+            [
+              "Weight",
+              "2.6"
+            ],
+            [
+              "Prediction",
+              "5.2"
+            ],
+            [
+              "New squared loss",
+              ".64"
+            ]
+          ],
+          "result": "After updating, the new loss is .64.",
+          "why": "The weight moved toward a lower loss for this example. Recompute the forward pass to measure the new value.",
+          "bars": [
+            {
+              "label": "Current squared loss",
+              "value": 0.64,
+              "max": 16
+            },
+            {
+              "label": "Reference squared loss",
+              "value": 16,
+              "max": 16
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "The forward pass produces a prediction and loss. Autograd records the needed operations as a graph describing dependence on parameters.",
+      "Backward applies the chain rule. PyTorch accumulates parameter gradients in .grad buffers; reset between independent updates unless accumulation is intentional.",
+      "The optimizer updates parameters. Check shapes too: an allowed broadcast may compare every prediction with every target instead of matching corresponding examples."
+    ],
+    "transfer": [
+      {
+        "question": "If w=3 with the same x=2 and target=6, what are prediction, loss and gradient?",
+        "answer": "Prediction is 6, loss is 0 and the gradient is 0. For this single example the target is already matched."
+      },
+      {
+        "question": "Does a lower loss after one step prove that a model generalizes?",
+        "answer": "No. It only shows improvement on the example used in that calculation. Generalization requires separate representative cases."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which action changes the weight in the toy?",
+        "options": [
+          "Computing the prediction",
+          "Printing the loss",
+          "Applying the optimizer update"
+        ],
+        "answer": 2,
+        "explanation": "Backward supplies a gradient; the optimizer uses it to update the parameter."
+      },
+      {
+        "question": "What happens if independent batch gradients are never reset?",
+        "options": [
+          "They can accumulate in parameter gradient buffers",
+          "The network automatically forgets earlier gradients",
+          "Only the labels change"
+        ],
+        "answer": 0,
+        "explanation": "Accumulation is useful when intentional, but otherwise changes the intended update."
+      },
+      {
+        "question": "What should a learner inspect before trusting a batch loss?",
+        "options": [
+          "Only the model file size",
+          "Prediction and target shapes",
+          "The notebook color"
+        ],
+        "answer": 1,
+        "explanation": "Broadcasting can silently turn the intended elementwise comparison into another calculation."
+      }
+    ],
+    "topics": [
+      {
+        "title": "tensors",
+        "explanation": "A tensor is a numeric array with a shape, such as a batch of four examples with three features: [4,3]. Track each dimension’s meaning so a row of features is not mistaken for a batch of labels."
+      },
+      {
+        "title": "broadcasting",
+        "explanation": "Broadcasting lets compatible shapes participate in operations without manually copying values. A [3,1] prediction minus a [3] target produces a [3,3] result, which may silently compare the wrong pairs."
+      },
+      {
+        "title": "autograd",
+        "explanation": "Automatic differentiation follows recorded operations to compute derivatives with respect to parameters. It does not choose a useful objective or verify that the code represents the intended task."
+      },
+      {
+        "title": "losses",
+        "explanation": "A loss translates a prediction error into a quantity to reduce during training. Squared error suits this numeric toy; classification usually needs a loss matched to its output and target format."
+      },
+      {
+        "title": "backpropagation",
+        "explanation": "Backpropagation applies the chain rule backward through the computation graph. It computes gradients, while a separate optimizer decides how to use those gradients to update weights."
+      }
+    ],
+    "sources": [
+      {
+        "title": "PyTorch 2.9: autograd mechanics",
+        "url": "https://docs.pytorch.org/docs/2.9/notes/autograd.html"
+      },
+      {
+        "title": "PyTorch: optimizing model parameters",
+        "url": "https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Run or hand-calculate the scalar fixture below and record all five intermediate quantities.",
+        "Repeat it with weight 3 and explain why the update is zero.",
+        "In a local PyTorch version, record tensor shapes and parameter values before backward, after backward, and after optimizer.step; demonstrate a gradient reset."
+      ],
+      "starter": "x, target, weight, rate = 2.0, 6.0, 1.0, 0.1\nprediction = weight * x\nloss = (prediction - target) ** 2\ngradient = 2 * (prediction - target) * x\nupdated_weight = weight - rate * gradient\nprint(prediction, loss, gradient, updated_weight)"
+    }
+  },
+  {
+    "id": "M05-L02",
+    "orientation": "Optimization repeatedly adjusts parameters to reduce a training loss. The learning rate controls the size of each move; stable progress requires inspecting both the objective and the updates.",
+    "idea": "Change one factor at a time so a failed learning run has an explainable cause.",
+    "story": [
+      "Arun wants a toy rental-delay model to reach weight 3. He increases the learning rate to finish sooner. Instead, the weight jumps past the target and back without settling.",
+      "Meera holds the initial weight and loss fixed while comparing rates. Changing one factor makes the paths explainable. Real networks are harder, but the habit of controlled comparison transfers."
+    ],
+    "example": "Use loss (w−3)² and start at w=0. Its gradient is 2(w−3). With rate .25, the first update reaches w=1.5 and loss 2.25. With rate 1 it reaches w=6 and loss 9, then returns to 0. With rate 1.2 it reaches 7.2 and loss 17.64.",
+    "trap": "Clipping a gradient does not certify that the loss is correct. A sign error, bad target or invalid operation can survive clipping.",
+    "sketch": [
+      "Inspect gradient",
+      "Choose step size",
+      "Watch loss path"
+    ],
+    "lab": {
+      "question": "What happens after two updates when only the learning rate changes?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Rate .25",
+          "steps": [
+            "Start w=0",
+            "Then w=1.5",
+            "Then w=2.25"
+          ],
+          "evidence": [
+            [
+              "Weight path",
+              "0 → 1.5 → 2.25"
+            ],
+            [
+              "Loss path",
+              "9 → 2.25 → .5625"
+            ],
+            [
+              "Gradient at start",
+              "−6"
+            ]
+          ],
+          "result": "The weight approaches 3 and the loss shrinks.",
+          "why": "For this particular quadratic, these steps are stable. A useful rate depends on the loss scale and curvature.",
+          "bars": [
+            {
+              "label": "Initial squared loss",
+              "value": 9,
+              "max": 40
+            },
+            {
+              "label": "After 2: squared loss",
+              "value": 0.5625,
+              "max": 40
+            }
+          ]
+        },
+        {
+          "label": "2 · Rate 1",
+          "steps": [
+            "Start w=0",
+            "Then w=6",
+            "Then w=0"
+          ],
+          "evidence": [
+            [
+              "Weight path",
+              "0 → 6 → 0"
+            ],
+            [
+              "Loss path",
+              "9 → 9 → 9"
+            ],
+            [
+              "Gradient at start",
+              "−6"
+            ]
+          ],
+          "result": "The weight oscillates without improving the loss.",
+          "why": "Each update overshoots to an equally distant point on the other side. More iterations repeat the same pattern.",
+          "bars": [
+            {
+              "label": "Initial squared loss",
+              "value": 9,
+              "max": 40
+            },
+            {
+              "label": "After 2: squared loss",
+              "value": 9,
+              "max": 40
+            }
+          ]
+        },
+        {
+          "label": "3 · Rate 1.2",
+          "steps": [
+            "Start w=0",
+            "Then w=7.2",
+            "Then w=−2.88"
+          ],
+          "evidence": [
+            [
+              "Weight path",
+              "0 → 7.2 → −2.88"
+            ],
+            [
+              "Loss path",
+              "9 → 17.64 → 34.5744"
+            ],
+            [
+              "Gradient at start",
+              "−6"
+            ]
+          ],
+          "result": "The distance and loss grow with each step.",
+          "why": "The steps are too large for this toy. Inspect the loss and gradient as well as the rate before diagnosing a real run.",
+          "bars": [
+            {
+              "label": "Initial squared loss",
+              "value": 9,
+              "max": 40
+            },
+            {
+              "label": "After 2: squared loss",
+              "value": 34.5744,
+              "max": 40
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Check the loss on a hand-solvable example first. A smaller learning rate cannot repair an objective that rewards the wrong answer.",
+      "Log loss, gradient norm and update magnitude. Hold the starting state and data order fixed when comparing one factor, documenting any remaining randomness.",
+      "Schedules vary the learning rate; clipping limits gradient magnitude. Choose these tools for a diagnosed problem and record their order relative to the optimizer update."
+    ],
+    "transfer": [
+      {
+        "question": "If a new implementation makes the loss negative although it should be a square, what should you inspect first?",
+        "answer": "The loss computation and logged quantity. A squared value cannot be negative; changing the learning rate does not resolve that contradiction."
+      },
+      {
+        "question": "The .25 rate is stable here. Is it a recommended rate for every neural network?",
+        "answer": "No. This is one quadratic with one scale. Different models, losses, normalization and optimizers change the appropriate update size."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which experiment best isolates learning rate?",
+        "options": [
+          "Change rate, dataset and model together",
+          "Keep the fixture and initial weight fixed; vary only rate",
+          "Pick the prettiest loss curve"
+        ],
+        "answer": 1,
+        "explanation": "Controlled changes make the observed difference attributable to the factor under investigation."
+      },
+      {
+        "question": "What does clipping directly limit?",
+        "options": [
+          "The gradient magnitude under the chosen clipping rule",
+          "The number of mislabeled examples",
+          "All possible sources of divergence"
+        ],
+        "answer": 0,
+        "explanation": "Clipping bounds a computed gradient; it cannot repair a wrong objective or data definition."
+      },
+      {
+        "question": "What does the rate-1 path demonstrate?",
+        "options": [
+          "A successful optimum",
+          "A data-loading crash",
+          "Repeated overshooting with constant loss"
+        ],
+        "answer": 2,
+        "explanation": "The weight alternates between 0 and 6, equally far from the optimum 3."
+      }
+    ],
+    "topics": [
+      {
+        "title": "initialization",
+        "explanation": "Initialization sets starting parameters and affects signal scale and symmetry. Record it so a lucky start is not confused with a better optimizer."
+      },
+      {
+        "title": "optimizers",
+        "explanation": "Optimizers turn gradients into updates, sometimes using accumulated state. SGD and adaptive methods behave differently, so their learning rates are not directly interchangeable."
+      },
+      {
+        "title": "schedules",
+        "explanation": "A schedule changes learning rate during training, perhaps after warmup. Save it with the checkpoint because it affects the experiment."
+      },
+      {
+        "title": "normalization",
+        "explanation": "Normalization controls input or activation scale. Training and serving still need compatible behavior and fitted statistics."
+      },
+      {
+        "title": "clipping",
+        "explanation": "Clipping bounds gradients by a value or norm rule. Log unclipped norms too, or clipping can hide persistent problems."
+      }
+    ],
+    "sources": [
+      {
+        "title": "PyTorch: optimization tutorial",
+        "url": "https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html"
+      },
+      {
+        "title": "PyTorch 2.9: autograd and invalid operations",
+        "url": "https://docs.pytorch.org/docs/2.9/notes/autograd.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Calculate two steps for each of the three rates using the provided loop.",
+        "Add columns for gradient and absolute update size; reproduce stable, oscillating and growing-loss paths.",
+        "Introduce exactly one repair to the divergent case, preserve the failed trace, and state why the result does not establish a universal learning rate."
+      ],
+      "starter": "for rate in [0.25, 1.0, 1.2]:\n    weight = 0.0\n    for step in range(3):\n        print(rate, step, weight, (weight - 3) ** 2)\n        gradient = 2 * (weight - 3)\n        weight -= rate * gradient"
+    }
+  },
+  {
+    "id": "M05-L03",
+    "orientation": "Generalization is useful performance on examples outside training. Evaluation mode changes the behavior of layers such as dropout; disabling gradient tracking is a separate choice.",
+    "idea": "Use the right layer mode and gradient mode, then judge on untouched examples.",
+    "story": [
+      "Meera restores a support-classifier checkpoint and sees different outputs for the same ticket. Dropout is still active. Arun adds no_grad, expecting the randomness to disappear, but it does not.",
+      "They changed different controls. Training versus evaluation mode governs dropout; gradient mode governs differentiation records. Ordinary evaluation needs appropriate settings for both, followed by assessment on separate examples."
+    ],
+    "example": "Two activations are [2,2] and dropout probability is .5. During training, a mask that keeps only the first produces [4,0]: surviving values are scaled by 1/(1−.5). In evaluation mode dropout returns [2,2]. Turning off gradients alone does not change the mask behavior.",
+    "trap": "eval() and no_grad() are not synonyms. eval() does not disable autograd, and no_grad() does not switch dropout off.",
+    "sketch": [
+      "Choose layer mode",
+      "Choose gradient mode",
+      "Evaluate new cases"
+    ],
+    "lab": {
+      "question": "Which controls actually change the dropout activations in this fixed example?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Training mode",
+          "steps": [
+            "Input [2,2]",
+            "Keep first activation",
+            "Scale survivor"
+          ],
+          "evidence": [
+            [
+              "Layer mode",
+              "Training"
+            ],
+            [
+              "Gradient tracking",
+              "On"
+            ],
+            [
+              "Fixed mask output",
+              "[4,0]"
+            ]
+          ],
+          "result": "One activation is dropped and the survivor is doubled.",
+          "why": "This is one specified mask, not a live random draw. Other masks can give different outputs.",
+          "bars": [
+            {
+              "label": "First activation",
+              "value": 4,
+              "max": 4
+            },
+            {
+              "label": "Second activation",
+              "value": 0,
+              "max": 4
+            }
+          ]
+        },
+        {
+          "label": "2 · No gradients only",
+          "steps": [
+            "Input [2,2]",
+            "Still training mode",
+            "Use same fixed mask"
+          ],
+          "evidence": [
+            [
+              "Layer mode",
+              "Training"
+            ],
+            [
+              "Gradient tracking",
+              "Off"
+            ],
+            [
+              "Fixed mask output",
+              "[4,0]"
+            ]
+          ],
+          "result": "The dropout result is unchanged even without gradient tracking.",
+          "why": "No-grad saves differentiation work; it does not change the module’s training/evaluation setting.",
+          "bars": [
+            {
+              "label": "First activation",
+              "value": 4,
+              "max": 4
+            },
+            {
+              "label": "Second activation",
+              "value": 0,
+              "max": 4
+            }
+          ]
+        },
+        {
+          "label": "3 · Evaluation mode",
+          "steps": [
+            "Input [2,2]",
+            "Disable dropout mask",
+            "Keep activations"
+          ],
+          "evidence": [
+            [
+              "Layer mode",
+              "Evaluation"
+            ],
+            [
+              "Gradient tracking",
+              "Off for this case"
+            ],
+            [
+              "Dropout output",
+              "[2,2]"
+            ]
+          ],
+          "result": "Dropout passes the input through unchanged.",
+          "why": "Evaluation mode changes dropout behavior. Other sources of nondeterminism may still exist in a complete system.",
+          "bars": [
+            {
+              "label": "First activation",
+              "value": 2,
+              "max": 4
+            },
+            {
+              "label": "Second activation",
+              "value": 2,
+              "max": 4
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Dropout discourages dependence on particular training activations. Training rescales survivors; evaluation uses unmasked inputs. Do not apply the training rescaling again during evaluation.",
+      "Early stopping selects a stopping point or checkpoint using validation evidence. Keep final test data outside those choices and restore the selected checkpoint.",
+      "Restoration needs matching configuration and preprocessing. Check a fixed fixture and explicitly record both layer mode and gradient mode."
+    ],
+    "transfer": [
+      {
+        "question": "You call model.eval() but still need a gradient for an explanation method. Is computing that gradient automatically forbidden?",
+        "answer": "No. eval() changes module behavior but does not disable gradient tracking. The relevant parameters/inputs and surrounding grad mode still determine differentiation."
+      },
+      {
+        "question": "Does evaluation mode guarantee identical outputs on all hardware?",
+        "answer": "No. It fixes mode-sensitive layers such as dropout; other random operations, nondeterministic kernels or changing inputs can still matter."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What turns ordinary dropout into an identity operation?",
+        "options": [
+          "Calling no_grad alone",
+          "Switching the module to evaluation mode",
+          "Clearing old gradients"
+        ],
+        "answer": 1,
+        "explanation": "Dropout behavior follows the module’s training flag, separately from gradient tracking."
+      },
+      {
+        "question": "Why keep a final test set separate from early stopping?",
+        "options": [
+          "It makes dropout stronger",
+          "It increases training labels automatically",
+          "Validation-based stopping already uses validation evidence to select a model"
+        ],
+        "answer": 2,
+        "explanation": "Final evaluation should assess the selected model without repeatedly steering its choice."
+      },
+      {
+        "question": "Which training output is possible for [2,2] with p=.5 and only the first activation kept?",
+        "options": [
+          "[4,0]",
+          "[2,0] under standard inverted dropout",
+          "[2,2] for that specified mask"
+        ],
+        "answer": 0,
+        "explanation": "Standard training dropout scales the surviving value by 1/(1−p), giving 4."
+      }
+    ],
+    "topics": [
+      {
+        "title": "dropout",
+        "explanation": "Dropout randomly removes activations during training and rescales survivors. In ordinary evaluation it is disabled; the fixed masks in this lesson illustrate its arithmetic without generating random outputs."
+      },
+      {
+        "title": "regularization",
+        "explanation": "Regularization limits reliance on training-specific patterns through choices such as penalties or dropout. Its benefit must be measured on separate data; stronger regularization is not automatically better."
+      },
+      {
+        "title": "early stopping",
+        "explanation": "Early stopping monitors validation behavior to choose a stopping point or checkpoint. Restore the selected checkpoint, since the final training epoch may be worse than an earlier one."
+      },
+      {
+        "title": "data loaders",
+        "explanation": "Data loaders assemble examples into batches and often control shuffling. Keep split membership fixed and verify that evaluation transformations do not accidentally introduce training-only randomness."
+      },
+      {
+        "title": "evaluation mode",
+        "explanation": "Evaluation mode switches mode-sensitive layers, including dropout and batch normalization. Combine it with a suitable no-grad or inference context for ordinary evaluation; these controls solve different problems."
+      }
+    ],
+    "sources": [
+      {
+        "title": "PyTorch 2.9: dropout",
+        "url": "https://docs.pytorch.org/docs/2.9/generated/torch.nn.Dropout.html"
+      },
+      {
+        "title": "PyTorch 2.9: grad modes versus evaluation mode",
+        "url": "https://docs.pytorch.org/docs/2.9/notes/autograd.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Write the four training masks for [2,2] at dropout probability .5 and calculate each output.",
+        "In a local PyTorch installation, compare train+no_grad with eval+no_grad; document version and observed outputs.",
+        "Save and restore a checkpoint, run a fixed evaluation fixture, and record how validation selected that checkpoint without inspecting final test labels."
+      ],
+      "starter": "# Local PyTorch example; this webpage does not execute it.\nimport torch\nlayer = torch.nn.Dropout(p=0.5)\nx = torch.tensor([2.0, 2.0])\nlayer.train()\nwith torch.no_grad():\n    print(\"train; random mask:\", layer(x))\nlayer.eval()\nwith torch.no_grad():\n    print(\"eval:\", layer(x))"
+    }
+  },
+  {
+    "id": "M05-L04",
+    "orientation": "An architecture builds assumptions into how a model processes inputs. Local shared filters, sequential state and attention offer different ways to represent useful relationships.",
+    "idea": "Choose an architecture for the structure of the evidence, then test its assumptions.",
+    "story": [
+      "A rental service receives photos, messages and ordered delivery events. Flattening everything into lists discards useful structure: neighboring pixels relate, and event order can change the meaning of a sequence.",
+      "Arun inspects one assumption: a shared edge filter should detect the same local transition at different positions. That demonstrates reusable structure, but does not prove a classifier recognizes damage."
+    ],
+    "example": "A toy one-dimensional filter [-1,+1] slides over three adjacent pairs. For the strip [0,0,1,1], responses are [0,1,0]. Move the edge to [0,1,1,1] and responses become [1,0,0]. The same two weights detect the same local transition at a different position.",
+    "trap": "An architecture’s useful bias is not proof of task success. Detecting an edge does not identify damage, and attention weights alone do not prove a faithful explanation.",
+    "sketch": [
+      "Represent inputs",
+      "Apply useful structure",
+      "Evaluate task errors"
+    ],
+    "lab": {
+      "question": "How does one shared local filter respond when an edge changes position?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Middle edge",
+          "steps": [
+            "Strip [0,0,1,1]",
+            "Slide filter [-1,+1]",
+            "Responses [0,1,0]"
+          ],
+          "evidence": [
+            [
+              "Filter weights",
+              "Shared at all positions"
+            ],
+            [
+              "Strongest response",
+              "Pair 2"
+            ],
+            [
+              "Pattern",
+              "0 → 1 transition"
+            ]
+          ],
+          "result": "The middle adjacent pair activates the filter.",
+          "why": "The filter computes right minus left at each pair. It detects this local transition without separate weights for every position.",
+          "bars": [
+            {
+              "label": "Pair 1 response",
+              "value": 0,
+              "max": 1
+            },
+            {
+              "label": "Pair 2 response",
+              "value": 1,
+              "max": 1
+            },
+            {
+              "label": "Pair 3 response",
+              "value": 0,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "label": "2 · Shifted edge",
+          "steps": [
+            "Strip [0,1,1,1]",
+            "Reuse same filter",
+            "Responses [1,0,0]"
+          ],
+          "evidence": [
+            [
+              "Filter weights",
+              "Unchanged"
+            ],
+            [
+              "Strongest response",
+              "Pair 1"
+            ],
+            [
+              "Pattern",
+              "Same local transition"
+            ]
+          ],
+          "result": "The response moves when the edge moves.",
+          "why": "Shared local weights reuse the detector. The response is shifted, not automatically invariant to position.",
+          "bars": [
+            {
+              "label": "Pair 1 response",
+              "value": 1,
+              "max": 1
+            },
+            {
+              "label": "Pair 2 response",
+              "value": 0,
+              "max": 1
+            },
+            {
+              "label": "Pair 3 response",
+              "value": 0,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "label": "3 · Flat strip",
+          "steps": [
+            "Strip [1,1,1,1]",
+            "Reuse same filter",
+            "Responses [0,0,0]"
+          ],
+          "evidence": [
+            [
+              "Filter weights",
+              "Unchanged"
+            ],
+            [
+              "Strongest response",
+              "None"
+            ],
+            [
+              "Pattern",
+              "No adjacent increase"
+            ]
+          ],
+          "result": "The filter has no positive edge response.",
+          "why": "A zero response to this filter does not mean a complete image is undamaged. It only answers this narrow local question.",
+          "bars": [
+            {
+              "label": "Pair 1 response",
+              "value": 0,
+              "max": 1
+            },
+            {
+              "label": "Pair 2 response",
+              "value": 0,
+              "max": 1
+            },
+            {
+              "label": "Pair 3 response",
+              "value": 0,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Embeddings represent discrete items as vectors. Similarity depends on how those representations were learned, not an inherent guarantee of shared meaning.",
+      "Convolution reuses local filters. Recurrent models carry sequential state. Attention weights information from other positions, allowing different relationships to influence each representation.",
+      "Evaluate meaningful slices: lighting for photos, paraphrases for messages, order for events. Compare latency, memory and label quality alongside prediction metrics."
+    ],
+    "transfer": [
+      {
+        "question": "The edge moves two pixels and the filter response moves with it. Is the response position-invariant?",
+        "answer": "No. It changes position in a corresponding way, called equivariance in this simplified setting. Later operations may reduce sensitivity to position."
+      },
+      {
+        "question": "Would an attention model automatically outperform a CNN on a small photo dataset?",
+        "answer": "No. Data, objective, pretrained representations, resource limits and evaluation determine usefulness; architecture names alone do not decide the result."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which weights are used at the three toy filter positions?",
+        "options": [
+          "A different trained pair at each position",
+          "The same [-1,+1] pair",
+          "No weights at all"
+        ],
+        "answer": 1,
+        "explanation": "Weight sharing reuses the local detector across positions."
+      },
+      {
+        "question": "What does an RNN carry along a sequence?",
+        "options": [
+          "A state influenced by earlier steps",
+          "A guarantee of perfect long-term memory",
+          "Only the final label from the future"
+        ],
+        "answer": 0,
+        "explanation": "A recurrent state summarizes prior processing, with practical capacity and optimization limits."
+      },
+      {
+        "question": "What would best support a damage-classifier claim?",
+        "options": [
+          "A strong edge response alone",
+          "A fashionable architecture name",
+          "Evaluation on labeled damage cases and relevant error slices"
+        ],
+        "answer": 2,
+        "explanation": "The local filter demonstrates a mechanism, not success on the complete business task."
+      }
+    ],
+    "topics": [
+      {
+        "title": "embeddings",
+        "explanation": "An embedding maps a discrete item into a learned vector representation. A product-ID embedding can capture useful relationships from training, but an unseen ID needs an explicit handling strategy."
+      },
+      {
+        "title": "CNNs",
+        "explanation": "Convolutional networks use local filters with shared weights across positions. This makes local patterns reusable, while padding, stride and boundaries affect the exact behavior."
+      },
+      {
+        "title": "RNNs",
+        "explanation": "Recurrent networks process sequences while updating a state. They naturally encode order, but compressing long histories into state can make distant relationships difficult to learn."
+      },
+      {
+        "title": "attention",
+        "explanation": "Attention combines information from selected positions using computed weights. It can relate distant tokens, but requires a representation of order when the task depends on position."
+      },
+      {
+        "title": "training diagnostics",
+        "explanation": "Training diagnostics inspect losses, gradients, predictions and meaningful error subsets. An architecture comparison should use comparable data and resource budgets rather than a single favorable example."
+      }
+    ],
+    "sources": [
+      {
+        "title": "PyTorch 2.9: convolution definition",
+        "url": "https://docs.pytorch.org/docs/2.9/generated/torch.nn.Conv2d.html"
+      },
+      {
+        "title": "Attention Is All You Need: original paper",
+        "url": "https://arxiv.org/abs/1706.03762"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Calculate the filter responses for the three strips and add an original shifted-edge strip.",
+        "Create an architecture comparison table for rental photos, ticket text and ordered delivery events; state one assumption for each candidate.",
+        "Define two error slices and a CPU/memory/latency measurement plan; label unrun comparisons as proposed rather than measured."
+      ],
+      "starter": "strips = [[0,0,1,1], [0,1,1,1], [1,1,1,1]]\nfor strip in strips:\n    response = [right-left for left,right in zip(strip, strip[1:])]\n    print(strip, response)\n# A fixed local detector, not a trained damage classifier."
+    }
+  },
+  {
+    "id": "M06-L01",
+    "orientation": "A data contract states what a record means, which fields are required, and when its values may be used. Matching a schema is necessary, but does not establish that a feature was available at prediction time.",
+    "idea": "Validate both the record and the time when the system could know it.",
+    "story": [
+      "A rental reminder is chosen at 10:00. Two events happened before then, but one arrived at 10:05. Tomorrow’s training query sees both; the live reminder service could see only one.",
+      "Meera records when each event happened and when it became available. She also validates required fields, preventing a historical table from teaching the model with unavailable or invalid information."
+    ],
+    "example": "Record A happened at 09:50 and became available at 09:55. Record B happened at 09:58 but arrived at 10:05. At the 10:00 decision, both satisfy event_time≤10:00, but only A satisfies available_at≤10:00. B must stay outside that historical feature calculation.",
+    "trap": "An old event timestamp does not prove old availability. Late arrivals and later corrections need an availability boundary too.",
+    "sketch": [
+      "Check fields",
+      "Check both clocks",
+      "Build usable features"
+    ],
+    "lab": {
+      "question": "Which of these two records could the 10:00 decision legitimately use?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Event time only",
+          "steps": [
+            "A happened 09:50",
+            "B happened 09:58",
+            "Accept both by time"
+          ],
+          "evidence": [
+            [
+              "Decision time",
+              "10:00"
+            ],
+            [
+              "A available",
+              "09:55"
+            ],
+            [
+              "B available",
+              "10:05"
+            ]
+          ],
+          "result": "A and B are accepted, leaking B into the earlier decision.",
+          "why": "The query checks when events happened but ignores when their values were knowable.",
+          "bars": [
+            {
+              "label": "Accepted records",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Blocked records",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · Both clocks",
+          "steps": [
+            "A available 09:55",
+            "B available 10:05",
+            "Accept A only"
+          ],
+          "evidence": [
+            [
+              "Decision time",
+              "10:00"
+            ],
+            [
+              "A status",
+              "Valid and already available"
+            ],
+            [
+              "B status",
+              "Arrives five minutes later"
+            ]
+          ],
+          "result": "Only A enters the feature calculation.",
+          "why": "Both the event and availability timestamps must satisfy this toy contract. A real source must define what availability means.",
+          "bars": [
+            {
+              "label": "Accepted records",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "label": "Blocked records",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · Schema change",
+          "steps": [
+            "A missing item_id",
+            "B still arrives late",
+            "Block both"
+          ],
+          "evidence": [
+            [
+              "Changed fixture",
+              "A lacks required item_id"
+            ],
+            [
+              "A status",
+              "Quarantine: invalid schema"
+            ],
+            [
+              "B status",
+              "Outside availability window"
+            ]
+          ],
+          "result": "Neither record is usable in this altered fixture.",
+          "why": "Timely data can still violate the contract. Record the rejection reason rather than silently replacing a missing identifier.",
+          "bars": [
+            {
+              "label": "Accepted records",
+              "value": 0,
+              "max": 2
+            },
+            {
+              "label": "Blocked records",
+              "value": 2,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Contracts include required fields, types, units and timing semantics. A numeric duration might mean hours or days; type checks alone cannot distinguish them.",
+      "Historical features must reconstruct what the decision could know. Keep event and availability times separate when late arrivals or backfills occur.",
+      "Quarantine invalid records with reasons and an owner. Track rejected and late counts so source changes cannot silently contaminate features."
+    ],
+    "transfer": [
+      {
+        "question": "A corrected fee was written tomorrow with yesterday’s event timestamp. May yesterday’s prediction use the correction?",
+        "answer": "Not when reconstructing what was actually knowable yesterday. Its availability timestamp is tomorrow, even though its event timestamp is older."
+      },
+      {
+        "question": "Does every feature-store historical join enforce availability time automatically?",
+        "answer": "No. Implementations and options vary. Verify the selected store, backend and timestamp semantics instead of assuming that “point-in-time” covers every clock."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which record is eligible at 10:00 under the two-clock rule?",
+        "options": [
+          "Both A and B",
+          "Only B",
+          "Only A"
+        ],
+        "answer": 2,
+        "explanation": "A happened and became available before 10:00. B arrived afterwards."
+      },
+      {
+        "question": "A required identifier disappears after a source update. What should the contract do?",
+        "options": [
+          "Reject or quarantine visibly with a reason",
+          "Silently reuse the previous customer ID",
+          "Treat timing checks as a replacement for schema checks"
+        ],
+        "answer": 0,
+        "explanation": "Missing identifiers can connect data to the wrong entity; a visible failure protects the feature calculation."
+      },
+      {
+        "question": "What can identical transformation code still fail to prevent?",
+        "options": [
+          "Any use of columns",
+          "Training-serving differences caused by source timing",
+          "All batch processing"
+        ],
+        "answer": 1,
+        "explanation": "Code parity does not ensure that historical and serving inputs contained the same available information."
+      }
+    ],
+    "topics": [
+      {
+        "title": "schemas",
+        "explanation": "A schema specifies fields and types, such as item_id:string. Add meanings and units because a correctly typed duration can still be wrong."
+      },
+      {
+        "title": "validation",
+        "explanation": "Validation tests explicit rules before records affect downstream artifacts. Quarantine a missing identifier visibly instead of silently substituting a plausible value."
+      },
+      {
+        "title": "ETL and ELT",
+        "explanation": "ETL transforms before loading; ELT loads before transforming. Both arrangements need controlled raw access, validation and downstream contracts."
+      },
+      {
+        "title": "batch",
+        "explanation": "Batch processing handles bounded collections together. A nightly build must still reconstruct availability at each historical decision."
+      },
+      {
+        "title": "streaming",
+        "explanation": "Streaming processes arriving records and must handle retries and late arrivals. Define whether late data changes previously published outputs."
+      },
+      {
+        "title": "feature stores",
+        "explanation": "Feature stores manage and serve model inputs, often including historical retrieval. Verify availability-time semantics and backend support rather than assuming every historical join prevents leakage."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hugging Face: dataset features",
+        "url": "https://huggingface.co/docs/datasets/about_dataset_features"
+      },
+      {
+        "title": "Feast: point-in-time joins and created timestamps",
+        "url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the two event rows below with an explicit required-field and timestamp contract.",
+        "Evaluate both event-only and two-clock eligibility at 10:00, then remove A’s item_id and record the quarantine reason.",
+        "Specify how late corrections affect a future batch rebuild; include a contract version, owner and a test for backfilled values."
+      ],
+      "starter": "id,item_id,event_time,available_at\nA,tool-1,09:50,09:55\nB,tool-2,09:58,10:05\n# Decision=10:00. Require item_id.\n# Eligible: event_time<=decision AND available_at<=decision.\n# Same-day times only in this toy; use timezone-aware timestamps in a real pipeline."
+    }
+  },
+  {
+    "id": "M06-L02",
+    "orientation": "A label is an assigned answer used to train or evaluate a model. Reliable labeling requires a shared definition, independent judgments and a way to resolve disagreement with evidence.",
+    "idea": "Agreement is useful evidence about consistency, but it is not proof of truth.",
+    "story": [
+      "Two reviewers label five rental tickets and disagree on “Please help soon; booking is next month.” One reacts to “soon”; the other considers whether service is currently blocked.",
+      "Meera makes the toy guideline explicit and documents the disputed decision. The goal is a defensible label definition, not merely getting two answer sheets to match."
+    ],
+    "example": "Reviewer A labels [1,0,1,0,0]; reviewer B labels [1,0,0,0,0]. Four of five positions match, so raw agreement is 80%. A documented guideline resolves ticket 3 to 0. Both then produce [1,0,0,0,0], but the tiny sample still cannot establish overall label quality.",
+    "trap": "If one reviewer copies another, agreement can reach 100% without adding independent evidence. Measure the process as well as the matching answers.",
+    "sketch": [
+      "Define the label",
+      "Review independently",
+      "Resolve with evidence"
+    ],
+    "lab": {
+      "question": "What does agreement tell us in these three labeling-process snapshots?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Ambiguous rule",
+          "steps": [
+            "Review independently",
+            "Disagree on ticket 3",
+            "Record 4/5 agreement"
+          ],
+          "evidence": [
+            [
+              "Reviewer A",
+              "[1,0,1,0,0]"
+            ],
+            [
+              "Reviewer B",
+              "[1,0,0,0,0]"
+            ],
+            [
+              "Raw agreement",
+              "80%"
+            ]
+          ],
+          "result": "The disagreement identifies an unclear boundary case.",
+          "why": "Inspect the ticket and guideline before choosing a label. A majority vote alone does not explain the intended meaning.",
+          "bars": [
+            {
+              "label": "Agreed tickets",
+              "value": 4,
+              "max": 5
+            },
+            {
+              "label": "Disputed tickets",
+              "value": 1,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "2 · Documented review",
+          "steps": [
+            "Define current blockage",
+            "Inspect ticket 3",
+            "Record decision reason"
+          ],
+          "evidence": [
+            [
+              "Revised labels",
+              "[1,0,0,0,0]"
+            ],
+            [
+              "Ticket 3 decision",
+              "0: future booking is not blocked"
+            ],
+            [
+              "Raw agreement",
+              "100% after adjudication"
+            ]
+          ],
+          "result": "The agreed answer now has a recorded reason.",
+          "why": "Report initial independent agreement separately from post-review agreement; adjudication is intended to resolve differences.",
+          "bars": [
+            {
+              "label": "Agreed tickets",
+              "value": 5,
+              "max": 5
+            },
+            {
+              "label": "Disputed tickets",
+              "value": 0,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "3 · Copied answers",
+          "steps": [
+            "Copy first labels",
+            "Skip independent review",
+            "Match all five"
+          ],
+          "evidence": [
+            [
+              "Matching labels",
+              "[1,0,1,0,0]"
+            ],
+            [
+              "Independent reviews",
+              "Only one"
+            ],
+            [
+              "Raw agreement",
+              "100%, misleading process"
+            ]
+          ],
+          "result": "Perfect matching does not establish label correctness.",
+          "why": "Both sheets retain the ambiguous label because one was copied. Consistency without independent review can hide shared mistakes.",
+          "bars": [
+            {
+              "label": "Agreed tickets",
+              "value": 5,
+              "max": 5
+            },
+            {
+              "label": "Disputed tickets",
+              "value": 0,
+              "max": 5
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Define labels through positive, negative and ambiguous examples. Specify how reviewers should handle insufficient evidence instead of forcing confident guesses.",
+      "Collect independent judgments before adjudication. Raw agreement and chance-adjusted measures answer related but different questions; neither replaces inspecting the examples.",
+      "Group near-duplicates before splitting. Synthetic paraphrases can look new while preserving the training case, making evaluation misleadingly easy."
+    ],
+    "transfer": [
+      {
+        "question": "Two reviewers both label every ticket nonurgent and agree perfectly. What is still unknown?",
+        "answer": "Whether their definition and answers are correct, particularly for actual urgent cases. Matching decisions alone do not establish coverage or correctness."
+      },
+      {
+        "question": "Can synthetic tickets replace a representative human evaluation set?",
+        "answer": "Not by default. They can broaden training or test particular failures, but generator bias and shared templates may omit real cases."
+      }
+    ],
+    "checks": [
+      {
+        "question": "How many initial labels agree in the fixture?",
+        "options": [
+          "Three",
+          "Four",
+          "Five"
+        ],
+        "answer": 1,
+        "explanation": "Only ticket 3 differs, so four of the five positions match."
+      },
+      {
+        "question": "Which agreement should describe independent reviewer consistency?",
+        "options": [
+          "The initial labels collected before discussion",
+          "Only the final adjudicated labels",
+          "Labels copied from the same answer sheet"
+        ],
+        "answer": 0,
+        "explanation": "Discussion intentionally increases agreement; keep that result distinct from independent labeling evidence."
+      },
+      {
+        "question": "Why group near-duplicates before splitting data?",
+        "options": [
+          "To guarantee every label is correct",
+          "To avoid documenting provenance",
+          "To keep essentially the same example from appearing in training and evaluation"
+        ],
+        "answer": 2,
+        "explanation": "Surface wording changes may preserve the same case and create an overly easy evaluation."
+      }
+    ],
+    "topics": [
+      {
+        "title": "annotation",
+        "explanation": "Annotation assigns labels according to a stated task definition. Record the reviewer, guideline version and evidence so a future disagreement can be investigated."
+      },
+      {
+        "title": "guidelines",
+        "explanation": "Guidelines describe the boundary between labels through rules and examples. “Urgent” is too vague without specifying whether current blockage, future inconvenience or strong language qualifies."
+      },
+      {
+        "title": "disagreement",
+        "explanation": "Disagreement can reveal ambiguous instructions, missing context or genuine uncertainty. Preserve initial judgments and an adjudication reason instead of overwriting the evidence of uncertainty."
+      },
+      {
+        "title": "deduplication",
+        "explanation": "Deduplication finds identical or substantially equivalent cases before split assignment. Matching only exact text can miss template variants or repeated tickets about the same underlying event."
+      },
+      {
+        "title": "synthetic data",
+        "explanation": "Synthetic data is deliberately generated rather than directly collected from the target setting. Mark its origin and keep generated training examples separate from representative independent evaluation cases."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Made With ML: data labeling",
+        "url": "https://madewithml.com/courses/mlops/labeling/"
+      },
+      {
+        "title": "scikit-learn: Cohen’s kappa",
+        "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.cohen_kappa_score.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Write five original rental tickets, including one ambiguous urgency case, and draft the labeling rule before annotation.",
+        "Obtain two independent label sets or clearly mark a self-authored simulation; calculate raw agreement and record one adjudication.",
+        "Add a paraphrased duplicate and one generated example, track their origins, and specify a grouped split with a separate human holdout."
+      ],
+      "starter": "ticket,A,B\n1,1,1\n2,0,0\n3,1,0\n4,0,0\n5,0,0\n# Ticket 3: \"Please help soon; booking is next month.\"\n# Toy rule: urgent = service currently blocked.\n# Preserve pre-adjudication labels; record final label and reason separately."
+    }
+  },
+  {
+    "id": "M06-L03",
+    "orientation": "Lineage records how an artifact came from source data and transformations. Versioning preserves identifiable states so a later correction does not erase the evidence needed to reproduce an earlier result.",
+    "idea": "A model result needs a traceable data snapshot and transformation, not just a filename.",
+    "story": [
+      "A support label changes after Meera trains a classifier. Arun opens tickets.csv and cannot tell whether it contains original or corrected labels: the filename stayed unchanged while its content changed.",
+      "They introduce manifests linking models to particular data and transformation versions. Corrections create new snapshots, allowing the team to explain both earlier results and later behavior changes."
+    ],
+    "example": "Model A refers to dataset v1, where ticket T7 has label 0, and transform t1. A correction creates dataset v2 with T7 labeled 1; Model B records v2 and t1. Replacing the old file in place leaves Model A’s manifest pointing at data that no longer matches its original input.",
+    "trap": "A hash can identify content or reveal that it changed. It does not store the missing content, prove a label correct, or grant permission to use a source.",
+    "sketch": [
+      "Record source",
+      "Freeze version",
+      "Link model manifest"
+    ],
+    "lab": {
+      "question": "Can the earlier model’s three required artifacts still be located?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Original version",
+          "steps": [
+            "Model A manifest",
+            "Dataset v1 retained",
+            "Transform t1 retained"
+          ],
+          "evidence": [
+            [
+              "T7 label in v1",
+              "0"
+            ],
+            [
+              "Required artifacts",
+              "Model A, dataset v1, transform t1"
+            ],
+            [
+              "Available artifacts",
+              "3 of 3"
+            ]
+          ],
+          "result": "The required toy artifacts for reconstructing Model A are present.",
+          "why": "A manifest connects the exact versions. A real reproduction also needs configuration, environment and relevant randomness records.",
+          "bars": [
+            {
+              "label": "Available artifacts",
+              "value": 3,
+              "max": 3
+            },
+            {
+              "label": "Missing artifacts",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · New correction",
+          "steps": [
+            "Keep dataset v1",
+            "Create dataset v2",
+            "Link Model B to v2"
+          ],
+          "evidence": [
+            [
+              "T7 label in v2",
+              "1"
+            ],
+            [
+              "Model A still uses",
+              "v1 + t1"
+            ],
+            [
+              "Old required artifacts",
+              "3 of 3 retained"
+            ]
+          ],
+          "result": "The correction is recorded without losing the earlier state.",
+          "why": "Model B can use the new version while the old manifest remains meaningful. Document why the label changed.",
+          "bars": [
+            {
+              "label": "Available artifacts",
+              "value": 3,
+              "max": 3
+            },
+            {
+              "label": "Missing artifacts",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "3 · Overwrite in place",
+          "steps": [
+            "Replace old dataset",
+            "Keep old manifest",
+            "Try to load v1"
+          ],
+          "evidence": [
+            [
+              "T7 now on disk",
+              "1"
+            ],
+            [
+              "Model A requests",
+              "Original v1, label 0"
+            ],
+            [
+              "Missing artifact",
+              "Original dataset snapshot"
+            ]
+          ],
+          "result": "A pointer to v1 cannot reconstruct the overwritten snapshot.",
+          "why": "The manifest detects a mismatch but cannot recover bytes that were never retained. A file called v1 is not enough if its content changed.",
+          "bars": [
+            {
+              "label": "Available artifacts",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Missing artifacts",
+              "value": 1,
+              "max": 3
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Link models, snapshots, transformation code and configuration. Immutable identifiers or verified hashes prevent mutable filenames from silently referring to different content.",
+      "Record origin and permitted-use information alongside technical lineage. Reproducible bytes do not establish that their source or intended use is acceptable.",
+      "Preserve versions under the project’s lifecycle rules. Some historical data may require restricted access or removal; document limits on reconstruction."
+    ],
+    "transfer": [
+      {
+        "question": "The dataset hash is unchanged but preprocessing code changed. Is the training input necessarily the same?",
+        "answer": "No. The same source records can produce different features under a different transform. Pin and record the transformation and configuration too."
+      },
+      {
+        "question": "Does retaining source bytes and a seed guarantee bit-for-bit identical training across hardware?",
+        "answer": "No. Environment, library versions, algorithms and nondeterministic operations can matter. State whether the goal is exact reproduction or comparable behavior."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What best identifies the dataset used by Model A?",
+        "options": [
+          "A filename that is overwritten nightly",
+          "Only the number of rows",
+          "An immutable snapshot reference with verified content identity"
+        ],
+        "answer": 2,
+        "explanation": "The reference must resolve to the original content, not merely reuse its name."
+      },
+      {
+        "question": "What should happen after correcting T7’s label?",
+        "options": [
+          "Create a new dataset version and record the reason",
+          "Silently replace all previous versions",
+          "Change only the model’s display name"
+        ],
+        "answer": 0,
+        "explanation": "A new version preserves the correction and the ability to explain earlier results, subject to retention rules."
+      },
+      {
+        "question": "What does a content hash establish by itself?",
+        "options": [
+          "The source is permitted for every use",
+          "Content identity under the chosen hash scheme",
+          "All labels are accurate"
+        ],
+        "answer": 1,
+        "explanation": "A hash concerns bytes and identity; provenance, rights and quality require other evidence."
+      }
+    ],
+    "topics": [
+      {
+        "title": "lineage",
+        "explanation": "Lineage connects source records, transformations and artifacts. A model-to-manifest-to-snapshot path helps investigate unexpected behavior."
+      },
+      {
+        "title": "dataset versions",
+        "explanation": "Versions identify particular record and label states. Save corrections separately rather than treating a mutable latest filename as a snapshot."
+      },
+      {
+        "title": "licensing",
+        "explanation": "Record the source’s license and relevant use constraints. Metadata documents a claim to review; it does not independently authorize every use."
+      },
+      {
+        "title": "provenance",
+        "explanation": "Provenance records where data originated and how it was created. Distinguish customer records, synthetic examples and transformed copies."
+      },
+      {
+        "title": "reproducibility",
+        "explanation": "Reconstruction requires identifiable inputs, transformations, configuration and environment. Seeds help but cannot eliminate every variation across platforms or versions."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Made With ML: code, data and model versioning",
+        "url": "https://madewithml.com/courses/mlops/versioning/"
+      },
+      {
+        "title": "Hugging Face: dataset cards and provenance metadata",
+        "url": "https://huggingface.co/docs/hub/datasets-cards"
+      },
+      {
+        "title": "Hugging Face: transformation fingerprints",
+        "url": "https://huggingface.co/docs/datasets/about_cache"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save original and corrected synthetic ticket fixtures under distinct versions; compute actual hashes locally if using hashes in the manifest.",
+        "Write Model A and Model B manifests referencing their respective data and transform versions; record the correction reason and source origin.",
+        "Reconstruct the older toy input, then deliberately remove its snapshot from a disposable copy and document the failure rather than silently substituting latest."
+      ],
+      "starter": "{\n  \"model\": \"model-A\",\n  \"dataset_snapshot\": \"tickets-v1\",\n  \"transform_version\": \"t1\",\n  \"configuration\": {\"label_policy\": \"urgency-v1\"},\n  \"source_origin\": \"original synthetic teaching fixture\",\n  \"content_hash\": \"compute-from-actual-bytes-before-use\"\n}\n# Keep v1:T7=0 and v2:T7=1 as distinct fixtures."
+    }
+  },
+  {
+    "id": "M06-L04",
+    "orientation": "A data lifecycle tracks creation, use, correction and removal across all relevant copies. A deletion request is complete only within its stated scope when the required stores have acknowledged the change.",
+    "idea": "Follow a data change through its derived copies and report unfinished work honestly.",
+    "story": [
+      "A rental ticket exists in raw storage, a cleaned dataset and a query cache. Meera deletes the raw record, yet the app still retrieves the cached copy.",
+      "Arun maps the copies and records each acknowledgement. If one store is unavailable, the job stays pending; finishing one deletion step does not establish completion across every declared store."
+    ],
+    "example": "Record R7 has three toy copies: raw, derived and cache. Deleting raw removes one copy but leaves two. Propagating the change successfully to all three leaves zero within this declared scope. If the cache operation fails, one copy remains and the deletion status must stay pending.",
+    "trap": "Removing a source record does not automatically remove indexes, caches, backups or influence in trained weights. State the scope and handle each artifact under its own documented process.",
+    "sketch": [
+      "Map copies",
+      "Apply the change",
+      "Verify acknowledgements"
+    ],
+    "lab": {
+      "question": "How many R7 copies remain in the three declared toy stores?",
+      "limitation": "Fixed synthetic case explorer, not a live Python runtime or production benchmark. All displayed records, intermediate values and outcomes are specified teaching fixtures.",
+      "scenarios": [
+        {
+          "label": "1 · Raw only",
+          "steps": [
+            "Delete raw R7",
+            "Derived still has R7",
+            "Cache still has R7"
+          ],
+          "evidence": [
+            [
+              "Raw store",
+              "Removed"
+            ],
+            [
+              "Derived dataset",
+              "Present"
+            ],
+            [
+              "Query cache",
+              "Present"
+            ]
+          ],
+          "result": "Two copies remain; the scoped deletion is incomplete.",
+          "why": "Derived stores do not disappear just because their original source record was removed.",
+          "bars": [
+            {
+              "label": "Removed copies",
+              "value": 1,
+              "max": 3
+            },
+            {
+              "label": "Remaining copies",
+              "value": 2,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · Propagate fully",
+          "steps": [
+            "Delete raw R7",
+            "Delete derived R7",
+            "Delete cached R7"
+          ],
+          "evidence": [
+            [
+              "Raw store",
+              "Removal acknowledged"
+            ],
+            [
+              "Derived dataset",
+              "Removal acknowledged"
+            ],
+            [
+              "Query cache",
+              "Removal acknowledged"
+            ]
+          ],
+          "result": "Zero copies remain in these three verified stores.",
+          "why": "This proves only the toy scope. The inventory would need to include any actual exports, indexes, backups and downstream consumers.",
+          "bars": [
+            {
+              "label": "Removed copies",
+              "value": 3,
+              "max": 3
+            },
+            {
+              "label": "Remaining copies",
+              "value": 0,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "3 · Cache failure",
+          "steps": [
+            "Delete raw R7",
+            "Delete derived R7",
+            "Cache request fails"
+          ],
+          "evidence": [
+            [
+              "Raw store",
+              "Removed"
+            ],
+            [
+              "Derived dataset",
+              "Removed"
+            ],
+            [
+              "Query cache",
+              "Present; retry pending"
+            ]
+          ],
+          "result": "One copy remains; report pending and assign follow-up.",
+          "why": "A failure is not an acknowledgement. Record the outstanding store and retry or escalate under the documented procedure.",
+          "bars": [
+            {
+              "label": "Removed copies",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Remaining copies",
+              "value": 1,
+              "max": 3
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Minimize personal fields before copying them. A delay predictor needing item category and elapsed hours does not automatically need customers’ contact details.",
+      "Define scope, identifiers, owners and completion evidence for deletion. Link derived artifacts to sources so propagation can be checked rather than guessed.",
+      "Investigate missing-field spikes or category shifts with the source owner. A changed distribution is a signal, not proof of degraded prediction quality."
+    ],
+    "transfer": [
+      {
+        "question": "A search index still retrieves R7 after the three toy stores acknowledge removal. Is the real deletion complete?",
+        "answer": "No. The actual scope includes that index, so the inventory and propagation process missed a copy. Verify it and update the process."
+      },
+      {
+        "question": "A category distribution changes overnight. Should the model be retrained automatically?",
+        "answer": "Not solely from that signal. Check pipeline changes, source behavior and labeled performance; distribution shift may or may not harm the task."
+      }
+    ],
+    "checks": [
+      {
+        "question": "What is the status when the cache deletion fails?",
+        "options": [
+          "Complete because the raw record is gone",
+          "Pending with the remaining store recorded",
+          "Unknown but safe to display success"
+        ],
+        "answer": 1,
+        "explanation": "Success requires the acknowledgements specified by the scope; a failed store remains outstanding."
+      },
+      {
+        "question": "What is the first useful step before propagating a deletion?",
+        "options": [
+          "Map the relevant copies and identifiers",
+          "Retrain every model immediately",
+          "Delete the monitoring dashboard"
+        ],
+        "answer": 0,
+        "explanation": "An inventory makes scope and verification concrete; otherwise derived copies can be missed."
+      },
+      {
+        "question": "What does a distribution-shift alert prove on its own?",
+        "options": [
+          "The model is definitely wrong",
+          "The data is definitely malicious",
+          "The monitored distribution changed and needs investigation"
+        ],
+        "answer": 2,
+        "explanation": "A changed distribution is a signal, not a direct measurement of downstream prediction quality."
+      }
+    ],
+    "topics": [
+      {
+        "title": "PII minimization",
+        "explanation": "Limit personal information to what the stated task needs. Use synthetic identifiers instead of real names and contact details in teaching fixtures."
+      },
+      {
+        "title": "retention",
+        "explanation": "Retention specifies how long data and artifacts remain available. Include derived copies and backup handling so expired records are not silently restored."
+      },
+      {
+        "title": "deletion",
+        "explanation": "Deletion is a scoped workflow with acknowledgements and visible failures. Removing dataset rows does not demonstrate removal of their influence from trained weights."
+      },
+      {
+        "title": "distribution shift",
+        "explanation": "Distribution shift means later data differs from the reference distribution. A category jump might be a launch, a mapping bug or changed demand; investigate before intervening."
+      },
+      {
+        "title": "quality alerts",
+        "explanation": "Quality alerts connect measurable conditions to an owner and response. A missing-ID threshold should identify affected counts, a quarantined sample and a responsible data owner."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hugging Face: persistent dataset caches",
+        "url": "https://huggingface.co/docs/datasets/about_cache"
+      },
+      {
+        "title": "Hugging Face: cache management",
+        "url": "https://huggingface.co/docs/datasets/cache"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Create three in-memory synthetic stores containing R7 and a second unrelated record; write the declared deletion scope.",
+        "Simulate raw-only deletion, full propagation and cache failure; record remaining copies and retain the unrelated record.",
+        "Write a retention note and an alert rule for missing IDs with an owner, investigation steps and a completion criterion; list unmanaged artifacts as limitations."
+      ],
+      "starter": "stores = {name: {\"R7\": \"synthetic\", \"R8\": \"keep\"}\n          for name in [\"raw\", \"derived\", \"cache\"]}\n# Simulate a cache outage: only two stores acknowledge.\nfor name in [\"raw\", \"derived\"]:\n    stores[name].pop(\"R7\", None)\nremaining = [name for name, rows in stores.items() if \"R7\" in rows]\nprint(\"pending\" if remaining else \"complete\", remaining)"
+    }
+  }
+]

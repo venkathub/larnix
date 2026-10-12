@@ -1,37 +1,47 @@
 # Larnix
 
-[![Checks](https://github.com/venkathub/larnix/actions/workflows/checks.yml/badge.svg)](https://github.com/venkathub/larnix/actions/workflows/checks.yml)
-[![Publish](https://github.com/venkathub/larnix/actions/workflows/publish.yml/badge.svg)](https://github.com/venkathub/larnix/actions/workflows/publish.yml)
+An original AI Engineering curriculum for interview preparation and production practice.
 
-A free, open-access, beginner-to-frontier school for AI/ML — modeled on Zerodha Varsity's pedagogy (plain language, analogies, short single-idea chapters, "Key Takeaways", difficulty tiers, quizzes) — where **every chapter runs in your browser at ₹0**: no installs, no GPU, no paywall.
+**[Open the classroom](https://venkathub.github.io/larnix/)** · [Start M01](https://venkathub.github.io/larnix/lessons/M01-L01/)
 
-**▶ Start learning now: [venkathub.github.io/larnix](https://venkathub.github.io/larnix)**
+The 42-module plan now has **26 authored interactive previews**: all 24 lessons in **M01–M06**, plus RAG and agent recovery.
 
-## What's live today
+The foundation modules cover AI product engineering, software engineering, mathematics/statistics, machine learning, deep learning and data quality. Open them from the published classroom or a local build. Their original notes are stored as [M01–M03](samples/foundations/m01-m03.json) and [M04–M06](samples/foundations/m04-m06.json); the existing vector lesson remains intact.
 
-**4 modules · 50 chapters**, each with in-browser runnable Python, auto-graded exercises, a per-chapter quiz, a module quiz, and a graded capstone:
+The three specialist labs are:
 
-| Module | Chapters | You'll learn |
-|---|---|---|
-| M0 — Orientation | 6 | What AI/ML actually is, how to learn it, the map ahead |
-| M1 — Python for AI | 14 | Python from zero to data-ready, entirely in the browser |
-| M2 — Math You Actually Need | 16 | Vectors, matrices, calculus, probability — intuition first |
-| M3 — Data & Tooling | 14 | NumPy, pandas, plotting, datasets, reproducibility |
+- [M03-L01 — Reason with vectors](samples/vector-similarity/index.html) · [preview guide](samples/vector-similarity/README.md)
+- [M17-L01 — Assemble a grounded answer pipeline](samples/rag-grounding/index.html) · [preview guide](samples/rag-grounding/README.md)
+- [M21-L02 — Resume without repeating effects](samples/agent-recovery/index.html) · [preview guide](samples/agent-recovery/README.md)
 
-**In progress:** M4 — Classical ML (regression, gradient descent, generalization).
-**Planned (P2–P7):** M5–M16 — deep learning → transformers → LLM fine-tuning → build-your-own-LLM → career readiness. Full map: [curriculum](https://venkathub.github.io/larnix/curriculum.html) · [`docs/ROADMAP.md`](docs/ROADMAP.md).
+Each preview offers a suggested **10-minute core** with handwritten-style diagrams, three quick checks and optional deeper reading, interview preparation and production practice.
 
-## How it works
+The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for all authored previews. The remaining 142 lesson narratives and labs are planned. Foundation case explorers use explicitly labeled synthetic fixtures; optimization and threshold lessons also offer live local calculations. No Python service or training job runs inside the webpage.
 
-- **Quarto + [quarto-live](https://github.com/r-wasm/quarto-live) (Pyodide)** — Python executes in your browser tab; a low-spec laptop is enough
-- **Auto-grading in the page** — exercises check themselves (`run_tests()`), quizzes track your best score locally
-- **Every chapter has a notebook twin that CI executes** — if a chapter's code breaks, the build fails
-- **Deterministic quality gates** — structure lint, quiz schema, accessibility (alt-text/contrast), link check, dataset license ledger, spell/style — all in [`checks.yml`](.github/workflows/checks.yml)
+## Run the platform
 
-## Try it (5 minutes)
+```sh
+python3 scripts/build_site.py
+python3 -m http.server 8775 --bind 127.0.0.1 --directory dist
+```
 
-Open the [live site](https://venkathub.github.io/larnix), pick M0 Chapter 1, and press Run. To build locally or contribute, see [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) and [`docs/RUNBOOK.md`](docs/RUNBOOK.md); design rationale lives in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+Open `http://127.0.0.1:8775/`. Rebuild after source changes, then reload the browser. No package installation, account or model API is required. Progress stays in browser local storage and is specific to the origin (including port); it does not synchronize across devices. Standalone samples keep session-only quiz progress.
 
-## Status & contributing
+See the [implementation guide](docs/IMPLEMENTATION.md) for architecture, checks, authoring and remaining milestones.
 
-Built in public, phase by phase ([`docs/ROADMAP.md`](docs/ROADMAP.md)). Issues and feedback welcome; the community-PR pipeline is being set up ([`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md)). Dataset licenses are tracked in [`docs/ASSETS.md`](docs/ASSETS.md).
+Start with the [curriculum specification](docs/curriculum/README.md), then browse the [42 module plans](docs/curriculum/INDEX.md), [primary source register](docs/curriculum/SOURCES.md), and [coverage audit](docs/curriculum/AUDIT.md).
+
+The [teaching design](docs/curriculum/TEACHING_DESIGN.md) specifies visual explanations, interactive experiments, worked examples and inline checks, combining the user's linearalgebra.info visual reference with the adopted Varsity-inspired narrative explanation standard.
+
+The AI Engineering Playbook supplied by the user is a background reference only. This repository does not fork it or import its code, prose, questions, diagrams, or interface.
+
+## Maintaining the plan
+
+The authoritative records are `docs/curriculum/curriculum.json` and `docs/curriculum/sources.json`. Human-readable module plans are generated from those records.
+
+```sh
+python3 scripts/curriculum.py render
+python3 scripts/curriculum.py check
+```
+
+The check verifies identifiers, references, prerequisite cycles, lesson completeness, generated-document consistency, and planned coverage. It does not claim that future lessons, exercises, or applications have been implemented or tested.
