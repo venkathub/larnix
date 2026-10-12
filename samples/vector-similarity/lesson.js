@@ -6,7 +6,6 @@
   let vectors = defaults(), metric = 'dot', normalized = false, selected = 'b';
   let projectionVisible = false;
   const svg = $('vector-plot');
-  const checked = new Set();
   const names = {q: 'Query q', a: 'Document A', b: 'Document B'};
   const symbols = {q: '◆', a: '●', b: '■'};
   const label = key => key === 'q' ? 'q' : key.toUpperCase();
@@ -153,35 +152,7 @@
     scale:{answer:'dot',correct:'Exactly. q · A becomes 3. Cosine is 3 / (1 × 3) = 1. Positive scaling changes length, not direction.',wrong:'Multiplying A by 3 also multiplies its length by 3. In cosine those factors cancel; in dot product they do not. Try again.'},
     zero:{answer:'undefined',correct:'Correct. The denominator contains a zero norm, so cosine is undefined. Exclude or quarantine the vector according to an explicit policy.',wrong:'A zero dot product does not rescue a zero denominator. There is no direction to compare, so cosine is undefined. Try again.'}
   };
-  function progress() {
-    $('check-progress').textContent=`${checked.size} / 3 checks understood`;
-    $('completion-title').textContent=`${checked.size} of 3 understood`;
-    $('completion-text').textContent=checked.size===3?'You completed the concept checks. The production exercise still needs your own implementation and evidence.':'Correct answers unlock a short recap. Production practice is a separate step.';
-    $('recap').hidden=checked.size !== 3;
-  }
-  document.querySelectorAll('[data-quiz]').forEach(quiz => {
-    const id=quiz.dataset.quiz,question=questions[id];
-    quiz.querySelectorAll('button').forEach(button => button.addEventListener('click',() => {
-      const correct=button.dataset.answer===question.answer;
-      quiz.querySelectorAll('button').forEach(b => {b.classList.remove('selected','correct');b.setAttribute('aria-pressed','false');});
-      button.classList.add(correct?'correct':'selected');button.setAttribute('aria-pressed','true');
-      const feedback=quiz.querySelector('.feedback');feedback.textContent=correct?question.correct:question.wrong;feedback.classList.toggle('success',correct);
-      if(correct)checked.add(id);else checked.delete(id);progress();
-    }));
-  });
-  $('reset-checks').addEventListener('click',() => {
-    checked.clear();
-    document.querySelectorAll('[data-quiz]').forEach(quiz => {
-      quiz.querySelectorAll('button').forEach(b => {b.classList.remove('selected','correct');b.setAttribute('aria-pressed','false');});
-      const feedback=quiz.querySelector('.feedback');feedback.textContent='Choose an answer and explain your reasoning.';feedback.classList.remove('success');
-    });progress();
-  });
-  $('theme-toggle').addEventListener('click',() => {
-    const light=document.documentElement.dataset.theme !== 'light';
-    document.documentElement.dataset.theme=light?'light':'dark';
-    $('theme-toggle').textContent=light?'Dark mode ◑':'Light mode ◐';
-    $('theme-toggle').setAttribute('aria-label',`Switch to ${light?'dark':'light'} theme`);
-  });
+  window.LessonUI.init({id:'M03-L01',questions});
   const links=[...document.querySelectorAll('.lesson-nav nav a')];
   const observer=new IntersectionObserver(entries => {
     entries.filter(entry=>entry.isIntersecting).forEach(entry => links.forEach(link=>{
@@ -191,5 +162,5 @@
     }));
   },{rootMargin:'-10% 0px -60% 0px',threshold:0});
   links.forEach(link=>observer.observe(document.querySelector(link.hash)));
-  render();progress();
+  render();
 })();

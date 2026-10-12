@@ -1,20 +1,22 @@
 # Sample lesson: When similarity changes its mind
 
-An original implementation of **M03-L01 — Reason with vectors**, using Larnix's visual teaching direction. This is a reviewable lesson prototype, not the full learning platform.
+An original implementation of **M03-L01 — Reason with vectors**, using Larnix's narrative and visual teaching direction. This is a reviewable lesson prototype, not the full learning platform.
 
 ## Open the lesson
 
 Open `index.html` in a browser, or serve this directory from the repository root:
 
 ```bash
-python3 -m http.server 8773 --bind 127.0.0.1 --directory samples/vector-similarity
+python3 -m http.server 8773 --bind 127.0.0.1 --directory samples
 ```
 
-Then visit `http://127.0.0.1:8773/`. The lesson uses local HTML, CSS and JavaScript with no build step, model API or account. The two further-reading links are external. Check progress lasts for the current page session and resets on reload.
+The parent directory also serves the shared lesson controls. Then visit `http://127.0.0.1:8773/vector-similarity/`. The lesson uses local HTML, CSS and JavaScript with no build step, model API or account. The two further-reading links are external. Check progress lasts for the current page session and resets on reload.
 
 ## What works
 
-- Original story, worked arithmetic, optional explanations of normalization/projections and matrix shapes.
+- Original rental-help-desk story, prerequisites, an arrow analogy with its limits, guided lab instructions and step-by-step arithmetic.
+- Expanded normalization explanation, common questions, five key takeaways, glossary and a bridge to later lessons.
+- Optional explanations of angles/projections and matrix shapes; mathematical scores are distinguished from relevance probabilities.
 - Draggable query/document vectors and keyboard-accessible coordinate inputs.
 - Dot product versus cosine rankings, normalization, projection overlay and presets.
 - Explicit zero-vector handling, ties, negative scores and invalid-input feedback.
@@ -40,7 +42,8 @@ The tests cover ranking reversal, normalization, scale invariance, zero/negative
 - `index.html`: complete lesson content and semantic controls.
 - `styles.css`: original responsive visual treatment.
 - `vector-math.js`: dependency-free numerical functions used by the lesson and tests.
-- `lesson.js`: interaction, ranking, feedback and theme behavior.
+- `lesson.js`: vector interaction, ranking and quiz definitions.
+- `../shared/lesson-ui.js`: reusable quiz feedback, reset and theme controls.
 - `exercise.py`: original five-document learner scaffold.
 
 The reference sites informed teaching direction and concepts. No reference implementation, assets or course content were copied.

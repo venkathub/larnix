@@ -1,12 +1,30 @@
 # Larnix — visual and interactive teaching direction
 
-Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 168 lessons in the [curriculum](INDEX.md). This document adds a teaching and presentation contract; the lesson prototypes are not implemented yet.
+Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 168 lessons in the [curriculum](INDEX.md). The vector-similarity and RAG evidence-pipeline samples are implemented; the remaining lessons are planned. The narrative standard below also applies when revising the existing sample.
 
 ## Reference and interpretation
 
 The user selected [linearalgebra.info](https://linearalgebra.info/) as the explanation and design reference. The homepage and [first public lesson](https://linearalgebra.info/unit-01.html) were inspected on 2026-10-11, including their rendered appearance. The observed pattern combines a dark visual canvas, large editorial headings, focused prose, embedded controls, worked numbers, comprehension checks and expandable derivations. Course navigation shows connections between units.
 
 For Larnix, the central requirement is that a learner can manipulate a concept and explain the resulting change. The following layout, interaction proposals and acceptance criteria are Larnix design decisions. Use original wording, illustrations, examples, code and branding. Do not import the reference site's assets, lesson content or source implementation. Its pricing and account model are not requirements for Larnix.
+
+## Narrative explanation standard for every lesson
+
+The user additionally selected Zerodha Varsity as the explanation reference. Its [Technical Analysis introduction](https://zerodha.com/varsity/chapter/background/) was reviewed on 2026-10-11. It connects to prior learning, develops a familiar analogy, maps that analogy to a technical concept, discusses limitations and closes with key takeaways. Larnix adopts these broad teaching principles alongside the interactive direction from linearalgebra.info. All prose, scenarios, diagrams and exercises must be original.
+
+Apply the following editorial requirements to every authored lesson, including advanced modules:
+
+- Begin with a concrete situation and explain why the learner needs this concept. Briefly reconnect to the stated prerequisites.
+- Use patient, conversational prose with explicit transitions. Introduce one idea at a time and define new terminology before relying on it. The main explanation must remain understandable without operating a widget.
+- Use a familiar analogy where it helps, then explicitly map it to the mechanism and explain where it stops being accurate. A concrete engineering example can serve this purpose when an analogy would mislead.
+- Carry one original example through the explanation, worked calculation or execution trace, interactive exploration and failure analysis. Introduce equations after their meaning; name every symbol and show intermediate steps. Introduce code after explaining its inputs, expected behavior and purpose.
+- Address the questions a learner is likely to ask, such as why a simpler approach fails and when the method is appropriate. Explain assumptions, counterexamples and tradeoffs without hiding essential caveats in optional sections.
+- Finish the main narrative with three to five specific takeaways, a short glossary of newly introduced terms and a bridge to the next lesson. Keep the existing understanding checks, sources, interview reasoning and production exercise.
+- Preserve depth through clearly signposted derivations and implementation detail. Advanced lessons may rely on linked prerequisites; they should still explain each new reasoning step. Let lesson length follow the concept rather than a fixed word quota.
+
+Before publication, review whether a learner with the stated prerequisites can explain why the mechanism works, reproduce the worked example and recognize a failure case. A prose outline or a collection of bullets does not satisfy the authored explanation requirement. The 168 existing lesson plans are authoring blueprints, not completed narrative chapters.
+
+The vector-similarity sample has been revised against this standard with a continuous rental-help-desk story, explicit prerequisites, worked normalization, common questions, takeaways and glossary. Use it as the first reviewable example of the narrative format; further prototypes must still validate the approach for evidence flow and agent recovery.
 
 ## Teaching sequence for every lesson
 
