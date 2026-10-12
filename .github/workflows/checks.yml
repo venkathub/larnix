@@ -1,0 +1,83 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  schema:
+    name: Schema, a11y & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: make check
+
+  notebooks:
+    # Retain the required check name across the rebuild. The current labs run
+    # in JavaScript; unfinished learner Python starters are not executables.
+    name: Notebook execution (R10)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Execute the shipped interactive lesson engines
+        run: node --test tests/foundation-math.test.cjs samples/*/tests/*.test.cjs
+      - name: Execute notebooks if any are authored
+        shell: bash
+        run: |
+          mapfile -d '' notebooks < <(git ls-files -z '*.ipynb')
+          if [ "${#notebooks[@]}" -eq 0 ]; then
+            echo 'No .ipynb notebooks are authored in this rebuild; JavaScript lab tests ran above.'
+          else
+            python -m pip install nbconvert==7.16.6 ipykernel==6.29.5
+            for notebook in "${notebooks[@]}"; do
+              jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=300 --output-dir=/tmp/larnix-notebooks "$notebook"
+            done
+          fi
+
+  prose:
+    name: Prose, spelling & links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install codespell==2.4.2
+      - name: Spelling (HAX is the Microsoft toolkit's name)
+        run: codespell README.md docs samples web scripts tests --skip='*.ttf,OFL.txt,PatrickHand-OFL.txt,__pycache__' --ignore-words-list=hax
+      - name: Curriculum, source records and generated prose consistency
+        run: python scripts/curriculum.py check
+      - name: Rendered links, anchors and project-site paths
+        run: python -m unittest discover -s tests -p test_site_build.py
+
+  preview:
+    name: preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/build_site.py
+      - name: Upload the static preview for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: larnix-preview
+          path: dist/
+          retention-days: 7

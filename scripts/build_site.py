@@ -24,6 +24,7 @@ def build():
     if OUT.is_symlink():
         raise ValueError('Build output must not be a symlink')
     OUT.mkdir(exist_ok=True)
+    (OUT / '.nojekyll').touch()
     assets = OUT / 'assets'
     assets.mkdir(exist_ok=True)
     for name in ['app.js', 'app.css', 'roadmap.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:

@@ -2,9 +2,11 @@
 
 An original AI Engineering curriculum for interview preparation and production practice.
 
+**[Open the classroom](https://venkathub.github.io/larnix/)** · [Start M01](https://venkathub.github.io/larnix/lessons/M01-L01/)
+
 The 42-module plan now has **26 authored interactive previews**: all 24 lessons in **M01–M06**, plus RAG and agent recovery.
 
-The foundation modules cover AI product engineering, software engineering, mathematics/statistics, machine learning, deep learning and data quality. Open them from the local catalogue after building. Their original notes are stored as [M01–M03](samples/foundations/m01-m03.json) and [M04–M06](samples/foundations/m04-m06.json); the existing vector lesson remains intact.
+The foundation modules cover AI product engineering, software engineering, mathematics/statistics, machine learning, deep learning and data quality. Open them from the published classroom or a local build. Their original notes are stored as [M01–M03](samples/foundations/m01-m03.json) and [M04–M06](samples/foundations/m04-m06.json); the existing vector lesson remains intact.
 
 The three specialist labs are:
 

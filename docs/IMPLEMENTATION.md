@@ -2,7 +2,7 @@
 
 ## Current milestone: M01–M06 foundations and two advanced previews
 
-Implemented on the rebuild branch. Main remains the empty baseline. The reference repository has not been forked or imported.
+Implemented through the rebuild branch and published from `main`. The reference repository has not been forked or imported.
 
 - Catalogue of all 42 modules and 168 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - Search across titles, topics and outcomes; Interview and Production views additionally search their respective question/exercise fields.
@@ -29,6 +29,12 @@ Visit `http://127.0.0.1:8775/`. This is a static build with no runtime package d
 With Node.js on PATH, `make check` runs the curriculum validation, platform tests, lesson arithmetic/evidence/recovery tests, syntax checks and generated-route checks. Override `NODE=/absolute/path/to/node` if needed. `make build` builds; `make serve` builds and serves on port 8775.
 
 Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by origin: switching port or domain starts a separate local record. The UI has a two-step reset. No analytics, tracking requests, external font requests or model calls are used. External source links open only when selected.
+
+## Publishing
+
+The classroom is published at https://venkathub.github.io/larnix/. GitHub Pages uses the GitHub Actions publishing source. `.github/workflows/publish.yml` validates and builds `dist/` on every push to `main`, then deploys it through the official Pages artifact actions. It can also be run manually on `main`. All site navigation and assets resolve relative to the project path; direct lesson URLs work without a rewrite service. `deployment.json` identifies the exact deployed source commit.
+
+Branch protections remain in place. `.github/workflows/checks.yml` preserves the four required check names while adapting their implementation to the rebuilt static platform: schema/unit tests and basic static accessibility checks; executable JavaScript lesson engines plus any authored notebooks; spelling, curriculum consistency and internal links; and a downloadable preview artifact. The legacy `Notebook execution (R10)` name remains for compatibility: there are currently no authored `.ipynb` files, and incomplete learner Python starters are intentionally not executed as finished labs. The preview check uploads a review artifact rather than writing a public PR preview into production. Existing backup branches and the historical `gh-pages` branch are retained.
 
 ## Source map
 
@@ -69,9 +75,9 @@ The curriculum status is a planning baseline. Preview availability comes from a 
 1. Validate the foundation lessons with first-time learners, including accessibility, transfer and the ten-minute core pace.
 2. Review learner-produced exercise evidence; the authored practice instructions are not completed production implementations.
 3. Expand retrieval, agents, evaluation/security, operations and advanced branches in curriculum order.
-4. Decide on accounts, cross-device progress, search indexing and publication requirements when their use cases are concrete.
+4. Decide on accounts, cross-device progress and search indexing when their use cases are concrete.
 
-Verification is a local functional/browser review, not a full accessibility audit, learner study or production deployment.
+Functional/browser checks and automated publishing do not constitute a full accessibility audit or a learner study.
 
 ## Notebook theme and UX research — October 12, 2026
 
