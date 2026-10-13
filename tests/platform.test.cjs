@@ -4,10 +4,10 @@ const {clean,create}=require('../web/progress.js');
 const data=require('../docs/curriculum/curriculum.json'),previews=require('../web/lessons.json');
 const base={tracks:data.tracks,previews};
 const count=results=>results.reduce((n,m)=>n+m.lessons.length,0);
-test('catalogue keeps 188 plans distinct from implemented previews',()=>{
- assert.equal(count(search(data.modules,base)),188);
+test('catalogue keeps all plans distinct from implemented previews',()=>{
+ assert.equal(count(search(data.modules,base)),data.expected_lessons);
  assert.equal(count(search(data.modules,{...base,availability:'interactive'})),Object.keys(previews).length);
- assert.equal(count(search(data.modules,{...base,availability:'planned'})),188-Object.keys(previews).length);
+ assert.equal(count(search(data.modules,{...base,availability:'planned'})),data.expected_lessons-Object.keys(previews).length);
 });
 test('topic search is case-insensitive and combines track and availability filters',()=>{
  const results=search(data.modules,{...base,query:'RAG pipeline',track:'T3',availability:'interactive'});

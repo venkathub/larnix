@@ -5,19 +5,19 @@ Generated from the authoritative JSON records after content validation. Run `pyt
 | Check | Result |
 | --- | --- |
 | Approved modules | 42 / 42 |
-| Lessons with all required fields | 188 / 188 |
-| Unique interview questions and answer guidance | 188 |
-| Unique exercise briefs with acceptance criteria | 188 |
-| Source records | 99 |
-| Direct prerequisite edges | 259 |
+| Lessons with all required fields | 192 / 192 |
+| Unique interview questions and answer guidance | 192 |
+| Unique exercise briefs with acceptance criteria | 192 |
+| Source records | 113 |
+| Direct prerequisite edges | 262 |
 | Unknown prerequisites / dependency cycles | 0 / 0 |
 | Unknown source IDs / invalid source URL syntax | 0 / 0 |
 | Learning path | All modules once; every dependency precedes its dependent lesson |
-| Lesson status | 159 planned; 29 previews; 0 full-contract complete |
+| Lesson status | 163 planned; 29 previews; 0 full-contract complete |
 
 ## Effort assumptions
 
-Guided study totals approximately 320–534 learner hours. Exercises add 581–959 hours if all are completed. These broad estimates describe learner effort, not an implementation commitment; prior knowledge and compute choices materially affect them.
+Guided study totals approximately 324–542 learner hours. Exercises add 589–971 hours if all are completed. These broad estimates describe learner effort, not an implementation commitment; prior knowledge and compute choices materially affect them.
 
 ## What was reviewed
 

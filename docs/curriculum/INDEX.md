@@ -1,6 +1,6 @@
 # Larnix — 42-module lesson index
 
-188 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
+192 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
 
 [Overview](README.md) · [Teaching design](TEACHING_DESIGN.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)
 
@@ -17,6 +17,10 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 ### [M02 — Software engineering for AI](modules/M02.md)
 
+- [M02-L08](modules/M02.md#m02-l08) — Read and run a Python program
+- [M02-L09](modules/M02.md#m02-l09) — Shape data with collections and files
+- [M02-L10](modules/M02.md#m02-l10) — Read errors and prove behaviour
+- [M02-L11](modules/M02.md#m02-l11) — Set up environments, scripts and notebooks
 - [M02-L01](modules/M02.md#m02-l01) — Build reproducible Python components
 - [M02-L05](modules/M02.md#m02-l05) — Operate on arrays without shape surprises
 - [M02-L06](modules/M02.md#m02-l06) — Transform dataframes with trustworthy joins

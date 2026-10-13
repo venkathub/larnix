@@ -62,8 +62,27 @@ class CurriculumTest(unittest.TestCase):
     def test_current_plan_and_original_urls_remain_valid(self):
         self.assertEqual(validate(self.curriculum, self.sources), [])
         ids = {lesson['id'] for m in self.curriculum['modules'] for lesson in m['lessons']}
-        self.assertTrue({f'M{m:02}-L{l:02}' for m in range(1, 43) for l in range(1, 5)} <= ids)
-        self.assertEqual(len(ids), 188)
+        self.assertTrue({f'M{m:02}-L{l:02}' for m in range(1, self.curriculum['expected_modules'] + 1) for l in range(1, 5)} <= ids)
+        self.assertEqual(len(ids), self.curriculum['expected_lessons'])
+
+    def test_optional_entry_without_dependents_can_lead_teaching_order(self):
+        module = next(m for m in self.curriculum['modules'] if not m['prerequisites'])
+        existing = [lesson['id'] for m in self.curriculum['modules'] for lesson in m['lessons']]
+        routes_before = {lid: route_lessons(self.curriculum, [lid]) for lid in existing}
+        lesson = deepcopy(module['lessons'][0])
+        lesson.update(id=f"{module['id']}-L{len(module['lessons']) + 1:02}",
+                      title='Test-only optional entry', prerequisites=[], status='planned',
+                      delivery={'full_contract': 'not_met', 'interaction': 'none', 'artifact': 'none'})
+        lesson['interview']['question'] = 'Test-only optional entry question?'
+        lesson['production_exercise']['brief'] = 'Test-only optional entry exercise.'
+        module['lessons'].append(lesson)
+        module['lesson_order'].insert(0, lesson['id'])
+        self.curriculum['expected_lessons'] += 1
+        self.assertFalse(any(lesson['id'] in item['prerequisites']
+                             for m in self.curriculum['modules'] for item in m['lessons']))
+        self.assertEqual(validate(self.curriculum, self.sources), [])
+        self.assertEqual(route_lessons(self.curriculum, [lesson['id']]), [lesson['id']])
+        self.assertEqual({lid: route_lessons(self.curriculum, [lid]) for lid in existing}, routes_before)
 
     def test_completion_requires_contract_evidence_not_a_status_change(self):
         lesson = self.curriculum['modules'][0]['lessons'][0]
@@ -155,7 +174,9 @@ class CurriculumTest(unittest.TestCase):
 
     def test_teaching_order_can_branch_but_cannot_skip_or_precede_requirements(self):
         module = self.curriculum['modules'][1]
-        module['lesson_order'] = ['M02-L05', 'M02-L01', *module['lesson_order'][2:]]
+        order = module['lesson_order']
+        prerequisite, dependent = order.index('M02-L01'), order.index('M02-L05')
+        order[prerequisite], order[dependent] = order[dependent], order[prerequisite]
         self.assertTrue(any('before prerequisite M02-L01' in e
                             for e in validate(self.curriculum, self.sources)))
         module['lesson_order'].pop()

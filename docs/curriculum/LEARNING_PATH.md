@@ -67,7 +67,7 @@ Reading links are not extra prerequisite modules. A source may introduce an idea
 The same order drives module lists and next/previous navigation in the classroom. IDs and URLs stay unchanged.
 
 - M01: [M01-L01](modules/M01.md#m01-l01) → [M01-L02](modules/M01.md#m01-l02) → [M01-L03](modules/M01.md#m01-l03) → [M01-L04](modules/M01.md#m01-l04)
-- M02: [M02-L01](modules/M02.md#m02-l01) → [M02-L05](modules/M02.md#m02-l05) → [M02-L06](modules/M02.md#m02-l06) → [M02-L07](modules/M02.md#m02-l07) → [M02-L02](modules/M02.md#m02-l02) → [M02-L03](modules/M02.md#m02-l03) → [M02-L04](modules/M02.md#m02-l04)
+- M02: [M02-L08](modules/M02.md#m02-l08) → [M02-L09](modules/M02.md#m02-l09) → [M02-L10](modules/M02.md#m02-l10) → [M02-L11](modules/M02.md#m02-l11) → [M02-L01](modules/M02.md#m02-l01) → [M02-L05](modules/M02.md#m02-l05) → [M02-L06](modules/M02.md#m02-l06) → [M02-L07](modules/M02.md#m02-l07) → [M02-L02](modules/M02.md#m02-l02) → [M02-L03](modules/M02.md#m02-l03) → [M02-L04](modules/M02.md#m02-l04)
 - M03: [M03-L01](modules/M03.md#m03-l01) → [M03-L02](modules/M03.md#m03-l02) → [M03-L03](modules/M03.md#m03-l03) → [M03-L04](modules/M03.md#m03-l04) → [M03-L05](modules/M03.md#m03-l05) → [M03-L06](modules/M03.md#m03-l06)
 - M04: [M04-L01](modules/M04.md#m04-l01) → [M04-L02](modules/M04.md#m04-l02) → [M04-L03](modules/M04.md#m04-l03) → [M04-L04](modules/M04.md#m04-l04) → [M04-L05](modules/M04.md#m04-l05) → [M04-L06](modules/M04.md#m04-l06) → [M04-L07](modules/M04.md#m04-l07)
 - M05: [M05-L01](modules/M05.md#m05-l01) → [M05-L02](modules/M05.md#m05-l02) → [M05-L03](modules/M05.md#m05-l03) → [M05-L04](modules/M05.md#m05-l04)

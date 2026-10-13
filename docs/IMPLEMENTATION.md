@@ -4,7 +4,7 @@
 
 The classroom has 29 authored previews; the published site follows `main`. The reference repository has not been forked or imported.
 
-- Catalogue of all 42 modules and 188 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
+- Catalogue of all 42 modules and 192 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.
 - Search across titles, topics and outcomes; Interview and Production views additionally search their respective question/exercise fields.
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
@@ -16,7 +16,7 @@ The classroom has 29 authored previews; the published site follows `main`. The r
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
 
-This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 159 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
+This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 163 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
 
 ## Run and check
 
@@ -135,7 +135,7 @@ Reviewer conclusion: the core now teaches a useful diagnostic distinction and pr
 
 ### Beginner improvements across every preview — October 12, 2026
 
-All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 159 currently planned lessons as authored.
+All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 163 currently planned lessons as authored.
 
 - **Vectors:** removed the winner from the prediction instructions, moved normalization beside metric selection, and added live raw coordinates and both scores next to the explanation. Normalization is defined where the first transfer question uses it. A second transfer case separates cosine alignment from factual correctness and freshness.
 - **Recovery:** introduced the authorized task and explained reconciliation before controls. The result now compares saved agent evidence with provider refund count and amount, explicitly marked as an observer view. Replay controls sit in the optional settings disclosure. A second transfer case tests matching the amount as well as the operation ID; deduplication is explained in plain language in the first case.
@@ -148,7 +148,7 @@ Honest review: vectors gives the most concrete entry point, although interpretin
 
 ## Foundation delivery — M01–M06
 
-Twenty-seven foundation lessons now open as authored previews, including M02-L05, M02-L06 and M02-L07. Twenty-six use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 27 of the 29 available previews; 159 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
+Twenty-seven foundation lessons now open as authored previews, including M02-L05, M02-L06 and M02-L07. Twenty-six use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 27 of the 29 available previews; 163 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
 
 Each new lesson includes definitions, a handwritten mechanism sketch, a worked example, a misconception, three original illustrated cases with adjacent feedback and numerical evidence, three checks, two concealed-answer transfer prompts, every approved topic as an expanded note, verified primary sources, and a downloadable practice starter with acceptance criteria. The ten-minute route introduces one central mechanism; broader notes and production practice require additional time.
 

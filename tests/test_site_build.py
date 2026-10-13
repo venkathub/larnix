@@ -111,10 +111,11 @@ class SiteBuildTest(unittest.TestCase):
             self.assertTrue(set(lesson['prerequisites']) <= prior, lesson['id'])
             self.assertNotIn('estimate_basis', lesson)
             prior.add(lesson['id'])
-        m02_ids = [l['id'] for l in modules['M02']['lessons']]
-        self.assertEqual(m02_ids[:4], ['M02-L01', 'M02-L05', 'M02-L06', 'M02-L07'])
-        self.assertEqual(modules['M35']['lessons'][0]['id'], 'M35-L05')
-        self.assertEqual(modules['M40']['lessons'][0]['id'], 'M40-L05')
+        curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
+        for module in curriculum['modules']:
+            with self.subTest(module=module['id']):
+                self.assertEqual([lesson['id'] for lesson in modules[module['id']]['lessons']],
+                                 module['lesson_order'])
 
     def test_static_routes_and_assets(self):
         out = ROOT / 'dist'
