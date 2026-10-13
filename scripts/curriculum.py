@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "docs" / "curriculum"
+RUNNABLE_LABS = {"runnable_data_lab", "runnable_service_lab"}
 CONTRACT_CATEGORIES = {
     "problem", "interaction", "explanation", "checks", "artifact",
     "failure", "interview", "production", "attribution",
@@ -111,6 +112,13 @@ def validate(curriculum, source_data):
                 require(isinstance(evidence, dict) and set(evidence) == CONTRACT_CATEGORIES
                         and all(text(item) and (ROOT / item).is_file() for item in evidence.values()),
                         f"{lid}: full contract requires evidence for all nine contract categories.")
+            require(delivery.get('artifact') in {'none', 'learner_starter'} | RUNNABLE_LABS,
+                    f"{lid}: invalid artifact type.")
+            if delivery.get('artifact') in RUNNABLE_LABS:
+                artifact = Path(delivery.get('artifact_path') or '')
+                require(len(artifact.parts) == 3 and artifact.parts[0] == 'labs'
+                        and artifact.parts[1] not in {'.', '..'} and artifact.name == 'README.md',
+                        f"{lid}: runnable lab requires labs/<name>/README.md.")
             if delivery.get('artifact_path'):
                 require((ROOT / delivery['artifact_path']).is_file(), f"{lid}: missing runnable artifact.")
             for field in ("title", "outcome", "resource_mode"):
@@ -236,7 +244,8 @@ def render(curriculum, source_data):
                       f"**Study estimate:** {h['guided_study'][0]}–{h['guided_study'][1]} hours guided study + {h['exercise'][0]}–{h['exercise'][1]} hours exercise. These are uncalibrated learner-effort estimates, not measured timings or an implementation schedule.", "",
                       "### Primary readings", ""]
             if lesson['delivery'].get('artifact_path'):
-                lines += [f"**Runnable artifact:** [Data foundations lab](../../../{lesson['delivery']['artifact_path']}) — artifact available; complete lesson narrative still planned.", ""]
+                lab_name = Path(lesson['delivery']['artifact_path']).parent.name.replace('-', ' ').capitalize()
+                lines += [f"**Runnable artifact:** [{lab_name} lab](../../../{lesson['delivery']['artifact_path']}) — artifact available; complete lesson narrative still planned.", ""]
             lines += [f"- {source_link(sid)} — {sources[sid]['focus']}." for sid in lesson["sources"]]
             lines += ["", "### Interview question", "", lesson["interview"]["question"], "",
                       "**A strong answer addresses:** " + "; ".join(lesson["interview"]["strong_answer_signals"]) + ".", "",
