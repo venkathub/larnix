@@ -44,6 +44,11 @@ class BeginnerPythonLessonTest(unittest.TestCase):
     def setUp(self):
         self.note = load_notes()['M02-L08']
 
+    def test_core_listing_matches_the_first_fifteen_practice_lines(self):
+        self.assertEqual(self.note['listing']['language'], 'python')
+        self.assertEqual(len(self.note['listing']['lines']), 15)
+        self.assertEqual(self.note['listing']['lines'], self.note['practice']['starter'].splitlines()[:15])
+
     def execute(self, starter, probe=False):
         with TemporaryDirectory() as directory:
             path = Path(directory) / 'rental_price.py'
