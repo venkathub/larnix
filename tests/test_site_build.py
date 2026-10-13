@@ -5,6 +5,7 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
 import json
+import hashlib
 from zipfile import ZipFile
 import unittest
 import sys
@@ -41,6 +42,23 @@ class SiteBuildTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         build()
+
+    def test_foundation_disclosures_are_scoped_without_changing_shared_styles(self):
+        manifest = json.loads((ROOT / 'web/lessons.json').read_text())
+        rule = '.foundation-lesson :is(#deep-dive,#production,#interview)>.lesson-extra'
+        for lesson_id, entry in manifest.items():
+            if entry.get('format') == 'foundation':
+                with self.subTest(lesson=lesson_id):
+                    css = (ROOT / 'dist/lessons' / lesson_id / 'foundation.css').read_text()
+                    self.assertIn('@media(min-width:651px){\n ' + rule, css)
+                    self.assertIn('max-width:calc(670px + 24px + 24px);margin-inline:auto', css)
+                    self.assertIn(rule + '>.extra-body.reading{max-width:none}', css)
+                    self.assertIn('.foundation-lesson #deep-dive>.eyebrow{padding-inline:24px}', css)
+        # Shared stylesheet at C2's base, 1fb476f. Future shared-style changes
+        # must deliberately update this snapshot; this fix is foundation-only.
+        shared = (ROOT / 'dist/assets/lesson.css').read_bytes()
+        self.assertEqual(hashlib.sha256(shared).hexdigest(),
+                         '06aebbaefb8ab903634dbc3a193777418560e339d43d65fb735ed2f913636e85')
 
     def test_downloadable_labs_are_complete_and_match_tested_sources(self):
         for lab in sorted((ROOT / 'labs').iterdir()):
