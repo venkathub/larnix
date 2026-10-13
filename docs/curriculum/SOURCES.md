@@ -1,6 +1,6 @@
 # Primary source register
 
-Planning review date: **2026-10-13**. **99 primary sources**: original papers, official documentation/specifications, maintainer guidance, and author-written courses or textbooks.
+Planning review date: **2026-10-13**. **113 primary sources**: original papers, official documentation/specifications, maintainer guidance, and author-written courses or textbooks.
 
 These are reading entry points, not claims that every lesson detail appears in one page. Select exact sections when writing lessons. Source concepts are attributed; the curriculum questions, scenarios and exercise specifications are original. No source code, course exercises or prose were imported.
 
@@ -426,6 +426,18 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M36-L01](modules/M36.md#m36-l01), [M36-L02](modules/M36.md#m36-l02), [M36-L03](modules/M36.md#m36-l03), [M36-L04](modules/M36.md#m36-l04)
 
+## GITBASICS — Git: Recording changes to the repository
+
+**Read:** [Git: Recording changes to the repository](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Inspect, stage and commit one rental script; distinguish working-tree edits from the staged snapshot..
+
+**Version policy:** Pro Git, second edition (v2), page reviewed on 2026-10-13. The hosted book can change; this date identifies the reviewed snapshot, not an immutable URL. Record the installed Git version when implementing.
+
+**Lesson references:** [M02-L11](modules/M02.md#m02-l11)
+
 ## GRAPH — Microsoft GraphRAG documentation
 
 **Read:** [Microsoft GraphRAG documentation](https://microsoft.github.io/graphrag/)
@@ -521,6 +533,18 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
 
 **Lesson references:** [M30-L02](modules/M30.md#m30-l02), [M30-L04](modules/M30.md#m30-l04)
+
+## JUPYTER — Jupyter: The Jupyter Notebook
+
+**Read:** [Jupyter: The Jupyter Notebook](https://jupyter-notebook.readthedocs.io/en/v7.4.5/notebook.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Notebook cells, execution state and export; compare a fresh top-to-bottom run with a rental-summary script..
+
+**Version policy:** Pinned to Jupyter Notebook documentation release 7.4.5; record the actual notebook and kernel versions during implementation.
+
+**Lesson references:** [M02-L11](modules/M02.md#m02-l11)
 
 ## K8S — Kubernetes deployments
 
@@ -822,6 +846,138 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M02-L03](modules/M02.md#m02-l03), [M09-L02](modules/M09.md#m09-l02), [M09-L03](modules/M09.md#m09-l03)
 
+## PYCLASS — Python: Classes
+
+**Read:** [Python: Classes](https://docs.python.org/3.12/tutorial/classes.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** A small class with named attributes as a rental record; no inheritance framework required..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L09](modules/M02.md#m02-l09)
+
+## PYCSV — Python: csv — CSV file reading and writing
+
+**Read:** [Python: csv — CSV file reading and writing](https://docs.python.org/3.12/library/csv.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Read and write CSV rental rows with explicit field names and numeric conversion..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L09](modules/M02.md#m02-l09)
+
+## PYDATA — Python: Data structures
+
+**Read:** [Python: Data structures](https://docs.python.org/3.12/tutorial/datastructures.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Lists, tuples, dictionaries and comprehensions for small rental records..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L09](modules/M02.md#m02-l09)
+
+## PYERRORS — Python: Errors and exceptions
+
+**Read:** [Python: Errors and exceptions](https://docs.python.org/3.12/tutorial/errors.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Read exceptions and raise a useful message rather than silently accepting invalid rental input..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L10](modules/M02.md#m02-l10)
+
+## PYFLOW — Python: More control flow tools
+
+**Read:** [Python: More control flow tools](https://docs.python.org/3.12/tutorial/controlflow.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Branches, loops and function definitions; trace execution when a rental function is called..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L08](modules/M02.md#m02-l08)
+
+## PYINTRO — Python: An informal introduction to Python
+
+**Read:** [Python: An informal introduction to Python](https://docs.python.org/3.12/tutorial/introduction.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Values, numeric and text types, expressions and variable assignment..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L08](modules/M02.md#m02-l08)
+
+## PYJSON — Python: json — JSON encoder and decoder
+
+**Read:** [Python: json — JSON encoder and decoder](https://docs.python.org/3.12/library/json.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Read and write JSON rental records and distinguish decoding from field validation..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L09](modules/M02.md#m02-l09)
+
+## PYMODULES — Python: Modules
+
+**Read:** [Python: Modules](https://docs.python.org/3.12/tutorial/modules.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Imports, the main module and running a file as a script..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L11](modules/M02.md#m02-l11)
+
+## PYTRACE — Python: traceback — Print or retrieve a stack traceback
+
+**Read:** [Python: traceback — Print or retrieve a stack traceback](https://docs.python.org/3.12/library/traceback.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Traceback frames, exception types and messages; diagnose the failing call without suppressing evidence..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L10](modules/M02.md#m02-l10)
+
+## PYUNIT — Python: unittest — Unit testing framework
+
+**Read:** [Python: unittest — Unit testing framework](https://docs.python.org/3.12/library/unittest.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** A first TestCase, equality checks and expected exceptions for rental fixtures..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L10](modules/M02.md#m02-l10)
+
+## PYVENV — Python: venv — Creation of virtual environments
+
+**Read:** [Python: venv — Creation of virtual environments](https://docs.python.org/3.12/library/venv.html)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Create an isolated environment and record installed package versions for reproduction..
+
+**Version policy:** Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson.
+
+**Lesson references:** [M02-L11](modules/M02.md#m02-l11)
+
 ## RAG — Retrieval Augmented Generation paper
 
 **Read:** [Retrieval Augmented Generation paper](https://arxiv.org/abs/2005.11401)
@@ -1097,6 +1253,18 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M08-L03](modules/M08.md#m08-l03), [M33-L04](modules/M33.md#m33-l04), [M34-L01](modules/M34.md#m34-l01), [M34-L02](modules/M34.md#m34-l02), [M34-L03](modules/M34.md#m34-l03), [M34-L04](modules/M34.md#m34-l04)
+
+## TSHANDBOOK — TypeScript: Everyday types — Type assertions
+
+**Read:** [TypeScript: Everyday types — Type assertions](https://github.com/microsoft/TypeScript-Website/blob/6556b08756b766fd41d0f887174cb0b042e5f72c/packages/documentation/copy/en/handbook-v2/Everyday%20Types.md)
+
+**Type:** official documentation, specification or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Type assertions provide no runtime validation. Rendered reading: https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions (also opened during review)..
+
+**Version policy:** Official TypeScript-Website handbook source pinned to commit 6556b08756b766fd41d0f887174cb0b042e5f72c; this is a documentation snapshot, not a compiler version. Record the compiler version at lesson implementation.
+
+**Lesson references:** [M02-L02](modules/M02.md#m02-l02)
 
 ## TTC — Scaling LLM Test-Time Compute Optimally
 

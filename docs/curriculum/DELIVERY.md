@@ -20,6 +20,10 @@ Generated from curriculum.json and checked against the preview manifest. A teste
 | [M02-L05](modules/M02.md#m02-l05) | preview | illustrated_cases | runnable_data_lab | not_met |
 | [M02-L06](modules/M02.md#m02-l06) | preview | illustrated_cases | runnable_data_lab | not_met |
 | [M02-L07](modules/M02.md#m02-l07) | preview | illustrated_cases | runnable_data_lab | not_met |
+| [M02-L08](modules/M02.md#m02-l08) | planned | none | none | not_met |
+| [M02-L09](modules/M02.md#m02-l09) | planned | none | none | not_met |
+| [M02-L10](modules/M02.md#m02-l10) | planned | none | none | not_met |
+| [M02-L11](modules/M02.md#m02-l11) | planned | none | none | not_met |
 | [M03-L01](modules/M03.md#m03-l01) | preview | tested_specialist_engine | learner_starter | not_met |
 | [M03-L02](modules/M03.md#m03-l02) | preview | illustrated_cases_and_tested_calculator | learner_starter | not_met |
 | [M03-L03](modules/M03.md#m03-l03) | preview | illustrated_cases | learner_starter | not_met |

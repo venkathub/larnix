@@ -16,7 +16,7 @@ The three specialist labs are:
 
 Each preview offers a suggested **10-minute core** with handwritten-style diagrams, three quick checks and optional deeper reading, interview preparation and production practice.
 
-The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for all authored previews. The remaining 159 lesson narratives are planned; their artifact availability is tracked separately. Foundation case explorers use explicitly labeled synthetic fixtures; optimization and threshold lessons also offer live local calculations. No Python service or training job runs inside the webpage.
+The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for all authored previews. The remaining 163 lesson narratives are planned; their artifact availability is tracked separately. Foundation case explorers use explicitly labeled synthetic fixtures; optimization and threshold lessons also offer live local calculations. No Python service or training job runs inside the webpage.
 
 The October 13 coverage review added 20 lesson plans for predictive ML and data engineering; the [delivery inventory](docs/curriculum/DELIVERY.md) lists every lesson's status. A new [runnable NumPy/pandas/plotting lab](labs/data-foundations/README.md) supports the planned M02 additions. Review records are kept as Traycer task artifacts rather than in the repository.
 

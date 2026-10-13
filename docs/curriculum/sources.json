@@ -991,6 +991,146 @@
       "reviewed_on": "2026-10-13",
       "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
       "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "PYINTRO",
+      "title": "Python: An informal introduction to Python",
+      "url": "https://docs.python.org/3.12/tutorial/introduction.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Values, numeric and text types, expressions and variable assignment.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYFLOW",
+      "title": "Python: More control flow tools",
+      "url": "https://docs.python.org/3.12/tutorial/controlflow.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Branches, loops and function definitions; trace execution when a rental function is called.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYDATA",
+      "title": "Python: Data structures",
+      "url": "https://docs.python.org/3.12/tutorial/datastructures.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Lists, tuples, dictionaries and comprehensions for small rental records.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYERRORS",
+      "title": "Python: Errors and exceptions",
+      "url": "https://docs.python.org/3.12/tutorial/errors.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Read exceptions and raise a useful message rather than silently accepting invalid rental input.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYMODULES",
+      "title": "Python: Modules",
+      "url": "https://docs.python.org/3.12/tutorial/modules.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Imports, the main module and running a file as a script.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYVENV",
+      "title": "Python: venv — Creation of virtual environments",
+      "url": "https://docs.python.org/3.12/library/venv.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Create an isolated environment and record installed package versions for reproduction.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYUNIT",
+      "title": "Python: unittest — Unit testing framework",
+      "url": "https://docs.python.org/3.12/library/unittest.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "A first TestCase, equality checks and expected exceptions for rental fixtures.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYTRACE",
+      "title": "Python: traceback — Print or retrieve a stack traceback",
+      "url": "https://docs.python.org/3.12/library/traceback.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Traceback frames, exception types and messages; diagnose the failing call without suppressing evidence.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYJSON",
+      "title": "Python: json — JSON encoder and decoder",
+      "url": "https://docs.python.org/3.12/library/json.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Read and write JSON rental records and distinguish decoding from field validation.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYCSV",
+      "title": "Python: csv — CSV file reading and writing",
+      "url": "https://docs.python.org/3.12/library/csv.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Read and write CSV rental rows with explicit field names and numeric conversion.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "PYCLASS",
+      "title": "Python: Classes",
+      "url": "https://docs.python.org/3.12/tutorial/classes.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "A small class with named attributes as a rental record; no inheritance framework required.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to the Python 3.12 documentation branch; patch documentation can change. Record the actual interpreter and package versions when authoring and running the lesson."
+    },
+    {
+      "id": "JUPYTER",
+      "title": "Jupyter: The Jupyter Notebook",
+      "url": "https://jupyter-notebook.readthedocs.io/en/v7.4.5/notebook.html",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Notebook cells, execution state and export; compare a fresh top-to-bottom run with a rental-summary script.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pinned to Jupyter Notebook documentation release 7.4.5; record the actual notebook and kernel versions during implementation."
+    },
+    {
+      "id": "GITBASICS",
+      "title": "Git: Recording changes to the repository",
+      "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Inspect, stage and commit one rental script; distinguish working-tree edits from the staged snapshot.",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Pro Git, second edition (v2), page reviewed on 2026-10-13. The hosted book can change; this date identifies the reviewed snapshot, not an immutable URL. Record the installed Git version when implementing."
+    },
+    {
+      "id": "TSHANDBOOK",
+      "title": "TypeScript: Everyday types — Type assertions",
+      "url": "https://github.com/microsoft/TypeScript-Website/blob/6556b08756b766fd41d0f887174cb0b042e5f72c/packages/documentation/copy/en/handbook-v2/Everyday%20Types.md",
+      "type": "official documentation, specification or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "focus": "Type assertions provide no runtime validation. Rendered reading: https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions (also opened during review).",
+      "verification": "Opened during beginner-entry planning; relevant sections reviewed, not a learner-validation claim.",
+      "version_policy": "Official TypeScript-Website handbook source pinned to commit 6556b08756b766fd41d0f887174cb0b042e5f72c; this is a documentation snapshot, not a compiler version. Record the compiler version at lesson implementation."
     }
   ]
 }

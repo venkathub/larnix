@@ -424,7 +424,21 @@
         "MATH",
         "PANDAS",
         "LEAK",
-        "PLOT"
+        "PLOT",
+        "PYINTRO",
+        "PYFLOW",
+        "PYDATA",
+        "PYERRORS",
+        "PYMODULES",
+        "PYVENV",
+        "PYUNIT",
+        "PYTRACE",
+        "PYJSON",
+        "PYCSV",
+        "PYCLASS",
+        "JUPYTER",
+        "GITBASICS",
+        "TSHANDBOOK"
       ],
       "lessons": [
         {
@@ -507,7 +521,8 @@
           "sources": [
             "ML",
             "STRUCT",
-            "HTTP"
+            "HTTP",
+            "TSHANDBOOK"
           ],
           "interview": {
             "question": "Why should an API client not retry every non-success response?",
@@ -888,11 +903,282 @@
             "artifact": "runnable_data_lab",
             "artifact_path": "labs/data-foundations/README.md"
           }
+        },
+        {
+          "id": "M02-L08",
+          "title": "Read and run a Python program",
+          "topics": [
+            "values and types",
+            "variables",
+            "control flow",
+            "functions",
+            "reading a program top to bottom"
+          ],
+          "outcome": "Trace a small rental-price program, predict its output and run it to explain any mismatch.",
+          "prerequisites": [],
+          "sources": [
+            "PYINTRO",
+            "PYFLOW"
+          ],
+          "interview": {
+            "question": "A rental script defines a price function before reading the number of days. Which lines run immediately, and which wait until the function is called?",
+            "strong_answer_signals": [
+              "Distinguishes a function definition from a call and follows the executed branch",
+              "Tracks variable values and types through a small hand-worked example",
+              "Compares a prediction with the actual output and names the input assumptions"
+            ],
+            "rubric": {
+              "0": "Incorrect or unsupported explanation",
+              "1": "Names the concept but misses mechanism or tradeoffs",
+              "2": "Explains the mechanism and relevant tradeoff",
+              "3": "Adds a concrete example, verification method and limitation"
+            }
+          },
+          "production_exercise": {
+            "brief": "Write a small rental-desk price script using named values, one function and a branch for a multi-day discount. Predict its output before running synthetic one-day and multi-day bookings.",
+            "acceptance": [
+              "Label the bookings synthetic and record the Python version and run command",
+              "Show the executed lines, intermediate values and predicted versus observed totals for both bookings",
+              "Explain why changing a numeric day count to text fails or changes behavior; do not silently substitute an answer",
+              "State that the chosen prices and discount are teaching fixtures, not a business pricing policy"
+            ],
+            "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
+          },
+          "status": "planned",
+          "estimated_hours": {
+            "guided_study": [
+              1,
+              2
+            ],
+            "exercise": [
+              2,
+              3
+            ]
+          },
+          "resource_mode": "Local Python 3.12 target and synthetic rental fixtures; no live provider or browser Python. Hour ranges are planning estimates, not learner-calibrated measurements.",
+          "evidence_required": [
+            "Versioned artifact or design specification",
+            "Baseline or hand-checkable fixture",
+            "Results or expected-results table including a failure case",
+            "Decision and limitations note"
+          ],
+          "delivery": {
+            "full_contract": "not_met",
+            "interaction": "none",
+            "artifact": "none"
+          }
+        },
+        {
+          "id": "M02-L09",
+          "title": "Shape data with collections and files",
+          "topics": [
+            "lists, dictionaries and tuples",
+            "comprehensions",
+            "CSV and JSON files",
+            "a small class as a named record"
+          ],
+          "outcome": "Represent a few rental tickets in collections, round-trip them through files and explain which fields need conversion.",
+          "prerequisites": [
+            "M02-L08"
+          ],
+          "sources": [
+            "PYDATA",
+            "PYCSV",
+            "PYJSON",
+            "PYCLASS"
+          ],
+          "interview": {
+            "question": "The desk reads days as \"3\" from CSV and as 3 from JSON. Why can the same rental total calculation behave differently, and how would you inspect the record?",
+            "strong_answer_signals": [
+              "Distinguishes text from numeric values instead of assuming a file format validates fields",
+              "Uses a dictionary or named attributes to explain field meaning and a list to hold multiple records",
+              "Checks counts and values after a file round-trip and explains a malformed or missing field"
+            ],
+            "rubric": {
+              "0": "Incorrect or unsupported explanation",
+              "1": "Names the concept but misses mechanism or tradeoffs",
+              "2": "Explains the mechanism and relevant tradeoff",
+              "3": "Adds a concrete example, verification method and limitation"
+            }
+          },
+          "production_exercise": {
+            "brief": "Organize three synthetic rental tickets in a list of dictionaries, select multi-day rentals with a comprehension, and save and reload CSV and JSON versions. Represent one ticket with a small class whose attributes name its fields.",
+            "acceptance": [
+              "Record the synthetic fixture, file encoding, Python version and reproduction command",
+              "Check the three-ticket count, field names and converted day counts after each round-trip",
+              "Compare a tuple position with a named field and explain why the chosen representation helps this desk",
+              "Show an invalid numeric field and the observed failure without dropping the row silently"
+            ],
+            "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
+          },
+          "status": "planned",
+          "estimated_hours": {
+            "guided_study": [
+              1,
+              2
+            ],
+            "exercise": [
+              2,
+              3
+            ]
+          },
+          "resource_mode": "Local Python 3.12 target and synthetic rental fixtures; no live provider or browser Python. Hour ranges are planning estimates, not learner-calibrated measurements.",
+          "evidence_required": [
+            "Versioned artifact or design specification",
+            "Baseline or hand-checkable fixture",
+            "Results or expected-results table including a failure case",
+            "Decision and limitations note"
+          ],
+          "delivery": {
+            "full_contract": "not_met",
+            "interaction": "none",
+            "artifact": "none"
+          }
+        },
+        {
+          "id": "M02-L10",
+          "title": "Read errors and prove behaviour",
+          "topics": [
+            "exceptions",
+            "reading tracebacks bottom-up",
+            "raising with a message",
+            "a first unittest",
+            "what a test does not prove"
+          ],
+          "outcome": "Diagnose a failed rental calculation from its traceback and write tests that distinguish valid input from an explicit rejection.",
+          "prerequisites": [
+            "M02-L09"
+          ],
+          "sources": [
+            "PYERRORS",
+            "PYTRACE",
+            "PYUNIT"
+          ],
+          "interview": {
+            "question": "A rental total test passes for two days, but a caller supplies zero days. How would you use the traceback and a new test to make the failure understandable?",
+            "strong_answer_signals": [
+              "Reads the exception type and message before following frames back to the failing call",
+              "Raises an explicit error with a useful message for invalid input",
+              "Tests a valid result and a rejection while stating that these examples do not prove correctness for every input"
+            ],
+            "rubric": {
+              "0": "Incorrect or unsupported explanation",
+              "1": "Names the concept but misses mechanism or tradeoffs",
+              "2": "Explains the mechanism and relevant tradeoff",
+              "3": "Adds a concrete example, verification method and limitation"
+            }
+          },
+          "production_exercise": {
+            "brief": "Extend the synthetic rental calculation with a positive-day guard and a first unittest TestCase. Diagnose an injected wrong-type failure from the final traceback line back to its calling frame.",
+            "acceptance": [
+              "Keep the failing input and annotate the exception message and relevant traceback frames",
+              "Run a valid-total test and an expected-error test, checking the rejection message",
+              "Demonstrate a deliberately broken guard causing a test failure, then restore the guard and rerun",
+              "Record the Python version, test command and results; list one untested boundary and avoid claiming exhaustive correctness"
+            ],
+            "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
+          },
+          "status": "planned",
+          "estimated_hours": {
+            "guided_study": [
+              1,
+              2
+            ],
+            "exercise": [
+              2,
+              3
+            ]
+          },
+          "resource_mode": "Local Python 3.12 target and synthetic rental fixtures; no live provider or browser Python. Hour ranges are planning estimates, not learner-calibrated measurements.",
+          "evidence_required": [
+            "Versioned artifact or design specification",
+            "Baseline or hand-checkable fixture",
+            "Results or expected-results table including a failure case",
+            "Decision and limitations note"
+          ],
+          "delivery": {
+            "full_contract": "not_met",
+            "interaction": "none",
+            "artifact": "none"
+          }
+        },
+        {
+          "id": "M02-L11",
+          "title": "Set up environments, scripts and notebooks",
+          "topics": [
+            "virtual environments",
+            "pinned packages",
+            "running scripts versus notebooks",
+            "notebook-to-script conversion",
+            "Git basics for one file"
+          ],
+          "outcome": "Reproduce a small rental summary in a fresh environment, move its notebook logic into a script and commit the intended file change.",
+          "prerequisites": [
+            "M02-L10"
+          ],
+          "sources": [
+            "PYMODULES",
+            "PYVENV",
+            "JUPYTER",
+            "GITBASICS"
+          ],
+          "interview": {
+            "question": "The desk notebook shows the right total only after cells were run out of order. What would you record and change before another person runs the rental summary?",
+            "strong_answer_signals": [
+              "Restarts the kernel and runs cells in order to expose hidden state",
+              "Records the interpreter, pinned package versions, fixture and fresh-environment commands",
+              "Moves the calculation into a script with explicit inputs and inspects the Git diff and staged file before committing"
+            ],
+            "rubric": {
+              "0": "Incorrect or unsupported explanation",
+              "1": "Names the concept but misses mechanism or tradeoffs",
+              "2": "Explains the mechanism and relevant tradeoff",
+              "3": "Adds a concrete example, verification method and limitation"
+            }
+          },
+          "production_exercise": {
+            "brief": "Create a local virtual environment for a synthetic rental-summary notebook, record exact installed package versions, and move the calculation into a script. Reproduce the same total from a fresh kernel and a new environment, then use Git to commit only the intended script change.",
+            "acceptance": [
+              "Record the actual Python and notebook/kernel versions, pinned requirements and environment creation/run commands; exclude the environment directory and secrets from Git",
+              "Use the same labelled synthetic rental fixture and compare fresh notebook and script outputs with a hand-computed total",
+              "Show how running a dependent cell first fails, then remove reliance on hidden cell state in the script",
+              "Show status, diff and staged diff for the one-file commit, and explain what the snapshot does not include",
+              "State that local reproduction does not prove compatibility with every operating system or package release"
+            ],
+            "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
+          },
+          "status": "planned",
+          "estimated_hours": {
+            "guided_study": [
+              1,
+              2
+            ],
+            "exercise": [
+              2,
+              3
+            ]
+          },
+          "resource_mode": "Local Python 3.12 target and synthetic rental fixtures; no live provider or browser Python. Hour ranges are planning estimates, not learner-calibrated measurements.",
+          "evidence_required": [
+            "Versioned artifact or design specification",
+            "Baseline or hand-checkable fixture",
+            "Results or expected-results table including a failure case",
+            "Decision and limitations note"
+          ],
+          "delivery": {
+            "full_contract": "not_met",
+            "interaction": "none",
+            "artifact": "none"
+          }
         }
       ],
       "track": "T1",
       "status": "in_progress",
       "lesson_order": [
+        "M02-L08",
+        "M02-L09",
+        "M02-L10",
+        "M02-L11",
         "M02-L01",
         "M02-L05",
         "M02-L06",
@@ -13705,7 +13991,7 @@
     ],
     "originality": "Original Larnix prose, examples, visuals, code and branding; reference is teaching and visual direction only."
   },
-  "expected_lessons": 188,
+  "expected_lessons": 192,
   "review_coverage": [
     {
       "concern": "NumPy, pandas, plotting and dataset programming",
