@@ -33,6 +33,12 @@ class FoundationLessonsTest(unittest.TestCase):
         self.assertEqual(self.manifest['M03-L01']['directory'], 'vector-similarity')
         validate_notes(self.notes, self.curriculum)
 
+    def test_manifest_descriptions_match_foundation_ideas(self):
+        for lesson_id, entry in self.manifest.items():
+            if entry.get('format') == 'foundation':
+                with self.subTest(lesson=lesson_id):
+                    self.assertEqual(entry['description'], self.notes[lesson_id]['idea'])
+
     def test_source_review_dates_require_iso_calendar_dates(self):
         for value in ['2026-10-13', '2024-02-29']:
             with self.subTest(valid=value):

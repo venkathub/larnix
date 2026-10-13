@@ -1560,243 +1560,257 @@
   },
   {
     "id": "M02-L03",
-    "orientation": "Concurrency lets work overlap while tasks wait. A task is a scheduled unit of async work; a concurrency limit controls how many may use a scarce resource at once.",
-    "idea": "Bound active work and release its slot when a request completes or is cancelled.",
+    "orientation": "A valid ticket can still wait too long or consume a slot after its customer leaves. Concurrency overlaps waiting work; bounded concurrency controls how much may enter a scarce resource at once.",
+    "idea": "Bound admission and active calls separately, then await cleanup when work is cancelled.",
     "story": [
-      "Five rental tickets need a response from a slow mock provider. Starting all five together seems fast, but the provider has capacity for only two active requests. Meera needs a waiting area as well as an active-work limit.",
-      "When a customer closes the page, their active request should stop consuming local capacity. Cleanup releases the slot so another ticket can proceed. Cancellation does not prove that a remote provider has undone work already accepted."
+      "Meera can now validate a rental ticket and reject an invalid reply. At opening time, five customers ask about equipment. The provider can handle two active checks. Calling it once for each customer, one after another, leaves capacity idle during waits; starting every check together ignores the two-slot limit. She needs somewhere for tickets to wait and a rule for admitting them.",
+      "Think of two telephone lines and a tray of request cards. A semaphore is the local slot counter: a caller acquires a slot before using a line and releases it on exit. A queue holds cards awaiting workers, the tasks that take and process them. A task is a scheduled coroutine, an async function’s resumable execution. A full tray must slow admission: this is backpressure, pressure from busy downstream work reaching its producer.",
+      "Unlike two human operators, Python’s event loop runs one task’s Python code at a time in its thread, switching when work suspends. The event loop is the scheduler for that cooperative progress. A customer leaving asks for cancellation; it does not instantly free a line. Meera waits for cleanup before reusing the slot. The five-ticket paper timeline explains that accounting. The downloadable SYNTHETIC lab uses four fixture tickets and records its own counters separately."
     ],
-    "example": "With five arrived tickets and two slots, two requests are active and three wait. Cancel one active request and finish its cleanup; the next waiting request enters. The new snapshot has two active, two waiting and one cancelled request. The total still accounts for all five.",
-    "trap": "A semaphore limits entry to a protected section; it does not automatically limit how many tasks you create. A large waiting population can still exhaust memory.",
+    "example": "SYNTHETIC paper timeline, five tickets A–E and two slots; waiting means all arrived but not active tickets, not queue.qsize(). Each tuple is (active, waiting, cancelled, completed). Arrival: (0,5,0,0). Admit A and B: (2,3,0,0). Request cancellation of A: still (2,3,0,0), pending cleanup. After A exits: (1,3,1,0). Admit C: (2,2,1,0). B and C finish: (0,2,1,2). Admit D and E: (2,0,1,2). They finish: (0,0,1,4). Each row sums to five; these are chosen steps, not measured scheduling times. Separately, the four-ticket lab returns rent-001, rent-002, rent-003, rent-004 in input order with max_active=2, max_queued=2, active_after=0. Ordered results do not prove completion order.",
+    "trap": "Two permits do not mean two allocated tasks. A million tasks waiting for the same semaphore still occupy memory. Bound the queue and worker population too. Even the lab retains its input list, result list and diagnostic events, so it is not a constant-memory client. Releasing a local slot proves local cleanup, not that a remote booking was stopped or undone.",
     "sketch": [
-      "Waiting tickets",
-      "Two active slots",
-      "Release on exit"
+      "Bound the waiting tray",
+      "Acquire a provider slot",
+      "Exit, clean up, release"
     ],
     "lab": {
-      "question": "Where are the five requests when capacity is limited to two?",
-      "limitation": "Fixed synthetic case explorer: counts are predetermined scheduling snapshots, not a running event loop, timing benchmark or proof of remote cancellation.",
+      "question": "SYNTHETIC fixed fixtures: no Python event loop or provider runs in the browser. Predict the peak active count, compare it with capacity, then check the final active count. These three cases quote the downloadable lab’s four-ticket fixture and separate two-ticket cancellation probe, not the five-ticket paper timeline.",
+      "limitation": "SYNTHETIC in-process lab counters, shown as fixed cases. MockProvider.active counts entered calls until their finally cleanup; max_active records the peak. These counts are not elapsed times, throughput, fairness or evidence of remote cancellation. Timeout and streaming extensions are described separately; the lab itself returns whole tickets.",
       "scenarios": [
         {
-          "label": "1 · Two slots",
+          "label": "1 · SYNTHETIC bounded client",
           "steps": [
-            "Five arrive",
-            "Admit two",
-            "Three wait"
+            "Queue four tickets",
+            "Three workers, two permits",
+            "Finish and release"
           ],
           "evidence": [
             [
-              "Total requests",
-              "5"
+              "Capacity / workers / queue",
+              "capacity=2; worker_tasks=3; queue_capacity=2"
             ],
             [
-              "Active limit",
-              "2"
+              "Instrumented counters",
+              "max_active=2; max_queued=2; active_after=0"
             ],
             [
-              "Snapshot",
-              "2 active, 3 waiting"
+              "Returned request keys",
+              "rent-001, rent-002, rent-003, rent-004 (input order)"
             ]
           ],
-          "result": "The active count stays at two while three requests wait.",
-          "why": "The limit protects active access. A production design must also bound the queue and choose what happens when it is full.",
+          "result": "All four tickets return; peak active calls equal capacity two and the final active count is zero.",
+          "why": "bounded_client uses Queue(maxsize=2), three fixed workers and Semaphore(2). A worker can hold a dequeued ticket while waiting for a permit; max_queued is not total waiting work. await queue.put slows the producer when the queue is full. The result list stores each ticket at its original index, so input order is preserved without promising completion order.",
           "bars": [
             {
-              "label": "Active · requests",
+              "label": "Peak active · requests",
               "value": 2,
-              "max": 5
+              "max": 4
             },
             {
-              "label": "Waiting · requests",
-              "value": 3,
-              "max": 5
+              "label": "Capacity · requests",
+              "value": 2,
+              "max": 4
             },
             {
-              "label": "Cancelled · requests",
+              "label": "Final active · requests",
               "value": 0,
-              "max": 5
+              "max": 4
             }
           ]
         },
         {
-          "label": "2 · No active limit",
+          "label": "2 · SYNTHETIC unlimited tasks",
           "steps": [
-            "Five arrive",
-            "Admit all five",
-            "Capacity exceeded"
+            "Start four calls",
+            "Observe peak four",
+            "Reject the capacity audit"
           ],
           "evidence": [
             [
-              "Total requests",
-              "5"
+              "Fixture / configured capacity",
+              "4 tickets; capacity=2"
             ],
             [
-              "Provider capacity",
-              "2 assumed"
+              "Instrumented counters",
+              "max_active=4; active_after=0"
             ],
             [
-              "Snapshot",
-              "5 active, 0 waiting"
+              "Rejected audit",
+              "CapacityExceeded: provider capacity exceeded: observed 4 > 2"
             ]
           ],
-          "result": "All five become active despite the assumed capacity of two.",
-          "why": "Concurrency is not free capacity. This snapshot demonstrates overload risk, not a measured failure probability.",
+          "result": "Four calls overlap: the observed peak exceeds capacity two, even though all calls later exit.",
+          "why": "This deliberately broken path bypasses the queue and semaphore. The mock accepts the calls; check_capacity rejects the recorded peak afterwards. It detects the violation rather than preventing overload or measuring a real provider’s rejection rate. A final count of zero cannot erase a peak of four.",
           "bars": [
             {
-              "label": "Active · requests",
-              "value": 5,
-              "max": 5
+              "label": "Peak active · requests",
+              "value": 4,
+              "max": 4
             },
             {
-              "label": "Waiting · requests",
-              "value": 0,
-              "max": 5
+              "label": "Capacity · requests",
+              "value": 2,
+              "max": 4
             },
             {
-              "label": "Cancelled · requests",
+              "label": "Final active · requests",
               "value": 0,
-              "max": 5
+              "max": 4
             }
           ]
         },
         {
-          "label": "3 · Cancel + cleanup",
+          "label": "3 · SYNTHETIC cancel + cleanup",
           "steps": [
-            "Cancel one active",
-            "Release its slot",
-            "Admit next waiting"
+            "Hold rent-001 at one slot",
+            "Cancel and await its exit",
+            "Let rent-002 enter"
           ],
           "evidence": [
             [
-              "Before",
-              "2 active, 3 waiting"
+              "Probe / cancellation",
+              "2 tickets; capacity=1; cancelled=true; error=CancelledError"
             ],
             [
-              "Cancelled locally",
-              "1 request"
+              "Slot reuse",
+              "next_entered=rent-002; completed=rent-002"
             ],
             [
-              "After",
-              "2 active, 2 waiting"
+              "Instrumented counters",
+              "max_active=1; active_after=0"
             ]
           ],
-          "result": "Cleanup makes the freed slot available to another request.",
-          "why": "Propagate cancellation after cleanup. Releasing local capacity is distinct from confirming a remote side effect stopped.",
+          "result": "The cancelled first request releases the only slot; rent-002 enters and completes.",
+          "why": "The event gate keeps rent-001 active while rent-002 waits for the semaphore. Cancelling and awaiting the first task propagates CancelledError, runs the provider’s finally and exits async with semaphore. The follower then enters. This probe has capacity one, unlike the capacity-two bounded run. Neither local cancellation nor the final zero establishes a remote outcome.",
           "bars": [
             {
-              "label": "Active · requests",
-              "value": 2,
-              "max": 5
-            },
-            {
-              "label": "Waiting · requests",
-              "value": 2,
-              "max": 5
-            },
-            {
-              "label": "Cancelled · requests",
+              "label": "Peak active · requests",
               "value": 1,
-              "max": 5
+              "max": 4
+            },
+            {
+              "label": "Capacity · requests",
+              "value": 1,
+              "max": 4
+            },
+            {
+              "label": "Final active · requests",
+              "value": 0,
+              "max": 4
             }
           ]
         }
       ]
     },
     "mechanism": [
-      "Async code makes progress when a task yields while waiting. A blocking sleep or long synchronous calculation inside the event-loop thread can prevent other tasks from progressing.",
-      "Use a bounded queue to control waiting work and a semaphore or fixed worker pool to control active work. Define a full-queue policy such as reject, wait within a deadline or reduce admission.",
-      "Put resource cleanup in finally blocks or async context managers. A timeout should trigger a deliberate cancellation path; swallowing cancellation can leave work running longer than the caller expects."
+      "A pending await gives other work a chance to progress; it is not a promise that every await suspends. In the lab, the mock’s cooperative waits let calls overlap, and the instrumented entry/exit counter proves how many are inside. Queue(maxsize=2) bounds queued items; three fixed worker tasks avoid one task per ticket; Semaphore(2) bounds the provider section. The producer awaits space rather than dropping tickets. Inputs and results remain stored, so admission control here is narrower than a bound on all process memory.",
+      "Cancellation is a request, not an immediate kill. The cancelled task must reach a cancellation opportunity and unwind its cleanup. In limited_request, async with releases the permit; in MockProvider.request, finally decrements active. The cancellation probe awaits the cancelled task and then observes rent-002 enter. For a timeout example, put a gated request inside asyncio.timeout: when its deadline expires, local cancellation runs the same cleanup and the caller catches TimeoutError outside the context. Cleanup can delay return beyond the deadline; swallowing CancelledError would break the intended path.",
+      "Streaming means delivering pieces before the result is complete. In a separate SYNTHETIC extension, rent-001 first emits “Checking drill”, then waits for its ticket result. That one progress chunk is not a completed ticket. Cancel while the next chunk is pending: await the cancelled read, close the local stream and keep the result marked incomplete. A remote provider could already have acted; local closure gives no rollback guarantee. Remember the three boundaries: bound admission, bound active calls, and distinguish partial output from completion. M02-L04 next asks what a durable write proves after a response is lost."
     ],
     "transfer": [
       {
-        "question": "You create a million tasks behind a semaphore of two. Is memory use bounded to two requests?",
-        "answer": "No. Only active access is bounded. The waiting tasks still exist; use bounded admission or a queue with a fixed worker pool."
+        "question": "Meera moves a blocking SDK call into async def. While it waits, the other rental tickets and their timeout callbacks stop progressing. Why, and what should she change?",
+        "answer": "async def does not change the SDK’s blocking behavior. Its call occupies the event-loop thread instead of suspending. Use an asynchronous API, or move suitable blocking I/O to asyncio.to_thread and bound that work too. Cancelling the awaiting task does not forcibly stop an already running thread or undo a remote effect. A CPU-heavy Python loop needs a separate execution strategy; adding await around unrelated code is not a cure."
       },
       {
-        "question": "A local task is cancelled. Can you promise a remote email was not sent?",
-        "answer": "No. Local cancellation does not establish the provider’s outcome. A side-effecting operation needs a separate reconciliation or deduplication design."
+        "question": "A new arrival stream creates one million tasks, each waiting behind Semaphore(2). Has Meera bounded memory, and would adding a queue after task creation fix it?",
+        "answer": "No. The semaphore protects only two active entries; the waiting million tasks already exist. Feed a bounded queue from a producer that awaits space, and use a fixed worker population rather than a task per arrival. Decide whether a full queue should wait within a deadline or reject admission. Bound retained inputs, results and diagnostics as well; the four-ticket lab keeps those in memory and therefore makes no constant-memory claim."
       }
     ],
     "checks": [
       {
-        "question": "What does a two-slot semaphore directly bound?",
+        "question": "Predict: three workers share Semaphore(2). What does that semaphore directly bound?",
         "options": [
           "All memory in the process",
           "Active entries to its protected section",
           "The provider’s total global traffic"
         ],
         "answer": 1,
-        "explanation": "Its scope is the code using that semaphore, not all tasks or other service instances."
+        "explanation": "At most two active entries to the protected provider section in this client. In the bounded fixture, max_active=2 despite worker_tasks=3. Waiting tasks, stored inputs and calls from other processes are outside this semaphore’s scope."
       },
       {
-        "question": "What should cleanup do after cancellation?",
+        "question": "rent-001 is cancelled while rent-002 waits for the only slot. What should cleanup do?",
         "options": [
           "Hide the cancellation forever",
           "Acquire another slot",
           "Release resources and usually propagate cancellation"
         ],
         "answer": 2,
-        "explanation": "Cleanup prevents leaks; propagation lets callers and structured concurrency observe cancellation."
+        "explanation": "Release resources and let CancelledError propagate so the caller can observe cancellation. The lab awaits rent-001’s exit, sees rent-002 enter and finish, and records max_active=1, active_after=0. Calling cancel() alone is not the cleanup evidence, and this does not prove a remote operation stopped."
       },
       {
-        "question": "Why can async code still stall?",
+        "question": "Meera uses async def but a blocking call freezes all other tickets. Why can async code still stall?",
         "options": [
           "Blocking work can occupy the event-loop thread",
           "All async code is automatically parallel",
           "Every await creates a new process"
         ],
         "answer": 0,
-        "explanation": "Async overlap depends on yielding; it does not make arbitrary synchronous work non-blocking."
+        "explanation": "The event loop cannot advance other tasks while synchronous work occupies its thread. Concurrency relies on cooperative suspension; async def neither creates a separate process nor makes a blocking call asynchronous. Even deadline callbacks can be delayed by that blocking work."
       }
     ],
     "topics": [
       {
         "title": "asyncio",
-        "explanation": "asyncio coordinates asynchronous Python work, commonly around I/O waits. It does not turn a CPU-heavy loop into parallel computation simply because the surrounding function uses async def."
+        "explanation": "asyncio supplies the event loop and cooperative I/O tools. In Meera’s mock, await asyncio.sleep(0) deliberately yields without claiming a realistic latency. A pending Event.wait also suspends until signalled or cancelled. A blocking sleep or CPU-heavy loop inside async def prevents that cooperation. Use the provider counter to test overlap, not the mere presence of async syntax."
       },
       {
         "title": "tasks",
-        "explanation": "A task schedules a coroutine so it can make progress with other work. Keep track of task lifetimes and failures; creating unlimited tasks can consume memory even behind a semaphore."
+        "explanation": "Calling an async function creates a coroutine object; scheduling it as a Task lets it progress with other work. Keep ownership of its lifetime and failures. The lab creates capacity + 1 workers in a TaskGroup, which awaits them and cancels siblings if a worker fails. Three workers can take tickets, but only two can hold provider permits. Indexed result storage preserves input order, not a promise about which task finishes first."
       },
       {
         "title": "timeouts",
-        "explanation": "A timeout sets a waiting boundary for an operation or caller. Expiration can trigger cancellation, but cleanup may take time and a remote operation may already have produced an effect."
+        "explanation": "A deadline bounds intended waiting, not guaranteed wall-clock completion. asyncio.timeout cancels the current task on expiry and converts its cancellation to TimeoutError outside the context; wait_for normally cancels its awaited operation and waits for cancellation to finish. The lab’s two-second wait_for calls are guards for expected test events, not provider service-level targets. The practice extension forces a deadline after an entry event, then checks active_after=0; no elapsed-time result is claimed."
       },
       {
         "title": "cancellation",
-        "explanation": "Cancellation asks a task to stop at a cancellation opportunity. Use finally or async with for cleanup, and normally propagate CancelledError after cleanup so the caller sees the cancellation."
+        "explanation": "Task.cancel requests that CancelledError be raised at the next opportunity. The lab’s gate makes the cancellation point observable. After the provider’s finally decrements active, exiting async with semaphore releases its permit. Await the task to observe its outcome, normally propagate cancellation after cleanup, and do not report it as a successful ticket. The one-slot probe demonstrates local reuse by rent-002; remote reconciliation remains a separate concern."
       },
       {
         "title": "queues",
-        "explanation": "A bounded queue limits waiting items and exposes overload at admission. A semaphore and queue solve different problems: active access versus waiting backlog."
+        "explanation": "A Queue(maxsize=2) stores at most two queued items; await put waits for space. It does not count a ticket already taken by a worker waiting on a semaphore. task_done in a finally block balances each get, and join waits for that bookkeeping to reach zero; it is not itself a business-success check. The lab also enqueues one None stop marker per worker. Its max_queued samples ticket admission, not a complete history of every queue transition. The producer and fixed workers create backpressure, while retained inputs, results and diagnostic events still grow with the fixture."
       },
       {
         "title": "streaming",
-        "explanation": "Streaming delivers pieces before the whole result is complete. Treat partial output separately from a successful final result, and close the stream when the caller cancels or the deadline expires."
+        "explanation": "A stream exposes pieces as they arrive; its protocol must say what makes a complete result. “Checking drill” is progress only. The practice extension uses an async generator, a local producer that yields pieces, and labels its ticket chunk complete. Cancelling a pending read unwinds the mock request; aclose closes this local generator. With real asyncio network streams, use the transport’s close and wait_closed lifecycle as appropriate. Closing locally cannot retract bytes already sent or prove a remote booking was cancelled. Buffer partial output separately, mark interruption explicitly, and require reconciliation before treating an uncertain remote effect as absent."
       }
     ],
     "sources": [
       {
-        "title": "Python: tasks and cancellation",
-        "url": "https://docs.python.org/3/library/asyncio-task.html"
+        "title": "Python 3.12: coroutines, tasks and cancellation",
+        "url": "https://docs.python.org/3.12/library/asyncio-task.html#task-cancellation"
       },
       {
-        "title": "Python 3.12: semaphore",
-        "url": "https://docs.python.org/3.12/library/asyncio-sync.html#semaphore"
+        "title": "Python 3.12: asyncio.Semaphore",
+        "url": "https://docs.python.org/3.12/library/asyncio-sync.html#asyncio.Semaphore"
       },
       {
-        "title": "Python 3.12: queues",
-        "url": "https://docs.python.org/3.12/library/asyncio-queue.html"
+        "title": "Python 3.12: asyncio.Queue",
+        "url": "https://docs.python.org/3.12/library/asyncio-queue.html#asyncio.Queue"
+      },
+      {
+        "title": "Python 3.12: asyncio.timeout",
+        "url": "https://docs.python.org/3.12/library/asyncio-task.html#asyncio.timeout"
+      },
+      {
+        "title": "Python 3.12: asyncio.wait_for",
+        "url": "https://docs.python.org/3.12/library/asyncio-task.html#asyncio.wait_for"
+      },
+      {
+        "title": "Python 3.12: streams and local closure",
+        "url": "https://docs.python.org/3.12/library/asyncio-stream.html#asyncio.StreamWriter.wait_closed"
       }
     ],
     "practice": {
       "steps": [
-        "Use the starter around a mocked awaitable provider; instrument entry and exit to record active requests. Run five tasks and verify the observed maximum is two.",
-        "Cancel an active task and verify its exit cleanup runs and another request can enter. Include a test that fails if the active counter leaks.",
-        "Replace unlimited task creation with a bounded queue and fixed workers. Document the full-queue and partial-stream policies."
+        "Download the service lab and follow labs/service-foundations/README.md with Python 3.12 as the target. Keep the lab read-only. Predict the four-ticket bounded counters (peak 2, queued 2, final 0), the unlimited peak 4 rejection, and the one-slot cancellation result before running its tests and report. Record the actual Python version and fixture hash. This SYNTHETIC in-process fixture is not a benchmark or learner-validated production client.",
+        "Save the companion below as concurrency_probe.py outside the lab. Run python3 -I concurrency_probe.py --lab-dir /path/to/service-foundations. It imports the unchanged lab, prints its concurrency results, and adds separate synthetic timeout and slow-stream probes. Predict TimeoutError with final active 0, then one partial chunk / zero completed tickets for an interrupted stream, versus one partial / one completed on normal exit. The deadline is forced after entry, so no timing benchmark or real network timeout is exercised.",
+        "Extend your companion, not the lab: cancel the entire bounded pipeline while a provider gate is closed, then prove every active counter returns to zero. Compare a bounded queue with unlimited task creation behind a semaphore. State your full-queue policy and how retained inputs/results are bounded in a real client; for streams, label partial output incomplete and explain why local cleanup cannot settle a remote booking outcome."
       ],
-      "starter": "import asyncio\n\nslots = asyncio.Semaphore(2)\n\nasync def request(ticket_id):\n    async with slots:\n        try:\n            await asyncio.sleep(0.1)  # mocked I/O wait\n            return ticket_id\n        finally:\n            print(\"leaving slot\", ticket_id)\n\n# Run inside an async main; record active counts and test cancellation."
-    }
+      "starter": "# SYNTHETIC companion: unchanged lab plus local timeout/stream extensions.\nimport argparse\nimport asyncio\nimport json\nfrom pathlib import Path\nimport sys\n\nasync def stream_ticket(lab, provider, slots, ticket):\n    yield {\"kind\": \"partial\", \"text\": \"Checking drill\"}\n    result = await lab.limited_request(provider, slots, ticket)\n    yield {\"kind\": \"complete\", \"ticket\": result}\n\nasync def extensions(lab, ticket):\n    provider = lab.MockProvider(asyncio.Event())\n    slots = asyncio.Semaphore(1)\n    task = asyncio.create_task(lab.limited_request(provider, slots, ticket))\n    try:\n        await asyncio.wait_for(provider.entered.get(), 2)\n        # Expire on the next event-loop turn, after the request has entered.\n        try:\n            async with asyncio.timeout(-1):\n                await task\n        except TimeoutError:\n            timeout = {\"error\": \"TimeoutError\", \"active_after\": provider.active}\n        else:\n            raise RuntimeError(\"expected timeout\")\n    finally:\n        if not task.done():\n            task.cancel()\n        await asyncio.gather(task, return_exceptions=True)\n\n    provider = lab.MockProvider(asyncio.Event())\n    stream = stream_ticket(lab, provider, slots, ticket)\n    chunks = [await anext(stream)]\n    read = asyncio.create_task(anext(stream))\n    try:\n        await asyncio.wait_for(provider.entered.get(), 2)\n        read.cancel()\n        try:\n            chunks.append(await read)\n        except asyncio.CancelledError:\n            pass  # The cancelled read is reported below, never as completion.\n        else:\n            raise RuntimeError(\"expected cancelled stream read\")\n    finally:\n        if not read.done():\n            read.cancel()\n        await asyncio.gather(read, return_exceptions=True)\n        await stream.aclose()\n    interrupted = {\"error\": \"CancelledError\", \"partial\": len(chunks),\n                   \"completed\": 0, \"active_after\": provider.active}\n    complete = [chunk async for chunk in\n                stream_ticket(lab, lab.MockProvider(), slots, ticket)]\n    if [chunk[\"kind\"] for chunk in complete] != [\"partial\", \"complete\"]:\n        raise RuntimeError(\"unexpected stream protocol\")\n    return {\"timeout\": timeout, \"interrupted_stream\": interrupted,\n            \"normal_stream\": {\"partial\": 1, \"completed\": 1}}\n\nasync def probe(lab):\n    tickets = json.loads(lab.FIXTURE.read_text())\n    result = {\"lab\": await lab.concurrency_cases(tickets),\n              \"extensions\": await extensions(lab, tickets[0])}\n    print(json.dumps(result, indent=2, sort_keys=True))\n    return result\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--lab-dir\", required=True, type=Path)\n    args = parser.parse_args()\n    sys.path.insert(0, str(args.lab_dir.resolve()))\n    import lab\n    asyncio.run(probe(lab))\n"
+    },
+    "sources_reviewed_on": "2026-10-13"
   },
   {
     "id": "M02-L04",
