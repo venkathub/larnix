@@ -1,5 +1,6 @@
 """Verify generated lesson assets and links, independently of the browser."""
 from html.parser import HTMLParser
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
 import json
@@ -10,6 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from build_site import build
+from render_foundations import load_notes
 
 
 class Page(HTMLParser):
@@ -46,36 +48,26 @@ class SiteBuildTest(unittest.TestCase):
                 self.assertEqual(archive.read('data-foundations/' + name),
                                  (ROOT / 'labs/data-foundations' / name).read_bytes())
 
-    def test_numpy_preview_links_runnable_lab_and_labels_fixtures_before_controls(self):
-        file = ROOT / 'dist/lessons/M02-L05/index.html'
-        text = file.read_text()
-        page = Page(text)
-        lab_ref = '../../labs/data-foundations.zip'
-        self.assertIn(lab_ref, page.refs)
-        self.assertTrue((file.parent / lab_ref).is_file())
-        self.assertIn('Download runnable data lab + README', text)
-        self.assertIn('labs/data-foundations/README.md', text)
-        self.assertIn('Authoring references rechecked October 13, 2026.', text)
-        existing = (ROOT / 'dist/lessons/M02-L01/index.html').read_text()
-        self.assertIn('Authoring references rechecked October 12, 2026.', existing)
-        limitation = 'SYNTHETIC fixed fixtures: this page does not run NumPy in the browser.'
-        self.assertLess(text.index(limitation), text.index('class="scenario-controls"'))
-
-    def test_foundation_data_lab_links_and_synthetic_notice(self):
+    def test_foundation_dates_and_data_lab_links_and_synthetic_notice(self):
         curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
         manifest = json.loads((ROOT / 'web/lessons.json').read_text())
+        notes = load_notes()
         for module in curriculum['modules']:
             for lesson in module['lessons']:
                 lesson_id = lesson['id']
-                if (manifest.get(lesson_id, {}).get('format') != 'foundation'
-                        or lesson['delivery']['artifact'] != 'runnable_data_lab'):
+                if manifest.get(lesson_id, {}).get('format') != 'foundation':
                     continue
                 with self.subTest(lesson=lesson_id):
                     file = ROOT / 'dist/lessons' / lesson_id / 'index.html'
                     text = file.read_text()
+                    reviewed = date.fromisoformat(notes[lesson_id].get('sources_reviewed_on', '2026-10-12'))
+                    self.assertIn(f'Authoring references rechecked {reviewed:%B} {reviewed.day}, {reviewed.year}.', text)
+                    if lesson['delivery']['artifact'] != 'runnable_data_lab':
+                        continue
                     ref = '../../labs/data-foundations.zip'
                     self.assertIn(ref, Page(text).refs)
                     self.assertTrue((file.parent / ref).is_file())
+                    self.assertIn('Download runnable data lab + README', text)
                     before_controls = text.split('class="scenario-controls"')[0]
                     self.assertIn('SYNTHETIC fixed fixtures:', before_controls)
                     self.assertIn('in the browser.', before_controls)

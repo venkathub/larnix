@@ -387,5 +387,19 @@
       "check2": "2",
       "check3": "0"
     }
+  },
+  "M02-L07": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Inspect datasets and communicate uncertainty",
+    "description": "Show the observed values, group sizes and missing counts beside an average; equal means do not imply similar customers or complete evidence.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }

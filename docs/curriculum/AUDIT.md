@@ -13,7 +13,7 @@ Generated from the authoritative JSON records after content validation. Run `pyt
 | Unknown prerequisites / dependency cycles | 0 / 0 |
 | Unknown source IDs / invalid source URL syntax | 0 / 0 |
 | Learning path | All modules once; every dependency precedes its dependent lesson |
-| Lesson status | 160 planned; 28 previews; 0 full-contract complete |
+| Lesson status | 159 planned; 29 previews; 0 full-contract complete |
 
 ## Effort assumptions
 
