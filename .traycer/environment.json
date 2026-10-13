@@ -1,0 +1,16 @@
+{
+  "setup": {
+    "default": "python3 -c 'import numpy, pandas, matplotlib; print(\"lab dependencies present\")' || { echo 'Install labs/data-foundations/requirements.txt in a virtual environment before running make check'; exit 1; }; node --version",
+    "macos": null,
+    "linux": null,
+    "windows": null
+  },
+  "teardown": {
+    "default": "",
+    "macos": null,
+    "linux": null,
+    "windows": null
+  },
+  "branchPrefix": "codex/",
+  "updatedAt": 1791856275768
+}
