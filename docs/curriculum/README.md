@@ -20,7 +20,7 @@ A subsequent implementation sample is available: [M03-L01 — Reason with vector
 | Coverage and validation | Approved-scope mapping, field checks, cycle detection, learning-order checks and local-link checks |
 | Maintainable source records | JSON records plus a standard-library renderer/checker; readable Markdown pages generated from those records |
 
-These records specify future teaching and production work. The application has 32 authored previews and a separate runnable data lab; none yet meets the full nine-part lesson contract. See [delivery inventory](DELIVERY.md) for per-lesson status. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
+These records specify future teaching and production work. The application has 33 authored previews and a separate runnable data lab; none yet meets the full nine-part lesson contract. See [delivery inventory](DELIVERY.md) for per-lesson status. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
 
 ## Originality and research policy
 
@@ -32,7 +32,7 @@ Sources are reading entry points rather than copied tutorials. Before writing a 
 
 ## Entry readiness and ordering
 
-Learners entering M02-L01 should be comfortable with basic programming ideas and running commands. Newcomers without programming experience who can run a command should start with the planned optional entry at [M02-L08](modules/M02.md#m02-l08), then follow M02-L09–L11. These four plans come first in M02’s teaching order; no existing lesson requires them, so learners who already have this knowledge can start at M02-L01. M02 plans a Python, HTTP, concurrency, SQL, NumPy, pandas and plotting bridge; M03 provides mathematical foundations. No previous LLM application experience is required. A learner can demonstrate an outcome to skip familiar prerequisite material.
+Learners entering M02-L01 should be comfortable with basic programming ideas and running commands. Newcomers without programming experience who can run a command should start with the optional entry at [M02-L08](modules/M02.md#m02-l08), then follow M02-L09–L11. These four authored previews come first in M02’s teaching order; no existing lesson requires them, so learners who already have this knowledge can start at M02-L01. M02 plans a Python, HTTP, concurrency, SQL, NumPy, pandas and plotting bridge; M03 provides mathematical foundations. No previous LLM application experience is required. A learner can demonstrate an outcome to skip familiar prerequisite material.
 
 The catalogue has seven groups of six modules. Grouping helps navigation; it does not force security and evaluation to the end. The [recommended path](LEARNING_PATH.md) brings M25 and M30 forward and validates all direct and transitive prerequisites. Each module declares a teaching order separately from its stable lesson IDs. Prerequisites state required knowledge; the preceding catalogue ID is not automatically required. The predictive-ML route lists its full dependency closure, including deployment gates but excluding LLM architecture, retrieval and agents.
 

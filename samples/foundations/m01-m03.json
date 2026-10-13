@@ -4025,5 +4025,278 @@
       ],
       "starter": "import sys\nimport unittest\n\ndef rental_total(days, rate):\n    if days <= 0:\n        raise ValueError(\"days must be positive\")\n    return days * rate\n\nclass RentalTests(unittest.TestCase):\n    def test_valid(self):\n        self.assertEqual(rental_total(2, 7), 14)\n\n    def test_zero(self):\n        with self.assertRaises(ValueError) as caught:\n            rental_total(0, 7)\n        self.assertEqual(\n            str(caught.exception),\n            \"days must be positive\")\n\nif __name__ == \"__main__\":\n    mode = sys.argv[1] if len(sys.argv) > 1 else \"tests\"\n    if mode == \"wrong\":\n        rental_total(\"2\", 7)\n    elif mode == \"zero\":\n        rental_total(0, 7)\n    else:\n        unittest.main(argv=[sys.argv[0]])\n\n# Expected wrong-mode stderr; directory prefix removed.\n\"\"\"\nTraceback (most recent call last):\n  File \"rental_errors.py\", line 23, in <module>\n    rental_total(\"2\", 7)\n  File \"rental_errors.py\", line 5, in rental_total\n    if days <= 0:\n       ^^^^^^^^^\nTypeError: '<=' not supported between instances of 'str' and 'int'\n\"\"\""
     }
+  },
+  {
+    "id": "M02-L11",
+    "orientation": "You can now read a program, load its data and test a rejection. Close the newcomer route by making another run agree with the first for a reason you can explain. Read the 19-line rental script beside its trace, then use the practice commands on your own machine. The script is the first 19 lines of the practice code; the text afterwards records cells, commands and output for comparison. No programming experience beyond M02-L08–L10 is assumed.",
+    "idea": "Reproduce the calculation from explicit inputs in a fresh process, then inspect exactly what your commit records.",
+    "story": [
+      "Meera’s SYNTHETIC rentals are r1: 2 days at 8 units per day and r2: 3 days at 5. The hand total is 16 + 15 = 31 fictional units. A notebook is a document mixing code and explanation. A code cell is one block you can run separately; its kernel is the running process that executes it and remembers values. Her displayed cell A calculates costs from tickets, while displayed cell B defines tickets. Earlier she ran B, then A printed total units: 31. The kernel kept tickets from that earlier run: hidden state is remembered information the displayed execution order does not supply.",
+      "Restarting the kernel clears that memory. Running the displayed A first now ends with NameError: name 'tickets' is not defined; NameError reports that a required name is unavailable. Move B above A, restart again and run top to bottom: 31 returns. A script is a text file executed as a program. The listing moves the inputs before the calculation and passes tickets into rental_summary explicitly. import platform loads the platform module that comes with Python; platform.python_version() reports the interpreter version. sum adds the costs and len counts the tickets, as in L09. The != comparison means “not equal”; the guard rejects a changed fixture total.",
+      "A virtual environment, or venv, is a project directory with its own Python entry point and package installation area. A package is installed reusable code; pip is the installer run through the chosen interpreter. A pinned version such as numpy==2.3.5 asks for that exact release. requirements.txt lists requested packages; python3 -m venv .venv creates the environment, and .venv/bin/python -m pip install -r requirements.txt installs those requests there. The -m option runs a named Python module; -r reads the requirements file. pip freeze lists installed package versions. Using the explicit .venv/bin/python path selects the environment without relying on an activated shell. The tiny script needs no extra package; the pins support the notebook tools and separate data-lab practice.",
+      "Git records selected file contents. The working tree is the editable set of files on disk; staged content is the version selected for the next saved snapshot, called a commit. git status shows file states; git diff shows tracked edits not yet staged. git add rental_summary.py selects that file’s current contents; git diff --staged shows the selected changes before git commit saves them locally. Here --unified=0 omits unchanged context lines from the diff and --name-only lists paths. A .gitignore file tells Git which untracked paths to leave out of normal status and staging. The .venv/ directory and .env secret file belong outside the snapshot. Ignoring a file does not remove an already tracked copy or erase a leaked secret."
+    ],
+    "example": "SYNTHETIC script trace: L1 imports platform. L3–L6 define rental_summary without calling it. L8–L11 create the two dictionaries in tickets. L12 sets expected = 31. L13 passes tickets to the function: L4–L5 build costs = [16, 15], and L6 returns their sum, 31. Now total = 31, so L14 is false and L15 does not raise. L16 prints fixture: SYNTHETIC rental desk; L17 prints tickets: 2; L18 prints total units: 31; L19 printed python: 3.12.13 in the recorded scratch environment. Your version line reports your actual interpreter, not a hard-coded promise. A fresh process has no earlier notebook variables to rescue a missing input. The repaired notebook also prints total units: 31; the bad displayed order fails before any total. The separate companion data lab has four rentals and totals 103, not 31. In the Git case only L12 changes from an intentionally wrong expected = 30 to expected = 31; both tickets stay the same.",
+    "listing": {
+      "title": "SYNTHETIC rental summary · first 19 practice lines",
+      "language": "python",
+      "lines": [
+        "import platform",
+        "",
+        "def rental_summary(tickets):",
+        "    costs = [row[\"days\"] * row[\"rate\"]",
+        "             for row in tickets]",
+        "    return sum(costs)",
+        "",
+        "tickets = [",
+        "    {\"id\": \"r1\", \"days\": 2, \"rate\": 8},",
+        "    {\"id\": \"r2\", \"days\": 3, \"rate\": 5},",
+        "]",
+        "expected = 31",
+        "total = rental_summary(tickets)",
+        "if total != expected:",
+        "    raise ValueError(\"fixture total changed\")",
+        "print(\"fixture: SYNTHETIC rental desk\")",
+        "print(\"tickets:\", len(tickets))",
+        "print(\"total units:\", total)",
+        "print(\"python:\", platform.python_version())"
+      ]
+    },
+    "sketch": [
+      "Restart → expose remembered inputs",
+      "Explicit inputs → fresh total 31",
+      "Inspect → stage one file → commit"
+    ],
+    "trap": "A visible notebook answer is not evidence that its displayed order can reproduce it. A kernel can retain values even after the cell that supplied them is moved or edited. Restart and run the whole notebook in order, then compare the script in a fresh process. Committing .venv is not the repair: a copied environment contains machine-specific paths and does not record the intended calculation clearly. Keep the script and environment instructions, not the installed environment directory.",
+    "lab": {
+      "question": "SYNTHETIC fixed fixtures: rental examples with locally recorded outputs; this page does not run Python, create an environment or execute Git in the browser. Predict the fresh-kernel result, compare the installed versions, then inspect which file is staged. Case evidence shows selected output lines; the preformatted practice reference preserves commands and spacing.",
+      "limitation": "SYNTHETIC teaching fixtures, not a pricing policy or benchmark. Browser controls select recorded cases only. Cell behavior was exercised in a local Python 3.12.13 kernel; Notebook 7.4.5 was installed, but its graphical editing workflow was not verified. Version and Git evidence comes from a separate Linux scratch directory; no host-global installation was changed. Only selected pip freeze lines are shown. Direct package pins do not lock every dependency, operating-system library or future package availability. Local reproduction does not prove compatibility with every OS or package release, production safety or learner understanding.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC remembered notebook inputs",
+          "steps": [
+            "Displayed A needs B",
+            "Old B → A prints 31",
+            "Restart A → NameError"
+          ],
+          "evidence": [
+            [
+              "Live kernel: B then A",
+              "total units: 31"
+            ],
+            [
+              "Restart, displayed A first: final error line",
+              "NameError: name 'tickets' is not defined"
+            ],
+            [
+              "Repair to B then A in a fresh kernel",
+              "total units: 31"
+            ]
+          ],
+          "result": "The first 31 relied on tickets retained from an earlier cell execution. After repair, a fresh notebook and the script each reproduce 31 from the same two tickets.",
+          "why": "Cell A uses tickets before displayed cell B defines it. Running B earlier populated the kernel, concealing the broken displayed order. On restart A fails first and no total is printed; running B afterwards would not make that failed run complete. Move B above A, restart and run all. The practice reference contains both exact cells. The automated fixture tests simulate these sequences offline; authoring also executed them in ipykernel 6.30.1.",
+          "bars": [
+            {
+              "label": "Tickets in the input cell",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Intended files staged in this case",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC global versus project packages",
+          "steps": [
+            "Read host versions only",
+            "Create venv + install pins",
+            "Freeze actual versions"
+          ],
+          "evidence": [
+            [
+              "Host pip freeze: selected exact lines",
+              "matplotlib==3.10.7+dfsg1\nnumpy==2.3.5\npandas==2.3.3"
+            ],
+            [
+              "Scratch venv pip freeze: selected exact lines",
+              "ipykernel==6.30.1\nmatplotlib==3.10.7\nnotebook==7.4.5\nnumpy==2.3.5\npandas==2.3.3"
+            ],
+            [
+              "Recorded tools / companion result",
+              "Python 3.12.13; pip 25.0.1; Notebook 7.4.5; ipykernel 6.30.1; IPython 9.17.1. Companion data-lab total: 103.0; 4 rows before and after."
+            ]
+          ],
+          "result": "The host has matplotlib 3.10.7+dfsg1, while the isolated practice environment resolves the requested 3.10.7. Its actual installed versions are recorded separately.",
+          "why": "The observed host uses Python 3.14.4 and pip 25.1.1. This is a read-only host inventory compared with a fresh venv installation, not an attempted global upgrade. A global install could affect unrelated projects. A venv separates these Python packages but does not select a different Python release automatically, fix hidden cell order, or sandbox the machine. The package installer and every run are addressed through the same environment’s interpreter. The companion lab’s 103-unit fixture is distinct from the script’s 31-unit fixture.",
+          "bars": [
+            {
+              "label": "Known tickets in the tiny script",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Intended files staged in this case",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC stage only the script",
+          "steps": [
+            "Inspect unstaged L12",
+            "Add rental_summary.py",
+            "Review staged diff → commit"
+          ],
+          "evidence": [
+            [
+              "git status --short: before → after git add",
+              "\" M rental_summary.py\" → \"M  rental_summary.py\""
+            ],
+            [
+              "git diff then git diff --staged: changed lines",
+              "-expected = 30\n+expected = 31"
+            ],
+            [
+              "Staged path / ignored environment",
+              "git diff --staged --name-only: rental_summary.py; git status --short --ignored -- .venv/: !! .venv/"
+            ]
+          ],
+          "result": "Only rental_summary.py is staged for the correction. After the quiet commit, git status --short prints nothing; the environment stays excluded.",
+          "why": "The practice first creates a baseline with the deliberately wrong expectation, .gitignore and the requirements file. Correcting L12 is then a one-file change. In short status the first column describes staged changes and the second describes unstaged changes; M means modified and !! means ignored. git diff --staged must show the intended correction before committing. A commit saves staged content, not live kernel memory, ignored files, or changes made after the last git add.",
+          "bars": [
+            {
+              "label": "Known tickets in the tiny script",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Intended files staged",
+              "value": 1,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Reproduction needs both an execution order and a recorded environment. The repaired notebook defines tickets before calculating costs; the script makes the function’s input explicit and checks the hand total. Merely exporting cells into a .py file preserves their bad order unless you repair it. Remove notebook-only commands and stale outputs, then run the file in a new process. The -I option requests Python’s isolated mode, reducing reliance on user-site packages and Python environment variables; it does not create a venv or remove dependencies you import.",
+      "An environment specification and an installed snapshot answer different questions. The requirements file asks for selected versions. pip freeze records what pip sees installed, including additional packages resolved for those requests. Save the full output, not just the five lines displayed here. These direct pins and this local snapshot are not a complete cross-platform lockfile. Record the interpreter and kernel too: a notebook can connect to a Python other than the one whose pip you just used. The practice diagnostic uses sys.executable, the interpreter’s path, and importlib.metadata.version, which reads an installed package’s version.",
+      "Take away three checks: fresh execution reproduces 31, the recorded interpreter matches the intended environment, and the staged diff contains only the intended script change. Glossary: kernel = notebook execution process; hidden state = remembered values absent from the displayed execution order; staged = selected contents for the next commit. You are now ready for M02-L01, Build reproducible Python components. It turns these habits into reusable components; M02-L07, Inspect datasets and communicate uncertainty, applies them to notebook analysis. Completing the illustrated cases is not a completed production exercise."
+    ],
+    "transfer": [
+      {
+        "question": "Before M02-L01, a teammate gets 31 from the script but used another Python and has no version record. What can you claim, and what should accompany a reproducible component?",
+        "answer": "You can claim that one calculation produced the expected number on that run, not that the environment matches. Keep the script, exact synthetic input, hand total, actual interpreter and package versions, and fresh-run commands. Record failures too. M02-L01, Build reproducible Python components, adds stable boundaries and reusable tests; a screenshot of 31 and a copied .venv directory do not supply those records."
+      },
+      {
+        "question": "In M02-L07 a plot looks right, but its notebook loads data below the plotting cell and an old dataframe remains in memory. Does exporting to a script fix that?",
+        "answer": "No. Restarting and running the displayed order exposes the missing input. Move loading and cleaning before the calculation, pass the needed values explicitly, then run the converted script in a fresh process. Compare the same fixture’s totals and missingness before trusting the plot. Exporting text does not fix execution order, sampling bias or an unrecorded environment."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Why did cell A print 31 before the restart but raise NameError after it?",
+        "options": [
+          "Restart changed the ticket prices",
+          "The kernel had retained tickets from an earlier run of B",
+          "A notebook always defines missing names automatically"
+        ],
+        "answer": 1,
+        "explanation": "The displayed A used tickets before B defined it. Earlier execution of B hid that dependency in kernel memory. Restart clears the value, so the repaired top-to-bottom order must put B first."
+      },
+      {
+        "question": "What does the recorded pip freeze tell Meera?",
+        "options": [
+          "All future installations on every OS will match",
+          "The notebook cell order must be correct",
+          "Which package versions were installed in that interpreter’s environment"
+        ],
+        "answer": 2,
+        "explanation": "Freeze is an installed-version record. Direct requirements pins constrain selected packages, but neither proves all platform dependencies are fixed or that notebook inputs are defined in the right order."
+      },
+      {
+        "question": "After git add rental_summary.py, which check shows the change the next commit will save?",
+        "options": [
+          "git diff --staged, with only the intended script in its file list",
+          "The notebook’s last visible output",
+          "Copying .venv into Git"
+        ],
+        "answer": 0,
+        "explanation": "Staging selects a version of the file. Inspect the staged diff and file list before committing; unstaged edits and ignored environment files are not added just because a notebook worked."
+      }
+    ],
+    "topics": [
+      {
+        "title": "virtual environments",
+        "explanation": "Create .venv using the Python version you intend to run; venv does not download or choose a different interpreter release for you. Explicit .venv/bin/python commands avoid confusing the host installer with the project installer. Activation is an optional shell convenience that changes command lookup, not a security boundary. On Windows the executable is under .venv\\Scripts instead of bin. Recreate environments from instructions rather than copying them across machines. A venv still shares the operating system and may use external libraries."
+      },
+      {
+        "title": "pinned packages",
+        "explanation": "The companion lab requests numpy==2.3.5, pandas==2.3.3 and matplotlib==3.10.7. Practice copies those unchanged pins and adds notebook==7.4.5 and ipykernel==6.30.1 for local notebook work. pip installs additional dependencies; the recorded IPython 9.17.1 is one such resolved version, not an extra direct pin. Save the full pip freeze and the Python version. The five displayed freeze lines are excerpts. A version list alone is not a hash-verified supply-chain lock or a guarantee that packages remain available."
+      },
+      {
+        "title": "running scripts versus notebooks",
+        "explanation": "Notebook cells send code to a persistent kernel, so rerunning, moving or editing cells can leave memory that the displayed text does not explain. A saved output can outlive the state that produced it. Restart and run in displayed order before sharing a result. Running python3 -I rental_summary.py starts a fresh interpreter process; the script prints the actual Python version each time. The authoring environment used Python 3.12.13 and ipykernel 6.30.1. The graphical Notebook editing workflow was not verified; cell behavior was executed through the local kernel."
+      },
+      {
+        "title": "notebook-to-script conversion",
+        "explanation": "Start with the repaired cell order, move imports and inputs before their uses, put the calculation in a function with explicit arguments, and remove notebook-only commands. The two dictionaries in the listing are the same input as cell B. Check 2 × 8 + 3 × 5 = 31 before running; do not just copy a stale displayed result into expected. The ValueError guard detects a fixture-total mismatch, not every invalid rental. The separate data lab checks its own four-ticket total of 103. Keep those two fixtures and claims separate."
+      },
+      {
+        "title": "Git basics for one file",
+        "explanation": "git status --short shows two state columns: staged first, working-tree second. The practice changes an already tracked file, so git diff shows it before staging; an untracked new file would not appear in that diff. git add selects the current contents, and git diff --staged compares that selection with the last commit. --name-only lists staged paths. Inspect both before git commit. The deliberate baseline already includes .gitignore and requirements.txt; the second commit changes only the script. Ignored paths do not include secrets in a snapshot, but ignoring is not encryption and does not untrack existing files. A local commit does not publish or push anything."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-14",
+    "sources": [
+      {
+        "title": "Python: Executing modules as scripts (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/modules.html#executing-modules-as-scripts"
+      },
+      {
+        "title": "Python: Creating virtual environments (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/venv.html#creating-virtual-environments"
+      },
+      {
+        "title": "Python: How venvs work (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/venv.html#how-venvs-work"
+      },
+      {
+        "title": "Jupyter: Opening notebooks (Notebook 7.4.5)",
+        "url": "https://jupyter-notebook.readthedocs.io/en/v7.4.5/notebook.html#opening-notebooks"
+      },
+      {
+        "title": "Jupyter: Code cells (Notebook 7.4.5)",
+        "url": "https://jupyter-notebook.readthedocs.io/en/v7.4.5/notebook.html#code-cells"
+      },
+      {
+        "title": "Git: Staging modified files (Pro Git v2)",
+        "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_staging_modified_files"
+      },
+      {
+        "title": "Git: Ignoring files (Pro Git v2)",
+        "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_ignoring"
+      },
+      {
+        "title": "Git: Viewing staged and unstaged changes (Pro Git v2)",
+        "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_git_diff_staged"
+      },
+      {
+        "title": "Git: Committing changes (Pro Git v2)",
+        "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_committing_changes"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the code below as rental_summary.py in a new practice directory. Its first 19 lines match the listing; the raw triple-quoted reference afterwards preserves commands and outputs as text and does not run those commands. Target Python 3.12 and record your actual version. These are SYNTHETIC teaching fixtures, not a pricing policy or benchmark. Read the companion instructions at labs/data-foundations/README.md (data-foundations/README.md in the ZIP). Follow the reference’s environment commands, using the linked ZIP’s unmodified data-foundations directory and requirements pins. Install notebook and kernel tools in that venv, save the complete pip freeze, and verify which Python the notebook kernel uses. The displayed records are Linux observations, not promised output on every machine.",
+        "Create the two notebook cells shown in the reference with A displayed above B. Run B then A to see total units: 31. Restart the kernel and run the displayed order: A must first report NameError: name 'tickets' is not defined. Keep that failure. Move B above A, restart and run all to reproduce 31. Run .venv/bin/python -I rental_summary.py in a new process and compare its total with 2 × 8 + 3 × 5 = 31; its version line records the interpreter used. Run the unmodified companion lab with the reference command and inspect report.json for 4 rows before/after and total 103.0. Retain its versions and input hashes; do not substitute its fixture for this lesson’s two tickets.",
+        "Follow the separate local Git exercise in the reference: create the ignore file, prepare the deliberate expected = 30 baseline, then restore expected = 31. Inspect git status, git diff, git add rental_summary.py and git diff --staged before committing only that correction. Record the staged file list, the ignored .venv/ line and the final empty short status. The initial setup snapshot holds .gitignore and requirements.txt; the correction snapshot changes one file. Keep notebook evidence and installed-version records outside this one-file change, and keep secrets out of Git. State one limitation of your environment record and one untested input; do not claim cross-platform or production correctness."
+      ],
+      "starter": "import platform\n\ndef rental_summary(tickets):\n    costs = [row[\"days\"] * row[\"rate\"]\n             for row in tickets]\n    return sum(costs)\n\ntickets = [\n    {\"id\": \"r1\", \"days\": 2, \"rate\": 8},\n    {\"id\": \"r2\", \"days\": 3, \"rate\": 5},\n]\nexpected = 31\ntotal = rental_summary(tickets)\nif total != expected:\n    raise ValueError(\"fixture total changed\")\nprint(\"fixture: SYNTHETIC rental desk\")\nprint(\"tickets:\", len(tickets))\nprint(\"total units:\", total)\nprint(\"python:\", platform.python_version())\n\nr\"\"\"\nREFERENCE ONLY: copy commands into a shell, not a notebook cell.\nSYNTHETIC fixtures; recorded on Linux, Python 3.12.13.\nThe script above is standard-library-only. This reference\nstring is not executed as shell commands when Python runs it.\n\nNOTEBOOK CELLS: create rental_cells.ipynb with this bad order.\nCELL A (displayed first)\ncosts = [row[\"days\"] * row[\"rate\"] for row in tickets]\nprint(\"total units:\", sum(costs))\n\nCELL B (displayed second)\ntickets = [\n    {\"id\": \"r1\", \"days\": 2, \"rate\": 8},\n    {\"id\": \"r2\", \"days\": 3, \"rate\": 5},\n]\n\nRun B then A in a live kernel: total units: 31\nRestart the kernel; run A first:\nNameError: name 'tickets' is not defined\nMove B above A; restart and run all: total units: 31\n\nENVIRONMENT COMMANDS (POSIX shell; Windows paths differ)\ncp copies a file; printf writes text; >> appends it to a file.\nThe > operator saves output to a file, replacing its contents.\nmkdir -p creates the evidence directory if needed.\nWork in a new empty directory. Save rental_summary.py here.\nDownload the linked lab ZIP and extract data-foundations here.\nConfirm python3 --version is your chosen Python 3.12 build;\nthe author selected the installed 3.12.13 executable.\n\npython3 --version\npython3 -m venv .venv\ncp data-foundations/requirements.txt requirements.txt\nprintf '%s\\n' 'notebook==7.4.5' 'ipykernel==6.30.1' >> requirements.txt\n.venv/bin/python -m pip install -r requirements.txt\n.venv/bin/python -m pip --version\nmkdir -p evidence\n.venv/bin/python -m pip freeze > evidence/installed.txt\n.venv/bin/python -I rental_summary.py\n.venv/bin/python data-foundations/lab.py --output evidence/data\n.venv/bin/python -m notebook\n\nIn the opened notebook select the environment's Python kernel.\nIn a separate diagnostic cell, record the actual kernel.\nsys.version is interpreter-identification text; split()[0]\nselects its first word. metadata.version reads a package version.\nimport sys\nimport importlib.metadata as metadata\nprint(sys.executable)\nprint(sys.version.split()[0])\nprint(metadata.version(\"ipykernel\"))\nprint(metadata.version(\"notebook\"))\nCompare sys.executable with this environment's Python path.\nIf it differs, select the intended kernel before comparing runs.\nStop the local notebook server when finished; keep its token private.\n\nRECORDED OUTPUT EXCERPTS (installation progress omitted)\nPython 3.12.13\npip 25.0.1 (directory-dependent path omitted)\nNotebook 7.4.5; ipykernel 6.30.1; IPython 9.17.1\nGit 2.53.0\nvenv creation: exit 0, no output\npip install: exit 0; full resolved set saved with pip freeze\nSelected exact pip freeze lines, not the full dependency set:\nipykernel==6.30.1\nmatplotlib==3.10.7\nnotebook==7.4.5\nnumpy==2.3.5\npandas==2.3.3\nExact script output in that interpreter:\nfixture: SYNTHETIC rental desk\ntickets: 2\ntotal units: 31\npython: 3.12.13\nCompanion lab report: rows_before 4, rows_after 4,\ncosts [20.0, 45.0, 10.0, 28.0], total 103.0.\nThis is a separate fixture from the two-ticket total of 31.\nThe lab's existing three pins are unchanged; notebook/kernel\npins are additional tools for this practice directory only.\n\nGIT PRACTICE (new local repository; no remote or push)\nCreate .gitignore with exactly these lines:\n.venv/\n.env\nevidence/\ndata-foundations/\nrental_cells.ipynb\n.ipynb_checkpoints/\n\nFor a deliberate baseline, change only expected = 31 to\nexpected = 30 in rental_summary.py. Do not change the tickets.\nRun these setup commands using your own local Git identity.\ngit init creates repository metadata; git config here stores\nidentity settings only in this new repository. --quiet\nsuppresses the commit summary; -m supplies its message.\ngit init --quiet\ngit config user.name \"Your Name\"\ngit config user.email \"you@example.com\"\ngit add .gitignore requirements.txt rental_summary.py\ngit commit --quiet -m \"chore: add synthetic practice baseline\"\n\nNow restore expected = 31, run the script, and inspect/stage\nonly that script correction (the recorded demonstration used\nLarnix Learner / learner@example.invalid in the scratch repo):\n.venv/bin/python -I rental_summary.py\ngit --version\ngit status --short\ngit diff --unified=0 -- rental_summary.py\ngit add rental_summary.py\ngit diff --staged --unified=0 -- rental_summary.py\ngit diff --staged --name-only\ngit status --short\ngit status --short --ignored -- .venv/\ngit commit --quiet -m \"fix: check the synthetic total against 31\"\ngit status --short\n\nRECORDED GIT OUTPUT (spaces in status matter)\nBefore staging:\n M rental_summary.py\nUnstaged diff, then the identical staged diff\n(content-identifier line omitted):\ndiff --git a/rental_summary.py b/rental_summary.py\n--- a/rental_summary.py\n+++ b/rental_summary.py\n@@ -12 +12 @@ tickets = [\n-expected = 30\n+expected = 31\nStaged file list:\nrental_summary.py\nAfter staging:\nM  rental_summary.py\nIgnored environment:\n!! .venv/\nBoth quiet commits: exit 0, no output.\nFinal git status --short: exit 0, no output.\nOnly rental_summary.py changes in the second commit.\nThe earlier baseline already contains .gitignore and the pins;\nthis final snapshot adds no environment, notebook or secrets.\n\"\"\""
+    }
   }
 ]

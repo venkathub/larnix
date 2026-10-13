@@ -443,5 +443,19 @@
       "check2": "2",
       "check3": "0"
     }
+  },
+  "M02-L11": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Set up environments, scripts and notebooks",
+    "description": "Reproduce the calculation from explicit inputs in a fresh process, then inspect exactly what your commit records.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }

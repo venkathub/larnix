@@ -1147,7 +1147,7 @@
             ],
             "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
           },
-          "status": "planned",
+          "status": "preview",
           "estimated_hours": {
             "guided_study": [
               1,
@@ -1167,8 +1167,9 @@
           ],
           "delivery": {
             "full_contract": "not_met",
-            "interaction": "none",
-            "artifact": "none"
+            "interaction": "illustrated_cases",
+            "artifact": "runnable_data_lab",
+            "artifact_path": "labs/data-foundations/README.md"
           }
         }
       ],
