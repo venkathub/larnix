@@ -2949,5 +2949,257 @@
       ],
       "starter": "# SYNTHETIC fixture; fictional currency units, not a benchmark.\n# Python 3.12 / pandas 2.3.3; setup: labs/data-foundations/README.md\nimport pandas as pd\n\nRENTALS = pd.DataFrame({\n    \"rental_id\": [\"R1\", \"R2\", \"R3\"],\n    \"branch\": [\"North\", \"South\", \"North\"],\n    \"equipment\": [\"drill\", \"drill\", \"lamp\"],\n    \"days\": pd.Series([2, 1, 4], dtype=\"Int64\"),\n})\nRATES = pd.DataFrame({\n    \"equipment\": [\"drill\", \"lamp\"],\n    \"daily_rate\": pd.Series([12, 5], dtype=\"Int64\"),\n})\n\n\ndef audit_join(rentals, rates):\n    # Baseline for this fixture; extend domain validation for real inputs.\n    ids = rentals[\"rental_id\"]\n    if ids.isna().any() or ids.duplicated().any():\n        raise ValueError(\"unique non-null rental IDs required\")\n    if rentals[\"equipment\"].isna().any() or rates[\"equipment\"].isna().any():\n        raise ValueError(\"null equipment keys rejected\")\n    joined = rentals.merge(rates, on=\"equipment\", how=\"left\",\n                           validate=\"many_to_one\", indicator=True)\n    if len(joined) != len(rentals):\n        raise ValueError(\"join changed the rental row count\")\n    bad = joined[\"_merge\"].ne(\"both\") | joined[\"daily_rate\"].isna()\n    missing = joined.loc[bad, [\"rental_id\", \"equipment\", \"days\", \"_merge\"]].copy()\n    joined[\"cost\"] = joined[\"days\"] * joined[\"daily_rate\"]\n    audit = {\"rows_before\": len(rentals), \"rows_after\": len(joined),\n             \"missing_rates\": int(bad.sum())}\n    # Preserve unknown rows and missing costs. Never fill a rate with zero.\n    return joined, missing, audit\n\n\ndef checked_report(joined, missing, audit):\n    # TODO: if missing is nonempty, report it and withhold full totals/pivot.\n    # TODO: otherwise check days, costs and group keys, then return group\n    #       totals and a pivot. Fill only absent pivot combinations with 0.\n    # TODO: reconcile row-level, grouped and pivot totals to the hand result.\n    raise NotImplementedError(\"implement the reporting gate and summaries\")\n\n\njoined, missing, audit = audit_join(RENTALS, RATES)\nassert missing.empty\nassert joined[\"cost\"].tolist() == [24, 12, 20]\nassert joined[\"cost\"].sum() == 56\nprint(\"SYNTHETIC clean audit:\", audit, \"total:\", joined[\"cost\"].sum())\n# TODO: call checked_report and test the known pivot and group totals.\n# Duplicate: pd.concat([RATES, RATES.iloc[[0]]], ignore_index=True)\n# Unknown: RENTALS.assign(equipment=[\"drill\", \"drill\", \"hoist\"])\n# Null price: RATES.assign(daily_rate=pd.Series([12, None], dtype=\"Int64\"))\n# Keep missing rows in the audit output; show 36 only as a known subtotal.\n# Prove a corrected rerun returns three rows and total 56.\n"
     }
+  },
+  {
+    "id": "M02-L07",
+    "orientation": "M02-L06 checked joins and kept unknown prices visible. Now inspect the resulting dataset before turning it into a chart. Exploratory data analysis means examining counts, missing values and the spread of observations to decide what the data can support.",
+    "idea": "Show the observed values, group sizes and missing counts beside an average; equal means do not imply similar customers or complete evidence.",
+    "story": [
+      "Meera prepares a rental-cost report for two customer groups, Walk-in and Account. Her SYNTHETIC export contains nine bookings from one desk on one day. Walk-in has costs [18, 20, 22, 18, 22, missing]; Account has [8, 8, 44], all in fictional currency units per rental. The blank cost belongs to a real booking with an unresolved price; it is not a free rental.",
+      "The mean is the sum of known costs divided by the number of known costs. Both groups show 20 units, so two equal bars look reassuring. Think of the mean as dividing the observed bill equally among the observed bookings: it tells you the equal share, not what each customer actually paid. Account’s 44-unit booking can balance its two 8-unit bookings without making any of them cost 20.",
+      "Meera therefore keeps the ledger next to the headline. Walk-in has six rows but only five known costs; Account has three rows and three known costs. The median is the middle observed value after sorting. It is 20 for Walk-in and 8 for Account. A clean-looking average chart has hidden both the smaller Account group’s uneven costs and Walk-in’s missing observation. Predict what adding counts and individual values will change about the conclusion."
+    ],
+    "example": "SYNTHETIC Walk-in: 18 + 20 + 22 + 18 + 22 = 100; observed mean 100 / 5 = 20, median of [18, 18, 20, 22, 22] = 20; 6 rows, 5 observed, 1 missing. Account: 8 + 8 + 44 = 60; mean 60 / 3 = 20, median = 8; 3 rows, 3 observed, 0 missing. Without the 44-unit booking, Account’s mean would be (8 + 8) / 2 = 8. Its presence raises the observed mean by 12 units; that sensitivity is not permission to delete it.",
+    "trap": "A mean usually excludes missing costs. Walk-in’s denominator is 5 observed bookings, not 6 rows. Filling its blank with zero changes the question and invents a charge. Equal means neither establish equal distributions nor show a causal effect of customer group; nine invented bookings cannot establish either population’s typical cost.",
+    "sketch": [
+      "Two means: 20 and 20",
+      "Audit n + missing",
+      "Inspect values: 8, 8, 44"
+    ],
+    "lab": {
+      "question": "SYNTHETIC fixed fixtures: this page does not run pandas or Matplotlib in the browser. With the same nine rentals, can equal 20-unit mean bars justify saying the two customer groups have similar rental costs? Change the report view, not the underlying data.",
+      "limitation": "SYNTHETIC illustrated report views. The bars and listed values are authored comparisons, not a rendered Matplotlib figure or live Python calculation. Every bar uses the same 0–44 fictional currency unit scale; row and missing counts are separate evidence. These selected bookings describe only this fixture, not a population or causal effect. Select case 1 to return to the mean-only headline.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC means only",
+          "steps": [
+            "Same nine bookings",
+            "Known costs → means",
+            "20 = 20; is that enough?"
+          ],
+          "evidence": [
+            [
+              "Mean calculation",
+              "Walk-in 100 / 5 = 20; Account 60 / 3 = 20 units"
+            ],
+            [
+              "Audit behind the headline",
+              "Walk-in: 6 rows, n=5 observed, missing=1; Account: 3 rows, n=3 observed, missing=0"
+            ],
+            [
+              "What equal bars hide",
+              "Medians: Walk-in 20; Account 8 units. Account values [8, 8, 44]"
+            ]
+          ],
+          "result": "The mean-only headline shows two equal 20-unit bars. “The groups have similar costs” is not supported by that headline.",
+          "why": "The bars discard the number and arrangement of observations. The audit evidence below exposes what the headline omits: five versus three known costs, one missing Walk-in cost, and Account’s 44-unit outlier. An outlier is unusually far from the other observed values; here it may be a legitimate long rental, not an error.",
+          "bars": [
+            {
+              "label": "Walk-in observed mean (units)",
+              "value": 20,
+              "max": 44
+            },
+            {
+              "label": "Account observed mean (units)",
+              "value": 20,
+              "max": 44
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC counts and gaps",
+          "steps": [
+            "Count all booking rows",
+            "Count known costs",
+            "Keep missingness visible"
+          ],
+          "evidence": [
+            [
+              "Walk-in denominator",
+              "6 rows = 5 observed + 1 missing; mean 20, median 20 units"
+            ],
+            [
+              "Account denominator",
+              "3 rows = 3 observed + 0 missing; mean 20, median 8 units"
+            ],
+            [
+              "Missing-cost audit",
+              "W6 cost is unknown. Walk-in missing fraction 1/6; Account 0/3"
+            ]
+          ],
+          "result": "The means stay at 20 units, but the labels now disclose unequal observed n and one unresolved cost.",
+          "why": "Use size for row count, count for non-missing costs, and isna to locate missing cells. Here n means observed costs, not all rows or distinct people. Do not present Walk-in’s observed mean as the six-booking mean. The reason W6 is missing could matter; a count alone cannot show whether missingness is harmless.",
+          "bars": [
+            {
+              "label": "Walk-in mean: n=5, missing=1 (units)",
+              "value": 20,
+              "max": 44
+            },
+            {
+              "label": "Account mean: n=3, missing=0 (units)",
+              "value": 20,
+              "max": 44
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC distribution and outlier",
+          "steps": [
+            "List observed values",
+            "Compare mean and median",
+            "Investigate 44; retain source"
+          ],
+          "evidence": [
+            [
+              "Observed distributions",
+              "Walk-in [18, 18, 20, 22, 22]; Account [8, 8, 44] units"
+            ],
+            [
+              "Coverage / summaries",
+              "Walk-in n=5, missing=1: mean 20, median 20; Account n=3, missing=0: mean 20, median 8 units"
+            ],
+            [
+              "Outlier sensitivity",
+              "Account without 44: n=2, mean 8, median 8 units; including it raises mean by 12 units"
+            ]
+          ],
+          "result": "Account’s mean is 20 but its median is 8. The 44-unit booking pulls the mean up by 12 units relative to the two other bookings.",
+          "why": "The listed distribution shows the spread that the bars hide. Investigate the source booking before changing it; a genuine high cost belongs in the report. The without-44 calculation is a labelled sensitivity comparison, not cleaned evidence. Keep the original nine rows and the missing Walk-in booking in the audit.",
+          "bars": [
+            {
+              "label": "Account observed mean (units)",
+              "value": 20,
+              "max": 44
+            },
+            {
+              "label": "Account observed median (units)",
+              "value": 8,
+              "max": 44
+            },
+            {
+              "label": "Account largest cost (units)",
+              "value": 44,
+              "max": 44
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Begin with the file, not the plot. Record a SHA-256 checksum, a fingerprint of the exact input bytes, and package versions so another reader can identify the same input and environment. Load the CSV with explicit column types, check unique booking IDs and group labels, and keep a blank cost as missing. Use groupby to calculate row count, observed count, mean and median; record missing = rows − observed. A checksum identifies bytes, not whether the records are true or representative.",
+      "Inspect distributions before choosing a summary. Walk-in’s five known values sit between 18 and 22; Account’s three span 8 to 44. Both observed means are 20, yet Account’s middle value is 8. Report the original mean, median and the 44-unit point together. Missing values must be reported separately: zero-fill would give Walk-in 100 / 6 ≈ 16.67 units, which is not its observed mean. No calculation here supplies the unknown W6 price or proves what caused the group difference.",
+      "Take away four habits: identify the input, count observed and missing values separately, show individual values when the sample is small, and separate description from causal claims. Distribution means the arrangement and spread of values; n here counts observed costs; an outlier is a value far from its peers. One desk’s one-day export may omit other customers entirely, even when every recorded field is filled. Next in M02’s teaching order, M02-L02 turns these explicit data assumptions into service contracts."
+    ],
+    "transfer": [
+      {
+        "question": "A new SYNTHETIC sheet has Walk-in costs [10, 10, 10, missing] and Account costs [4, 4, 22]. Both observed means are 10. What counts and medians would you add, and how does the 22-unit booking affect the Account mean?",
+        "answer": "Walk-in has 4 rows, n=3 observed, missing=1, mean 10 and median 10 units. Account has 3 rows, n=3 observed, missing=0, mean (4 + 4 + 22) / 3 = 10 and median 4 units. Without 22, Account’s mean is 4; including it raises the mean by 6 units. Keep the high booking while investigating it, and do not turn the blank into zero."
+      },
+      {
+        "question": "Meera recovers W6’s cost as 20, so both full group means are now 20 and no costs are missing. Can she conclude that customer group has no effect on rental cost across the company?",
+        "answer": "No. Walk-in now has 6 observed costs totaling 120, mean 20 and median 20; Account still has 3 totaling 60, mean 20 and median 8. Equal means still hide different distributions. The nine bookings came from one desk on one day, not a representative company-wide sample; group membership was not randomly assigned. Describe this export and investigate coverage and possible confounding rather than making a causal claim."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Predict: Meera adds observed n, missing counts and medians to the two equal mean bars. Which conclusion is justified?",
+        "options": [
+          "The customer groups have identical cost distributions",
+          "The observed means match, but group sizes, missingness and distributions differ",
+          "Customer group cannot affect rental cost"
+        ],
+        "answer": 1,
+        "explanation": "Walk-in has n=5 and one missing cost; Account has n=3 and none missing. Their medians are 20 and 8 units despite both observed means being 20. This describes the fixture and establishes no causal effect."
+      },
+      {
+        "question": "Walk-in has six rows, five known costs totaling 100 and one blank. What should the report do?",
+        "options": [
+          "Fill the blank with zero and publish 16.67 as the observed mean",
+          "Drop the blank row and hide it from the counts",
+          "Report observed mean 20 with n=5 and missing=1; leave the six-booking mean unknown"
+        ],
+        "answer": 2,
+        "explanation": "The observed mean is 100 / 5 = 20. Dividing by six assumes an invented zero; deleting the row hides coverage. Preserve W6 and report that the complete group mean is unresolved until its cost is recovered."
+      },
+      {
+        "question": "Account costs are [8, 8, 44]. What is the sound response to the large booking?",
+        "options": [
+          "Show mean 20, median 8 and the 44-unit value; investigate its source",
+          "Delete 44 because a lower mean is easier to explain",
+          "Replace all three costs with their mean"
+        ],
+        "answer": 0,
+        "explanation": "Without 44, the two remaining costs average 8; including it raises the mean by 12 units. That shows sensitivity, not that 44 is wrong. Retain the original, label any comparison and investigate before correcting data."
+      }
+    ],
+    "topics": [
+      {
+        "title": "dataset loading",
+        "explanation": "Use pd.read_csv with an explicit schema: rental_id and customer_group as string, cost as nullable Float64. A blank cost becomes a missing value under the default CSV missing-value rules; malformed numeric text should fail rather than silently become zero. Check required columns, unique non-null IDs and allowed groups before computing. Read and hash the same bytes so the reported SHA-256 identifies the input you parsed. Record filename and versions; the hash does not certify data quality."
+      },
+      {
+        "title": "exploratory data analysis",
+        "explanation": "EDA asks what is present, absent and surprising before making a claim. df[\"cost\"].describe() summarizes observed numeric values, including count, mean, quartiles and extremes; it does not count missing costs for you. df.isna().sum() gives missing cells by column. Grouping by customer_group exposes our 6 versus 3 rows, 5 versus 3 known costs, and 1 versus 0 missing costs. Check these against the raw rows before accepting a polished chart."
+      },
+      {
+        "title": "Matplotlib figures and axes",
+        "explanation": "A Figure is the whole output canvas; an Axes is one plotting region containing data, labels and scales. fig, axes = plt.subplots(1, 2, sharey=True, layout=\"constrained\") creates two regions with a shared vertical cost scale. Plot each group’s observed bookings in its own Axes; label missing counts instead of plotting missing costs at zero. Save with fig.savefig and close the Figure after writing. The browser cases are illustrated comparisons; the optional local starter generates the actual Matplotlib file."
+      },
+      {
+        "title": "distributions and outliers",
+        "explanation": "A mean compresses the distribution into one value; the median selects its middle after sorting. Walk-in [18, 18, 20, 22, 22] has mean/median 20/20. Account [8, 8, 44] has 20/8: the high booking is far from the other two. With so few observations, show every known value rather than relying on histogram bins. Investigate duration, units and source errors before excluding an outlier. A median is less affected here but still cannot resolve missingness or sampling bias."
+      },
+      {
+        "title": "plot labeling",
+        "explanation": "Label customer group, the within-group observation number, and Cost (fictional currency units per rental). Put observed n, total rows and missing count beside each group; n is not the number of distinct customers. Use the same cost scale so heights are comparable, and name whether a mark shows a mean, median or individual booking. Here the browser comparison scale is 0–44 units. A local plot may add headroom while still showing 44 in full. Label any without-outlier comparison separately and retain the full-data view."
+      },
+      {
+        "title": "sampling bias",
+        "explanation": "Sampling bias occurs when the observed records systematically miss parts of the population you want to describe. These nine bookings were selected from one desk on one day; other desks, dates and booking channels may differ. Unequal group sizes alone do not prove bias, and equal sizes would not remove it. A missing cost among recorded rows is visible to isna; entirely absent bookings are not. Describe the selection process and missingness before generalizing. Observational group comparisons also cannot isolate a causal effect of membership."
+      },
+      {
+        "title": "notebook-to-script conversion",
+        "explanation": "A notebook can depend on cells run out of order or variables left from earlier experiments. Move loading, validation, summaries and plotting into functions with explicit inputs, then a main entry point with input/output paths. Test from a fresh process, record the input hash and package versions, and compare outputs with hand calculations. The starter writes group_summary.csv, missingness.csv, provenance.json and costs.png. A blank or unknown group label, an entirely absent expected group, or a malformed cost should fail visibly; a valid blank cost stays in the missingness report. Reproducibility means rerunning the stated procedure, not proving the sample represents all customers."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-13",
+    "sources": [
+      {
+        "title": "Matplotlib 3.10.7: quick start, figures and axes",
+        "url": "https://matplotlib.org/3.10.7/users/explain/quick_start.html"
+      },
+      {
+        "title": "Matplotlib 3.10.7: axis labels",
+        "url": "https://matplotlib.org/3.10.7/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html"
+      },
+      {
+        "title": "Matplotlib 3.10.7: scatter plots",
+        "url": "https://matplotlib.org/3.10.7/api/_as_gen/matplotlib.axes.Axes.scatter.html"
+      },
+      {
+        "title": "pandas 2.3: read_csv and explicit column types",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.read_csv.html"
+      },
+      {
+        "title": "pandas 2.3: DataFrame.describe",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.describe.html"
+      },
+      {
+        "title": "pandas 2.3: DataFrame.isna",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.isna.html"
+      },
+      {
+        "title": "pandas 2.3: group by, split-apply-combine",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/user_guide/groupby.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Follow labs/data-foundations/README.md from the repository or lab ZIP for Python 3.12 setup (pandas 2.3.3, Matplotlib 3.10.7). Keep that four-rental, 103-unit reference lab unchanged. Save the separate SYNTHETIC starter below as inspect_rentals.py in your own practice directory. Run python inspect_rentals.py --write-fixture to create its nine-row CSV once, then python inspect_rentals.py --input rental-inspection.csv --output evidence. Keep the CSV under version control.",
+        "Inspect group_summary.csv, missingness.csv, provenance.json and costs.png. Recompute both observed means 20, medians 20/8, row counts 6/3, observed counts 5/3 and missing counts 1/0. Check that each plot labels units and observed n, retains the 44-unit point, and does not draw the missing cost at zero. Add a results table comparing Account with and without 44; label that comparison as sensitivity, never an automatic cleaning rule.",
+        "Run from a fresh process twice and compare the data summaries and input checksum. Inject a blank or unknown group label, remove every row of an expected group, duplicate a booking ID, and enter a nonnumeric cost; each should fail visibly. Then recover W6 as 20 in a new input version and record the new hash, zero missing costs and unchanged observed mean. Explain the remaining sampling and causal limits. This fixture is synthetic, not a performance benchmark; successful execution is not evidence of learner understanding or production representativeness."
+      ],
+      "starter": "# SYNTHETIC fixture, not a benchmark. Python 3.12.\n# Setup: labs/data-foundations/README.md (pandas 2.3.3 / Matplotlib 3.10.7).\nimport argparse\nimport hashlib\nimport io\nimport json\nimport platform\nfrom pathlib import Path\n\nimport matplotlib\nmatplotlib.use(\"Agg\")\nfrom matplotlib import pyplot as plt\nimport numpy as np\nimport pandas as pd\n\nFIXTURE_CSV = \"\"\"rental_id,customer_group,cost\nW1,Walk-in,18\nW2,Walk-in,20\nW3,Walk-in,22\nW4,Walk-in,18\nW5,Walk-in,22\nW6,Walk-in,\nA1,Account,8\nA2,Account,8\nA3,Account,44\n\"\"\"\nGROUPS = [\"Walk-in\", \"Account\"]\n\n\ndef inspect_csv(raw):\n    df = pd.read_csv(io.BytesIO(raw), dtype={\n        \"rental_id\": \"string\", \"customer_group\": \"string\", \"cost\": \"Float64\"})\n    required = {\"rental_id\", \"customer_group\", \"cost\"}\n    if not required.issubset(df.columns):\n        raise ValueError(\"required columns missing\")\n    if df[\"rental_id\"].isna().any() or df[\"rental_id\"].duplicated().any():\n        raise ValueError(\"unique non-null booking IDs required\")\n    if df[\"customer_group\"].isna().any() or not df[\"customer_group\"].isin(GROUPS).all():\n        raise ValueError(\"known non-null customer groups required\")\n    missing_groups = set(GROUPS) - set(df[\"customer_group\"])\n    if missing_groups:\n        raise ValueError(f\"expected groups missing: {sorted(missing_groups)}\")\n    known = df[\"cost\"].dropna().to_numpy(dtype=float)\n    if not np.isfinite(known).all() or (known < 0).any():\n        raise ValueError(\"known costs must be finite and nonnegative\")\n    summary = df.groupby(\"customer_group\")[\"cost\"].agg(\n        rows=\"size\", observed=\"count\", mean=\"mean\", median=\"median\")\n    summary[\"missing\"] = summary[\"rows\"] - summary[\"observed\"]\n    return df, summary\n\n\ndef write_report(input_path, output):\n    raw = Path(input_path).read_bytes()\n    df, summary = inspect_csv(raw)\n    output = Path(output)\n    output.mkdir(parents=True, exist_ok=True)\n    summary.to_csv(output / \"group_summary.csv\")\n    df.isna().sum().rename(\"missing_count\").to_csv(output / \"missingness.csv\")\n    provenance = {\n        \"mode\": \"SYNTHETIC descriptive fixture; not a benchmark\",\n        \"input\": str(input_path), \"sha256\": hashlib.sha256(raw).hexdigest(),\n        \"versions\": {\"python\": platform.python_version(), \"pandas\": pd.__version__,\n                     \"matplotlib\": matplotlib.__version__, \"numpy\": np.__version__},\n        \"limitations\": \"One desk, one day; missing costs stay unknown; no causal claim.\",\n    }\n    (output / \"provenance.json\").write_text(json.dumps(provenance, indent=2) + \"\\n\")\n    fig, axes = plt.subplots(1, 2, sharey=True, figsize=(9, 4), layout=\"constrained\")\n    for group, ax in zip(GROUPS, axes):\n        values = df.loc[df[\"customer_group\"].eq(group), \"cost\"].dropna().to_numpy(dtype=float)\n        rows = int(df[\"customer_group\"].eq(group).sum())\n        ax.scatter(range(1, len(values) + 1), values)\n        ax.set_title(f\"{group}: n={len(values)}, rows={rows}, missing={rows-len(values)}\")\n        ax.set_xlabel(\"Observed booking number (within group)\")\n        ax.set_xticks(range(1, len(values) + 1))\n    known = df[\"cost\"].dropna().to_numpy(dtype=float)\n    top = max(1.0, float(known.max()) * 1.1) if len(known) else 1.0\n    axes[0].set_ylim(0, top)  # shared scale includes the largest observed cost\n    axes[0].set_ylabel(\"Cost (fictional currency units per rental)\")\n    fig.suptitle(\"SYNTHETIC rental costs: observed values only\")\n    fig.savefig(output / \"costs.png\", dpi=120)\n    plt.close(fig)\n    return summary\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"Inspect a synthetic rental CSV\")\n    parser.add_argument(\"--input\", default=\"rental-inspection.csv\")\n    parser.add_argument(\"--output\", default=\"evidence\")\n    parser.add_argument(\"--write-fixture\", action=\"store_true\")\n    args = parser.parse_args()\n    if args.write_fixture:\n        # Exclusive creation protects any existing learner-edited input.\n        with Path(args.input).open(\"x\", encoding=\"utf-8\", newline=\"\") as handle:\n            handle.write(FIXTURE_CSV)\n    else:\n        print(write_report(args.input, args.output))\n# TODO: add the labelled with/without-44 comparison and decision note.\n# TODO: test invalid inputs, the recovered W6 case and fresh-process reruns.\n"
+    }
   }
 ]
