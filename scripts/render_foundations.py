@@ -107,7 +107,12 @@ def stages(labels):
 
 
 def evidence(rows):
-    return '<dl class="case-evidence">' + ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in rows) + '</dl>'
+    def value_markup(value):
+        text = str(value)
+        return f'<pre class="evidence-pre">{e(text)}</pre>' if '\n' in text else e(text)
+
+    return '<dl class="case-evidence">' + ''.join(
+        f'<div><dt>{e(k)}</dt><dd>{value_markup(v)}</dd></div>' for k, v in rows) + '</dl>'
 
 
 def bars(items):
