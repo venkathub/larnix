@@ -48,11 +48,14 @@ Refines the global guide. Roles are unchanged: Claude plans and reviews, Codex i
 
 ## Artifact layout for a Task
 
+Every artifact is a folder containing `index.md` with front matter (`title`, `kind`, `status`
+for story and ticket, `comments`); nest child artifacts as subfolders.
+
 ```text
-<initiative>/index.md                               kind: story
-<initiative>/plan.md                                kind: spec    (scope, sequence, decisions)
-<initiative>/t<n>-<lesson-or-slug>/index.md         kind: ticket
-<initiative>/t<n>-<lesson-or-slug>/review-r<k>.md   kind: review
+<initiative>/index.md                                      kind: story
+<initiative>/plan/index.md                                 kind: spec    (scope, sequence, decisions)
+<initiative>/t<n>-<lesson-or-slug>/index.md                kind: ticket
+<initiative>/t<n>-<lesson-or-slug>/review-r<k>/index.md    kind: review
 ```
 
 ## Current next increment
