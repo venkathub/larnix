@@ -55,11 +55,31 @@ class SiteBuildTest(unittest.TestCase):
         self.assertTrue((file.parent / lab_ref).is_file())
         self.assertIn('Download runnable data lab + README', text)
         self.assertIn('labs/data-foundations/README.md', text)
-        self.assertIn('Authoring references rechecked 2026-10-13.', text)
+        self.assertIn('Authoring references rechecked October 13, 2026.', text)
         existing = (ROOT / 'dist/lessons/M02-L01/index.html').read_text()
         self.assertIn('Authoring references rechecked October 12, 2026.', existing)
         limitation = 'SYNTHETIC fixed fixtures: this page does not run NumPy in the browser.'
         self.assertLess(text.index(limitation), text.index('class="scenario-controls"'))
+
+    def test_foundation_data_lab_links_and_synthetic_notice(self):
+        curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
+        manifest = json.loads((ROOT / 'web/lessons.json').read_text())
+        for module in curriculum['modules']:
+            for lesson in module['lessons']:
+                lesson_id = lesson['id']
+                if (manifest.get(lesson_id, {}).get('format') != 'foundation'
+                        or lesson['delivery']['artifact'] != 'runnable_data_lab'):
+                    continue
+                with self.subTest(lesson=lesson_id):
+                    file = ROOT / 'dist/lessons' / lesson_id / 'index.html'
+                    text = file.read_text()
+                    ref = '../../labs/data-foundations.zip'
+                    self.assertIn(ref, Page(text).refs)
+                    self.assertTrue((file.parent / ref).is_file())
+                    before_controls = text.split('class="scenario-controls"')[0]
+                    self.assertIn('SYNTHETIC fixed fixtures:', before_controls)
+                    self.assertIn('in the browser.', before_controls)
+                    self.assertIn(lesson['delivery']['artifact_path'], text)
 
     def test_shipped_navigation_uses_teaching_order_and_respects_dependencies(self):
         source = (ROOT / 'dist/assets/data.js').read_text()

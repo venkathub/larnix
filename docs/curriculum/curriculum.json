@@ -793,7 +793,7 @@
             ],
             "execution_phase": "Planned exercise; runnable artifacts are tracked separately from full lesson completion."
           },
-          "status": "planned",
+          "status": "preview",
           "estimated_hours": {
             "guided_study": [
               2,
@@ -813,7 +813,7 @@
           ],
           "delivery": {
             "full_contract": "not_met",
-            "interaction": "none",
+            "interaction": "illustrated_cases",
             "artifact": "runnable_data_lab",
             "artifact_path": "labs/data-foundations/README.md"
           }
