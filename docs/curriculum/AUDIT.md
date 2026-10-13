@@ -33,4 +33,4 @@ Lessons with one source: 27. EVAL references: 24; NIST references: 20. A focused
 
 Hour ranges differ by lesson but remain low-confidence editorial estimates, not measured learner timings. They assume stated prerequisites and small local fixtures or labeled replays, excluding large training runs and cloud provisioning. Repeated estimate-basis prose was removed after post-review; calibrate the ranges through learner trials.
 
-[Per-lesson delivery inventory](DELIVERY.md) · [Review response](REVIEW_2026-10-13.md)
+[Per-lesson delivery inventory](DELIVERY.md)

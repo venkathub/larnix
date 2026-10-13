@@ -88,5 +88,3 @@ Dedicated additions preserve existing IDs and avoid stretching a ten-minute prev
 | Multilingual and low-resource systems | [M38-L05](modules/M38.md#m38-l05), [M26-L04](modules/M26.md#m26-l04) |
 | Chat UI, streaming rendering and demo boundaries | [M09-L02](modules/M09.md#m09-l02), [M40-L03](modules/M40.md#m40-l03) |
 | Recommendations and forecasting | [M40-L01](modules/M40.md#m40-l01), [M40-L02](modules/M40.md#m40-l02), [M40-L05](modules/M40.md#m40-l05), [M40-L06](modules/M40.md#m40-l06) |
-
-See [review response](REVIEW_2026-10-13.md) for evidence, archived-content mapping and remaining delivery work.
