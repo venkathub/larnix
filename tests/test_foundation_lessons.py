@@ -19,13 +19,28 @@ class FoundationLessonsTest(unittest.TestCase):
         cls.notes = load_notes()
 
     def test_all_six_modules_are_authored_without_replacing_vector_lab(self):
-        expected = {l['id'] for m in self.curriculum['modules'][:6] for l in m['lessons'][:4]}
-        expected.add('M02-L05')
-        self.assertEqual(len(expected), 25)
+        expected = {lid for lid, entry in self.manifest.items()
+                    if entry.get('format') == 'foundation'} | {'M03-L01'}
+        original = {l['id'] for m in self.curriculum['modules'][:6] for l in m['lessons'][:4]}
+        authored = {l['id'] for m in self.curriculum['modules'][:6] for l in m['lessons']
+                    if l['status'] in {'preview', 'complete'}}
+        self.assertTrue(original <= expected)
+        self.assertEqual(expected, authored)
         self.assertEqual(set(self.notes), expected - {'M03-L01'})
-        self.assertTrue(expected <= self.manifest.keys())
         self.assertEqual(self.manifest['M03-L01']['directory'], 'vector-similarity')
         validate_notes(self.notes, self.curriculum)
+
+    def test_source_review_dates_require_iso_calendar_dates(self):
+        for value in ['2026-10-13', '2024-02-29']:
+            with self.subTest(valid=value):
+                note = dict(self.notes['M02-L05'], sources_reviewed_on=value)
+                validate_notes({'M02-L05': note}, self.curriculum)
+        for value in ['October 13, 2026', '20261013', '2026-W42-2',
+                      '2026-02-29', '2026-1-3', '', None, 20261013]:
+            with self.subTest(invalid=value):
+                note = dict(self.notes['M02-L05'], sources_reviewed_on=value)
+                with self.assertRaisesRegex(ValueError, 'sources_reviewed_on.*YYYY-MM-DD'):
+                    validate_notes({'M02-L05': note}, self.curriculum)
 
     def test_saved_check_keys_match_the_rendered_lesson_answers(self):
         for lesson_id, note in self.notes.items():

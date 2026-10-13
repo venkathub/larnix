@@ -2,7 +2,7 @@
 
 ## Current milestone: M01–M06 foundations and two advanced previews
 
-This branch contains 27 authored previews, including M02-L05; publication follows merge to `main`. The reference repository has not been forked or imported.
+The classroom has 27 authored previews; the published site follows `main`. The reference repository has not been forked or imported.
 
 - Catalogue of all 42 modules and 188 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.

@@ -1291,34 +1291,34 @@
         "explanation": "Vectorization expresses repeated numeric work as array operations such as days * rates instead of a Python loop over bookings. It can reduce Python-level overhead, but this preview measures no speedup. A pairwise mistake can allocate n × n results rather than n. Keep a loop baseline, validate inputs before either path, and measure time and memory on a stated workload before making performance claims."
       }
     ],
-    "sources_reviewed_on": "October 13, 2026",
+    "sources_reviewed_on": "2026-10-13",
     "sources": [
       {
-        "title": "NUMPY · NumPy 2.3: broadcasting rules",
+        "title": "NumPy 2.3: broadcasting rules",
         "url": "https://numpy.org/doc/2.3/user/basics.broadcasting.html"
       },
       {
-        "title": "NUMPY · NumPy 2.3: data types",
+        "title": "NumPy 2.3: data types",
         "url": "https://numpy.org/doc/2.3/user/basics.types.html"
       },
       {
-        "title": "NUMPY · NumPy 2.3: sum and axis reductions",
+        "title": "NumPy 2.3: sum and axis reductions",
         "url": "https://numpy.org/doc/2.3/reference/generated/numpy.sum.html"
       },
       {
-        "title": "NUMPY · NumPy 2.3: indexing, including boolean masks",
+        "title": "NumPy 2.3: indexing, including boolean masks",
         "url": "https://numpy.org/doc/2.3/user/basics.indexing.html"
       },
       {
-        "title": "NUMPY · NumPy 2.3: copies and views",
+        "title": "NumPy 2.3: copies and views",
         "url": "https://numpy.org/doc/2.3/user/basics.copies.html"
       },
       {
-        "title": "NUMPY · NumPy 2.3: finite-value checks",
+        "title": "NumPy 2.3: finite-value checks",
         "url": "https://numpy.org/doc/2.3/reference/generated/numpy.isfinite.html"
       },
       {
-        "title": "MATH · D2L: linear algebra and reductions (conceptual reading)",
+        "title": "Dive into Deep Learning: linear algebra and reductions (conceptual reading)",
         "url": "https://d2l.ai/chapter_preliminaries/linear-algebra.html"
       }
     ],
@@ -1326,7 +1326,7 @@
       "steps": [
         "Open labs/data-foundations/README.md in the repository or the runnable data-lab download. Follow its Python 3.12 environment and test commands; it pins NumPy 2.3.5. That existing lab has a separate four-rental fixture totalling 103 units. The three-rental SYNTHETIC starter below is an additional exercise, with expected total 79; do not confuse the two datasets.",
         "Save the starter as rental_costs.py in your own practice directory. Implement vectorized_costs using the documented contract. Compare all three costs and the total with the loop and [24, 28, 27], using rtol=0 and atol=1e-9. Inject rates of shape (2,), days of shape (3, 1), and NaN or infinite rates; each must raise ValueError. Restore the original inputs and rerun.",
-        "Demonstrate rates[:2] mutating its parent, then repeat from fresh inputs with rates[:2].copy() and prove the parent is unchanged. Record Python/NumPy versions, input values, matched and failed results, and your decision note. State that the fixture is synthetic, not learner-validated or a performance benchmark; billing identity, taxes, discounts and currency rounding remain outside this exercise."
+        "Demonstrate rates[:2] mutating its parent, then repeat from fresh inputs with rates[:2].copy() and prove the parent is unchanged. Record Python/NumPy versions, input values, matched and failed results, and your decision note. State that the fixture is synthetic and not a performance benchmark; billing identity, taxes, discounts and currency rounding remain outside this exercise."
       ],
       "starter": "# SYNTHETIC fixture; fictional currency units. Python 3.12 / NumPy 2.3.5.\n# Setup and runnable reference: labs/data-foundations/README.md\nimport numpy as np\n\nDAYS = np.array([2, 4, 3], dtype=np.int64)\nRATES = np.array([12, 7, 9], dtype=np.float64)\nEXPECTED = np.array([24, 28, 27], dtype=np.float64)\nATOL = 1e-9  # fictional currency units; relative tolerance is zero\n\n\ndef loop_costs(days, rates):\n    if days.ndim != 1 or rates.ndim != 1 or days.shape != rates.shape:\n        raise ValueError(\"expected equal one-dimensional shapes\")\n    if not np.isfinite(days).all() or not np.isfinite(rates).all():\n        raise ValueError(\"days and rates must be finite\")\n    return np.array([float(days[i]) * float(rates[i])\n                     for i in range(len(days))])\n\n\ndef vectorized_costs(days, rates):\n    # TODO: enforce the same shape and finite-value contract, then multiply.\n    # Do not flatten column inputs or silently discard unmatched rates.\n    raise NotImplementedError(\"implement and test the array calculator\")\n\n\nbaseline = loop_costs(DAYS, RATES)\nnp.testing.assert_allclose(baseline, EXPECTED, rtol=0, atol=ATOL)\n# TODO: compare vectorized values AND total 79 against the baseline.\n# TODO: reject RATES[:2], DAYS[:, None], and rates containing np.nan/np.inf.\n# TODO: show the wrong pairwise matrix, then a corrected rerun.\n# TODO: compare mutation through RATES[:2] with RATES[:2].copy()\n#       using fresh arrays for each experiment; preserve the fixture.\nprint(\"SYNTHETIC loop costs:\", baseline, \"total:\", baseline.sum())"
     }

@@ -3,6 +3,7 @@
 Content stays in reviewed JSON; generated HTML includes the complete lesson even
 without JavaScript. Only the case explorer and saved checks need the runtime.
 """
+from datetime import date
 from html import escape
 import json
 from pathlib import Path
@@ -58,6 +59,13 @@ def validate_notes(notes, curriculum):
             raise ValueError(f'{lesson_id}: use a consistent scale across illustrated cases')
         if not note['sources'] or any(not s['url'].startswith('https://') for s in note['sources']):
             raise ValueError(f'{lesson_id}: primary sources required')
+        if 'sources_reviewed_on' in note:
+            reviewed_on = note['sources_reviewed_on']
+            try:
+                if date.fromisoformat(reviewed_on).isoformat() != reviewed_on:
+                    raise ValueError('noncanonical date')
+            except (TypeError, ValueError) as error:
+                raise ValueError(f'{lesson_id}: sources_reviewed_on must be a valid YYYY-MM-DD date') from error
         if len(note['practice']['steps']) != 3 or not note['practice']['starter'].strip():
             raise ValueError(f'{lesson_id}: missing practice starter')
 

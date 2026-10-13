@@ -55,7 +55,9 @@ class SiteBuildTest(unittest.TestCase):
         self.assertTrue((file.parent / lab_ref).is_file())
         self.assertIn('Download runnable data lab + README', text)
         self.assertIn('labs/data-foundations/README.md', text)
-        self.assertIn('Authoring references rechecked October 13, 2026.', text)
+        self.assertIn('Authoring references rechecked 2026-10-13.', text)
+        existing = (ROOT / 'dist/lessons/M02-L01/index.html').read_text()
+        self.assertIn('Authoring references rechecked October 12, 2026.', existing)
         limitation = 'SYNTHETIC fixed fixtures: this page does not run NumPy in the browser.'
         self.assertLess(text.index(limitation), text.index('class="scenario-controls"'))
 
