@@ -115,7 +115,7 @@
     "directory": "foundations",
     "format": "foundation",
     "title": "Persist and test behavior",
-    "description": "Keep related writes atomic, and handle duplicate requests separately from rollback.",
+    "description": "Commit related rows together, recognize repeated request keys, and test what remains after failure.",
     "kind": "Interactive preview",
     "reading_minutes": "10",
     "checks": 3,
