@@ -39,6 +39,12 @@ class FoundationLessonsTest(unittest.TestCase):
                 with self.subTest(lesson=lesson_id):
                     self.assertEqual(entry['description'], self.notes[lesson_id]['idea'])
 
+    def test_foundation_source_titles_follow_publisher_page_style(self):
+        for lesson_id, note in self.notes.items():
+            for source in note['sources']:
+                with self.subTest(lesson=lesson_id, title=source['title']):
+                    self.assertRegex(source['title'], r'^[^:—·]+: .+$')
+
     def test_source_review_dates_require_iso_calendar_dates(self):
         for value in ['2026-10-13', '2024-02-29']:
             with self.subTest(valid=value):

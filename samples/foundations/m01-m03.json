@@ -1532,19 +1532,19 @@
     ],
     "sources": [
       {
-        "title": "IETF — RFC 9110 §15.5: client-error status codes",
+        "title": "IETF: RFC 9110 §15.5 client-error status codes",
         "url": "https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5"
       },
       {
-        "title": "IETF — RFC 9110 §9.2.2: idempotent methods",
+        "title": "IETF: RFC 9110 §9.2.2 idempotent methods",
         "url": "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2"
       },
       {
-        "title": "OpenAI — Structured model outputs: JSON, schemas and error handling",
+        "title": "OpenAI: structured model outputs",
         "url": "https://developers.openai.com/api/docs/guides/structured-outputs"
       },
       {
-        "title": "Made With ML by Anyscale — Testing machine learning systems: code, data and models",
+        "title": "Made With ML: testing",
         "url": "https://madewithml.com/courses/mlops/testing/"
       }
     ],
@@ -4154,7 +4154,7 @@
           "evidence": [
             [
               "git status --short: before → after git add",
-              "\" M rental_summary.py\" → \"M  rental_summary.py\""
+              "before:  M rental_summary.py\nafter:  M  rental_summary.py"
             ],
             [
               "git diff then git diff --staged: changed lines",
