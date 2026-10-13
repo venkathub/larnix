@@ -3226,15 +3226,15 @@
   },
   {
     "id": "M02-L08",
-    "orientation": "You only need to be able to run a command. A program is a set of instructions; Python is the language used here, and its interpreter is the application that follows those instructions. We will read one small rental-price program before running it on your own machine. M02-L08 is the starting point for readers new to programming. M01 is not required first; the previous-lesson link follows catalogue order, not a prerequisite. The full program listing is at the start of the starter inside the Production practice disclosure; open it alongside the line-by-line trace below.",
+    "orientation": "You only need to be able to run a command. A program is a set of instructions; Python is the language used here, and its interpreter is the application that follows those instructions. We will read one small rental-price program before running it on your own machine. M02-L08 is the starting point for readers new to programming. M01 is not required first; the previous-lesson link follows catalogue order, not a prerequisite. The full program is in the practice code at the bottom of this page, under Production practice. Open that section to compare the code with the line-by-line trace below.",
     "idea": "Track the value and type of each name, follow the chosen branch, and enter a function body only when it is called.",
     "story": [
       "Meera’s rental desk needs a price for a lamp. For this SYNTHETIC exercise, the daily rate is 20 fictional currency units and a booking of at least 3 days gets a single 5-unit discount. These are teaching fixtures, not a pricing policy. Before running anything, predict the one-day charge and the three-day charge: should the discount happen once or once per day?",
-      "A value is a piece of data: 20 is a whole number. Its type describes what kind of data it is: int means integer, while str means text such as \"3\". A variable is a name bound to a value. The statement daily_rate = 20 assigns 20 to that name; = assigns rather than asks whether two values are equal. Multiplication is written * and subtraction is written -. Meera names the two fixed values daily_rate and discount so the calculation says what its numbers mean.",
+      "A value is a piece of data: 20 is a whole number. Its type describes what kind of data it is: int means integer, while str means text such as \"3\". Think of a variable as a label attached to some data: later instructions can use that label instead of writing the data again. The statement daily_rate = 20 assigns 20 to that name; = assigns rather than asks whether two values are equal. Multiplication is written * and subtraction is written -. Meera names the two fixed values daily_rate and discount so the calculation says what its numbers mean.",
       "A function is a named set of instructions that can be called to do a job. Line 3, def rental_price(days):, defines one. The parameter days is a local name for the value supplied by a call such as rental_price(3). Indentation, the spaces at the start of a line, groups the function body and the discount branch. The if statement tests a condition: days >= 3 asks whether days is at least 3. A branch is the block followed only when that condition is true. return sends the computed value back to the caller; print displays a value on the screen.",
-      "Follow the Quick revision trace above using L1–L15 as source line numbers. The exact program is the first 15 lines of the starter in Production practice; expand it for a spaced listing. Defining rental_price does not yet calculate a charge. The top-level instructions continue at L8, and the call at L10 sends execution into the indented body before returning to L11. Top to bottom means following the executed path, including these calls and returns, rather than executing every printed source line once."
+      "Follow the Quick revision trace above using L1–L15 as source line numbers. The exact program occupies the first 15 lines of the practice code at the bottom of this page, under Production practice; open that section to see the indentation. Defining rental_price does not yet calculate a charge. The top-level instructions continue at L8, and the call at L10 sends execution into the indented body before returning to L11. Top to bottom means following the executed path, including these calls and returns, rather than executing every printed source line once."
     ],
-    "example": "SYNTHETIC trace of the starter’s first 15 lines. L1: daily_rate = 20. L2: discount = 5; daily_rate stays 20. L3 binds rental_price to a function; its L4–L7 body waits, with no local days or total yet. L8: days = 1. L9: predicted = 20. L10 calls rental_price(1): local days = 1; L4 sets total = 20 (1 × 20); L5 tests 1 >= 3 → False; L6 is skipped; L7 returns total = 20. Back at L10, observed = 20. L11 prints one-day predicted: 20 observed: 20. L12: days = 3; predicted and observed are still 20. L13: predicted = 55; observed stays 20. L14 calls rental_price(3): local days = 3; L4 sets total = 60 (3 × 20); L5 tests 3 >= 3 → True; L6 changes total = 55 (60 − 5); L7 returns total = 55. Back at L14, observed = 55. L15 prints multi-day predicted: 55 observed: 55. Throughout, daily_rate = 20 and discount = 5; the function’s local total belongs to that call. predicted is our written expectation, not an input to the function.",
+    "example": "SYNTHETIC trace of the practice code’s first 15 lines. L1: daily_rate = 20. L2: discount = 5; daily_rate stays 20. L3 binds rental_price to a function; its L4–L7 body waits, with no local days or total yet. L8: days = 1. L9: predicted = 20. L10 calls rental_price(1): local days = 1; L4 sets total = 20 (1 × 20); L5 tests 1 >= 3 → False; L6 is skipped; L7 returns total = 20. Back at L10, observed = 20. L11 prints one-day predicted: 20 observed: 20. L12: days = 3; predicted and observed are still 20. L13: predicted = 55; observed stays 20. L14 calls rental_price(3): local days = 3; L4 sets total = 60 (3 × 20); L5 tests 3 >= 3 → True; L6 changes total = 55 (60 − 5); L7 returns total = 55. Back at L14, observed = 55. L15 prints multi-day predicted: 55 observed: 55. Throughout, daily_rate = 20 and discount = 5; the function’s local total belongs to that call. predicted is our written expectation, not an input to the function.",
     "trap": "Quotation marks matter: days = \"3\" stores text, not the integer 3. In this particular program L4 repeats that text 20 times instead of doing numeric multiplication. L5 then raises TypeError when it tries to compare text with the integer 3. An error is not a zero charge. Inspect the original input and change the deliberately wrong fixture to days = 3; do not hide the failure by inventing a result.",
     "sketch": [
       "Name rate 20, discount 5",
@@ -3331,7 +3331,7 @@
             ],
             [
               "Printed output from this failing call",
-              "None; the two earlier booking lines remain printed by the full starter."
+              "None; the two earlier booking lines remain printed by the full practice program."
             ],
             [
               "Exception (final traceback line)",
@@ -3339,7 +3339,7 @@
             ]
           ],
           "result": "The text-day call returns no charge; its print never runs.",
-          "why": "Python evaluates rental_price(days) before the surrounding print can display its arguments. L5 raises TypeError, an exception reporting an operation on unsuitable types. The full starter first prints cases 1 and 2, then stops here with a traceback, a report of where the error occurred. The path and line formatting can vary by Python version.",
+          "why": "Python evaluates rental_price(days) before the surrounding print can display its arguments. L5 raises TypeError, an exception reporting an operation on unsuitable types. The full practice program first prints cases 1 and 2, then stops here with a traceback, a report of where the error occurred. The path and line formatting can vary by Python version.",
           "bars": [
             {
               "label": "Returned charges in this case",
@@ -3409,7 +3409,7 @@
       },
       {
         "title": "variables",
-        "explanation": "A variable is a name bound to a value. daily_rate = 20 assigns a value; observed = rental_price(days) assigns the returned result. Assignment is not a comparison: == would test equality, whereas = binds the name. The function reads the outer daily_rate and discount but gives each call local names days and total. When the outer days becomes 3, predicted and observed do not automatically update; their later assignments do that work."
+        "explanation": "Use those labels to follow each assignment. daily_rate = 20 assigns a value; observed = rental_price(days) assigns the returned result. Assignment is not a comparison: == would test equality, whereas = binds the name. The function reads the outer daily_rate and discount but gives each call local names days and total. When the outer days becomes 3, predicted and observed do not automatically update; their later assignments do that work."
       },
       {
         "title": "control flow",
@@ -3421,7 +3421,7 @@
       },
       {
         "title": "reading a program top to bottom",
-        "explanation": "Read the file from its first top-level instruction and keep track of calls that temporarily enter a body. For one day the executed source lines are 1, 2, 3, 8, 9, 10, 4, 5, 7, 11; then the file continues at 12. The three-day call follows 14, 4, 5, 6, 7 before reaching 15. A line in a function definition can appear earlier on the page yet run later. Comments beginning with # explain the code to people; blank lines and those comments do not calculate a result."
+        "explanation": "Read the file from its first top-level instruction and keep track of calls that temporarily enter a body. For one day the executed source lines are 1, 2, 3, 8, 9, 10, 4, 5, 7, 11; then the file continues at 12 and 13. The three-day call at 14 runs lines 4, 5, 6, 7 before reaching 15. A line in a function definition can appear earlier on the page yet run later. Comments beginning with # explain the code to people; blank lines and those comments do not calculate a result."
       }
     ],
     "sources_reviewed_on": "2026-10-13",
@@ -3445,7 +3445,7 @@
     ],
     "practice": {
       "steps": [
-        "Save the starter as rental_price.py in your own practice directory. Its first 15 lines are the traced program; preserve the indentation. The bookings are SYNTHETIC: these prices and this discount are teaching fixtures, not a pricing policy. No packages are needed. Target Python 3.12; run python3 --version and keep the actual version with your notes.",
+        "Save the practice code below as rental_price.py in your own practice directory. Its first 15 lines are the traced program; preserve the indentation. The bookings are SYNTHETIC: these prices and this discount are teaching fixtures, not a pricing policy. No packages are needed. Target Python 3.12; run python3 --version and keep the actual version with your notes.",
         "Before running, write your two predictions and track the intermediate totals. Run python3 -I rental_price.py (-I selects isolated mode, reducing dependence on local Python settings). Expect exactly one-day predicted: 20 observed: 20, then multi-day predicted: 55 observed: 55 on separate lines. The deliberate error extension then stops the run with TypeError; this first nonzero exit is expected, not a completed exercise.",
         "Find days = \"3\" in the marked error extension and change only that line to days = 3. Predict the extra printed line text-day observed: 55; rerun the same command and record the now-successful exit. Explain why the original L4 produced repeated text and why L5 failed. Keep the original failure evidence; do not replace an error with zero. Try a two-day booking and predict 40 before running. Keep the input values, line trace, predicted and observed outputs, command and Python version together. State that these fixtures do not validate zero or negative day counts, real billing, taxes or rounding, and are not a performance benchmark."
       ],
