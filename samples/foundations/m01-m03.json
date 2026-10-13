@@ -3828,7 +3828,7 @@
               "2 tests run; 2 passed; 0 failed. rental_total(2, 7) returns 14; it does not print 14."
             ]
           ],
-          "result": "The valid-total assertion and the expected ValueError with its exact message both pass. Exit status is 0.",
+          "result": "The valid-total assertion and the expected ValueError with its exact message both pass. An exit status is the number a finished program returns to the shell (the command runner): 0 reports success and a nonzero value reports failure. This run returns 0.",
           "why": "unittest writes its report to standard error, the output channel used for diagnostics. Each dot is a passing test; the final line is OK. Between them the real report includes Ran 2 tests in an elapsed number of seconds. That duration varies and is not a performance claim. Standard output is empty. The test names run in sorted order: test_valid then test_zero.",
           "bars": [
             {
