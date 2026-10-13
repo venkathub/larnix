@@ -306,7 +306,7 @@ def render(curriculum, source_data):
                   f"**Complete prerequisite route ({len(required)} lessons):**", ""]
         for step, lid in enumerate(required, 1):
             lines.append(f"{step}. {lesson_link(lid)}")
-    files["LEARNING_PATH.md"] = "\n".join(lines)
+    files["LEARNING_PATH.md"] = "\n".join(lines).rstrip() + "\n"
 
     lines = ["# Approved-scope coverage map", "",
              f"This maps all 42 modules to {len(lessons)} lesson units, including 20 additions from the October 13 coverage review. It establishes coverage of the agreed curriculum, not exhaustive coverage of every research topic in AI. Each linked unit contains topics, outcomes, readings, interview guidance and an exercise.", "",
