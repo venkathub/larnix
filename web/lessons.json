@@ -101,7 +101,7 @@
     "directory": "foundations",
     "format": "foundation",
     "title": "Control concurrent work",
-    "description": "Bound active work and release its slot when a request completes or is cancelled.",
+    "description": "Bound admission and active calls separately, then await cleanup when work is cancelled.",
     "kind": "Interactive preview",
     "reading_minutes": "10",
     "checks": 3,
