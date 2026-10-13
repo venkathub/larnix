@@ -54,11 +54,25 @@ class SiteBuildTest(unittest.TestCase):
                     self.assertIn('max-width:calc(670px + 24px + 24px);margin-inline:auto', css)
                     self.assertIn(rule + '>.extra-body.reading{max-width:none}', css)
                     self.assertIn('.foundation-lesson #deep-dive>.eyebrow{padding-inline:24px}', css)
+                    self.assertIn('.foundation-lesson :is(#production,#interview).section'
+                                  '{padding:0;scroll-margin-top:100px}', css)
+                    self.assertIn(rule + '{margin:0 auto 14px}', css)
+                    self.assertIn('.foundation-lesson #interview.section{padding-bottom:65px}', css)
+                    self.assertIn('.foundation-lesson .case-evidence .evidence-pre'
+                                  '{background:var(--surface-2);border:1px solid var(--line);'
+                                  'border-radius:5px;padding:10px 12px}', css)
+                    self.assertIn('.foundation-lesson .case-evidence>div:has(.evidence-pre)'
+                                  '{grid-template-columns:1fr;gap:4px}', css)
+                    self.assertIn('.foundation-lesson .case-evidence .evidence-pre::first-line'
+                                  '{font-weight:600}', css)
         # Shared stylesheet at C2's base, 1fb476f. Future shared-style changes
         # must deliberately update this snapshot; this fix is foundation-only.
         shared = (ROOT / 'dist/assets/lesson.css').read_bytes()
         self.assertEqual(hashlib.sha256(shared).hexdigest(),
-                         '06aebbaefb8ab903634dbc3a193777418560e339d43d65fb735ed2f913636e85')
+                         '06aebbaefb8ab903634dbc3a193777418560e339d43d65fb735ed2f913636e85',
+                         msg='dist/assets/lesson.css changed: foundation-only fixes must leave '
+                             'the shared stylesheet untouched; update this snapshot deliberately '
+                             'only when an intended shared-style change is reviewed.')
 
     def test_downloadable_labs_are_complete_and_match_tested_sources(self):
         for lab in sorted((ROOT / 'labs').iterdir()):

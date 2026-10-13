@@ -16,8 +16,15 @@
 .case-bar strong{font:500 19px ui-monospace,monospace}.bar-track{display:block;height:13px;border:1px solid var(--line);border-radius:3px 6px 4px 6px;margin-top:6px;overflow:hidden;background:var(--surface-2)}.bar-track>span{display:block;background:var(--accent);height:100%;border-radius:2px 5px 3px 2px}
 .case-evidence{margin:22px 0 0;display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:15px}.case-evidence>div{display:grid;grid-template-columns:1fr 1.5fr;gap:14px;font:400 20px/1.35 var(--hand)}.case-evidence dt{color:var(--muted)}.case-evidence dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .case-evidence .evidence-pre{margin:0;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--text)}
+.foundation-lesson .case-evidence .evidence-pre{background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:10px 12px}
+.foundation-lesson .case-evidence>div:has(.evidence-pre){grid-template-columns:1fr;gap:4px}
+.foundation-lesson .case-evidence .evidence-pre::first-line{font-weight:600}
 .foundation-lesson .topic-note{border-bottom:1px dashed var(--line);padding:16px 0}.foundation-lesson .topic-note h3{margin:0 0 8px;text-transform:none}.foundation-lesson .topic-note p{margin:0}.practice-code{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);background:var(--surface-2);padding:18px;border-radius:5px 12px 7px 15px;font:14px/1.7 ui-monospace,monospace}
 .foundation-lesson .source-list a{color:var(--accent);text-decoration:underline;overflow-wrap:anywhere}.foundation-lesson .lesson-extra{scroll-margin-top:100px}
+/* The optional disclosures form one group, not three padded page sections. */
+.foundation-lesson :is(#production,#interview).section{padding:0;scroll-margin-top:100px}
+.foundation-lesson :is(#deep-dive,#production,#interview)>.lesson-extra{margin:0 auto 14px}
+.foundation-lesson #interview.section{padding-bottom:65px}
 /* Match the shared 670px reading measure plus 24px body padding per side. */
 @media(min-width:651px){
  .foundation-lesson :is(#deep-dive,#production,#interview)>.lesson-extra,
