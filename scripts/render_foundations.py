@@ -31,6 +31,23 @@ def validate_notes(notes, curriculum):
         required = ['orientation', 'idea', 'example', 'trap']
         if not all(isinstance(note.get(k), str) and note[k].strip() for k in required):
             raise ValueError(f'{lesson_id}: missing introductory content')
+        if 'listing' in note:
+            listing = note['listing']
+            if not isinstance(listing, dict):
+                raise ValueError(f'{lesson_id}: listing must be an object')
+            if not isinstance(listing.get('title'), str) or not listing['title'].strip():
+                raise ValueError(f'{lesson_id}: listing title must be a nonempty string')
+            if listing.get('language') not in ('python', 'text'):
+                raise ValueError(f'{lesson_id}: listing language must be python or text')
+            lines = listing.get('lines')
+            if not isinstance(lines, list) or not lines:
+                raise ValueError(f'{lesson_id}: listing lines must be a nonempty list')
+            if any(not isinstance(line, str) for line in lines):
+                raise ValueError(f'{lesson_id}: listing lines must contain only strings')
+            if any('\n' in line or '\r' in line for line in lines):
+                raise ValueError(f'{lesson_id}: listing lines must not contain line breaks')
+            if not any(line.strip() for line in lines):
+                raise ValueError(f'{lesson_id}: listing must contain visible code or text')
         if len(note['story']) < 2 or len(note['mechanism']) != 3 or len(note['sketch']) != 3:
             raise ValueError(f'{lesson_id}: incomplete teaching sequence')
         if len(note['transfer']) != 2 or any(not t['question'] or not t['answer'] for t in note['transfer']):
@@ -107,9 +124,24 @@ def mini_lab(lesson_id):
     return f'''<details class="lesson-extra live-math"><summary>Take a gradient step · computed locally</summary><div class="extra-body"><p>Loss = (w − 3)². The slope is 2(w − 3). Predict the direction before stepping.</p><div class="math-controls"><label>Learning rate <select id="rate-input" aria-label="Learning rate"><option>0.1</option><option selected>0.25</option><option>0.5</option><option>1</option><option>1.1</option><option>1.2</option></select></label><button type="button" id="step-learning">Take one step →</button><button type="button" id="reset-learning">Reset weight ↺</button></div><p id="live-result" role="status" aria-live="polite"></p><svg class="descent-chart" viewBox="0 0 450 280" role="img" aria-labelledby="descent-title descent-desc"><title id="descent-title">Gradient descent on a quadratic loss</title><desc id="descent-desc">Start at weight zero with loss nine.</desc><path class="plot-axis" d="M45 30 V230 H415"/><polyline class="loss-curve" points="{points}"/><circle id="descent-point" cx="135" cy="185" r="7"/><text x="18" y="24">loss</text><text x="409" y="254">w</text><text x="34" y="255">−3</text><text x="132" y="255">0</text><text x="220" y="255">3</text><text x="399" y="255">9</text><text x="233" y="218">minimum</text></svg><p id="descent-range"></p><p>This exact toy calculation demonstrates update size; real training losses need not have this shape.</p></div></details>'''
 
 
+def worked_example(note):
+    """Keep the old markup unless an author supplies an adjacent code listing."""
+    trace = f'<p class="sketch-caption">{e(note["example"])}</p>'
+    if 'listing' not in note:
+        return trace
+    listing = note['listing']
+    lines = '\n'.join(f'<span class="code-line" data-line="{i}">{e(line)}</span>'
+                      for i, line in enumerate(listing['lines'], 1))
+    figure = (f'<figure class="code-listing"><figcaption>{e(listing["title"])}</figcaption>'
+              f'<pre tabindex="0" aria-label="{e(listing["title"])}">'
+              f'<code class="language-{e(listing["language"])}">{lines}</code></pre></figure>')
+    return f'<div class="listing-trace">{figure}{trace}</div>'
+
+
 def render(note, lesson, module):
     title = e(lesson['title'])
     first = note['lab']['scenarios'][0]
+    board_class = 'revision-board revision-board-with-listing' if 'listing' in note else 'revision-board'
     check_html = ''
     for i, q in enumerate(note['checks']):
         options = ''.join(f'<button type="button" data-answer="{j}">{e(text)}</button>' for j, text in enumerate(q['options']))
@@ -137,7 +169,7 @@ def render(note, lesson, module):
 <body class="foundation-lesson" id="top"><a class="skip" href="#main">Skip to lesson</a><header class="topbar"><a class="brand" href="#top" aria-label="Larnix lesson home"><span class="brand-mark" aria-hidden="true">L</span>larnix.</a><span class="breadcrumb">Foundations / {e(module['id'])}</span><div class="header-actions"><span id="check-progress" class="progress-label" aria-live="polite">0 / 3 checks correct</span><button id="theme-toggle" type="button" class="quiet">Dark mode ◑</button></div></header>
 <div class="page-shell"><aside class="lesson-nav" aria-label="Lesson contents"><p class="eyebrow">{e(module['id'])} · FOUNDATIONS</p><p class="nav-title">{title}</p><nav><a href="#revision">↺ Quick revision</a><a href="#story">2 min · See the idea</a><a href="#lab">4 min · Try three cases</a><a href="#mechanism">3 min · Explain &amp; check</a><a href="#takeaways">1 min · Recall it</a><a href="#deep-dive">＋ All topic notes</a><a href="#production">＋ Production practice</a><a href="#interview">＋ Interview prep</a></nav></aside>
 <main id="main"><header class="revision-title"><div class="hero-kicker"><span class="section-tag">{e(lesson['id'])}</span><span>FOUNDATION FIELD NOTES</span></div><h1>{title}</h1><p class="lesson-orientation">{e(note['orientation'])}</p></header>
-<section class="revision-sheet revision-first" id="revision" aria-label="Quick revision sheet"><div class="revision-idea"><span class="note-index" aria-hidden="true">01</span><div><h2>The idea in one sentence</h2><p>{e(note['idea'])}</p></div></div><div class="revision-board"><div class="revision-picture"><h2>02 · Picture the mechanism</h2>{stages(note['sketch'])}<p class="sketch-caption">{e(note['example'])}</p></div><div class="revision-notes"><div class="exam-trap"><h2>03 · The exam trap</h2><p>{e(note['trap'])}</p></div><div class="recall-card"><h2>04 · Apply it to a new case</h2>{recall(note['transfer'][0], 'Check your reasoning')}</div></div></div><nav class="revision-actions" aria-label="Choose how to learn"><a class="primary" href="#story">Teach me step by step ↓</a><a class="text-link" href="#lab">Try the lab ↗</a></nav></section>
+<section class="revision-sheet revision-first" id="revision" aria-label="Quick revision sheet"><div class="revision-idea"><span class="note-index" aria-hidden="true">01</span><div><h2>The idea in one sentence</h2><p>{e(note['idea'])}</p></div></div><div class="{board_class}"><div class="revision-picture"><h2>02 · Picture the mechanism</h2>{stages(note['sketch'])}{worked_example(note)}</div><div class="revision-notes"><div class="exam-trap"><h2>03 · The exam trap</h2><p>{e(note['trap'])}</p></div><div class="recall-card"><h2>04 · Apply it to a new case</h2>{recall(note['transfer'][0], 'Check your reasoning')}</div></div></div><nav class="revision-actions" aria-label="Choose how to learn"><a class="primary" href="#story">Teach me step by step ↓</a><a class="text-link" href="#lab">Try the lab ↗</a></nav></section>
 <details class="study-route"><summary>The study route · about 10 minutes</summary><p class="pace-note">2 minutes to see the idea, 4 to explore the cases, 3 to explain and check, 1 to recall. This is a suggested introduction to the central concept. Topic notes, coding and production practice need extra time.</p><p>Prerequisites: {e(prereqs)}</p></details>
 <section class="reading section" id="story"><p class="section-number">01 / SEE THE IDEA · 2 MIN</p><h2>Start with a real decision.</h2>{paragraphs(note['story'])}<p class="core-rule">{e(lesson['outcome'])}</p></section>
 <section class="section lab-section" id="lab" aria-labelledby="lab-title"><div class="section-heading"><div><p class="section-number">02 / TRY THREE CASES · 4 MIN</p><h2 id="lab-title">Change the case.<br>Follow the evidence.</h2><p class="fixture-label">Illustrated fixtures · no live model or service</p></div></div><div class="lab-guide"><p><strong>Your question:</strong> {e(note['lab']['question'])}</p><p>Predict first. Then choose 1 → 2 → 3 and explain what changed.</p></div><div class="foundation-lab"><div class="scenario-controls" role="group" aria-label="Illustrated cases">{scenario_buttons}</div><div class="lab-feedback" role="status" aria-live="polite" aria-atomic="true"><p class="feedback-label">What happened</p><p id="case-result">{e(first['result'])}</p><p class="feedback-label">Why · what to inspect</p><p id="case-why">{e(first['why'])}</p></div><div class="case-visual" id="case-visual">{stages(first['steps'])}{bars(first['bars'])}{evidence(first['evidence'])}</div></div><p class="lab-caption">{e(note['lab']['limitation'])}</p>{mini_lab(lesson['id'])}<noscript><p class="callout">The first case is shown above. Case switching, calculators and saved checks need JavaScript; all explanations and practice instructions remain readable.</p></noscript></section>
