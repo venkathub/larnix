@@ -1,17 +1,63 @@
 """Prevent misleading completion labels and broken expanded learning paths."""
 from copy import deepcopy
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from curriculum import load, validate, route_lessons
+import curriculum as curriculum_cli
 
 
 class CurriculumTest(unittest.TestCase):
     def setUp(self):
         self.curriculum, self.sources = load()
+
+    def test_render_writes_every_document_with_one_trailing_newline(self):
+        documents = curriculum_cli.render(self.curriculum, self.sources)
+        with TemporaryDirectory() as directory, \
+                patch.object(curriculum_cli, 'BASE', Path(directory)), \
+                patch.object(curriculum_cli, 'load', return_value=(self.curriculum, self.sources)), \
+                patch.object(sys, 'argv', ['curriculum.py', 'render']), \
+                redirect_stdout(StringIO()):
+            curriculum_cli.main()
+            for relative, original in documents.items():
+                with self.subTest(document=relative):
+                    written = (Path(directory) / relative).read_bytes()
+                    self.assertTrue(written.endswith(b'\n'))
+                    self.assertFalse(written[:-1].endswith((b'\n', b'\r', b' ', b'\t')))
+                    self.assertEqual(written, original.encode('utf-8'))
+
+    def test_write_and_check_normalize_synthetic_builder_output(self):
+        documents = {
+            'no-newline.md': '# Test',
+            'extra-newlines.md': '# Test\n\n\n',
+            'trailing-whitespace.md': '# Test\n \t\r\n',
+        }
+        with TemporaryDirectory() as directory, \
+                patch.object(curriculum_cli, 'BASE', Path(directory)), \
+                patch.object(curriculum_cli, 'load', return_value=(self.curriculum, self.sources)), \
+                patch.object(curriculum_cli, 'render', return_value=documents), \
+                patch.object(curriculum_cli, 'check_local_links', return_value=[]), \
+                redirect_stdout(StringIO()):
+            with patch.object(sys, 'argv', ['curriculum.py', 'render']):
+                curriculum_cli.main()
+            for relative in documents:
+                self.assertEqual((Path(directory) / relative).read_bytes(), b'# Test\n')
+            with patch.object(sys, 'argv', ['curriculum.py', 'check']):
+                curriculum_cli.main()
+                for relative, original in documents.items():
+                    with self.subTest(document=relative):
+                        path = Path(directory) / relative
+                        path.write_text(original)
+                        with self.assertRaisesRegex(SystemExit, 'Missing or stale generated document'):
+                            curriculum_cli.main()
+                        path.write_bytes(b'# Test\n')
 
     def test_current_plan_and_original_urls_remain_valid(self):
         self.assertEqual(validate(self.curriculum, self.sources), [])
