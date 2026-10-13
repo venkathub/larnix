@@ -4,7 +4,7 @@ An original AI/ML Engineering curriculum for interview preparation and productio
 
 **[Open the classroom](https://venkathub.github.io/larnix/)** · [Curriculum](https://venkathub.github.io/larnix/#/catalog) · [Start M01](https://venkathub.github.io/larnix/lessons/M01-L01/)
 
-The 42-module plan now has **31 authored interactive previews**: 29 original lessons in **M01–M06**, plus RAG and agent recovery.
+The 42-module plan now has **32 authored interactive previews**: 30 original lessons in **M01–M06**, plus RAG and agent recovery.
 
 The foundation modules cover AI product engineering, software engineering, mathematics/statistics, machine learning, deep learning and data quality. Open them from the published classroom or a local build. Their original notes are stored as [M01–M03](samples/foundations/m01-m03.json) and [M04–M06](samples/foundations/m04-m06.json); the existing vector lesson remains intact.
 
@@ -16,7 +16,7 @@ The three specialist labs are:
 
 Each preview offers a suggested **10-minute core** with handwritten-style diagrams, three quick checks and optional deeper reading, interview preparation and production practice.
 
-The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for all authored previews. The remaining 161 lesson narratives are planned; their artifact availability is tracked separately. Foundation case explorers use explicitly labeled synthetic fixtures; optimization and threshold lessons also offer live local calculations. No Python service or training job runs inside the webpage.
+The first local platform foundation is implemented: a searchable catalogue, lesson-plan pages, prerequisite links, Learn/Interview/Production views, and browser-local progress for all authored previews. The remaining 160 lesson narratives are planned; their artifact availability is tracked separately. Foundation case explorers use explicitly labeled synthetic fixtures; optimization and threshold lessons also offer live local calculations. No Python service or training job runs inside the webpage.
 
 The October 13 coverage review added 20 lesson plans for predictive ML and data engineering; the [delivery inventory](docs/curriculum/DELIVERY.md) lists every lesson's status. A new [runnable NumPy/pandas/plotting lab](labs/data-foundations/README.md) supports the planned M02 additions. Review records are kept as Traycer task artifacts rather than in the repository.
 

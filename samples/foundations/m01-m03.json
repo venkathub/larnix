@@ -3752,5 +3752,278 @@
       ],
       "starter": "import csv\nimport json\ntickets = [\n    {\"id\": \"r1\", \"days\": 1},\n    {\"id\": \"r2\", \"days\": 3},\n    {\"id\": \"r3\", \"days\": 2},\n]\nmulti = [row for row in tickets if row[\"days\"] >= 2]\nwith open(\"tickets.csv\", \"w\", newline=\"\",\n          encoding=\"utf-8\") as file:\n    writer = csv.DictWriter(\n        file, fieldnames=[\"id\", \"days\"],\n        lineterminator=\"\\n\")\n    writer.writeheader()\n    writer.writerows(tickets)\nwith open(\"tickets.csv\", newline=\"\",\n          encoding=\"utf-8\") as file:\n    csv_rows = list(csv.DictReader(file))\nwith open(\"tickets.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(tickets, file)\nwith open(\"tickets.json\", encoding=\"utf-8\") as file:\n    json_rows = json.load(file)\ncsv_days = [int(row[\"days\"]) for row in csv_rows]\nprint(\"counts:\", len(tickets), len(csv_rows),\n      len(json_rows))\nprint(\"multi:\", [row[\"id\"] for row in multi])\nprint(\"csv days:\", repr(csv_rows[1][\"days\"]),\n      type(csv_rows[1][\"days\"]).__name__)\nprint(\"json days:\", repr(json_rows[1][\"days\"]),\n      type(json_rows[1][\"days\"]).__name__)\nprint(\"totals:\", sum(csv_days),\n      sum(row[\"days\"] for row in json_rows))\nprint(\"raw vs converted:\", csv_rows[1][\"days\"] * 2,\n      int(csv_rows[1][\"days\"]) * 2)\n\n# SYNTHETIC named-record comparison; no automatic field validation.\nclass Ticket:\n    def __init__(self, ticket_id, days):\n        self.ticket_id = ticket_id\n        self.days = days\nnamed = Ticket(\"r2\", 3)\npair = (\"r2\", 3)\nprint(\"named / tuple / dict:\", named.days, pair[1], tickets[1][\"days\"])\n\n# Deliberate invalid field in memory; the two files stay unchanged.\ncsv_rows[1][\"days\"] = \"three\"\nprint(\"invalid row:\", csv_rows[1])\nprint(\"invalid total:\", sum(int(row[\"days\"]) for row in csv_rows))"
     }
+  },
+  {
+    "id": "M02-L10",
+    "orientation": "In M02-L09 you kept an invalid ticket visible instead of dropping its row. Now read the error report to locate the failed operation, then make two expectations executable. Read the numbered program beside its trace before running the practice code at the bottom of this page. The listing is the first 27 lines of rental_errors.py; the practice copy also includes the captured traceback for comparison. These SYNTHETIC teaching fixtures are not a pricing policy.",
+    "idea": "Read the last traceback line first, then test both an expected result and an explicit rejection.",
+    "story": [
+      "Meera charges a fictional 7 units per day. Two days should cost 14; zero days should be rejected. An exception is Python’s signal that an operation cannot continue normally. raise deliberately sends that signal. ValueError names the exception used here for a day count outside the allowed range; its message, days must be positive, tells the caller what to correct. A guard is the condition checked before the calculation: L5 tests days <= 0, L6 raises, and L7 runs only if that guard does not reject the input.",
+      "A traceback records the calls active when an exception escapes. Each frame identifies a file, a line and the function running there; <module> means the file’s top-level code. TypeError names an operation applied to incompatible types. Text \"2\" cannot be compared with integer 0 using <=. That call fails at L5 before the deliberate ValueError at L6. Reading bottom-up starts at the last line, with the exception type and message, then moves to the failed operation and its caller. The wrong-type case below is a real traceback from this program, not a guessed error report.",
+      "Python’s unittest module supplies tools for repeatable checks; import makes it available. A test case groups checks in a class based on unittest.TestCase. self refers to the running test object. An assertion states an expected condition: assertEqual compares actual and expected values and fails the test if they differ. assertRaises expects the indented call to raise the named exception. with creates that expectation around the call; as caught keeps the captured exception available afterwards. caught.exception is that object, and str turns it into its message text. Here the second assertEqual checks the exact message as well as the exception type.",
+      "The sys module exposes command arguments in sys.argv, a list with the file name at position 0 and an optional mode at position 1. len counts the arguments. The __name__ == \"__main__\" check runs L21–L27 when this file is launched directly. At L21 the conditional expression picks argument 1 if present, otherwise \"tests\". A mode selects one path: \"wrong\" or \"zero\" calls the function directly; the default runs unittest.main, which finds methods whose names start with test. Its argv=[sys.argv[0]] passes only the file name to the test runner. The tests catch the expected zero-day exception; the two direct-call modes leave their exceptions uncaught so the real tracebacks remain visible."
+    ],
+    "example": "SYNTHETIC worked trace: L1–L2 import the modules. L4–L7 define rental_total without calling it. L9–L18 define the test class and its two test methods; their bodies wait for the runner. With no mode argument, L20 is true, L21 sets mode = \"tests\", L22 and L24 are false, and L27 starts two tests. L11 calls rental_total with days = 2 and rate = 7: L5 is false and L7 returns 14, matching the expected 14. L14–L15 call with days = 0 and rate = 7: L5 is true, L6 raises ValueError, and assertRaises captures it. L16–L18 compare its message with days must be positive. Both checks pass; unittest’s final summary line is OK. With mode = \"wrong\", L23 passes days = \"2\" and rate = 7. Read its real traceback bottom-up, starting at the last line: “TypeError: '<=' not supported between instances of 'str' and 'int'” names the incompatible comparison; “^^^^^^^^^” underlines the failed expression; “if days <= 0:” is that source line; “File \"rental_errors.py\", line 5, in rental_total” locates it; “rental_total(\"2\", 7)” is the calling source line; “File \"rental_errors.py\", line 23, in <module>” locates the caller; “Traceback (most recent call last):” explains why the innermost frame is printed after its caller. The practice code includes the captured traceback in monospaced text; the case evidence groups its lines as a summary. No total is returned. With mode = \"zero\", the calling frame is L25 and the raising line is L6; the final line is ValueError: days must be positive.",
+    "listing": {
+      "title": "SYNTHETIC rental checks · first 27 practice lines",
+      "language": "python",
+      "lines": [
+        "import sys",
+        "import unittest",
+        "",
+        "def rental_total(days, rate):",
+        "    if days <= 0:",
+        "        raise ValueError(\"days must be positive\")",
+        "    return days * rate",
+        "",
+        "class RentalTests(unittest.TestCase):",
+        "    def test_valid(self):",
+        "        self.assertEqual(rental_total(2, 7), 14)",
+        "",
+        "    def test_zero(self):",
+        "        with self.assertRaises(ValueError) as caught:",
+        "            rental_total(0, 7)",
+        "        self.assertEqual(",
+        "            str(caught.exception),",
+        "            \"days must be positive\")",
+        "",
+        "if __name__ == \"__main__\":",
+        "    mode = sys.argv[1] if len(sys.argv) > 1 else \"tests\"",
+        "    if mode == \"wrong\":",
+        "        rental_total(\"2\", 7)",
+        "    elif mode == \"zero\":",
+        "        rental_total(0, 7)",
+        "    else:",
+        "        unittest.main(argv=[sys.argv[0]])"
+      ]
+    },
+    "sketch": [
+      "Last line: type + message",
+      "Failed operation ← calling frame",
+      "Test result and rejection separately"
+    ],
+    "trap": "A green test result is evidence for the inputs and assertions that ran. It is not proof that every rental is valid. Catching Exception and continuing with zero would hide this fault and turn a failed calculation into an apparent free rental. Keep an unexplained failure visible. The narrowly expected ValueError inside assertRaises is different: a missing rejection fails the test, and a different exception is reported as an error.",
+    "lab": {
+      "question": "SYNTHETIC fixed program cases: predict the outcome before choosing a mode. This page shows recorded Python output; it does not execute Python. Case 1 runs the two tests; cases 2 and 3 call the same function directly.",
+      "limitation": "SYNTHETIC teaching fixtures, not a pricing policy or benchmark. No Python runs in the browser. Tracebacks were captured with Python 3.12; only the directory prefix is replaced by rental_errors.py below. Other Python versions may draw different caret markers. The test count and final summary are shown exactly; variable timing and the separator line are omitted. Two passing tests do not establish rate validation, all input types, real billing, deployment safety or learner validation. Bars count tests actually run, not correctness for every input.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC two passing tests",
+          "steps": [
+            "2 × 7 → 14",
+            "0 days → expected rejection",
+            "2 tests → OK"
+          ],
+          "evidence": [
+            [
+              "Command",
+              "python3 -I rental_errors.py"
+            ],
+            [
+              "Exact progress / final summary",
+              "..\nOK"
+            ],
+            [
+              "Counts / calculation",
+              "2 tests run; 2 passed; 0 failed. rental_total(2, 7) returns 14; it does not print 14."
+            ]
+          ],
+          "result": "The valid-total assertion and the expected ValueError with its exact message both pass. Exit status is 0.",
+          "why": "unittest writes its report to standard error, the output channel used for diagnostics. Each dot is a passing test; the final line is OK. Between them the real report includes Ran 2 tests in an elapsed number of seconds. That duration varies and is not a performance claim. Standard output is empty. The test names run in sorted order: test_valid then test_zero.",
+          "bars": [
+            {
+              "label": "Tests run",
+              "value": 2,
+              "max": 2
+            },
+            {
+              "label": "Tests passed",
+              "value": 2,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC zero-day rejection",
+          "steps": [
+            "Call with days = 0",
+            "L6 raises ValueError",
+            "Stop without a total"
+          ],
+          "evidence": [
+            [
+              "Command",
+              "python3 -I rental_errors.py zero"
+            ],
+            [
+              "Exact final traceback line",
+              "ValueError: days must be positive"
+            ],
+            [
+              "Frames / counts",
+              "Calling frame L25 → raising frame L6; 0 tests run; no total returned; exit status 1."
+            ]
+          ],
+          "result": "The guard rejects zero days with a useful message; the direct call leaves the exception visible.",
+          "why": "Zero is an integer, so the comparison succeeds and is true. Python reaches the explicit raise at L6. This mode does not start unittest and does not capture the error. It prints a traceback to standard error and no standard output. Case 1 captures this same rejection because the test expects it.",
+          "bars": [
+            {
+              "label": "Tests run",
+              "value": 0,
+              "max": 2
+            },
+            {
+              "label": "Tests passed",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC wrong-type traceback",
+          "steps": [
+            "Call with days = \"2\"",
+            "L5 comparison fails",
+            "Read the last line first"
+          ],
+          "evidence": [
+            [
+              "Header and calling frame",
+              "Traceback (most recent call last):\n  File \"rental_errors.py\", line 23, in <module>\n    rental_total(\"2\", 7)"
+            ],
+            [
+              "Failed frame and operation",
+              "  File \"rental_errors.py\", line 5, in rental_total\n    if days <= 0:\n       ^^^^^^^^^"
+            ],
+            [
+              "Exact final traceback line",
+              "TypeError: '<=' not supported between instances of 'str' and 'int'"
+            ]
+          ],
+          "result": "TypeError stops the direct call at L5 before L6 or L7: 0 tests run, no total returned, exit status 1.",
+          "why": "Read the last evidence item first: str means text and int means integer. Then move upward through the marked comparison and its rental_total frame to the calling line and <module> frame. L23 supplied text, not the integer used by the valid test. This is the program’s actual Python 3.12 traceback with the directory removed, not an exception deliberately raised by the guard. Standard output is empty.",
+          "bars": [
+            {
+              "label": "Tests run",
+              "value": 0,
+              "max": 2
+            },
+            {
+              "label": "Tests passed",
+              "value": 0,
+              "max": 2
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "An exception changes the path through the program. return supplies a normal result to the caller; raise leaves that normal path. An uncaught exception ends these direct runs with a nonzero exit status. The traceback reports where execution failed, which may differ from where the bad input originated. Here L5 fails because L23 supplied text. A traceback is a starting point for investigation, not an automatic repair or proof of the root cause.",
+      "The test makes the rejection observable. assertRaises fails if its call returns normally; assertEqual then checks the captured message. Change L5 from days <= 0 to days < 0: zero now reaches L7 and returns 0. test_valid still passes, but test_zero fails with AssertionError: ValueError not raised and the final summary FAILED (failures=1). AssertionError names the failed test expectation. Restore <= and rerun the same two tests to recover OK. Do not remove the failing test to make the report green.",
+      "Take away three habits: start with the traceback’s last line, distinguish the failing operation from its caller, and test a rejection as well as a result. Glossary: frame = one active call’s location; assertion = an expectation a test checks; guard = a condition checked before proceeding. These two tests leave negative rates untested: rental_total(2, -7) returns -14. Decide the rule and add a test before claiming that case is handled. M02-L04, Persist and test behavior, applies the same limits to storage failures. Next is M02-L11, Set up environments, scripts and notebooks, to make the command and environment easier to reproduce."
+    ],
+    "transfer": [
+      {
+        "question": "Change only L25 to rental_total(-1, 7), then run the zero mode. Which line fails, which line called it, and what will the last traceback line say?",
+        "answer": "L5 evaluates -1 <= 0 as true, so L6 raises; L25 is its caller. The last line is ValueError: days must be positive. Unlike the wrong-type case, the comparison itself works. No total is returned. Follow the frames to separate the explicit rejection from the place the input entered."
+      },
+      {
+        "question": "Both tests are green. Does that prove rental_total(2, -7) rejects a negative rate? How does this limit carry forward to M02-L04’s tests of persistent storage?",
+        "answer": "No: neither test uses a negative rate. This program returns -14 for that call. First decide whether negative rates are allowed, then add a specific expectation and implementation. In M02-L04 a passing normal-write test likewise cannot prove rollback or safe replay after a lost response; those failure paths need their own fixtures and assertions. A green report covers the checks executed, not every possible input or environment."
+      }
+    ],
+    "checks": [
+      {
+        "question": "For the wrong-type call at L23, where does the traceback tell you the operation failed?",
+        "options": [
+          "L6, because all invalid days use the explicit ValueError",
+          "L5, where text \"2\" is compared with integer 0",
+          "L7, after a total was returned"
+        ],
+        "answer": 1,
+        "explanation": "The last line says TypeError and the innermost frame points at L5. The comparison fails before the guard can choose its branch. L23 is the calling frame; it supplied the text value."
+      },
+      {
+        "question": "What does test_zero establish when it passes?",
+        "options": [
+          "Every input type and every rate is safe",
+          "Zero days returns a free rental",
+          "Zero days raises ValueError with the exact expected message"
+        ],
+        "answer": 2,
+        "explanation": "assertRaises checks the exception type and assertEqual checks its message. This one fixture does not establish rules for negative rates, all types or every caller."
+      },
+      {
+        "question": "After changing days <= 0 to days < 0, test_zero reports ValueError not raised. What should Meera do?",
+        "options": [
+          "Restore <= and rerun the same test command",
+          "Delete the rejection test so the report is green",
+          "Catch every exception and substitute zero"
+        ],
+        "answer": 0,
+        "explanation": "The broken guard permits zero and returns 0. The failure exposes that changed behavior. Restoring the guard makes the expected rejection work again; deleting the test or hiding the error removes evidence instead of fixing the rule."
+      }
+    ],
+    "topics": [
+      {
+        "title": "exceptions",
+        "explanation": "An exception interrupts normal evaluation. ValueError here is the deliberate rejection of a comparable but nonpositive day count. TypeError comes from the <= operation on text and an integer before that rejection can run. This program does not check all input types explicitly. Catch an exception only where you have a defined response; catching Exception and treating failure as zero would conceal the invalid rental. In a test, an expected exception is captured so its type and message can be checked."
+      },
+      {
+        "title": "reading tracebacks bottom-up",
+        "explanation": "Start at the final line: exception type, then message. Move upward to the source line and frame nearest that message, then to the caller. The header’s most recent call last describes the printed order of frames, from outer caller to inner failure. For wrong mode the two frames are L23 in <module> and L5 in rental_total; the caret marks the failed comparison. For zero mode they are L25 and L6. A file path or caret style can differ on another machine while those source locations and the failure remain the same."
+      },
+      {
+        "title": "raising with a message",
+        "explanation": "raise ValueError(\"days must be positive\") states the rejected rule instead of returning a plausible charge. It runs for zero and negative numeric days, not for the incompatible text comparison. Keep messages useful to the caller and avoid including secrets. The message assertion deliberately makes this small teaching contract exact; if the wording is intentionally revised, revise the expected message too. Raising is not logging and does not automatically recover or retry."
+      },
+      {
+        "title": "a first unittest",
+        "explanation": "RentalTests inherits unittest.TestCase so its instances have assertion helpers. unittest.main finds the two test_ methods. assertEqual checks 14 against the valid calculation. The assertRaises context captures ValueError; caught.exception exposes it for the message assertion. A missing ValueError is a test failure, whereas an unexpected exception type is reported as an error. The two dots and OK are report output, not proof that the program printed a charge. Record the command, Python version and the tested inputs alongside the result."
+      },
+      {
+        "title": "what a test does not prove",
+        "explanation": "Two passing examples establish those assertions in the environment where they ran. They do not establish all numeric boundaries, valid rates, allowed types, safe billing or deployment behavior. The guard mutation is a useful check of the test itself: changing <= to < must produce FAILED (failures=1); restoring <= must pass. It does not prove the test suite catches every possible bug. Keep one untested boundary in your notes, then turn a chosen rule into another test rather than claiming complete coverage."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-14",
+    "sources": [
+      {
+        "title": "Python: Exceptions (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/errors.html#exceptions"
+      },
+      {
+        "title": "Python: Raising exceptions (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/errors.html#raising-exceptions"
+      },
+      {
+        "title": "Python: Handling exceptions (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/errors.html#handling-exceptions"
+      },
+      {
+        "title": "Python: traceback.print_exception (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/traceback.html#traceback.print_exception"
+      },
+      {
+        "title": "Python: Basic unittest example (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/unittest.html#basic-example"
+      },
+      {
+        "title": "Python: TestCase.assertRaises (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/unittest.html#unittest.TestCase.assertRaises"
+      },
+      {
+        "title": "Python: TestCase.assertEqual (3.12 library)",
+        "url": "https://docs.python.org/3.12/library/unittest.html#unittest.TestCase.assertEqual"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the code below as rental_errors.py. Its first 27 lines are identical to the numbered listing. The triple-quoted text afterwards is the captured Python 3.12 traceback to compare with your wrong-mode run; it is a reference string, not another command. Each mode exits before reaching it. Only the directory prefix has been removed from that recorded output. These are SYNTHETIC teaching fixtures, not a pricing policy or benchmark. Target Python 3.12, standard library only. Record python3 --version and the exact test command python3 -I rental_errors.py with its output. Predict 14 for two days at 7 units per day and an explicit rejection for zero. Run that command: expect two tests, two dots and the final summary OK. The elapsed time may differ; it is not a benchmark.",
+        "Run python3 -I rental_errors.py zero and keep its real traceback, ending ValueError: days must be positive. Then run python3 -I rental_errors.py wrong and keep the traceback ending TypeError: '<=' not supported between instances of 'str' and 'int'. Both direct runs should exit with status 1. Annotate each traceback bottom-up: last-line type and message, failing source line, its frame, calling source line and frame, then the header. For wrong mode identify L5 and L23; for zero mode identify L6 and L25. Neither run prints a total.",
+        "Now deliberately edit L5 from days <= 0 to days < 0. Rerun python3 -I rental_errors.py: expect AssertionError: ValueError not raised and the final line FAILED (failures=1), with a nonzero exit. Save that report. Restore days <= 0 and rerun python3 -I rental_errors.py unchanged: two tests pass and the final line is OK again. Keep the before, broken and restored commands and reports with the Python version; name one untested boundary such as a negative rate. Do not remove a test or catch every exception to hide the failure."
+      ],
+      "starter": "import sys\nimport unittest\n\ndef rental_total(days, rate):\n    if days <= 0:\n        raise ValueError(\"days must be positive\")\n    return days * rate\n\nclass RentalTests(unittest.TestCase):\n    def test_valid(self):\n        self.assertEqual(rental_total(2, 7), 14)\n\n    def test_zero(self):\n        with self.assertRaises(ValueError) as caught:\n            rental_total(0, 7)\n        self.assertEqual(\n            str(caught.exception),\n            \"days must be positive\")\n\nif __name__ == \"__main__\":\n    mode = sys.argv[1] if len(sys.argv) > 1 else \"tests\"\n    if mode == \"wrong\":\n        rental_total(\"2\", 7)\n    elif mode == \"zero\":\n        rental_total(0, 7)\n    else:\n        unittest.main(argv=[sys.argv[0]])\n\n# Expected wrong-mode stderr; directory prefix removed.\n\"\"\"\nTraceback (most recent call last):\n  File \"rental_errors.py\", line 23, in <module>\n    rental_total(\"2\", 7)\n  File \"rental_errors.py\", line 5, in rental_total\n    if days <= 0:\n       ^^^^^^^^^\nTypeError: '<=' not supported between instances of 'str' and 'int'\n\"\"\""
+    }
   }
 ]

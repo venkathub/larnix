@@ -429,5 +429,19 @@
       "check2": "2",
       "check3": "0"
     }
+  },
+  "M02-L10": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Read errors and prove behaviour",
+    "description": "Read the last traceback line first, then test both an expected result and an explicit rejection.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }
