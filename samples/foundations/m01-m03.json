@@ -3472,5 +3472,276 @@
         "print(\"multi-day predicted:\", predicted, \"observed:\", observed)"
       ]
     }
+  },
+  {
+    "id": "M02-L09",
+    "orientation": "In M02-L08 you followed a value through a function and a branch. Now Meera needs to keep several rental tickets together and save them between runs. A collection holds several values; a file keeps text outside the running program. Predict what survives a trip to a file and back. The numbered program below is the first 25 lines of the practice code under Production practice; read it beside the trace before running it.",
+    "idea": "Keep field names with each ticket, then check row counts and value types after saving and reloading a file.",
+    "story": [
+      "Meera has three SYNTHETIC rental tickets: r1 lasts 1 day, r2 lasts 3 days and r3 lasts 2 days. She wants the bookings lasting at least 2 days and a total number of rental days. A list is an ordered collection written with square brackets. Each item here is a dictionary, or dict: it connects a key, the lookup label, to a value. In {\"id\": \"r2\", \"days\": 3}, the keys are \"id\" and \"days\". tickets[1] retrieves the second ticket because list positions start at zero; tickets[1][\"days\"] retrieves its day count.",
+      "A comprehension builds a new collection by evaluating an expression for each input item, optionally keeping only items that pass a condition. Read L8 from its for clause: take each row in tickets, test row[\"days\"] >= 2, and put that row into multi if the test passes. Predict r2 and r3, in that order. The original three-ticket list stays intact. multi is a new list, but its dictionaries are the same objects: changing a selected dictionary would also change that ticket in tickets.",
+      "CSV means comma-separated values: this file has a header and one row per ticket. JSON is a text format with named fields, lists and distinct number and text values. Saving and loading again is a round-trip. Python’s csv and json modules supply the reading and writing functions; import makes those modules available. with open(...) opens a file for the indented block and closes it afterwards. The \"w\" mode writes a new file or replaces an existing one. Use a fresh practice directory. UTF-8 specifies how text becomes bytes. Neither file format decides whether a rental is valid.",
+      "A tuple is an ordered collection whose positions cannot be reassigned: (\"r2\", 3) keeps an ID in position 0 and days in position 1. A class defines a kind of object; an attribute is a value reached through a name after a dot. In the practice extension, Ticket(\"r2\", 3) creates an object called named; its initialization function __init__ stores self.ticket_id and self.days, where self refers to that new object. named.days, pair[1] and tickets[1][\"days\"] all give 3, but the named forms explain what 3 means. This small class does not check the value’s type or range."
+    ],
+    "example": "SYNTHETIC trace: L1–L2 load the two file modules. L3–L7 make three dictionaries inside tickets, with day counts [1, 3, 2]. L8 tests 1 >= 2 (False), 3 >= 2 (True), then 2 >= 2 (True), so multi holds r2 and r3. L9–L12 write the CSV header and all three tickets, not just multi. L13–L14 read three dictionaries; csv_rows[1][\"days\"] is text \"3\". L15–L18 write and read all three tickets as JSON; json_rows[1][\"days\"] is integer 3. L19 converts the CSV values to [1, 3, 2]. L20 prints counts: 3 3 3. L21 prints multi: ['r2', 'r3']. L22 prints csv days: '3' str; L23 prints json days: 3 int. L24 prints totals: 6 6 because 1 + 3 + 2 = 6 rental days. L25 prints raw vs converted: 33 6: text \"3\" repeated twice is \"33\", while 3 × 2 = 6. At a fictional 2 units per day, only the numeric calculation is a 6-unit charge for r2. There is no discount in this file exercise. The exact file text is shown in case 1; the files are written before the deliberate bad-field extension.",
+    "listing": {
+      "title": "SYNTHETIC ticket round-trip · first 25 practice lines",
+      "language": "python",
+      "lines": [
+        "import csv",
+        "import json",
+        "tickets = [",
+        "    {\"id\": \"r1\", \"days\": 1},",
+        "    {\"id\": \"r2\", \"days\": 3},",
+        "    {\"id\": \"r3\", \"days\": 2},",
+        "]",
+        "multi = [row for row in tickets if row[\"days\"] >= 2]",
+        "with open(\"tickets.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as file:",
+        "    writer = csv.DictWriter(file, fieldnames=[\"id\", \"days\"], lineterminator=\"\\n\")",
+        "    writer.writeheader()",
+        "    writer.writerows(tickets)",
+        "with open(\"tickets.csv\", newline=\"\", encoding=\"utf-8\") as file:",
+        "    csv_rows = list(csv.DictReader(file))",
+        "with open(\"tickets.json\", \"w\", encoding=\"utf-8\") as file:",
+        "    json.dump(tickets, file)",
+        "with open(\"tickets.json\", encoding=\"utf-8\") as file:",
+        "    json_rows = json.load(file)",
+        "csv_days = [int(row[\"days\"]) for row in csv_rows]",
+        "print(\"counts:\", len(tickets), len(csv_rows), len(json_rows))",
+        "print(\"multi:\", [row[\"id\"] for row in multi])",
+        "print(\"csv days:\", repr(csv_rows[1][\"days\"]), type(csv_rows[1][\"days\"]).__name__)",
+        "print(\"json days:\", repr(json_rows[1][\"days\"]), type(json_rows[1][\"days\"]).__name__)",
+        "print(\"totals:\", sum(csv_days), sum(row[\"days\"] for row in json_rows))",
+        "print(\"raw vs converted:\", csv_rows[1][\"days\"] * 2, int(csv_rows[1][\"days\"]) * 2)"
+      ]
+    },
+    "sketch": [
+      "3 named ticket dictionaries",
+      "Write → read CSV and JSON",
+      "Inspect types → convert → total"
+    ],
+    "trap": "A file that opens successfully is not necessarily a valid rental record. CSV gives this program text day counts; JSON preserves the numeric values we wrote, but would also accept \"days\": \"three\" as perfectly valid JSON text. Converting \"three\" with int raises ValueError, an exception reporting an unsuitable value. Dropping that ticket would make an incomplete total look complete. Keep the row, stop the calculation and inspect the field.",
+    "lab": {
+      "question": "SYNTHETIC fixed program fixtures: this page does not run Python or read your files. Predict the selected IDs, the reloaded types and the bad-field failure before choosing a case. Cases 1 and 2 show outputs from the same 25-line program; case 3 shows its deliberate practice extension.",
+      "limitation": "SYNTHETIC teaching fixtures, not a pricing policy or benchmark. This page switches authored outputs; it does not execute Python. The program checks these three rows, not a complete rental schema: it does not enforce unique IDs or positive days, and a missing field fails only when accessed. The invalid total is withheld, not replaced by zero. Bars count tickets, not money or successful validation.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC filter and files",
+          "steps": [
+            "Keep days >= 2",
+            "Write all 3 tickets",
+            "Read 3; sum 6 days"
+          ],
+          "evidence": [
+            [
+              "Exact count / filter / total output",
+              "counts: 3 3 3\nmulti: ['r2', 'r3']\ntotals: 6 6"
+            ],
+            [
+              "Exact CSV text (UTF-8)",
+              "\"id,days\\nr1,1\\nr2,3\\nr3,2\\n\"; each \\n denotes one LF line ending, including the final one."
+            ],
+            [
+              "Exact JSON text (UTF-8)",
+              "[{\"id\": \"r1\", \"days\": 1}, {\"id\": \"r2\", \"days\": 3}, {\"id\": \"r3\", \"days\": 2}] (one line; no final newline)"
+            ]
+          ],
+          "result": "Two tickets meet the multi-day condition; both files still contain all three. Converted CSV days and JSON days each total 6.",
+          "why": "Selection and storage are separate decisions. L8 selects r2 and r3 without deleting r1. L12 and L16 save tickets, so each round-trip keeps 3 records. CSV has a header plus 3 data rows; JSON has a list of 3 objects. The CSV writer explicitly uses LF line endings. The output lines shown here are L20, L21 and L24; case 2 supplies the intervening type lines and L25.",
+          "bars": [
+            {
+              "label": "Selected multi-day tickets",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Rows retained in memory",
+              "value": 3,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC text versus number",
+          "steps": [
+            "CSV \"3\" / JSON 3",
+            "Text × 2 → \"33\"",
+            "int(\"3\") × 2 → 6"
+          ],
+          "evidence": [
+            [
+              "Exact CSV type output",
+              "csv days: '3' str"
+            ],
+            [
+              "Exact JSON type output",
+              "json days: 3 int"
+            ],
+            [
+              "Exact multiplication output",
+              "raw vs converted: 33 6"
+            ]
+          ],
+          "result": "The same written digits reload with different types: CSV text repeats under multiplication; the converted integer multiplies numerically.",
+          "why": "repr shows quotes around text and type(...).__name__ prints str or int, the type’s name. Normal print omits the quotes around \"33\", so the last line can look numeric even though it contains repeated text. Inspect the type before using a value in a total. The 6 6 in case 1 is the sum of all day counts; the 6 here is r2’s 3 days multiplied by 2 fictional units per day.",
+          "bars": [
+            {
+              "label": "Selected multi-day tickets",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Rows retained in memory",
+              "value": 3,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC invalid numeric field",
+          "steps": [
+            "Set r2 days to \"three\"",
+            "Retain all 3 rows",
+            "int → ValueError; stop"
+          ],
+          "evidence": [
+            [
+              "Exact output before failure",
+              "invalid row: {'id': 'r2', 'days': 'three'}"
+            ],
+            [
+              "Exception (final traceback line)",
+              "ValueError: invalid literal for int() with base 10: 'three'"
+            ],
+            [
+              "Rows / total after failure",
+              "3 rows retained; no invalid total: line is printed. Earlier totals: 6 6 belongs to the original valid fixture."
+            ]
+          ],
+          "result": "The practice extension stops with ValueError and a nonzero exit; no total for the altered rows is reported.",
+          "why": "The extension changes only csv_rows in memory after the files and valid outputs were produced. int converts r1, then fails on r2. Python evaluates the sum before calling print, so invalid total: never appears. No except block hides the failure and no filter removes r2. The saved CSV and JSON remain the original three valid tickets. Read errors and prove behaviour in M02-L10 will investigate this traceback, the report of where execution failed.",
+          "bars": [
+            {
+              "label": "Selected multi-day tickets",
+              "value": 2,
+              "max": 3
+            },
+            {
+              "label": "Rows retained in memory",
+              "value": 3,
+              "max": 3
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Field names and positions solve different problems. A list keeps ticket order; a dictionary makes row[\"days\"] meaningful without memorizing a slot. A tuple is convenient when its short positional agreement is clear. The small Ticket class offers attribute access, but writing a class does not make a record valid. In every form Meera must still decide which IDs and day counts are allowed. A missing dictionary key raises KeyError, an exception naming the lookup that failed; it is not an empty or zero day count.",
+      "A file stores a representation of the values, not the running objects themselves. DictReader uses the CSV header as keys and, with these default settings, returns the field values as strings. JSON’s unquoted integer number reloads as a Python int. int(\"3\") explicitly converts the known numeric text; int(\"three\") refuses it. len counts items and sum adds numbers; the comprehension at L19 prepares numbers before the total is calculated. Converting successfully does not prove positivity or a unique ID. Check names, counts, types and the rules your application needs.",
+      "Take away four habits: keep related fields together, select into a new list, inspect a round-trip’s types, and stop on an unexplained bad field. Glossary: key = dictionary lookup label; attribute = named value on an object; comprehension = expression applied across inputs to build a collection; round-trip = write then read. Next is M02-L10, Read errors and prove behaviour: use the deliberate failure to read a traceback and make a small test. Later M02-L05 and M02-L06 add arrays and dataframes for larger numeric and tabular work; these three tickets do not measure their performance."
+    ],
+    "transfer": [
+      {
+        "question": "Meera extracts days = [1, 3, 2]. Before M02-L05, predict days * 2. Why is this Python list not yet a numeric array?",
+        "answer": "The result is [1, 3, 2, 1, 3, 2]: list multiplication repeats the sequence. It does not produce [2, 6, 4]. A Python list can hold different kinds of objects; a NumPy array adds an element type and array arithmetic with explicit shape rules. M02-L05, Operate on arrays without shape surprises, teaches that separate contract. Merely writing square brackets does not opt into it."
+      },
+      {
+        "question": "Before M02-L06, Meera stores {\"id\": [\"r1\", \"r2\"], \"days\": [1, 3]} and sorts only the ID list into descending order. Can matching list positions safely join these tickets to rates? What if a rate ID appears twice?",
+        "answer": "Positions can drift apart: sorting only one list can attach days to the wrong ID. Keep each ticket’s fields together and match on an explicit identifier. Even named dictionaries do not solve duplicate rate keys or missing matches. M02-L06, Transform dataframes with trustworthy joins, checks the key relationship and row counts before totaling charges; a join can create more rows than tickets."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Which tickets does L8 select, and how many remain in tickets?",
+        "options": [
+          "r2 only; 1 ticket remains",
+          "r2 and r3; all 3 tickets remain",
+          "r1 and r2; 2 tickets remain"
+        ],
+        "answer": 1,
+        "explanation": "The condition includes exactly 2 days, so r2 (3) and r3 (2) pass. The comprehension creates multi; it does not delete r1 from tickets. Both files are written from the original 3-ticket list."
+      },
+      {
+        "question": "CSV reloads r2 days as text \"3\". Which calculation gives its numeric charge at 2 units per day?",
+        "options": [
+          "csv_rows[1][\"days\"] * 2",
+          "Trust print: 33 looks like a number",
+          "int(csv_rows[1][\"days\"]) * 2"
+        ],
+        "answer": 2,
+        "explanation": "int converts the known numeric text to 3; multiplying by 2 gives 6. Without conversion, the text repeats as \"33\". JSON storing a number is useful, but neither format validates every future input."
+      },
+      {
+        "question": "The altered r2 field is \"three\". What does the full practice run do?",
+        "options": [
+          "Raises ValueError, retains the row and reports no altered total",
+          "Drops r2 and reports the other two tickets as a complete total",
+          "Changes r2 to zero automatically"
+        ],
+        "answer": 0,
+        "explanation": "int(\"three\") raises ValueError. There is no code to remove or replace the row, and the sum fails before print runs. The earlier 6-day total and saved files belong to the valid fixture, not the altered rows."
+      }
+    ],
+    "topics": [
+      {
+        "title": "lists, dictionaries and tuples",
+        "explanation": "Use a list when you need several tickets in order, a dictionary when a record needs meaningful field labels, and a tuple for a short positional record whose ordering is agreed. tickets[1] is the second item; tickets[1][\"days\"] reads its named field. pair = (\"r2\", 3) needs the convention that pair[1] means days. A tuple prevents reassignment of its positions, not validation of the objects inside it. Building multi does not deeply copy its ticket dictionaries. Avoid removing list items while walking that same list: selection into a new list keeps the input count inspectable."
+      },
+      {
+        "title": "comprehensions",
+        "explanation": "In [row for row in tickets if row[\"days\"] >= 2], for visits each ticket, if decides whether to keep it, and the first row is the value put into the new list. [int(row[\"days\"]) for row in csv_rows] instead transforms every field and keeps the count. Do not add an if to silently discard fields you cannot convert: that changes the meaning of the total. A comprehension may raise an exception partway through; it does not promise a successful result just because its input is a list."
+      },
+      {
+        "title": "CSV and JSON files",
+        "explanation": "DictWriter writes the ordered header id,days and converts these integers to text. newline=\"\" lets the csv module handle line boundaries; lineterminator=\"\\n\" chooses LF for reproducible output. DictReader reads the header as names and gives this program string fields. json.dump writes the full list; json.load reconstructs dictionaries and integer values for the numbers used here. Both use UTF-8 explicitly. The exact CSV text in case 1 uses escaped \\n to show otherwise invisible line endings; JSON is one line with spaces and no final newline. Preserve the files and compare field names, row counts and converted values. Parsing valid syntax is not checking rental rules."
+      },
+      {
+        "title": "a small class as a named record",
+        "explanation": "The practice code defines Ticket with an __init__ function. Calling Ticket(\"r2\", 3) creates an instance, one object of that class, and initialization assigns its ticket_id and days attributes. self identifies that instance inside the function. Reading named.days describes a field more clearly than pair[1], while the dictionary form uses tickets[1][\"days\"]. The printed comparison is named / tuple / dict: 3 3 3. This class has no automatic checks, no inheritance and no storage behavior. The JSON code writes dictionaries, not arbitrary Ticket objects."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-13",
+    "sources": [
+      {
+        "title": "Python: List comprehensions (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/datastructures.html#list-comprehensions"
+      },
+      {
+        "title": "Python: Tuples and sequences (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/datastructures.html#tuples-and-sequences"
+      },
+      {
+        "title": "Python: Dictionaries (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/datastructures.html#dictionaries"
+      },
+      {
+        "title": "Python: DictReader (3.12 csv module)",
+        "url": "https://docs.python.org/3.12/library/csv.html#csv.DictReader"
+      },
+      {
+        "title": "Python: DictWriter (3.12 csv module)",
+        "url": "https://docs.python.org/3.12/library/csv.html#csv.DictWriter"
+      },
+      {
+        "title": "Python: JSON decoding table (3.12 json module)",
+        "url": "https://docs.python.org/3.12/library/json.html#json-to-py-table"
+      },
+      {
+        "title": "Python: json.dump (3.12 json module)",
+        "url": "https://docs.python.org/3.12/library/json.html#json.dump"
+      },
+      {
+        "title": "Python: Instance objects (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/classes.html#instance-objects"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the code below as rental_files.py in a new practice directory; run it from that directory because it writes or replaces tickets.csv and tickets.json there. The numbered core listing is exactly its first 25 lines. The rest compares a small class with a tuple, then injects an invalid field. These are SYNTHETIC teaching fixtures, not a pricing policy or benchmark. Target Python 3.12, standard library only. Record python3 --version, the fixture, UTF-8 encoding, LF CSV line endings and the command python3 -I rental_files.py.",
+        "Predict 3 input rows, 2 selected tickets and 6 total days before running python3 -I rental_files.py. Compare both saved files with case 1, including the CSV header id,days and JSON keys id and days. Reloaded CSV days are text; converted CSV days and JSON days are [1, 3, 2]. Keep the exact outputs counts: 3 3 3, multi: ['r2', 'r3'], csv days: '3' str, json days: 3 int, totals: 6 6, raw vs converted: 33 6, and named / tuple / dict: 3 3 3. Explain the tuple position and each named alternative. The deliberate extension prints the altered r2 row, then raises ValueError; this nonzero exit is expected evidence, not completed practice.",
+        "Keep the original traceback and all three rows. In the deliberately marked assignment change \"three\" to \"3\", predict invalid total: 6, and rerun to a successful exit. Do not remove the row or invent zero. The bad value was injected in memory, so the original saved files stayed valid. As a separate experiment remove days from one dictionary and inspect the resulting KeyError when the field is read; restore the original fixture afterwards. Record commands, outputs and which values were changed. These checks do not establish uniqueness, positive days, a complete schema, real billing or performance; M02-L10 will turn specific expectations into tests."
+      ],
+      "starter": "import csv\nimport json\ntickets = [\n    {\"id\": \"r1\", \"days\": 1},\n    {\"id\": \"r2\", \"days\": 3},\n    {\"id\": \"r3\", \"days\": 2},\n]\nmulti = [row for row in tickets if row[\"days\"] >= 2]\nwith open(\"tickets.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as file:\n    writer = csv.DictWriter(file, fieldnames=[\"id\", \"days\"], lineterminator=\"\\n\")\n    writer.writeheader()\n    writer.writerows(tickets)\nwith open(\"tickets.csv\", newline=\"\", encoding=\"utf-8\") as file:\n    csv_rows = list(csv.DictReader(file))\nwith open(\"tickets.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(tickets, file)\nwith open(\"tickets.json\", encoding=\"utf-8\") as file:\n    json_rows = json.load(file)\ncsv_days = [int(row[\"days\"]) for row in csv_rows]\nprint(\"counts:\", len(tickets), len(csv_rows), len(json_rows))\nprint(\"multi:\", [row[\"id\"] for row in multi])\nprint(\"csv days:\", repr(csv_rows[1][\"days\"]), type(csv_rows[1][\"days\"]).__name__)\nprint(\"json days:\", repr(json_rows[1][\"days\"]), type(json_rows[1][\"days\"]).__name__)\nprint(\"totals:\", sum(csv_days), sum(row[\"days\"] for row in json_rows))\nprint(\"raw vs converted:\", csv_rows[1][\"days\"] * 2, int(csv_rows[1][\"days\"]) * 2)\n\n# SYNTHETIC named-record comparison; no automatic field validation.\nclass Ticket:\n    def __init__(self, ticket_id, days):\n        self.ticket_id = ticket_id\n        self.days = days\nnamed = Ticket(\"r2\", 3)\npair = (\"r2\", 3)\nprint(\"named / tuple / dict:\", named.days, pair[1], tickets[1][\"days\"])\n\n# Deliberate invalid field in memory; the two files stay unchanged.\ncsv_rows[1][\"days\"] = \"three\"\nprint(\"invalid row:\", csv_rows[1])\nprint(\"invalid total:\", sum(int(row[\"days\"]) for row in csv_rows))"
+    }
   }
 ]

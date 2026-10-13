@@ -2,7 +2,7 @@
 
 ## Current milestone: M01–M06 foundations and two advanced previews
 
-The classroom has 30 authored previews; the published site follows `main`. The reference repository has not been forked or imported.
+The classroom has 31 authored previews; the published site follows `main`. The reference repository has not been forked or imported.
 
 - Catalogue of all 42 modules and 192 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.
@@ -10,13 +10,13 @@ The classroom has 30 authored previews; the published site follows `main`. The r
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
 - The separate preview showcase is removed in the catalogue draft. Available lessons open directly from their modules; planned lessons open their blueprints. On mobile the roadmap starts collapsed and closes after a stage is selected.
 - Module pages, lesson blueprints, direct prerequisite links, primary readings and next-lesson navigation.
-- Thirty authored previews: 28 original foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
+- Thirty-one authored previews: 29 original foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
 - Each preview has a suggested 10-minute core, original handwritten-style SVG, three checks, and optional deeper explanation/interview/production sections. Direct links reveal optional content automatically.
 - Shared quiz/theme component plus course navigation, bookmarks and independent reading/check/practice records.
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
 
-This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 162 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
+This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 161 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
 
 ## Run and check
 
@@ -135,7 +135,7 @@ Reviewer conclusion: the core now teaches a useful diagnostic distinction and pr
 
 ### Beginner improvements across every preview — October 12, 2026
 
-All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 162 currently planned lessons as authored.
+All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 161 currently planned lessons as authored.
 
 - **Vectors:** removed the winner from the prediction instructions, moved normalization beside metric selection, and added live raw coordinates and both scores next to the explanation. Normalization is defined where the first transfer question uses it. A second transfer case separates cosine alignment from factual correctness and freshness.
 - **Recovery:** introduced the authorized task and explained reconciliation before controls. The result now compares saved agent evidence with provider refund count and amount, explicitly marked as an observer view. Replay controls sit in the optional settings disclosure. A second transfer case tests matching the amount as well as the operation ID; deduplication is explained in plain language in the first case.
@@ -148,13 +148,13 @@ Honest review: vectors gives the most concrete entry point, although interpretin
 
 ## Foundation delivery — M01–M06
 
-Twenty-eight foundation lessons now open as authored previews, including M02-L05, M02-L06 and M02-L07. Twenty-seven use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 28 of the 30 available previews; 162 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
+Twenty-nine foundation lessons now open as authored previews, including M02-L05, M02-L06 and M02-L07. Twenty-eight use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 29 of the 31 available previews; 161 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
 
 Each new lesson includes definitions, a handwritten mechanism sketch, a worked example, a misconception, three original illustrated cases with adjacent feedback and numerical evidence, three checks, two concealed-answer transfer prompts, every approved topic as an expanded note, verified primary sources, and a downloadable practice starter with acceptance criteria. The ten-minute route introduces one central mechanism; broader notes and production practice require additional time.
 
 The case explorer switches between fixed synthetic fixtures and labels that limitation explicitly before the controls and below the visual. It does not pretend to run Python, train a model, call an API or measure production results. M03-L02 and M05-L02 additionally provide a computed quadratic-loss chart and step controls; M04-L03 provides a computed threshold slider with six per-ticket decisions, confusion counts, precision and recall. Undefined precision at zero alerts is preserved.
 
-The build rejects missing topic coverage, malformed checks, incomplete cases and inconsistent chart scales. Tests independently calculate threshold counts, baseline mistakes, scalar gradient updates and shared-filter outputs; the page checks enforce 28-lesson foundation availability and match saved quiz keys to authored answers. Previous/next navigation opens authored lessons directly and stays visible after completion checks.
+The build rejects missing topic coverage, malformed checks, incomplete cases and inconsistent chart scales. Tests independently calculate threshold counts, baseline mistakes, scalar gradient updates and shared-filter outputs; the page checks enforce 29-lesson foundation availability and match saved quiz keys to authored answers. Previous/next navigation opens authored lessons directly and stays visible after completion checks.
 
 Authoring sources were rechecked against primary documentation, including Python, RFC 9110, PostgreSQL, D2L, SciPy, scikit-learn, PyTorch 2.9, Google ML framing, Microsoft HAX, Feast and Hugging Face. Individual lessons link the exact relevant pages. The reference GitHub project was not forked or imported. Coding starters are exercises for learners to develop and verify; they are not a claim that all described services or pipelines have been built.
 
