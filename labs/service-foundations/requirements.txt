@@ -1,0 +1,1 @@
+# standard library only; target Python 3.12
