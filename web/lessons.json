@@ -415,5 +415,19 @@
       "check2": "2",
       "check3": "0"
     }
+  },
+  "M02-L09": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Shape data with collections and files",
+    "description": "Keep field names with each ticket, then check row counts and value types after saving and reloading a file.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }

@@ -1,6 +1,6 @@
 # AGENTS.md — Larnix
 
-Original AI/ML Engineering curriculum: 42 modules, 192 lesson plans, 30 authored previews,
+Original AI/ML Engineering curriculum: 42 modules, 192 lesson plans, 31 authored previews,
 static site published to GitHub Pages. No backend, no accounts, no model calls at runtime.
 
 ## Commands
