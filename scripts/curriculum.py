@@ -400,7 +400,9 @@ def main():
         raise SystemExit(f"Invalid curriculum input: {exc}") from exc
     if errors:
         raise SystemExit("\n".join(errors))
-    expected = render(curriculum, sources)
+    # Share the on-disk newline contract between writing and stale-file checks.
+    expected = {relative: content.rstrip() + "\n"
+                for relative, content in render(curriculum, sources).items()}
     if args.command == "render":
         for relative, content in expected.items():
             path = BASE / relative
