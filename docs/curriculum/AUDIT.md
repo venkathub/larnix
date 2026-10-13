@@ -9,7 +9,7 @@ Generated from the authoritative JSON records after content validation. Run `pyt
 | Unique interview questions and answer guidance | 188 |
 | Unique exercise briefs with acceptance criteria | 188 |
 | Source records | 99 |
-| Direct prerequisite edges | 252 |
+| Direct prerequisite edges | 259 |
 | Unknown prerequisites / dependency cycles | 0 / 0 |
 | Unknown source IDs / invalid source URL syntax | 0 / 0 |
 | Learning path | All modules once; every dependency precedes its dependent lesson |
@@ -31,6 +31,6 @@ The checker validates IDs, field completeness, unique questions/exercises, sourc
 
 Lessons with one source: 27. EVAL references: 24; NIST references: 20. A focused specification can legitimately be a single source; source count alone is not evidence quality.
 
-Effort ranges were reviewed per lesson against its exercise on October 13. They remain editorial estimates, not validated timings. Every record contains its work basis, assumptions and calibration requirement.
+Hour ranges differ by lesson but remain low-confidence editorial estimates, not measured learner timings. They assume stated prerequisites and small local fixtures or labeled replays, excluding large training runs and cloud provisioning. Repeated estimate-basis prose was removed after post-review; calibrate the ranges through learner trials.
 
 [Per-lesson delivery inventory](DELIVERY.md) · [Review response](REVIEW_2026-10-13.md)

@@ -18,12 +18,12 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 ### [M02 — Software engineering for AI](modules/M02.md)
 
 - [M02-L01](modules/M02.md#m02-l01) — Build reproducible Python components
-- [M02-L02](modules/M02.md#m02-l02) — Design service contracts
-- [M02-L03](modules/M02.md#m02-l03) — Control concurrent work
-- [M02-L04](modules/M02.md#m02-l04) — Persist and test behavior
 - [M02-L05](modules/M02.md#m02-l05) — Operate on arrays without shape surprises
 - [M02-L06](modules/M02.md#m02-l06) — Transform dataframes with trustworthy joins
 - [M02-L07](modules/M02.md#m02-l07) — Inspect datasets and communicate uncertainty
+- [M02-L02](modules/M02.md#m02-l02) — Design service contracts
+- [M02-L03](modules/M02.md#m02-l03) — Control concurrent work
+- [M02-L04](modules/M02.md#m02-l04) — Persist and test behavior
 
 ### [M03 — Applied mathematics and statistics](modules/M03.md)
 
@@ -231,12 +231,12 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 - [M29-L01](modules/M29.md#m29-l01) — Package reproducible services
 - [M29-L02](modules/M29.md#m29-l02) — Automate delivery gates
-- [M29-L03](modules/M29.md#m29-l03) — Release progressively
-- [M29-L04](modules/M29.md#m29-l04) — Operate across environments
 - [M29-L05](modules/M29.md#m29-l05) — Track reproducible predictive training runs
 - [M29-L06](modules/M29.md#m29-l06) — Promote model versions through a registry
 - [M29-L07](modules/M29.md#m29-l07) — Serve predictions in batches and online
 - [M29-L08](modules/M29.md#m29-l08) — Close the drift and retraining loop
+- [M29-L03](modules/M29.md#m29-l03) — Release progressively
+- [M29-L04](modules/M29.md#m29-l04) — Operate across environments
 
 ### [M30 — AI application security](modules/M30.md)
 
@@ -278,12 +278,12 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 ### [M35 — Inference and serving systems](modules/M35.md)
 
+- [M35-L05](modules/M35.md#m35-l05) — Understand hardware before optimizing kernels
+- [M35-L06](modules/M35.md#m35-l06) — Export and validate models on constrained devices
 - [M35-L01](modules/M35.md#m35-l01) — Model inference costs
 - [M35-L02](modules/M35.md#m35-l02) — Improve scheduling and memory
 - [M35-L03](modules/M35.md#m35-l03) — Reduce inference work
 - [M35-L04](modules/M35.md#m35-l04) — Scale serving safely
-- [M35-L05](modules/M35.md#m35-l05) — Understand hardware before optimizing kernels
-- [M35-L06](modules/M35.md#m35-l06) — Export and validate models on constrained devices
 
 ### [M36 — Distributed training and advanced optimization](modules/M36.md)
 
@@ -319,12 +319,12 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 ### [M40 — Applied AI architectures](modules/M40.md)
 
+- [M40-L05](modules/M40.md#m40-l05) — Build and evaluate recommendation baselines
+- [M40-L06](modules/M40.md#m40-l06) — Forecast with rolling evidence
 - [M40-L01](modules/M40.md#m40-l01) — Design search and recommendations
 - [M40-L02](modules/M40.md#m40-l02) — Combine prediction and language
 - [M40-L03](modules/M40.md#m40-l03) — Build document and analytics assistants
 - [M40-L04](modules/M40.md#m40-l04) — Build operational and coding assistants
-- [M40-L05](modules/M40.md#m40-l05) — Build and evaluate recommendation baselines
-- [M40-L06](modules/M40.md#m40-l06) — Forecast with rolling evidence
 
 ### [M41 — AI system design](modules/M41.md)
 

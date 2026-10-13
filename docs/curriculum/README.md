@@ -34,7 +34,7 @@ Sources are reading entry points rather than copied tutorials. Before writing a 
 
 Learners should be comfortable with basic programming ideas and running commands. M02 plans a Python, HTTP, concurrency, SQL, NumPy, pandas and plotting bridge; M03 provides mathematical foundations. No previous LLM application experience is required. A learner can demonstrate an outcome to skip familiar prerequisite material.
 
-The catalogue has seven groups of six modules. Grouping helps navigation; it does not force security and evaluation to the end. The [recommended path](LEARNING_PATH.md) brings M25 and M30 forward and validates all direct and transitive prerequisites. Lessons inside each module are sequential, and extra prerequisites appear at the exact lesson that needs them.
+The catalogue has seven groups of six modules. Grouping helps navigation; it does not force security and evaluation to the end. The [recommended path](LEARNING_PATH.md) brings M25 and M30 forward and validates all direct and transitive prerequisites. Each module declares a teaching order separately from its stable lesson IDs. Prerequisites state required knowledge; the preceding catalogue ID is not automatically required. The predictive-ML route lists its full dependency closure, including deployment gates but excluding LLM architecture, retrieval and agents.
 
 M34 (preference and reinforcement learning) and M36 (distributed training) are advanced branches. They remain fully planned within the 42-module scope. Application engineers may defer them without blocking downstream core modules. Other compute-heavy lessons provide small-model, mocked-service or recorded-trace alternatives.
 

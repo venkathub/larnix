@@ -203,13 +203,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study frame a useful decision; build or analyze: Write a decision brief for a fictional equipment-rental support desk, including a rules baseline. Verify: Name the user and decision.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -273,13 +266,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study specify quality and economics; build or analyze: Create a spreadsheet specification comparing manual, rules-based and model-assisted resolution. Verify: Show cost per resolved case.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -343,13 +329,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design human control; build or analyze: Storyboard a wrong delivery-date answer and a subsequent user correction. Verify: Include recovery and escalation.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -413,13 +392,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose a delivery boundary; build or analyze: Produce a vendor-neutral build-versus-buy decision and a limited pilot plan. Verify: Identify ownership and rollback.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -428,7 +400,13 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M01-L01",
+        "M01-L02",
+        "M01-L03",
+        "M01-L04"
+      ]
     },
     {
       "id": "M02",
@@ -506,13 +484,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build reproducible python components; build or analyze: Build a typed ticket-normalization package with locked dependencies, explicit configuration and a clean-environment reproduction command. Verify: Document input/output types.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -578,13 +549,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design service contracts; build or analyze: Implement a minimal Python ticket-ingestion service and a typed client contract; exercise invalid payloads and version mismatches. Verify: Include invalid JSON and incompatible-version cases.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -649,13 +613,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control concurrent work; build or analyze: Implement a bounded mock-provider client with a slow stream, cancellation and instrumented active-request counts. Verify: Bound active requests.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -720,13 +677,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study persist and test behavior; build or analyze: Implement a small SQL ticket store and migration; run integration cases for duplicate submissions and failed transactions. Verify: Verify one logical record per request key.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -746,7 +696,7 @@
           ],
           "outcome": "Compute daily equipment costs with explicit shapes and verify that a vectorized result agrees with a loop.",
           "prerequisites": [
-            "M02-L04"
+            "M02-L01"
           ],
           "sources": [
             "NUMPY",
@@ -793,13 +743,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate on arrays without shape surprises; build or analyze: Build an array cost calculator for three equipment rentals; compare a loop with vectorized arithmetic and inject a mismatched shape. Verify: Match expected totals within a declared tolerance.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -868,13 +811,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study transform dataframes with trustworthy joins; build or analyze: Create a pandas cleaning and aggregation pipeline from deliberately messy rental and rate tables, with a row-count audit. Verify: Reject duplicate rate keys.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -943,13 +879,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study inspect datasets and communicate uncertainty; build or analyze: Build a script that writes a rental-quality report, a labeled cost chart and a missingness table from a versioned CSV. Verify: Record input checksum and package versions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -959,7 +888,16 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M02-L01",
+        "M02-L05",
+        "M02-L06",
+        "M02-L07",
+        "M02-L02",
+        "M02-L03",
+        "M02-L04"
+      ]
     },
     {
       "id": "M03",
@@ -1038,13 +976,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study reason with vectors; build or analyze: Create and execute a hand-checkable similarity notebook for five synthetic document vectors. Verify: Include zero vectors and unequal norms.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "tested_specialist_engine",
@@ -1109,13 +1040,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand optimization; build or analyze: Implement analytic and finite-difference gradients for a tiny regression objective and compare their behavior. Verify: Compare analytic and numerical gradients.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases_and_tested_calculator",
@@ -1181,13 +1105,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study model uncertainty; build or analyze: Create a worked alert-triage calculation under two prevalence assumptions using a reproducible notebook or worksheet. Verify: Show confusion counts and posterior precision.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -1253,13 +1170,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare experiments honestly; build or analyze: Run a paired comparison of two recorded routing-result sets using bootstrap resampling and a documented release decision. Verify: Report uncertainty and sample assumptions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -1327,13 +1237,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design causal questions and controlled experiments; build or analyze: Simulate a rental reminder experiment with repeat customers and an unequal assignment bug; write an analysis plan before calculating outcomes. Verify: State the causal assumptions and estimand.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -1401,13 +1304,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare bandits and uplift decisions; build or analyze: Construct a small synthetic offer log with known action probabilities; compare an always-popular policy with an importance-weighted estimate and an uplift decision table. Verify: Verify the estimator by hand on a small fixture.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -1416,7 +1312,15 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M03-L01",
+        "M03-L02",
+        "M03-L03",
+        "M03-L04",
+        "M03-L05",
+        "M03-L06"
+      ]
     },
     {
       "id": "M04",
@@ -1497,13 +1401,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study establish supervised baselines; build or analyze: Train and evaluate two late-return classifiers on synthetic tabular rental records, including an interpretable baseline. Verify: Compare against majority prediction.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -1568,13 +1465,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study protect the evaluation boundary; build or analyze: Construct a deliberately leaking ticket dataset, measure the inflated result, and repair its split and preprocessing strategy. Verify: Demonstrate the leak.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -1639,13 +1529,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study handle imperfect predictions; build or analyze: Build an urgency-threshold analysis with synthetic scores, a fixed review capacity and held-out evaluation. Verify: Report per-class errors and calibration.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases_and_tested_calculator",
@@ -1710,13 +1593,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study discover structure and diagnose fit; build or analyze: Run clustering of recurring synthetic support issues and compare regularization settings on a supervised baseline. Verify: Check cluster stability.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -1785,13 +1661,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare classical model families; build or analyze: Compare logistic regression, kNN, SVM, naive Bayes and a random forest on one original small ticket dataset with a fixed split. Verify: Fit preprocessing only inside training folds.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -1860,13 +1729,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study tune models under a fixed search budget; build or analyze: Tune a forest and an SVM under the same trial budget; save every configuration, seed, metric and failed trial. Verify: Keep the final holdout untouched until selection.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -1886,7 +1748,7 @@
           ],
           "outcome": "Use attribution to debug a model while showing its dependence on correlated features and background data.",
           "prerequisites": [
-            "M04-L06"
+            "M04-L05"
           ],
           "sources": [
             "SHAP",
@@ -1934,13 +1796,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study explain predictions without claiming causality; build or analyze: Explain two predictions from a rental-risk classifier; compare permutation importance, SHAP and a local surrogate under correlated inputs. Verify: Keep the model and explanation background versioned.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -1949,7 +1804,16 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M04-L01",
+        "M04-L02",
+        "M04-L03",
+        "M04-L04",
+        "M04-L05",
+        "M04-L06",
+        "M04-L07"
+      ]
     },
     {
       "id": "M05",
@@ -2027,13 +1891,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study trace a learning step; build or analyze: Implement a tiny neural classifier and inspect one forward/backward pass, tensor shapes and parameter updates. Verify: Audit tensor shapes and gradient resets.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2097,13 +1954,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study stabilize optimization; build or analyze: Run a small experiment varying learning rate and initialization one factor at a time, including a deliberately divergent run. Verify: Log losses and gradient norms.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases_and_tested_calculator",
@@ -2167,13 +2017,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control generalization; build or analyze: Train a small regularized baseline with validation-driven stopping and verify checkpoint restoration and inference mode. Verify: Prevent holdout tuning.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2238,13 +2081,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose representations and architectures; build or analyze: Prepare an architecture comparison for product photos and event sequences. Verify: State inductive assumptions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2253,7 +2089,13 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M05-L01",
+        "M05-L02",
+        "M05-L03",
+        "M05-L04"
+      ]
     },
     {
       "id": "M06",
@@ -2339,13 +2181,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define dataset contracts; build or analyze: Build a fixture-based rental-event ingestion pipeline with schema checks, late events and point-in-time feature joins. Verify: Include schema-change and late-event tests.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2411,13 +2246,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study curate reliable labels; build or analyze: Create and label an original synthetic ticket corpus using written guidelines, adjudication and duplicate detection. Verify: Measure annotator agreement.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2481,13 +2309,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study version and trace data; build or analyze: Build a versioned dataset manifest and demonstrate reconstructing the snapshot before a label correction. Verify: Record source rights and hashes.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2553,13 +2374,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate the data lifecycle; build or analyze: Implement deletion propagation across a toy raw store, derived dataset and cache; document the remaining retention policy. Verify: Trace one deletion end to end.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
@@ -2628,13 +2442,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study orchestrate repeatable data processing; build or analyze: Build a local partitioned rental ETL pipeline with a manifest and interrupted task; compare a single-process reference with a small Spark or Ray run. Verify: Reruns produce identical row counts and checksums.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -2655,8 +2462,9 @@
           ],
           "outcome": "Reproduce a prediction with only features that were available when the decision occurred.",
           "prerequisites": [
-            "M06-L05",
-            "M04-L02"
+            "M06-L03",
+            "M04-L02",
+            "M02-L06"
           ],
           "sources": [
             "FEAST",
@@ -2704,13 +2512,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study engineer features at the right time; build or analyze: Build equipment-history aggregates at request time and test an intentionally late-arriving event; write an offline/online feature contract. Verify: Exclude unavailable future records.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -2730,7 +2531,8 @@
           ],
           "outcome": "Compare label acquisition strategies without contaminating the independently labeled evaluation set.",
           "prerequisites": [
-            "M06-L06"
+            "M06-L02",
+            "M04-L03"
           ],
           "sources": [
             "ACTIVE",
@@ -2778,13 +2580,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study spend a labeling budget wisely; build or analyze: Use a fixed labeling budget for a synthetic ticket corpus; compare random sampling, uncertainty sampling and noisy labeling rules, then test a meaning-changing augmentation. Verify: Retain an independently reviewed holdout.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -2793,7 +2588,16 @@
         }
       ],
       "track": "T1",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M06-L01",
+        "M06-L02",
+        "M06-L03",
+        "M06-L04",
+        "M06-L05",
+        "M06-L06",
+        "M06-L07"
+      ]
     },
     {
       "id": "M07",
@@ -2869,13 +2673,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study trace tokens through a transformer; build or analyze: Run tokenizer and tensor-shape inspections for short multilingual support requests using a tiny local model or recorded model traces. Verify: Record character and token counts.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -2942,13 +2739,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare attention architectures; build or analyze: Write a model anatomy worksheet comparing dense, grouped-query and expert configurations. Verify: Separate stored parameters from active compute.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3014,13 +2804,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control text generation; build or analyze: Run a fixed-prompt decoding experiment using a small local model or recorded logits. Verify: Hold inputs and versions fixed.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3088,13 +2871,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand capabilities and limits; build or analyze: Compare correct and deliberately mismatched chat serialization using a tiny model or supplied token/output fixtures. Verify: Inspect actual tokenized inputs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3103,7 +2879,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M07-L01",
+        "M07-L02",
+        "M07-L03",
+        "M07-L04"
+      ]
     },
     {
       "id": "M08",
@@ -3184,13 +2966,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design pretraining inputs; build or analyze: Create a pretraining data card for a toy domain corpus with a fixed token budget. Verify: Specify mixture weights and exclusions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3258,13 +3033,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study plan training and checkpoints; build or analyze: Run a tiny language-model training experiment, interrupt it and compare recovery with an uninterrupted baseline; use recorded checkpoint traces if compute is unavailable. Verify: Track tokens processed and validation loss.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3329,13 +3097,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study separate adaptation stages; build or analyze: Write an adaptation decision for a model that knows terminology but ignores output instructions. Verify: Identify the observed failure.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3401,13 +3162,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study release model artifacts responsibly; build or analyze: Draft a release manifest linking weights, tokenizer, data versions and evaluation reports. Verify: Include rollback identity and intended uses.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3416,7 +3170,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M08-L01",
+        "M08-L02",
+        "M08-L03",
+        "M08-L04"
+      ]
     },
     {
       "id": "M09",
@@ -3499,13 +3259,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define provider-neutral requests; build or analyze: Implement adapters for two mock providers with different structured-output and tool capabilities. Verify: Reject unsupported options explicitly.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3577,13 +3330,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study handle streaming as a protocol; build or analyze: Build a stream consumer and inject delayed chunks, mid-stream failure and client cancellation. Verify: Never commit partial business data.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3650,13 +3396,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control failures and request budgets; build or analyze: Build a mock gateway that injects throttling, timeouts and malformed responses; record retry and deadline behavior. Verify: Bound attempts and elapsed time.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3723,13 +3462,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study test and evolve contracts; build or analyze: Implement adapter contract tests with success, refusal and truncation fixtures and a deliberately incompatible model response. Verify: Version fixtures and schemas.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3738,7 +3470,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M09-L01",
+        "M09-L02",
+        "M09-L03",
+        "M09-L04"
+      ]
     },
     {
       "id": "M10",
@@ -3814,13 +3552,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study specify tasks and examples; build or analyze: Create and evaluate a prompt set for classifying original equipment-damage reports using recorded or small-model outputs. Verify: Include ambiguous and out-of-domain cases.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3884,13 +3615,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study decompose difficult work; build or analyze: Build an invoice-checking workflow that extracts facts, performs deterministic arithmetic and explains discrepancies using a mock model interface. Verify: Use deterministic arithmetic.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -3955,13 +3679,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study develop prompts experimentally; build or analyze: Compare three prompt revisions with one isolated change per revision using versioned prompts and held-out results. Verify: Keep a development set separate.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4026,13 +3743,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study make prompts robust; build or analyze: Create a prompt failure catalog for conflicting, incomplete and adversarial ticket content. Verify: Include abstention examples.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4041,7 +3751,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M10-L01",
+        "M10-L02",
+        "M10-L03",
+        "M10-L04"
+      ]
     },
     {
       "id": "M11",
@@ -4117,13 +3833,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design output schemas; build or analyze: Implement a rental-return extraction schema and validators for missing dates and ambiguous damage severity. Verify: Validate schemas and domain constraints separately.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4188,13 +3897,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study validate and recover; build or analyze: Build a validator and bounded repair flow for contradictory date fields using deterministic mock responses. Verify: Reject impossible chronology.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4259,13 +3961,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study attach verifiable evidence; build or analyze: Implement an evidence-linked answer format and checks for document IDs, versions and source spans. Verify: Detect fabricated IDs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4330,13 +4025,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study calibrate answering behavior; build or analyze: Build and evaluate an evidence gate for expired, absent and contradictory rental policies using labeled fixtures. Verify: Evaluate false-answer and unnecessary-abstention rates.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4345,7 +4033,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M11-L01",
+        "M11-L02",
+        "M11-L03",
+        "M11-L04"
+      ]
     },
     {
       "id": "M12",
@@ -4423,13 +4117,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study budget the context window; build or analyze: Implement a context builder with reserved output capacity, ranked evidence slots and a visible token-budget manifest. Verify: Account for all token consumers.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4494,13 +4181,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study manage conversation state; build or analyze: Build a conversation compactor for a synthetic multi-day rental dispute and compare facts before and after repeated compaction. Verify: Retain critical constraints and source IDs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4565,13 +4245,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study retrieve context just in time; build or analyze: Implement lazy policy retrieval with version-aware and permission-aware cache invalidation. Verify: Invalidate changed permissions and policy versions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4636,13 +4309,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate context strategies; build or analyze: Run a matched comparison of full documents, selected chunks and compressed context using small-model or recorded outputs. Verify: Use identical questions and source versions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4651,7 +4317,13 @@
         }
       ],
       "track": "T2",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M12-L01",
+        "M12-L02",
+        "M12-L03",
+        "M12-L04"
+      ]
     },
     {
       "id": "M13",
@@ -4731,13 +4403,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study parse heterogeneous documents; build or analyze: Create original scanned-form, HTML-policy and table-heavy manual fixtures; parse them into a canonical representation. Verify: Preserve page and section provenance.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4803,13 +4468,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study segment meaningfully; build or analyze: Implement and compare two chunking strategies on original synthetic equipment manuals. Verify: Track table and heading continuity.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4875,13 +4533,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study enrich and secure ingestion; build or analyze: Implement a canonical chunk schema carrying tenant, version, page and access metadata; reject incomplete records. Verify: Reject missing permission metadata.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4946,13 +4597,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate ingestion pipelines; build or analyze: Build an idempotent ingestion prototype and inject a failure halfway through a policy update. Verify: Expose only complete versions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -4961,7 +4605,13 @@
         }
       ],
       "track": "T3",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M13-L01",
+        "M13-L02",
+        "M13-L03",
+        "M13-L04"
+      ]
     },
     {
       "id": "M14",
@@ -5039,13 +4689,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand embedding objectives; build or analyze: Create and run an embedding probe set with synonyms, negation and nearly identical equipment part numbers. Verify: Inspect nearest neighbors by slice.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5112,13 +4755,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study select representations; build or analyze: Compare two embedding representations for multilingual equipment-support questions using fixed relevance judgments. Verify: Use a held-out relevance set.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5183,13 +4819,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study measure embedding behavior; build or analyze: Implement exact-search diagnostics with positives, hard negatives and irrelevant items; then compare an approximate index. Verify: Compare task relevance and ANN agreement separately.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5254,13 +4883,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study manage embedding changes; build or analyze: Build a dual-index migration prototype with shadow queries and versioned records. Verify: Prevent cross-version comparisons.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5269,7 +4891,13 @@
         }
       ],
       "track": "T3",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M14-L01",
+        "M14-L02",
+        "M14-L03",
+        "M14-L04"
+      ]
     },
     {
       "id": "M15",
@@ -5345,13 +4973,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study establish exact search; build or analyze: Implement an exact-search harness over synthetic vectors with metadata filters and hand-checkable distances. Verify: Verify distances on a small fixture.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5417,13 +5038,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study tune approximate indexes; build or analyze: Run an approximate-index parameter sweep with low- and high-selectivity filters on a local synthetic dataset. Verify: Report recall versus exact search.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5489,13 +5103,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose storage architecture; build or analyze: Write an architecture decision comparing a local index, PostgreSQL extension and dedicated service. Verify: Include backup, recovery and update semantics.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5561,13 +5168,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study isolate and maintain indexes; build or analyze: Execute tenant-isolation, deletion and restore drills against a local policy index. Verify: Prove zero cross-tenant IDs in test results.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5576,7 +5176,13 @@
         }
       ],
       "track": "T3",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M15-L01",
+        "M15-L02",
+        "M15-L03",
+        "M15-L04"
+      ]
     },
     {
       "id": "M16",
@@ -5653,13 +5259,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build lexical and dense baselines; build or analyze: Implement keyword and dense retrieval baselines for original policy questions and equipment codes. Verify: Use relevance judgments.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5723,13 +5322,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study combine and rerank candidates; build or analyze: Build hybrid candidate fusion followed by reranking on a fixed candidate budget. Verify: Report candidate recall and ranking nDCG.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5794,13 +5386,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study transform queries carefully; build or analyze: Implement a query-rewrite comparison for time-bounded and negated policy questions using a mock or local rewriting model. Verify: Preserve dates and exclusions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5868,13 +5453,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate retrieval as a service; build or analyze: Build a retrieval scorecard with head, tail, multilingual and permission-sensitive queries. Verify: Define metric denominators and cutoffs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -5883,7 +5461,13 @@
         }
       ],
       "track": "T3",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M16-L01",
+        "M16-L02",
+        "M16-L03",
+        "M16-L04"
+      ]
     },
     {
       "id": "M17",
@@ -5960,13 +5544,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study assemble a grounded answer pipeline; build or analyze: Build a small policy assistant using versioned synthetic documents, a fixed relevance set and a mock or local generator. Verify: Trace each answer to chunks.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "tested_specialist_engine",
@@ -6030,13 +5607,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study handle evidence failures; build or analyze: Inject outdated fees, contradictory manuals and malicious document instructions into the RAG prototype and evaluate its responses. Verify: Require supported claims or abstention.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6101,13 +5671,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare architecture choices; build or analyze: Write a decision memo for daily policy changes and stable response-format requirements. Verify: Separate knowledge and behavior needs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6175,13 +5738,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study release and maintain rag; build or analyze: Execute a local index rollout with shadow queries, answer-quality checks and a rollback drill. Verify: Version all pipeline components.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6190,7 +5746,13 @@
         }
       ],
       "track": "T3",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M17-L01",
+        "M17-L02",
+        "M17-L03",
+        "M17-L04"
+      ]
     },
     {
       "id": "M18",
@@ -6267,13 +5829,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study retrieve across structured knowledge; build or analyze: Build a read-only rental analytics prototype with query validation, row limits and a fixture database. Verify: Test unauthorized tables and misleading joins.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6337,13 +5892,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study model relationships and graph retrieval; build or analyze: Create a small equipment-compatibility graph with evidence-backed edges and a traversal-based question set. Verify: Attach provenance to relationships.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6408,13 +5956,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study use hierarchical and adaptive retrieval; build or analyze: Implement a two-level manual index with bounded follow-up retrieval and compare it to flat retrieval. Verify: Compare local and global question slices.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6478,13 +6019,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate a changing knowledge layer; build or analyze: Specify a conflict-resolution plan joining policy text, inventory tables and relationship data. Verify: Test effective-date boundaries.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6493,7 +6027,13 @@
         }
       ],
       "track": "T3",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M18-L01",
+        "M18-L02",
+        "M18-L03",
+        "M18-L04"
+      ]
     },
     {
       "id": "M19",
@@ -6569,13 +6109,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose deterministic orchestration; build or analyze: Implement a deterministic equipment-return workflow with explicit decision branches and terminal states. Verify: Cover every terminal state.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6640,13 +6173,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define bounded agency; build or analyze: Build a sandbox agent that gathers missing return evidence without committing refunds. Verify: Specify action, time and token limits.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6712,13 +6238,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study use patterns selectively; build or analyze: Compare a fixed checklist and an iterative repair loop using identical mock tool results and a verified outcome rubric. Verify: Limit iterations.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6784,13 +6303,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate agency costs; build or analyze: Run an agent-versus-workflow evaluation on incomplete rental requests with scripted user clarifications. Verify: Include tasks requiring clarification.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6799,7 +6311,13 @@
         }
       ],
       "track": "T4",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M19-L01",
+        "M19-L02",
+        "M19-L03",
+        "M19-L04"
+      ]
     },
     {
       "id": "M20",
@@ -6879,13 +6397,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design useful tool contracts; build or analyze: Implement lookup, quote and draft-return tools with typed input/output contracts and controlled fixture data. Verify: Reject invalid arguments.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -6951,13 +6462,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study enforce authority outside the model; build or analyze: Implement a server-side authorization policy for inventory reads and refund drafts, then test forged identity and approval fields. Verify: Deny forged identity and approval fields.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7023,13 +6527,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study make side effects recoverable; build or analyze: Implement a mock refund tool and inject lost-response and repeated-call failures. Verify: Record one logical refund per key.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7095,13 +6592,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study contain tool execution; build or analyze: Build a sandboxed document-inspection tool with path, size, network and time restrictions. Verify: Reject disallowed paths and network destinations.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7110,7 +6600,13 @@
         }
       ],
       "track": "T4",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M20-L01",
+        "M20-L02",
+        "M20-L03",
+        "M20-L04"
+      ]
     },
     {
       "id": "M21",
@@ -7185,13 +6681,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define persistent execution state; build or analyze: Implement a checkpoint store and reconstruct an evidence-gathering agent from persisted state. Verify: Reconstruct progress from persisted records.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7256,13 +6745,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study resume without repeating effects; build or analyze: Inject crashes before, during and after a mock refund tool call; reconcile ambiguous completion on recovery. Verify: Preserve one business effect.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "tested_specialist_engine",
@@ -7329,13 +6811,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study coordinate human intervention; build or analyze: Build a local review queue for disputed damage-charge drafts with editable proposals, expiring approvals and resume tokens. Verify: Reject stale approvals.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7402,13 +6877,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build the execution harness; build or analyze: Implement a small execution harness with external budgets, a tool registry and terminal-state tracing. Verify: Enforce limits externally.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7417,7 +6885,13 @@
         }
       ],
       "track": "T4",
-      "status": "in_progress"
+      "status": "in_progress",
+      "lesson_order": [
+        "M21-L01",
+        "M21-L02",
+        "M21-L03",
+        "M21-L04"
+      ]
     },
     {
       "id": "M22",
@@ -7497,13 +6971,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study separate memory types; build or analyze: Create a memory policy for a rental assistant using synthetic preferences and past incidents. Verify: Classify each field.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7569,13 +7036,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control memory writes; build or analyze: Implement a memory-write gate for synthetic corrected addresses and equipment preferences with provenance and verification. Verify: Reject unverified identity changes.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7643,13 +7103,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study retrieve and update memory; build or analyze: Build a memory read/update prototype and test preference changes, TTL expiry and deletion. Verify: Prefer authorized current values.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7714,13 +7167,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate personalization; build or analyze: Run paired tasks with and without memory across synthetic users and deliberately stale records. Verify: Measure task benefit and stale-memory errors.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7729,7 +7175,13 @@
         }
       ],
       "track": "T4",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M22-L01",
+        "M22-L02",
+        "M22-L03",
+        "M22-L04"
+      ]
     },
     {
       "id": "M23",
@@ -7805,13 +7257,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand protocol boundaries; build or analyze: Draw a textual sequence for initialization, capability negotiation and a tool call. Verify: Identify all trust boundaries.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7877,13 +7322,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study expose tools and context; build or analyze: Build a local MCP server exposing synthetic equipment manuals and a stock-lookup tool using a pinned specification/library version. Verify: Validate schemas and discovery.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -7949,13 +7387,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study secure transports and identity; build or analyze: Create separate local and remote connection threat models with token-flow diagrams described in text. Verify: Reject wrong-audience tokens.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8020,13 +7451,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study test compatibility and operation; build or analyze: Run a mock MCP client/server compatibility matrix for stock lookup and document access. Verify: Cover disconnect and cancellation.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8035,7 +7459,13 @@
         }
       ],
       "track": "T4",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M23-L01",
+        "M23-L02",
+        "M23-L03",
+        "M23-L04"
+      ]
     },
     {
       "id": "M24",
@@ -8115,13 +7545,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study justify multiple agents; build or analyze: Specify single-agent and specialist-agent designs for equipment incident investigation. Verify: Use matched task sets.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8188,13 +7611,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design collaboration contracts; build or analyze: Implement a simulated coordinator contract for policy-review and inventory-analysis agents using typed messages and fixed outputs. Verify: Assign one owner per side effect.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8261,13 +7677,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study interoperate through a2a; build or analyze: Implement a local or fixture-replayed A2A exchange between simulated rental and repair services, recording the selected protocol version. Verify: Pin a protocol version.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8333,13 +7742,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study contain coordination failures; build or analyze: Run an orchestration fault drill with an unavailable specialist, duplicate tasks and conflicting results. Verify: Cap fan-out and delegation depth.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8348,7 +7750,13 @@
         }
       ],
       "track": "T4",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M24-L01",
+        "M24-L02",
+        "M24-L03",
+        "M24-L04"
+      ]
     },
     {
       "id": "M25",
@@ -8427,13 +7835,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define evaluation contracts; build or analyze: Design an evaluation specification for rental-policy assistance before building the model pipeline. Verify: Separate critical failures from quality scores.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8499,13 +7900,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build trustworthy test data; build or analyze: Create an original synthetic seed suite with split assignments and a documented plan for future consented production sampling. Verify: Keep provenance and split assignments.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8570,13 +7964,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study calibrate human and model judges; build or analyze: Run a judge-validation study using shuffled answer order and intentionally plausible errors; compare judge labels with human labels. Verify: Measure disagreement by slice.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8646,13 +8033,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study make release decisions; build or analyze: Produce a paired evaluation report from recorded candidate results and simulate a canary go/no-go decision. Verify: State uncertainty and minimum sample assumptions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8661,7 +8041,13 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M25-L01",
+        "M25-L02",
+        "M25-L03",
+        "M25-L04"
+      ]
     },
     {
       "id": "M26",
@@ -8744,13 +8130,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate retrieval and grounded answers; build or analyze: Implement a decomposed RAG scorecard with independent retrieval and answer labels. Verify: Include correct-but-unsupported and supported-but-incomplete answers.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8816,13 +8195,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate tools and agents; build or analyze: Build and run a sandbox task suite with inventory updates and scripted user clarifications. Verify: Inspect final environment state.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8887,13 +8259,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate code and structured tasks; build or analyze: Create isolated code-repair tasks and schema-extraction fixtures, then run hidden-edge-case checks. Verify: Use hidden edge cases.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8959,13 +8324,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate conversations and modalities; build or analyze: Design a multimodal support-session rubric using paired transcripts and image fixtures. Verify: Score recovery and end result.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -8974,7 +8332,13 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M26-L01",
+        "M26-L02",
+        "M26-L03",
+        "M26-L04"
+      ]
     },
     {
       "id": "M27",
@@ -9053,13 +8417,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study instrument meaningful traces; build or analyze: Instrument an end-to-end trace for a fixture-based policy query that invokes a lookup tool. Verify: Propagate correlation IDs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9124,13 +8481,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study monitor quality and cost; build or analyze: Build a local dashboard or reproducible report with operational metrics and sampled outcome scores. Verify: Define units and denominators.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9194,13 +8544,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study diagnose regressions; build or analyze: Investigate a seeded wrong-fee regression using paired traces and isolate the earliest failing component. Verify: Separate source, retrieval, model and tool faults.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9266,13 +8609,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study protect telemetry and close feedback loops; build or analyze: Specify a telemetry policy and incident-to-evaluation workflow. Verify: Retain critical failure metadata.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9281,7 +8617,13 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M27-L01",
+        "M27-L02",
+        "M27-L03",
+        "M27-L04"
+      ]
     },
     {
       "id": "M28",
@@ -9360,13 +8702,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study define reliability targets; build or analyze: Write an SLO specification for interactive answers and background document ingestion. Verify: Define measurement windows and exclusions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9432,13 +8767,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study prevent overload and cascades; build or analyze: Run a load and dependency-failure experiment using mock model latency and a bounded request queue. Verify: Bound queue depth.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9504,13 +8832,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study preserve consistency under failure; build or analyze: Implement a return-processing transaction with an outbox and retried worker; inject crashes at publish and consume boundaries. Verify: Prevent lost events and duplicate effects.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9575,13 +8896,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design graceful degradation; build or analyze: Write an outage runbook covering provider failure, index outage and restoration. Verify: State degraded behavior per dependency.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9590,7 +8904,13 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M28-L01",
+        "M28-L02",
+        "M28-L03",
+        "M28-L04"
+      ]
     },
     {
       "id": "M29",
@@ -9599,8 +8919,7 @@
       "depth": "core",
       "prerequisites": [
         "M02-L04",
-        "M25-L04",
-        "M28-L04"
+        "M25-L04"
       ],
       "sources": [
         "DOCKER",
@@ -9629,8 +8948,7 @@
           "outcome": "Specify a build that reproduces code, configuration and model dependencies.",
           "prerequisites": [
             "M02-L04",
-            "M25-L04",
-            "M28-L04"
+            "M25-L04"
           ],
           "sources": [
             "DOCKER",
@@ -9677,13 +8995,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study package reproducible services; build or analyze: Package a mock policy API and ingestion worker in reproducible containers with a version manifest. Verify: Pin application artifacts.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9750,13 +9061,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study automate delivery gates; build or analyze: Create a local-executable CI workflow specification with contract tests, a bounded evaluation suite and failure injection; remote execution is optional. Verify: Prevent secret exposure.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9776,7 +9080,8 @@
           ],
           "outcome": "Roll out code and model changes while preserving recoverability.",
           "prerequisites": [
-            "M29-L02"
+            "M29-L02",
+            "M28-L04"
           ],
           "sources": [
             "K8S",
@@ -9822,13 +9127,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study release progressively; build or analyze: Simulate a staged release changing the prompt, model adapter and retrieval index, then restore the previous compatible version set. Verify: Record a compatible version set.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9896,13 +9194,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate across environments; build or analyze: Write a deployment decision for a small team and a later scale-up path. Verify: Compare operating cost and failure recovery.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -9922,8 +9213,8 @@
           ],
           "outcome": "Reproduce a classical-model run from an immutable data version, transform pipeline and recorded configuration.",
           "prerequisites": [
-            "M29-L04",
-            "M06-L07",
+            "M29-L02",
+            "M06-L06",
             "M04-L06"
           ],
           "sources": [
@@ -9972,13 +9263,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study track reproducible predictive training runs; build or analyze: Train two rental-demand baseline models through a local pipeline and record both runs in MLflow, including one failed run. Verify: Reproduce metrics within a stated tolerance.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10046,13 +9330,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study promote model versions through a registry; build or analyze: Register two demand models locally; promote one after slice checks, then inject a schema mismatch and restore the previous compatible version. Verify: Record the resolved version for each prediction.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10120,13 +9397,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study serve predictions in batches and online; build or analyze: Score a rental queue from the registered model in a batch script and a local request handler; inject a missing feature and rerun the batch. Verify: Outputs match for identical feature snapshots.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10195,13 +9465,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study close the drift and retraining loop; build or analyze: Simulate two time windows of rental requests, delayed labels and a sensor-format change; train a challenger only after diagnosis and compare with the registered champion. Verify: Separate data-quality, covariate and concept-drift evidence.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10210,7 +9473,17 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M29-L01",
+        "M29-L02",
+        "M29-L05",
+        "M29-L06",
+        "M29-L07",
+        "M29-L08",
+        "M29-L03",
+        "M29-L04"
+      ]
     },
     {
       "id": "M30",
@@ -10288,13 +9561,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study map assets and trust boundaries; build or analyze: Create a threat model for a document assistant with optional account actions. Verify: Map entry points and sensitive sinks.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10361,13 +9627,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study resist instruction and data attacks; build or analyze: Build an injection test suite across user input, documents and tool results using only synthetic canary secrets. Verify: Use synthetic canary secrets.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10434,13 +9693,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study secure tools and dependencies; build or analyze: Implement a local URL-fetching test harness with a controlled network boundary and simulated private-address/redirect cases. Verify: Test private-address and redirect cases.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10511,13 +9763,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study verify controls and respond; build or analyze: Run a synthetic cross-tenant exposure drill and produce a red-team report with reproduction, containment and regression evidence. Verify: Reproduce using synthetic records.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10526,7 +9771,13 @@
         }
       ],
       "track": "T5",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M30-L01",
+        "M30-L02",
+        "M30-L03",
+        "M30-L04"
+      ]
     },
     {
       "id": "M31",
@@ -10607,13 +9858,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study classify risks and responsibilities; build or analyze: Draft a risk register for rental eligibility assistance using fictional applicants. Verify: Separate decision support from automated decisions.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10683,13 +9927,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate fairness and accessibility; build or analyze: Run a synthetic eligibility fairness audit and design an accessible appeal flow. Verify: Report subgroup uncertainty.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10757,13 +9994,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study govern data and models; build or analyze: Create a governance packet template linking data, model, system and evaluation records. Verify: Record unanswered legal questions for qualified review.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10829,13 +10059,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study operate ongoing assurance; build or analyze: Specify a review cadence and change-trigger policy for the assistant. Verify: Define evidence required after a model change.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -10844,7 +10067,13 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M31-L01",
+        "M31-L02",
+        "M31-L03",
+        "M31-L04"
+      ]
     },
     {
       "id": "M32",
@@ -10930,13 +10159,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study select models for a workload; build or analyze: Execute a bake-off among a small local model and two recorded or mock hosted-model profiles, labeling simulated results clearly. Verify: Use identical tasks and constraints.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11005,13 +10227,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study calculate complete unit economics; build or analyze: Build a reproducible cost worksheet for 1,000 synthetic support tasks using parameterized prices. Verify: Include failed tasks and human review.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11075,13 +10290,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study route and cascade intelligently; build or analyze: Run a routing experiment based on task type and independently validated signals using a fixed result set. Verify: Compare to always-strong and always-small baselines.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11146,13 +10354,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study manage capacity and vendor risk; build or analyze: Write a traffic forecast and provider-exit drill using parameterized prices and quotas. Verify: Model burst load and quota exhaustion.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11161,7 +10362,13 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M32-L01",
+        "M32-L02",
+        "M32-L03",
+        "M32-L04"
+      ]
     },
     {
       "id": "M33",
@@ -11239,13 +10446,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study diagnose an adaptation need; build or analyze: Write an adaptation proposal for inconsistent damage-category extraction. Verify: Show baseline errors.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11312,13 +10512,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study prepare supervised tuning data; build or analyze: Create a small original instruction dataset and implement template, loss-mask and contamination checks. Verify: Validate template and target masks.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11386,13 +10579,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study apply parameter-efficient adaptation; build or analyze: Run a tiny-model adapter experiment with fixed data and two rank settings, or analyze supplied training records when compute is unavailable. Verify: Compare held-out quality and memory.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11459,13 +10645,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study distill and release adapted models; build or analyze: Run or replay a teacher-to-small-model experiment with human-audited synthetic examples and independent held-out evaluation. Verify: Record generation provenance and permitted use.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11474,7 +10653,13 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M33-L01",
+        "M33-L02",
+        "M33-L03",
+        "M33-L04"
+      ]
     },
     {
       "id": "M34",
@@ -11555,13 +10740,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study collect meaningful preferences; build or analyze: Conduct a blinded preference-labeling study for concise, evidence-supported policy answers. Verify: Randomize order.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11627,13 +10805,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare preference objectives; build or analyze: Implement a toy numerical comparison of supervised and preference objectives, documenting every loss input. Verify: State assumptions and loss inputs.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11700,13 +10871,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand policy optimization; build or analyze: Run or replay a tiny rollout experiment for verifiable arithmetic tasks, including a deliberate weak-reward exploit. Verify: Trace rewards to advantages and updates.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11775,13 +10939,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study prevent reward exploitation and regressions; build or analyze: Audit recorded pre- and post-optimization checkpoints using task tests independent of the training reward. Verify: Use tests independent of training reward.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11790,7 +10947,13 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M34-L01",
+        "M34-L02",
+        "M34-L03",
+        "M34-L04"
+      ]
     },
     {
       "id": "M35",
@@ -11798,9 +10961,8 @@
       "title": "Inference and serving systems",
       "depth": "core",
       "prerequisites": [
-        "M07-L04",
-        "M28-L04",
-        "M32-L04"
+        "M02-L05",
+        "M05-L01"
       ],
       "sources": [
         "VLLM",
@@ -11833,7 +10995,8 @@
           "prerequisites": [
             "M07-L04",
             "M28-L04",
-            "M32-L04"
+            "M32-L04",
+            "M35-L05"
           ],
           "sources": [
             "VLLM",
@@ -11880,13 +11043,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study model inference costs; build or analyze: Run a small-model serving benchmark or analyze supplied traces across prompt length, output length and concurrency. Verify: Report TTFT, inter-token latency and end-to-end percentiles.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -11953,13 +11109,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study improve scheduling and memory; build or analyze: Compare batching and cache configurations with trace replay or a local inference service. Verify: Measure throughput and tail latency together.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12025,13 +11174,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study reduce inference work; build or analyze: Compare quantization or speculative decoding using small models or matched recorded profiles. Verify: Report task quality and acceptance rate where relevant.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12096,13 +11238,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study scale serving safely; build or analyze: Create a capacity and failover plan for a self-hosted inference service. Verify: Include replica-loss and memory-exhaustion tests.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12122,7 +11257,8 @@
           ],
           "outcome": "Identify whether transfers, memory traffic or compute dominate a stated workload before choosing an optimization.",
           "prerequisites": [
-            "M35-L04"
+            "M02-L05",
+            "M05-L01"
           ],
           "sources": [
             "CUDA",
@@ -12170,13 +11306,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand hardware before optimizing kernels; build or analyze: Build a tensor-operation cost worksheet and profile a small workload on available hardware; compare against a recorded GPU trace if no accelerator is available. Verify: Separate initialization, transfer and steady-state work.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12199,7 +11328,8 @@
           "outcome": "Choose one target runtime, export a model and test prediction parity before claiming a device deployment.",
           "prerequisites": [
             "M35-L05",
-            "M29-L07"
+            "M05-L03",
+            "M25-L02"
           ],
           "sources": [
             "ONNX",
@@ -12249,13 +11379,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study export and validate models on constrained devices; build or analyze: Export one tiny trained model to ONNX Runtime or ExecuTorch and compare with the source runtime; prepare a target matrix for TensorRT, Core ML and LiteRT. Verify: Set accuracy tolerances before conversion.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12264,7 +11387,15 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M35-L05",
+        "M35-L06",
+        "M35-L01",
+        "M35-L02",
+        "M35-L03",
+        "M35-L04"
+      ]
     },
     {
       "id": "M36",
@@ -12345,13 +11476,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study account for training memory; build or analyze: Build a memory-accounting worksheet for a hypothetical transformer configuration. Verify: Separate persistent and activation memory.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12417,13 +11541,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose a parallelism strategy; build or analyze: Write a topology decision for fitting and training a model on limited accelerators. Verify: Estimate per-device memory and communication.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12490,13 +11607,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study optimize the training loop; build or analyze: Run a controlled optimization comparison using a tiny model or supplied profiler traces. Verify: Report memory, step time and effective batch size.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12562,13 +11672,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study recover and verify distributed jobs; build or analyze: Perform a failed-rank recovery and checkpoint-restore analysis using recorded artifacts, with an optional multi-device run. Verify: Validate state completeness and processed-data position.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12577,7 +11680,13 @@
         }
       ],
       "track": "T6",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M36-L01",
+        "M36-L02",
+        "M36-L03",
+        "M36-L04"
+      ]
     },
     {
       "id": "M37",
@@ -12662,13 +11771,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study prepare visual inputs; build or analyze: Create a synthetic equipment-photo dataset with varying light, scale and text size, and compare preprocessing effects. Verify: Keep source and processed-image lineage.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12733,13 +11835,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study choose perception architectures; build or analyze: Design a comparison for identifying damaged components in staged equipment images. Verify: Define task-specific labels and metrics.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12804,13 +11899,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study reason over video; build or analyze: Build a video frame-sampling pipeline using short synthetic or licensed inspection clips and verify event coverage. Verify: Test brief events and reordered frames.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12875,13 +11963,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study ground and evaluate visual decisions; build or analyze: Create counterfactual image pairs and run a visual-answer evaluation using a small model or recorded outputs. Verify: Change one relevant feature at a time.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -12890,7 +11971,13 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M37-L01",
+        "M37-L02",
+        "M37-L03",
+        "M37-L04"
+      ]
     },
     {
       "id": "M38",
@@ -12973,13 +12060,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand the speech pipeline; build or analyze: Create an audio test set with equipment names, dates and noisy backgrounds; score recorded or locally generated transcripts. Verify: Report entity errors as well as WER.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13045,13 +12125,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design conversational timing; build or analyze: Implement a simulated real-time interaction state machine for correcting a delivery date mid-response. Verify: Cancel pending output.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13117,13 +12190,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study integrate tools in voice sessions; build or analyze: Build a mock voice-tool flow for rental extension and inject slow lookups and dropped connections. Verify: Tie confirmation to action parameters.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13193,13 +12259,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate and operate voice; build or analyze: Plan a voice scorecard and incident review using licensed or synthetic recordings. Verify: Slice by noise and speaking style.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13267,13 +12326,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study evaluate multilingual and low-resource behavior; build or analyze: Create a reviewed bilingual ticket fixture including code switching; compare original-language and translated processing and log missing language expertise. Verify: Report each language separately with sample sizes.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13282,7 +12334,14 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M38-L01",
+        "M38-L02",
+        "M38-L03",
+        "M38-L04",
+        "M38-L05"
+      ]
     },
     {
       "id": "M39",
@@ -13364,13 +12423,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study understand generative model families; build or analyze: Create a model-family comparison and implement a tiny noise/denoising demonstration. Verify: State what the toy example omits.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13436,13 +12488,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study control image creation and editing; build or analyze: Run or analyze a synthetic equipment-catalog image-editing experiment with recorded generation settings. Verify: Record full generation settings.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13509,13 +12554,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study extend to audio and video generation; build or analyze: Design an evaluation plan for a short fictional product animation and original sound cue. Verify: Score consistency and synchronization.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13584,13 +12622,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study govern generated assets; build or analyze: Specify an asset manifest and publication checklist for synthetic training media. Verify: Record origin and edits.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13599,7 +12630,13 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M39-L01",
+        "M39-L02",
+        "M39-L03",
+        "M39-L04"
+      ]
     },
     {
       "id": "M40",
@@ -13607,12 +12644,8 @@
       "title": "Applied AI architectures",
       "depth": "core",
       "prerequisites": [
-        "M04-L04",
-        "M17-L04",
-        "M21-L04",
-        "M26-L04",
-        "M29-L04",
-        "M30-L04"
+        "M04-L05",
+        "M25-L04"
       ],
       "sources": [
         "RECSYS",
@@ -13693,13 +12726,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study design search and recommendations; build or analyze: Build a small equipment recommendation prototype for synthetic rental histories with popularity and cold-start baselines. Verify: Use time-aware evaluation.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13764,13 +12790,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study combine prediction and language; build or analyze: Build demand forecasting with a seasonal naive baseline and evidence-linked explanations using synthetic time-series data. Verify: Use rolling-origin evaluation.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13836,13 +12855,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build document and analytics assistants; build or analyze: Implement a fixture-based rental-invoice reconciliation service joining extracted fields with database records. Verify: Test totals and join logic deterministically.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13909,13 +12921,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build operational and coding assistants; build or analyze: Build a sandbox assistant that diagnoses and repairs a deliberately broken mock rental API. Verify: Require a minimal reviewed diff and relevant tests.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -13936,8 +12941,8 @@
           ],
           "outcome": "Evaluate a recommender against a popularity baseline while controlling temporal leakage and feedback bias.",
           "prerequisites": [
-            "M40-L04",
-            "M29-L08"
+            "M04-L05",
+            "M25-L04"
           ],
           "sources": [
             "RECSYS",
@@ -13985,13 +12990,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study build and evaluate recommendation baselines; build or analyze: Implement popularity and factorization or content-based recommenders on a small original rental interaction dataset; evaluate a time-held-out set. Verify: Include unseen users and items.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14012,7 +13010,9 @@
           ],
           "outcome": "Compare a forecasting model with a seasonal baseline using only data available at each forecast origin.",
           "prerequisites": [
-            "M40-L05"
+            "M04-L06",
+            "M06-L06",
+            "M25-L04"
           ],
           "sources": [
             "FORECAST",
@@ -14060,13 +13060,6 @@
             "Injected failure, diagnosis and corrected rerun",
             "Decision, resource assumptions and limitations"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study forecast with rolling evidence; build or analyze: Forecast synthetic weekly rental demand with rolling origins; compare a seasonal-naive baseline and a fitted model, then inject unavailable future weather. Verify: Reject unavailable future covariates.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14075,7 +13068,15 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M40-L05",
+        "M40-L06",
+        "M40-L01",
+        "M40-L02",
+        "M40-L03",
+        "M40-L04"
+      ]
     },
     {
       "id": "M41",
@@ -14165,13 +13166,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study turn requirements into architecture; build or analyze: Write a system-design brief for a fictional multi-tenant equipment platform. Verify: State assumptions and non-goals.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14239,13 +13233,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study compare viable designs; build or analyze: Produce two architecture options and an evidence-driven decision record. Verify: Trace one request and one update end to end.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14313,13 +13300,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study stress the design; build or analyze: Run a tabletop design review with load, deletion and provider-outage scenarios. Verify: Provide a detection signal and recovery step for each failure.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14387,13 +13367,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study assemble a production readiness case; build or analyze: Create a capstone design dossier for the approved architecture. Verify: Include evaluation, security, operations and economics evidence.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14402,7 +13375,13 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M41-L01",
+        "M41-L02",
+        "M41-L03",
+        "M41-L04"
+      ]
     },
     {
       "id": "M42",
@@ -14483,13 +13462,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study explain concepts with tradeoffs; build or analyze: Record a mock interview using ten questions drawn across the curriculum. Verify: Use a rubric for correctness and clarity.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14556,13 +13528,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study solve practical engineering problems; build or analyze: Complete a timed debugging exercise with a malformed-output bug and a misleading aggregate metric. Verify: Produce a minimal fix and relevant test plan.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14629,13 +13594,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study practice system design and incidents; build or analyze: Run a mock design interview followed by an outage tabletop for the same system. Verify: Revise estimates explicitly.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14703,13 +13661,6 @@
             "Results or expected-results table including a failure case",
             "Decision and limitations note"
           ],
-          "estimate_basis": {
-            "reviewed_on": "2026-10-13",
-            "confidence": "low; editorial estimate, not learner-measured",
-            "assumption": "Stated prerequisites met; small local fixture or explicitly labeled replay; excludes large training runs and cloud provisioning.",
-            "work": "Study demonstrate engineering judgment; build or analyze: Assemble a portfolio brief from the capstone with a design decision, failed experiment and recovery story. Verify: Link claims to artifacts.",
-            "validation": "Calibrate against first-time learner timings; retain the ten-minute preview estimate separately."
-          },
           "delivery": {
             "full_contract": "not_met",
             "interaction": "none",
@@ -14718,7 +13669,13 @@
         }
       ],
       "track": "T7",
-      "status": "planned"
+      "status": "planned",
+      "lesson_order": [
+        "M42-L01",
+        "M42-L02",
+        "M42-L03",
+        "M42-L04"
+      ]
     }
   ],
   "teaching_design": {
@@ -14867,6 +13824,42 @@
         "M40-L05",
         "M40-L06"
       ]
+    }
+  ],
+  "learning_routes": [
+    {
+      "id": "predictive-ml",
+      "title": "Predictive ML engineering",
+      "targets": [
+        "M02-L07",
+        "M04-L07",
+        "M06-L07",
+        "M29-L08",
+        "M35-L06",
+        "M40-L05",
+        "M40-L06"
+      ],
+      "excluded_modules": [
+        "M07",
+        "M08",
+        "M09",
+        "M10",
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15",
+        "M16",
+        "M17",
+        "M18",
+        "M19",
+        "M20",
+        "M21",
+        "M22",
+        "M23",
+        "M24"
+      ],
+      "description": "Data programming, model selection, features, predictive-model operations, edge export and applied baselines. The sequence includes every transitive prerequisite and does not require transformer, retrieval or agent modules. Production-scale reliability and LLM serving remain separate extensions."
     }
   ]
 }

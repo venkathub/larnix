@@ -57,7 +57,7 @@ Branch protections remain in place. `.github/workflows/checks.yml` preserves the
 
 The three authored lesson pages retain their specialist lab engines. Shared components handle repeatable teaching UI. The current base lesson stylesheet comes from the vector sample and is emitted once as `assets/lesson.css`; the RAG and recovery labs add their own layout rules. This keeps the approved visual treatment without adding a framework solely for the prototype.
 
-The roadmap stages are consecutive groups of six modules from `recommended_module_order`, not replacements for the seven topic groups or the prerequisite graph. Evaluation and security stay before language-model work.
+The explicit `lesson_order` in each module drives classroom lists and next/previous links; numeric lesson IDs remain stable. The roadmap stages are consecutive groups of six modules from `recommended_module_order`, not replacements for the seven topic groups or the prerequisite graph. Evaluation and security stay before language-model work.
 
 The curriculum records distinguish planned, preview and full-contract complete states. Preview statuses are checked against the published manifest; a complete lesson requires evidence for each of the nine contract categories. Supporting runnable artifacts do not change narrative status.
 
@@ -135,7 +135,7 @@ Reviewer conclusion: the core now teaches a useful diagnostic distinction and pr
 
 ### Beginner improvements across every preview — October 12, 2026
 
-All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 165 planned lessons as authored.
+All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 162 currently planned lessons as authored.
 
 - **Vectors:** removed the winner from the prediction instructions, moved normalization beside metric selection, and added live raw coordinates and both scores next to the explanation. Normalization is defined where the first transfer question uses it. A second transfer case separates cosine alignment from factual correctness and freshness.
 - **Recovery:** introduced the authorized task and explained reconciliation before controls. The result now compares saved agent evidence with provider refund count and amount, explicitly marked as an observer view. Replay controls sit in the optional settings disclosure. A second transfer case tests matching the amount as well as the operation ID; deduplication is explained in plain language in the first case.

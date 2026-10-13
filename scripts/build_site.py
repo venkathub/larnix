@@ -7,6 +7,7 @@ import hashlib
 import re
 from zipfile import ZipFile, ZIP_DEFLATED
 from urllib.parse import urlsplit
+from curriculum import ordered_lessons
 from render_foundations import load_notes, render as render_foundation, validate_notes
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,7 @@ def build():
     shutil.copytree(ROOT / 'samples/shared/fonts', assets / 'fonts', dirs_exist_ok=True)
     shutil.copy2(ROOT / 'samples/vector-similarity/styles.css', assets / 'lesson.css')
     shutil.copy2(ROOT / 'web/index.html', OUT / 'index.html')
-    data = {'modules': curriculum['modules'], 'tracks': curriculum['tracks'],
+    data = {'modules': [{**m, 'lessons': ordered_lessons(m)} for m in curriculum['modules']], 'tracks': curriculum['tracks'],
             'order': curriculum['recommended_module_order'], 'sources': sources, 'previews': previews}
     (assets / 'data.js').write_text('window.LarnixData = ' + json.dumps(data, ensure_ascii=False).replace('<', '\\u003c') + ';\n')
     for lesson_id, preview in previews.items():
