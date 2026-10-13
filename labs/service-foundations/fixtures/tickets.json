@@ -1,0 +1,6 @@
+[
+  {"request_key": "rent-001", "equipment": "drill", "days": 2},
+  {"request_key": "rent-002", "equipment": "saw", "days": 1},
+  {"request_key": "rent-003", "equipment": "pump", "days": 3},
+  {"request_key": "rent-004", "equipment": "drill", "days": 2}
+]

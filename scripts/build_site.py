@@ -28,10 +28,13 @@ def build():
     OUT.mkdir(exist_ok=True)
     (OUT / '.nojekyll').touch()
     (OUT / 'labs').mkdir(exist_ok=True)
-    with ZipFile(OUT / 'labs/data-foundations.zip', 'w', ZIP_DEFLATED) as archive:
-        for path in sorted((ROOT / 'labs/data-foundations').iterdir()):
-            if path.is_file() and path.suffix in {'.py', '.csv', '.txt', '.md'}:
-                archive.write(path, 'data-foundations/' + path.name)
+    for lab in sorted((ROOT / 'labs').iterdir()):
+        if not lab.is_dir() or lab.is_symlink():
+            continue
+        with ZipFile(OUT / 'labs' / f'{lab.name}.zip', 'w', ZIP_DEFLATED) as archive:
+            for path in sorted(lab.rglob('*')):
+                if path.is_file() and path.suffix in {'.py', '.csv', '.txt', '.md', '.json'}:
+                    archive.write(path, (Path(lab.name) / path.relative_to(lab)).as_posix())
     assets = OUT / 'assets'
     assets.mkdir(exist_ok=True)
     for name in ['app.js', 'app.css', 'home.css', 'roadmap.css', 'catalog.js', 'progress.js', 'lesson-shell.js']:

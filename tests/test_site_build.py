@@ -1,5 +1,6 @@
 """Verify generated lesson assets and links, independently of the browser."""
 from html.parser import HTMLParser
+from copy import deepcopy
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
@@ -11,7 +12,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from build_site import build
-from render_foundations import load_notes
+from render_foundations import load_notes, render as render_foundation
+from curriculum import render as render_curriculum
 
 
 class Page(HTMLParser):
@@ -40,15 +42,19 @@ class SiteBuildTest(unittest.TestCase):
     def setUpClass(cls):
         build()
 
-    def test_downloadable_lab_is_complete_and_matches_tested_sources(self):
-        names = {'README.md', 'requirements.txt', 'rentals.csv', 'rates.csv', 'lab.py', 'test_lab.py'}
-        with ZipFile(ROOT / 'dist/labs/data-foundations.zip') as archive:
-            self.assertEqual(set(archive.namelist()), {'data-foundations/' + name for name in names})
-            for name in names:
-                self.assertEqual(archive.read('data-foundations/' + name),
-                                 (ROOT / 'labs/data-foundations' / name).read_bytes())
+    def test_downloadable_labs_are_complete_and_match_tested_sources(self):
+        for lab in sorted((ROOT / 'labs').iterdir()):
+            if not lab.is_dir():
+                continue
+            with self.subTest(lab=lab.name), ZipFile(ROOT / 'dist/labs' / f'{lab.name}.zip') as archive:
+                names = {path.relative_to(lab).as_posix() for path in lab.rglob('*')
+                         if path.is_file() and '__pycache__' not in path.parts}
+                self.assertEqual(set(archive.namelist()), {f'{lab.name}/{name}' for name in names})
+                self.assertTrue({'README.md', 'requirements.txt', 'lab.py', 'test_lab.py'} <= names)
+                for name in names:
+                    self.assertEqual(archive.read(f'{lab.name}/{name}'), (lab / name).read_bytes())
 
-    def test_foundation_dates_and_data_lab_links_and_synthetic_notice(self):
+    def test_foundation_dates_and_runnable_lab_links_and_synthetic_notice(self):
         curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
         manifest = json.loads((ROOT / 'web/lessons.json').read_text())
         notes = load_notes()
@@ -62,16 +68,38 @@ class SiteBuildTest(unittest.TestCase):
                     text = file.read_text()
                     reviewed = date.fromisoformat(notes[lesson_id].get('sources_reviewed_on', '2026-10-12'))
                     self.assertIn(f'Authoring references rechecked {reviewed:%B} {reviewed.day}, {reviewed.year}.', text)
-                    if lesson['delivery']['artifact'] != 'runnable_data_lab':
+                    if lesson['delivery']['artifact'] not in {'runnable_data_lab', 'runnable_service_lab'}:
                         continue
-                    ref = '../../labs/data-foundations.zip'
+                    lab = Path(lesson['delivery']['artifact_path']).parent.name
+                    label = lab.removesuffix('-foundations').replace('-', ' ')
+                    ref = f'../../labs/{lab}.zip'
                     self.assertIn(ref, Page(text).refs)
                     self.assertTrue((file.parent / ref).is_file())
-                    self.assertIn('Download runnable data lab + README', text)
+                    self.assertIn(f'Download runnable {label} lab + README', text)
                     before_controls = text.split('class="scenario-controls"')[0]
                     self.assertIn('SYNTHETIC fixed fixtures:', before_controls)
                     self.assertIn('in the browser.', before_controls)
                     self.assertIn(lesson['delivery']['artifact_path'], text)
+
+        # No service lesson record ships in A1. Exercise both kinds with a copy of
+        # one authored lab lesson, so neither coverage nor paths depend on its ID.
+        module, original = next((m, l) for m in curriculum['modules'] for l in m['lessons']
+                                if l['id'] in notes and l['delivery']['artifact'] == 'runnable_data_lab')
+        for kind, lab, label in [('runnable_data_lab', 'data-foundations', 'data'),
+                                 ('runnable_service_lab', 'service-foundations', 'service')]:
+            with self.subTest(artifact=kind):
+                lesson = deepcopy(original)
+                lesson['delivery'].update(artifact=kind, artifact_path=f'labs/{lab}/README.md')
+                html = render_foundation(notes[lesson['id']], lesson, module)
+                self.assertIn(f'../../labs/{lab}.zip', Page(html).refs)
+                self.assertIn(f'Download runnable {label} lab + README', html)
+                self.assertTrue((ROOT / 'dist/labs' / f'{lab}.zip').is_file())
+                records = deepcopy(curriculum)
+                target = next(l for m in records['modules'] for l in m['lessons'] if l['id'] == lesson['id'])
+                target['delivery'] = lesson['delivery']
+                markdown = render_curriculum(records, json.loads((ROOT / 'docs/curriculum/sources.json').read_text()))
+                self.assertIn(f'[{label.capitalize()} foundations lab](../../../labs/{lab}/README.md)',
+                              markdown[f"modules/{module['id']}.md"])
 
     def test_shipped_navigation_uses_teaching_order_and_respects_dependencies(self):
         source = (ROOT / 'dist/assets/data.js').read_text()

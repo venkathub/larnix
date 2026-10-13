@@ -7,6 +7,7 @@ from datetime import date
 from html import escape
 import json
 from pathlib import Path
+from curriculum import RUNNABLE_LABS
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -120,8 +121,10 @@ def render(note, lesson, module):
     signals = ''.join(f'<li>{e(s)}</li>' for s in lesson['interview']['strong_answer_signals'])
     scenario_buttons = ''.join(f'<button type="button" data-case="{i}" aria-pressed="{str(i==0).lower()}">{e(s["label"])}</button>' for i, s in enumerate(note['lab']['scenarios']))
     artifact_link = ''
-    if lesson.get('delivery', {}).get('artifact') == 'runnable_data_lab':
-        artifact_link = '<p><a href="../../labs/data-foundations.zip" download>Download runnable data lab + README</a></p>'
+    if lesson.get('delivery', {}).get('artifact') in RUNNABLE_LABS:
+        lab_name = Path(lesson['delivery']['artifact_path']).parent.name
+        label = lab_name.removesuffix('-foundations').replace('-', ' ')
+        artifact_link = f'<p><a href="../../labs/{e(lab_name)}.zip" download>Download runnable {e(label)} lab + README</a></p>'
     reviewed_display = 'October 12, 2026'
     if 'sources_reviewed_on' in note:
         reviewed = date.fromisoformat(note['sources_reviewed_on'])

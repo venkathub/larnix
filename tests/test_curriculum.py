@@ -95,6 +95,19 @@ class CurriculumTest(unittest.TestCase):
         lesson['status'] = 'preview'
         self.assertTrue(any('manifest differ' in e for e in validate(self.curriculum, self.sources)))
 
+    def test_runnable_lab_kinds_require_existing_lab_readmes(self):
+        lesson = self.curriculum['modules'][0]['lessons'][0]
+        for kind, name in [('runnable_data_lab', 'data-foundations'),
+                           ('runnable_service_lab', 'service-foundations')]:
+            with self.subTest(artifact=kind):
+                lesson['delivery'].update(artifact=kind, artifact_path=f'labs/{name}/README.md')
+                self.assertEqual(validate(self.curriculum, self.sources), [])
+                for path in ('', 'README.md', 'labs/no-such-lab/README.md'):
+                    lesson['delivery']['artifact_path'] = path
+                    self.assertTrue(validate(self.curriculum, self.sources))
+        lesson['delivery'].update(artifact='unrecognized_lab', artifact_path='labs/data-foundations/README.md')
+        self.assertTrue(any('invalid artifact type' in e for e in validate(self.curriculum, self.sources)))
+
     def test_hours_and_artifact_evidence_are_required(self):
         lesson = self.curriculum['modules'][1]['lessons'][4]
         del lesson['estimated_hours']['exercise']
