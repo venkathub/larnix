@@ -82,6 +82,17 @@ class InspectionLessonTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.starter['inspect_csv'](malformed)
 
+    def test_inspection_rejects_absent_expected_groups(self):
+        for absent in [('Account',), ('Walk-in',), ('Account', 'Walk-in')]:
+            with self.subTest(absent=absent):
+                lines = [line for line in self.raw.splitlines()
+                         if not any(f',{group},'.encode() in line for group in absent)]
+                raw = b'\n'.join(lines) + b'\n'
+                with self.assertRaises(ValueError) as caught:
+                    self.starter['inspect_csv'](raw)
+                self.assertEqual(str(caught.exception),
+                                 f'expected groups missing: {sorted(absent)}')
+
     def test_report_records_same_input_and_labels_every_group(self):
         original_save = Figure.savefig
         captured = []
