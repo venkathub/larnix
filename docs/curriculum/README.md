@@ -20,7 +20,7 @@ A subsequent implementation sample is available: [M03-L01 — Reason with vector
 | Coverage and validation | Approved-scope mapping, field checks, cycle detection, learning-order checks and local-link checks |
 | Maintainable source records | JSON records plus a standard-library renderer/checker; readable Markdown pages generated from those records |
 
-These records specify future teaching and production work. The application has 26 authored previews and a separate runnable data lab; none yet meets the full nine-part lesson contract. See [delivery inventory](DELIVERY.md) for per-lesson status. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
+These records specify future teaching and production work. The application has 27 authored previews and a separate runnable data lab; none yet meets the full nine-part lesson contract. See [delivery inventory](DELIVERY.md) for per-lesson status. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
 
 ## Originality and research policy
 

@@ -1,4 +1,5 @@
 """Prevent misleading completion labels and broken expanded learning paths."""
+from copy import deepcopy
 from pathlib import Path
 import sys
 import unittest
@@ -28,9 +29,23 @@ class CurriculumTest(unittest.TestCase):
         self.assertTrue(any('nine contract categories' in e for e in validate(self.curriculum, self.sources)))
 
     def test_planned_artifact_does_not_become_an_authored_preview(self):
-        lesson = self.curriculum['modules'][1]['lessons'][4]
-        self.assertEqual(lesson['delivery']['artifact'], 'runnable_data_lab')
-        self.assertEqual(lesson['status'], 'planned')
+        # Append a throwaway plan so this guard survives every real lab becoming a preview.
+        module = self.curriculum['modules'][1]
+        lesson = deepcopy(module['lessons'][-1])
+        lesson['id'] = f"{module['id']}-L{len(module['lessons']) + 1:02}"
+        lesson['title'] = 'Test-only runnable artifact'
+        lesson['interview']['question'] = 'Test-only artifact question?'
+        lesson['production_exercise']['brief'] = 'Test-only artifact exercise.'
+        lesson['status'] = 'planned'
+        lesson['delivery'] = {
+            'artifact': 'runnable_data_lab',
+            'artifact_path': 'labs/data-foundations/README.md',
+            'interaction': 'none', 'full_contract': 'not_met',
+        }
+        module['lessons'].append(lesson)
+        module['lesson_order'].append(lesson['id'])
+        self.curriculum['expected_lessons'] += 1
+        self.assertEqual(validate(self.curriculum, self.sources), [])
         lesson['status'] = 'preview'
         self.assertTrue(any('manifest differ' in e for e in validate(self.curriculum, self.sources)))
 

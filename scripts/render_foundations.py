@@ -3,6 +3,7 @@
 Content stays in reviewed JSON; generated HTML includes the complete lesson even
 without JavaScript. Only the case explorer and saved checks need the runtime.
 """
+from datetime import date
 from html import escape
 import json
 from pathlib import Path
@@ -58,6 +59,13 @@ def validate_notes(notes, curriculum):
             raise ValueError(f'{lesson_id}: use a consistent scale across illustrated cases')
         if not note['sources'] or any(not s['url'].startswith('https://') for s in note['sources']):
             raise ValueError(f'{lesson_id}: primary sources required')
+        if 'sources_reviewed_on' in note:
+            reviewed_on = note['sources_reviewed_on']
+            try:
+                if date.fromisoformat(reviewed_on).isoformat() != reviewed_on:
+                    raise ValueError('noncanonical date')
+            except (TypeError, ValueError) as error:
+                raise ValueError(f'{lesson_id}: sources_reviewed_on must be a valid YYYY-MM-DD date') from error
         if len(note['practice']['steps']) != 3 or not note['practice']['starter'].strip():
             raise ValueError(f'{lesson_id}: missing practice starter')
 
@@ -111,6 +119,9 @@ def render(note, lesson, module):
     acceptance = ''.join(f'<li>{e(s)}</li>' for s in lesson['production_exercise']['acceptance'])
     signals = ''.join(f'<li>{e(s)}</li>' for s in lesson['interview']['strong_answer_signals'])
     scenario_buttons = ''.join(f'<button type="button" data-case="{i}" aria-pressed="{str(i==0).lower()}">{e(s["label"])}</button>' for i, s in enumerate(note['lab']['scenarios']))
+    artifact_link = ''
+    if lesson.get('delivery', {}).get('artifact') == 'runnable_data_lab':
+        artifact_link = '<p><a href="../../labs/data-foundations.zip" download>Download runnable data lab + README</a></p>'
     prereqs = ', '.join(lesson['prerequisites']) or 'No earlier lesson required; read the definitions below.'
     return f'''<!doctype html>
 <html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{e(lesson['outcome'])}"><title>{title} · Larnix</title>
@@ -125,7 +136,7 @@ def render(note, lesson, module):
 <section class="section lab-section" id="lab" aria-labelledby="lab-title"><div class="section-heading"><div><p class="section-number">02 / TRY THREE CASES · 4 MIN</p><h2 id="lab-title">Change the case.<br>Follow the evidence.</h2><p class="fixture-label">Illustrated fixtures · no live model or service</p></div></div><div class="lab-guide"><p><strong>Your question:</strong> {e(note['lab']['question'])}</p><p>Predict first. Then choose 1 → 2 → 3 and explain what changed.</p></div><div class="foundation-lab"><div class="scenario-controls" role="group" aria-label="Illustrated cases">{scenario_buttons}</div><div class="lab-feedback" role="status" aria-live="polite" aria-atomic="true"><p class="feedback-label">What happened</p><p id="case-result">{e(first['result'])}</p><p class="feedback-label">Why · what to inspect</p><p id="case-why">{e(first['why'])}</p></div><div class="case-visual" id="case-visual">{stages(first['steps'])}{bars(first['bars'])}{evidence(first['evidence'])}</div></div><p class="lab-caption">{e(note['lab']['limitation'])}</p>{mini_lab(lesson['id'])}<noscript><p class="callout">The first case is shown above. Case switching, calculators and saved checks need JavaScript; all explanations and practice instructions remain readable.</p></noscript></section>
 <section class="reading section" id="mechanism"><p class="section-number">03 / EXPLAIN &amp; CHECK · 3 MIN</p><h2>What changed—and why?</h2>{paragraphs(note['mechanism'])}{check_html}</section>
 <section class="reading section" id="takeaways"><p class="section-number">04 / RECALL IT · 1 MIN</p><h2>Can you use the idea elsewhere?</h2><div class="transfer-check"><h3>Explain before revealing</h3>{recall(note['transfer'][1], 'Check the new case')}</div><p class="core-rule">{e(note['idea'])}</p><div class="completion"><div><p class="eyebrow">YOUR QUICK CHECKS</p><h3 id="completion-title">0 of 3 answered correctly</h3><p id="completion-text"></p></div><button id="reset-checks" class="quiet" type="button">Retry all checks</button></div><div id="recap" class="takeaway" hidden><p>Explain the diagram with the answer hidden. Correct checks are practice feedback, not proof of mastery.</p></div></section>
-<div class="optional-reading" id="deep-dive"><p class="eyebrow">ALL TOPIC NOTES · EXTRA STUDY</p><details class="lesson-extra"><summary>Open the topic notes<span aria-hidden="true">＋</span></summary><div class="extra-body reading">{topic_html}<h3>Primary sources</h3><p>Authoring references rechecked October 12, 2026. Versioned pages apply to their stated versions; package behavior may differ.</p><ul class="source-list">{sources}</ul></div></details></div>
-<section class="section" id="production"><details class="lesson-extra"><summary>Production practice · beyond the ten-minute core<span aria-hidden="true">＋</span></summary><div class="extra-body reading"><h2>Build the evidence.</h2><p>{e(lesson['production_exercise']['brief'])}</p><ol>{steps}</ol><h3>Starter fixture / worksheet</h3><pre class="practice-code"><code>{e(note['practice']['starter'])}</code></pre><a class="text-link" href="starter.txt" download>Download starter text ↓</a><h3>Acceptance evidence</h3><ul>{acceptance}</ul><p>Keep the input, versioned output, failure case and decision note together. Completing this exercise requires your implementation; switching the illustrated cases does not complete it.</p></div></details></section>
+<div class="optional-reading" id="deep-dive"><p class="eyebrow">ALL TOPIC NOTES · EXTRA STUDY</p><details class="lesson-extra"><summary>Open the topic notes<span aria-hidden="true">＋</span></summary><div class="extra-body reading">{topic_html}<h3>Primary sources</h3><p>Authoring references rechecked {e(note.get("sources_reviewed_on", "October 12, 2026"))}. Versioned pages apply to their stated versions; package behavior may differ.</p><ul class="source-list">{sources}</ul></div></details></div>
+<section class="section" id="production"><details class="lesson-extra"><summary>Production practice · beyond the ten-minute core<span aria-hidden="true">＋</span></summary><div class="extra-body reading"><h2>Build the evidence.</h2><p>{e(lesson['production_exercise']['brief'])}</p><ol>{steps}</ol>{artifact_link}<h3>Starter fixture / worksheet</h3><pre class="practice-code"><code>{e(note['practice']['starter'])}</code></pre><a class="text-link" href="starter.txt" download>Download starter text ↓</a><h3>Acceptance evidence</h3><ul>{acceptance}</ul><p>Keep the input, versioned output, failure case and decision note together. Completing this exercise requires your implementation; switching the illustrated cases does not complete it.</p></div></details></section>
 <section class="section" id="interview"><details class="lesson-extra"><summary>Interview practice<span aria-hidden="true">＋</span></summary><div class="extra-body reading"><h2>{e(lesson['interview']['question'])}</h2><p>Give your own answer before opening the prompts.</p><details class="recall-answer"><summary>What a strong answer should address</summary><ul>{signals}</ul><p>Explain the mechanism, use a concrete example, and name a verification method and limitation.</p></details></div></details></section>
 <footer class="lesson-footer"><p>Original Larnix lesson · fictional teaching fixtures · optional practice runs on your own machine.</p><a href="../../#/catalog">Return to curriculum ↗</a></footer></main></div></body></html>'''

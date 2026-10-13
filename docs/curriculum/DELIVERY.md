@@ -17,7 +17,7 @@ Generated from curriculum.json and checked against the preview manifest. A teste
 | [M02-L02](modules/M02.md#m02-l02) | preview | illustrated_cases | learner_starter | not_met |
 | [M02-L03](modules/M02.md#m02-l03) | preview | illustrated_cases | learner_starter | not_met |
 | [M02-L04](modules/M02.md#m02-l04) | preview | illustrated_cases | learner_starter | not_met |
-| [M02-L05](modules/M02.md#m02-l05) | planned | none | runnable_data_lab | not_met |
+| [M02-L05](modules/M02.md#m02-l05) | preview | illustrated_cases | runnable_data_lab | not_met |
 | [M02-L06](modules/M02.md#m02-l06) | planned | none | runnable_data_lab | not_met |
 | [M02-L07](modules/M02.md#m02-l07) | planned | none | runnable_data_lab | not_met |
 | [M03-L01](modules/M03.md#m03-l01) | preview | tested_specialist_engine | learner_starter | not_met |

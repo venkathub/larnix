@@ -1089,6 +1089,249 @@
     }
   },
   {
+    "id": "M02-L05",
+    "orientation": "NumPy stores numbers in arrays: ordered collections with a shape (the length of each axis) and a dtype (the stored value type). Here, one position means one rental. Start with M02-L01’s explicit input contract; now make the array shapes part of that contract.",
+    "idea": "Match each rental’s days to its own daily rate, then verify the output shape and a hand-calculated cost before trusting the total.",
+    "story": [
+      "Meera closes the equipment-rental desk with three SYNTHETIC bookings: a drill for 2 days at 12 fictional currency units per day, a sander for 4 days at 7, and a lamp for 3 days at 9. She wants one charge per booking. Think of two aligned ledger columns: day counts and daily rates. Multiplying across each row gives that rental’s cost.",
+      "She puts days [2, 4, 3] and rates [12, 7, 9] into separate one-dimensional NumPy arrays. Each has shape (3,), meaning one axis with three entries. The same position in each array must still identify the same rental; NumPy does not know the equipment names. A Python loop pairs the entries explicitly. Vectorization expresses the same work as days * rates, applying multiplication across the arrays.",
+      "Then Meera adds a column axis to days. Its shape becomes (3, 1), while rates stays (3,). NumPy accepts the multiplication, but now compares every day count with every rate. Each number resembles a reasonable rental charge. The ledger analogy stops here: NumPy aligns dimensions, not booking identities. Predict the number of outputs before choosing the cases below."
+    ],
+    "example": "SYNTHETIC matched costs: drill 2 × 12 = 24; sander 4 × 7 = 28; lamp 3 × 9 = 27 fictional currency units. A loop and days * rates both return [24, 28, 27], shape (3,), with total 24 + 28 + 27 = 79. Rates are per day; multiplying by days gives the whole rental charge, not a daily rate.",
+    "trap": "A successful operation can answer the wrong question. Shapes (3, 1) × (3,) produce (3, 3): nine pairwise costs instead of three matched costs. Even the first value, 24, is right. Check the entire first row and the output shape before summing; a plausible first cell is not enough.",
+    "sketch": [
+      "3 rentals: days (3,)",
+      "Match rates (3,)",
+      "Costs (3,) → total 79"
+    ],
+    "lab": {
+      "question": "SYNTHETIC fixed fixtures: this page does not run NumPy in the browser. For Meera’s same three rentals, will each shape choice produce three matched costs, nine pairwise costs, or an error?",
+      "limitation": "SYNTHETIC fixed case explorer. Inputs, outputs and the failure shown here are authored fixtures, not browser-executed NumPy or production evidence. Bars count output entries on a shared 0–9 scale; zero after an error means no output, not a free rental. Run the separate data lab for executable evidence.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC matched rows",
+          "steps": [
+            "days (3,)",
+            "rates (3,)",
+            "costs (3,)"
+          ],
+          "evidence": [
+            [
+              "Inputs",
+              "days [2, 4, 3]; rates [12, 7, 9] units/day"
+            ],
+            [
+              "Loop / vectorized",
+              "[24, 28, 27] / [24, 28, 27] units"
+            ],
+            [
+              "Total / shape",
+              "79 units / (3,)"
+            ]
+          ],
+          "result": "Three matched costs; loop and vectorized total both equal 79 fictional currency units.",
+          "why": "Equal one-dimensional shapes pair the same positions. Check the sander: 4 days × 7 units/day = 28 units. This assumes both arrays preserve rental order.",
+          "bars": [
+            {
+              "label": "Expected matched entries",
+              "value": 3,
+              "max": 9
+            },
+            {
+              "label": "Produced entries",
+              "value": 3,
+              "max": 9
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC pairwise trap",
+          "steps": [
+            "days[:, None] (3, 1)",
+            "rates (3,)",
+            "pairwise (3, 3)"
+          ],
+          "evidence": [
+            [
+              "Operand shapes",
+              "(3, 1) × (3,) → (3, 3)"
+            ],
+            [
+              "Pairwise costs",
+              "[[24, 14, 18], [48, 28, 36], [36, 21, 27]] units"
+            ],
+            [
+              "Wrong total / correct total",
+              "252 units / 79 units"
+            ]
+          ],
+          "result": "Nine plausible costs sum to 252 units, but Meera has only three bookings.",
+          "why": "Broadcasting aligns dimensions from the right; equal lengths or a length of 1 can expand. Here each day count meets all three rates. Row one is [24, 14, 18], not the drill’s single charge 24. Require matching one-dimensional inputs and rerun case 1; do not flatten the nine wrong charges.",
+          "bars": [
+            {
+              "label": "Expected matched entries",
+              "value": 3,
+              "max": 9
+            },
+            {
+              "label": "Produced entries",
+              "value": 9,
+              "max": 9
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC missing rate",
+          "steps": [
+            "days (3,)",
+            "rates (2,)",
+            "Reject → restore rate"
+          ],
+          "evidence": [
+            [
+              "Inputs",
+              "days [2, 4, 3]; rates [12, 7] units/day"
+            ],
+            [
+              "Shape mismatch",
+              "(3,) × (2,): 3 and 2 differ; neither is 1"
+            ],
+            [
+              "Failure / recovery",
+              "ValueError; restore lamp rate 9, then rerun → total 79"
+            ]
+          ],
+          "result": "No costs are produced: the missing lamp rate makes the shapes incompatible.",
+          "why": "NumPy raises ValueError for these shapes; your calculator should reject them at its input boundary too. Do not truncate the loop or invent a zero rate. Recover the matched source rate and select case 1 to inspect the corrected result.",
+          "bars": [
+            {
+              "label": "Expected matched entries",
+              "value": 3,
+              "max": 9
+            },
+            {
+              "label": "Produced entries",
+              "value": 0,
+              "max": 9
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Keep the meaning beside the shape. One axis of length three is (3,); three rows of one column is (3, 1). Broadcasting permits some unequal shapes, but our per-rental contract deliberately requires two equal one-dimensional arrays. Reject a column input even when NumPy could multiply it. Validate finite values before computing: NaN means not-a-number, and infinity is not a usable rate.",
+      "Compare the vectorized values with a loop and the hand calculation, not just with each other. Declare an absolute tolerance of 1e-9 fictional currency units and relative tolerance 0 for this tiny float64 fixture. A reduction combines values along an axis: costs.sum() turns [24, 28, 27] into 79. Reducing the wrong matrix just hides the extra combinations. Both implementations can agree while using incorrectly ordered rates.",
+      "Take away three habits: name each axis, reject shapes outside the business contract, and verify a row plus the output shape before reducing. Array means an ordered numeric collection; broadcasting aligns compatible dimensions; vectorization applies an operation across an array. In M02-L06, tables and join keys will help establish which rate belongs to which booking before we do this arithmetic."
+    ],
+    "transfer": [
+      {
+        "question": "A new SYNTHETIC booking sheet has days [5, 2] and matched rates [6, 11]. What output and shape should you expect? What if days is accidentally shaped (2, 1)?",
+        "answer": "The matched output is [30, 22], shape (2,), total 52 units. A column-shaped day array multiplied by rates of shape (2,) gives [[30, 55], [12, 22]], shape (2, 2), total 119. Those extra cross-booking combinations are valid arithmetic but invalid billing."
+      },
+      {
+        "question": "Both arrays have shape (3,), and the loop agrees with vectorization. Does that prove the rates belong to the correct equipment?",
+        "answer": "No. Shapes cannot check identity. With the same days [2, 4, 3] but reordered rates [7, 12, 9], both implementations return [14, 48, 27], total 89. Verify the booking-to-rate mapping and compare a known row. Neither agreement nor finite values alone establishes correct billing."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Predict: days has shape (3, 1) and rates has shape (3,). What does days * rates produce?",
+        "options": [
+          "Three matched costs, shape (3,)",
+          "Nine pairwise costs, shape (3, 3)",
+          "A shape error in NumPy"
+        ],
+        "answer": 1,
+        "explanation": "The trailing 1 expands across three rates, while the missing leading rate axis acts as length 1 and expands across three rentals. The result is (3, 3). Our billing contract should reject that input even though NumPy accepts it."
+      },
+      {
+        "question": "A new SYNTHETIC rental fixture has days [1, 3] and rates [8, 5, 4]. What should a per-rental calculator do?",
+        "options": [
+          "Use the first two rates and return [8, 15]",
+          "Pad days with zero",
+          "Reject the mismatch and recover the missing pairing"
+        ],
+        "answer": 2,
+        "explanation": "Shapes (2,) and (3,) cannot broadcast. A zip-based loop would silently drop the third rate unless you check lengths first. Reject the mismatch; do not guess which rental or rate is missing."
+      },
+      {
+        "question": "Meera sets trial = rates[:2], then trial[0] = 0. Why does the drill’s original rate change?",
+        "options": [
+          "The basic slice is a view sharing the numeric storage",
+          "Every slice creates an independent copy",
+          "Multiplication changed rates in place"
+        ],
+        "answer": 0,
+        "explanation": "Basic slicing returns a view. Assigning through trial changes rates too. Use rates[:2].copy() for an isolated experiment and test that the original stays unchanged; ordinary days * rates creates a separate result."
+      }
+    ],
+    "topics": [
+      {
+        "title": "NumPy arrays and dtypes",
+        "explanation": "A numeric ndarray has a shape and a common storage dtype. Use np.array([2, 4, 3], dtype=np.int64) for these whole-day counts and np.array([12, 7, 9], dtype=np.float64) for rates. A dtype describes representation, not units or validity. Fixed-width integers can overflow; floating-point amounts need declared comparison and rounding rules. Our small synthetic fixture is not a money-accounting policy."
+      },
+      {
+        "title": "broadcasting",
+        "explanation": "Compare axis lengths from the right. Each pair must match or contain a 1; missing leading axes act as 1. Thus (3,) with (3,) gives three matched values, while (3, 1) with (3,) gives a 3 × 3 pairwise table. Lengths 3 and 2 cannot expand into one another. Broadcasting knows sizes, not rental identities."
+      },
+      {
+        "title": "axis reductions",
+        "explanation": "An axis is a numbered dimension. A reduction such as sum combines values along the chosen dimension. For the pairwise table [[24, 14, 18], [48, 28, 36], [36, 21, 27]], sum(axis=1) removes the column axis and gives row totals [56, 112, 84]; sum(axis=0) removes the row axis and gives column totals [108, 63, 81]. Neither is the matched charge vector [24, 28, 27]. Omitting axis sums all nine entries to 252. Establish the intended shape before reducing."
+      },
+      {
+        "title": "boolean indexing",
+        "explanation": "A boolean mask is an array of True/False selections. For matched costs [24, 28, 27], costs >= 27 is [False, True, True], so costs[costs >= 27] returns [28, 27]. Boolean indexing creates a copy when reading selected values; direct assignment such as costs[mask] = 0 still updates costs. Filtering expensive rentals is useful for inspection, but dropping invalid rates would misalign the billing inputs."
+      },
+      {
+        "title": "views versus copies",
+        "explanation": "A view shares underlying storage; a copy has separate storage. With float64 rates [12, 7, 9], trial = rates[:2] followed by trial[0] = 0 changes rates to [0, 7, 9]. Start again and use trial = rates[:2].copy() before editing: rates remains [12, 7, 9]. Basic slices are views; advanced indexing reads are copies. Do not assume every reshape copies the data."
+      },
+      {
+        "title": "vectorization",
+        "explanation": "Vectorization expresses repeated numeric work as array operations such as days * rates instead of a Python loop over bookings. It can reduce Python-level overhead, but this preview measures no speedup. A pairwise mistake can allocate n × n results rather than n. Keep a loop baseline, validate inputs before either path, and measure time and memory on a stated workload before making performance claims."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-13",
+    "sources": [
+      {
+        "title": "NumPy 2.3: broadcasting rules",
+        "url": "https://numpy.org/doc/2.3/user/basics.broadcasting.html"
+      },
+      {
+        "title": "NumPy 2.3: data types",
+        "url": "https://numpy.org/doc/2.3/user/basics.types.html"
+      },
+      {
+        "title": "NumPy 2.3: sum and axis reductions",
+        "url": "https://numpy.org/doc/2.3/reference/generated/numpy.sum.html"
+      },
+      {
+        "title": "NumPy 2.3: indexing, including boolean masks",
+        "url": "https://numpy.org/doc/2.3/user/basics.indexing.html"
+      },
+      {
+        "title": "NumPy 2.3: copies and views",
+        "url": "https://numpy.org/doc/2.3/user/basics.copies.html"
+      },
+      {
+        "title": "NumPy 2.3: finite-value checks",
+        "url": "https://numpy.org/doc/2.3/reference/generated/numpy.isfinite.html"
+      },
+      {
+        "title": "Dive into Deep Learning: linear algebra and reductions (conceptual reading)",
+        "url": "https://d2l.ai/chapter_preliminaries/linear-algebra.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Open labs/data-foundations/README.md in the repository or the runnable data-lab download. Follow its Python 3.12 environment and test commands; it pins NumPy 2.3.5. That existing lab has a separate four-rental fixture totalling 103 units. The three-rental SYNTHETIC starter below is an additional exercise, with expected total 79; do not confuse the two datasets.",
+        "Save the starter as rental_costs.py in your own practice directory. Implement vectorized_costs using the documented contract. Compare all three costs and the total with the loop and [24, 28, 27], using rtol=0 and atol=1e-9. Inject rates of shape (2,), days of shape (3, 1), and NaN or infinite rates; each must raise ValueError. Restore the original inputs and rerun.",
+        "Demonstrate rates[:2] mutating its parent, then repeat from fresh inputs with rates[:2].copy() and prove the parent is unchanged. Record Python/NumPy versions, input values, matched and failed results, and your decision note. State that the fixture is synthetic and not a performance benchmark; billing identity, taxes, discounts and currency rounding remain outside this exercise."
+      ],
+      "starter": "# SYNTHETIC fixture; fictional currency units. Python 3.12 / NumPy 2.3.5.\n# Setup and runnable reference: labs/data-foundations/README.md\nimport numpy as np\n\nDAYS = np.array([2, 4, 3], dtype=np.int64)\nRATES = np.array([12, 7, 9], dtype=np.float64)\nEXPECTED = np.array([24, 28, 27], dtype=np.float64)\nATOL = 1e-9  # fictional currency units; relative tolerance is zero\n\n\ndef loop_costs(days, rates):\n    if days.ndim != 1 or rates.ndim != 1 or days.shape != rates.shape:\n        raise ValueError(\"expected equal one-dimensional shapes\")\n    if not np.isfinite(days).all() or not np.isfinite(rates).all():\n        raise ValueError(\"days and rates must be finite\")\n    return np.array([float(days[i]) * float(rates[i])\n                     for i in range(len(days))])\n\n\ndef vectorized_costs(days, rates):\n    # TODO: enforce the same shape and finite-value contract, then multiply.\n    # Do not flatten column inputs or silently discard unmatched rates.\n    raise NotImplementedError(\"implement and test the array calculator\")\n\n\nbaseline = loop_costs(DAYS, RATES)\nnp.testing.assert_allclose(baseline, EXPECTED, rtol=0, atol=ATOL)\n# TODO: compare vectorized values AND total 79 against the baseline.\n# TODO: reject RATES[:2], DAYS[:, None], and rates containing np.nan/np.inf.\n# TODO: show the wrong pairwise matrix, then a corrected rerun.\n# TODO: compare mutation through RATES[:2] with RATES[:2].copy()\n#       using fresh arrays for each experiment; preserve the fixture.\nprint(\"SYNTHETIC loop costs:\", baseline, \"total:\", baseline.sum())"
+    }
+  },
+  {
     "id": "M02-L02",
     "orientation": "A service contract defines what requests and responses mean. HTTP carries the message, JSON represents data, and application validation checks whether that data is usable.",
     "idea": "Receiving a response and receiving valid business data are different successes.",

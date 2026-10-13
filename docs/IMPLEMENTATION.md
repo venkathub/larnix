@@ -2,7 +2,7 @@
 
 ## Current milestone: M01–M06 foundations and two advanced previews
 
-The 26-preview classroom and homepage are published from `main`. The curriculum expansion described here is a local branch change pending merge and publication. The reference repository has not been forked or imported.
+The classroom has 27 authored previews; the published site follows `main`. The reference repository has not been forked or imported.
 
 - Catalogue of all 42 modules and 188 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.
@@ -10,13 +10,13 @@ The 26-preview classroom and homepage are published from `main`. The curriculum 
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
 - The separate preview showcase is removed in the catalogue draft. Available lessons open directly from their modules; planned lessons open their blueprints. On mobile the roadmap starts collapsed and closes after a stage is selected.
 - Module pages, lesson blueprints, direct prerequisite links, primary readings and next-lesson navigation.
-- Twenty-six authored previews: 24 original foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
+- Twenty-seven authored previews: 25 original foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
 - Each preview has a suggested 10-minute core, original handwritten-style SVG, three checks, and optional deeper explanation/interview/production sections. Direct links reveal optional content automatically.
 - Shared quiz/theme component plus course navigation, bookmarks and independent reading/check/practice records.
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
 
-This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 162 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
+This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 161 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
 
 ## Run and check
 
@@ -135,7 +135,7 @@ Reviewer conclusion: the core now teaches a useful diagnostic distinction and pr
 
 ### Beginner improvements across every preview — October 12, 2026
 
-All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 162 currently planned lessons as authored.
+All three entries in the preview manifest now use the same question-first, evidence-beside-result approach. This extends the RAG review; it does not label any of the 161 currently planned lessons as authored.
 
 - **Vectors:** removed the winner from the prediction instructions, moved normalization beside metric selection, and added live raw coordinates and both scores next to the explanation. Normalization is defined where the first transfer question uses it. A second transfer case separates cosine alignment from factual correctness and freshness.
 - **Recovery:** introduced the authorized task and explained reconciliation before controls. The result now compares saved agent evidence with provider refund count and amount, explicitly marked as an observer view. Replay controls sit in the optional settings disclosure. A second transfer case tests matching the amount as well as the operation ID; deduplication is explained in plain language in the first case.
@@ -148,16 +148,35 @@ Honest review: vectors gives the most concrete entry point, although interpretin
 
 ## Foundation delivery — M01–M06
 
-The original 24 foundation lessons now open as authored previews. Twenty-three use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 24 of the 26 available previews; 162 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
+Twenty-five foundation lessons now open as authored previews, including M02-L05. Twenty-four use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 25 of the 27 available previews; 161 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
 
 Each new lesson includes definitions, a handwritten mechanism sketch, a worked example, a misconception, three original illustrated cases with adjacent feedback and numerical evidence, three checks, two concealed-answer transfer prompts, every approved topic as an expanded note, verified primary sources, and a downloadable practice starter with acceptance criteria. The ten-minute route introduces one central mechanism; broader notes and production practice require additional time.
 
 The case explorer switches between fixed synthetic fixtures and labels that limitation explicitly before the controls and below the visual. It does not pretend to run Python, train a model, call an API or measure production results. M03-L02 and M05-L02 additionally provide a computed quadratic-loss chart and step controls; M04-L03 provides a computed threshold slider with six per-ticket decisions, confusion counts, precision and recall. Undefined precision at zero alerts is preserved.
 
-The build rejects missing topic coverage, malformed checks, incomplete cases and inconsistent chart scales. Tests independently calculate threshold counts, baseline mistakes, scalar gradient updates and shared-filter outputs; the page checks enforce 24-lesson foundation availability and match saved quiz keys to authored answers. Previous/next navigation opens authored lessons directly and stays visible after completion checks.
+The build rejects missing topic coverage, malformed checks, incomplete cases and inconsistent chart scales. Tests independently calculate threshold counts, baseline mistakes, scalar gradient updates and shared-filter outputs; the page checks enforce 25-lesson foundation availability and match saved quiz keys to authored answers. Previous/next navigation opens authored lessons directly and stays visible after completion checks.
 
 Authoring sources were rechecked against primary documentation, including Python, RFC 9110, PostgreSQL, D2L, SciPy, scikit-learn, PyTorch 2.9, Google ML framing, Microsoft HAX, Feast and Hugging Face. Individual lessons link the exact relevant pages. The reference GitHub project was not forked or imported. Coding starters are exercises for learners to develop and verify; they are not a claim that all described services or pipelines have been built.
 
-Foundation acceptance evidence: browser-tested all 69 case selections across the 23 new pages at 390 × 844; each produced a distinct expected state and no horizontal overflow. Opened topic notes and practice starters in a representative lesson from each module. Verified correct checks, wrong-answer explanation, persistence after reload and reset in six representative lessons, restoring their initially unanswered state. Tested the threshold slider by keyboard at no-alert and .7 cutoffs; verified local gradient-step values. The desktop revision sheet, restored light/dark preference, direct next-lesson link and catalogue counts (24 foundation lessons / 26 total previews) were checked. No browser console errors were observed.
+Historical foundation acceptance evidence (before M02-L05): browser-tested all 69 case selections across the 23 new pages at 390 × 844; each produced a distinct expected state and no horizontal overflow. Opened topic notes and practice starters in a representative lesson from each module. Verified correct checks, wrong-answer explanation, persistence after reload and reset in six representative lessons, restoring their initially unanswered state. Tested the threshold slider by keyboard at no-alert and .7 cutoffs; verified local gradient-step values. The desktop revision sheet, restored light/dark preference, direct next-lesson link and catalogue counts (24 foundation lessons / 26 total previews) were checked. No browser console errors were observed.
 
 This is implementation and informed content review, not an independent learner trial or a comprehensive accessibility audit. The dense mathematics and systems modules still require the stated prerequisites; ten-minute comprehension and later retention remain to be validated with first-time learners.
+
+
+### M02-L05 NumPy preview — October 13, 2026
+
+The new preview follows three synthetic equipment rentals through matched array multiplication,
+a plausible but incorrect pairwise matrix, and an incompatible-shape failure. Its six topic notes,
+three graded checks and two concealed transfer prompts accompany a practice starter. The production
+section links the existing runnable data-lab archive and its README; that lab uses a separate
+four-rental fixture. The page switches fixed fixtures and does not execute NumPy in the browser.
+
+Tests recompute the displayed costs, reductions, transfer values and view/copy behavior with NumPy,
+match manifest keys to authored answers, and check the static lab link and pre-control limitation.
+Browser checks at 1440 × 1000 and 390 × 844 exercised all three cases without horizontal overflow;
+all three checks showed explanatory wrong-answer feedback, graded correctly, persisted after reload
+and were reset to unanswered. Both transfer disclosures and all six topic notes were inspected.
+Previous opens M02-L01, next opens the M02-L06 blueprint, and the M02 catalogue lists L05 as available.
+No browser console warnings or errors were observed. Light and dark layouts were inspected.
+These are implementation checks: the preview is not learner-validated, and no performance or
+comprehensive accessibility result is claimed.
