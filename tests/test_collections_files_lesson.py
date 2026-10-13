@@ -31,10 +31,11 @@ class CollectionsFilesLessonTest(unittest.TestCase):
                      if (Path(directory) / name).exists()}
             return run, files
 
-    def test_listing_is_the_first_twenty_five_program_lines(self):
+    def test_listing_is_the_first_thirty_four_program_lines(self):
         self.assertEqual(self.note['listing']['language'], 'python')
-        self.assertEqual(len(self.note['listing']['lines']), 25)
-        self.assertEqual(self.note['listing']['lines'], self.note['practice']['starter'].splitlines()[:25])
+        self.assertEqual(len(self.note['listing']['lines']), 34)
+        self.assertTrue(all(len(line) < 60 for line in self.note['listing']['lines']))
+        self.assertEqual(self.note['listing']['lines'], self.note['practice']['starter'].splitlines()[:34])
         run, files = self.execute('\n'.join(self.note['listing']['lines']))
         self.assertEqual(run.returncode, 0, run.stderr)
         self.assertEqual(files, self.files)
