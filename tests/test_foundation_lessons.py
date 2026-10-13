@@ -152,6 +152,9 @@ class FoundationLessonsTest(unittest.TestCase):
         cells = joined.groupby(['branch', 'equipment'], as_index=False, dropna=False)['cost'].sum()
         wide = cells.pivot(index='branch', columns='equipment', values='cost')
         self.assertTrue(pd.isna(wide.loc['South', 'lamp']))
+        evidence = dict(self.notes['M02-L06']['lab']['scenarios'][0]['evidence'])['Branch totals / pivot']
+        self.assertIn(f'South {wide.loc["South"].tolist()}', evidence)
+        self.assertIn('After the audit, fill the absent cell with 0', evidence)
         wide = wide.fillna(0)
         self.assertEqual(wide.loc['North'].tolist(), [24, 20])
         self.assertEqual(wide.loc['South'].tolist(), [12, 0])
