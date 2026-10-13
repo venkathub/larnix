@@ -23,7 +23,7 @@ Use the same Python executable for both runs. `report.json` is the only output. 
 
 Expected values:
 
-- Statuses are **400**, **422**, **426**, **200** respectively. The invalid 200 is rejected. A JSON number `2` is accepted; a string `"2"` or boolean `true` is not.
+- Statuses are **400**, **422**, **400**, **200** respectively. The invalid 200 is rejected. A JSON number `2` is accepted; a string `"2"` or boolean `true` is not.
 - The bounded run completes **4** tickets in input order, reaches **2** active requests and at most **2** queued items, then returns to **0** active. There are **3** worker tasks regardless of input size; the semaphore limits in-flight provider calls. The deliberately unlimited run reaches **4 > 2** active requests and fails the capacity audit.
 - Cancellation propagates `CancelledError`, releases the semaphore, lets `rent-002` enter and finish, and leaves **0** active. Its maximum is **1**.
 - The crash leaves **0 tickets / 0 audits**. After the committed response is lost: **1 / 3**. Replay returns ticket ID **1**, `replayed=true`, and leaves **1 / 3**. Direct duplicate insertion and a changed payload using the same key are rejected. The join has **3 rows**, but **1 distinct ticket**.
@@ -32,7 +32,7 @@ Expected values:
 
 ### Contract: parse, validate, then check the version
 
-`handle()` accepts a JSON body plus the `X-Larnix-Version` header and returns a small HTTP-shaped response. It is called in-process: no socket, DNS lookup or external provider. Request header names are case-insensitive. Its response helper emits one canonical header spelling, used by the in-process client. The versioned ticket schema has exactly three fields: nonempty string `request_key`, nonempty string `equipment`, and positive integer `days`.
+`handle()` accepts a JSON body plus the `X-Larnix-Version` header and returns a small HTTP-shaped response. It is called in-process: no socket, DNS lookup or external provider. Request header names are case-insensitive. Its response helper emits one canonical header spelling, used by the in-process client. An unsupported or missing contract version is a 400 bad request with its own error reason; it is not an HTTP protocol upgrade. The versioned ticket schema has exactly three fields: nonempty string `request_key`, nonempty string `equipment`, and positive integer `days`.
 
 `accept_response()` checks the response version, parses the body and validates the envelope and ticket even for status 200. Parsing JSON alone proves neither field types nor compatibility. The contract handler does not store a ticket; the separate persistence case owns that boundary.
 
@@ -56,7 +56,7 @@ A one-to-many audit join repeats the ticket three times. `COUNT(DISTINCT tickets
 | --- | --- |
 | Malformed JSON | `ContractError: HTTP 400: malformed JSON` |
 | String duration | `ContractError: HTTP 422: days must be a positive integer` |
-| Incompatible version | `ContractError: HTTP 426: unsupported contract version; expected 1` |
+| Incompatible version | `ContractError: HTTP 400: unsupported contract version; expected 1` |
 | Invalid data in a 200 | `ContractError: invalid 200 ticket: days must be a positive integer` |
 | Unlimited tasks | `CapacityExceeded: provider capacity exceeded: observed 4 > 2` |
 | Crash between writes | `InjectedCrash: crash after ticket insert, before audit insert` |

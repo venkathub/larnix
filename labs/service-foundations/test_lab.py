@@ -22,11 +22,19 @@ class ContractTest(unittest.TestCase):
     def test_status_and_body_contract_for_each_request_failure(self):
         report = contract_cases(self.ticket)
         self.assertEqual(report['statuses'], {'malformed_json': 400, 'wrong_field_type': 422,
-                                             'incompatible_version': 426, 'valid': 200})
+                                             'incompatible_version': 400, 'valid': 200})
         self.assertEqual(report['accepted_ticket'], self.ticket)
         self.assertEqual(report['rejected_failures']['invalid_200']['message'],
                          'invalid 200 ticket: days must be a positive integer')
-        self.assertEqual(handle(json.dumps(self.ticket), {}).status, 426)
+        self.assertEqual(report['rejected_failures']['incompatible_version'], {
+            'type': 'ContractError', 'message': 'HTTP 400: unsupported contract version; expected 1'})
+        for headers in ({}, {VERSION_HEADER: '2'}):
+            with self.subTest(headers=headers):
+                reply = handle(json.dumps(self.ticket), headers)
+                self.assertEqual(reply.status, 400)
+                self.assertEqual(json.loads(reply.body), {'error': 'unsupported contract version; expected 1'})
+                with self.assertRaisesRegex(ContractError, 'HTTP 400: unsupported contract version; expected 1'):
+                    accept_response(reply)
         self.assertEqual(handle(json.dumps(self.ticket), {'x-larnix-version': '1'}).status, 200)
 
     def test_field_validation_rejects_bool_null_missing_and_extra(self):

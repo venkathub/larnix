@@ -74,7 +74,7 @@ def handle(body, headers):
         return response(422, {'error': str(exc)})
     version = next((v for k, v in headers.items() if k.lower() == VERSION_HEADER.lower()), None)
     if version != VERSION:
-        return response(426, {'error': 'unsupported contract version; expected 1'})
+        return response(400, {'error': 'unsupported contract version; expected 1'})
     return response(200, {'accepted': True, 'ticket': ticket})
 
 
