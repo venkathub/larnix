@@ -1078,7 +1078,7 @@
             ],
             "execution_phase": "Future lesson/lab delivery; Phase 1 specifies this work only."
           },
-          "status": "planned",
+          "status": "preview",
           "estimated_hours": {
             "guided_study": [
               1,
@@ -1098,7 +1098,7 @@
           ],
           "delivery": {
             "full_contract": "not_met",
-            "interaction": "none",
+            "interaction": "illustrated_cases",
             "artifact": "none"
           }
         },
