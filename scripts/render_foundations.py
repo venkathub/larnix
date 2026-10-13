@@ -133,7 +133,7 @@ def worked_example(note):
     lines = '\n'.join(f'<span class="code-line" data-line="{i}">{e(line)}</span>'
                       for i, line in enumerate(listing['lines'], 1))
     figure = (f'<figure class="code-listing"><figcaption>{e(listing["title"])}</figcaption>'
-              f'<pre tabindex="0" aria-label="{e(listing["title"])}">'
+              f'<pre role="region" tabindex="0" aria-label="{e(listing["title"])}">'
               f'<code class="language-{e(listing["language"])}">{lines}</code></pre></figure>')
     return f'<div class="listing-trace">{figure}{trace}</div>'
 

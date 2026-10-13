@@ -69,6 +69,7 @@ class FoundationListingTest(unittest.TestCase):
                 self.assertEqual(parsed.code, '\n'.join(self.listing['lines']))
                 self.assertEqual(parsed.numbers, ['1', '2', '3', '4'])
                 self.assertEqual(parsed.scroll_attributes['tabindex'], '0')
+                self.assertEqual(parsed.scroll_attributes['role'], 'region')
                 self.assertEqual(parsed.scroll_attributes['aria-label'], self.listing['title'])
                 self.assertIn('Rental &lt;code&gt; &amp; trace', html)
                 self.assertIn('    print(&quot;&lt;lamp&gt;&amp;&quot;)', html)

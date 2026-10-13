@@ -37,5 +37,5 @@
 .code-listing pre{max-width:100%;overflow-x:auto;white-space:pre;margin:0;padding:14px 12px;border:1px solid var(--line);border-radius:5px;background:var(--surface-2);color:var(--text);tab-size:4}
 .code-listing pre:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .code-listing code{font:14px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
-.code-listing .code-line::before{content:attr(data-line);display:inline-block;min-width:2ch;margin-right:2ch;text-align:right;color:var(--muted);user-select:none;-webkit-user-select:none}
+.code-listing .code-line::before{content:attr(data-line);display:inline-block;min-width:2ch;margin-right:2ch;text-align:right;color:var(--muted)}
 @media(max-width:1000px){.listing-trace{grid-template-columns:minmax(0,1fr);gap:18px}}
