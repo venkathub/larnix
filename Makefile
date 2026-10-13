@@ -18,6 +18,7 @@ check:
 	$(NODE) --check samples/foundations/mini-math.js
 	$(NODE) --check samples/foundations/mini-lab.js
 	python3 -m unittest discover -s tests -p 'test_*.py'
+	python3 -m unittest discover -s labs/data-foundations -p 'test_*.py'
 
 serve: build
 	python3 -m http.server 8775 --bind 127.0.0.1 --directory dist

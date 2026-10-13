@@ -591,6 +591,406 @@
       "focus": "Continuous flow models, probability paths and flow-matching objectives",
       "verification": "opened during curriculum research; recheck relevant sections and versions when authoring",
       "version_policy": "Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior."
+    },
+    {
+      "id": "NUMPY",
+      "title": "NumPy array fundamentals",
+      "url": "https://numpy.org/doc/stable/user/absolute_beginners.html",
+      "focus": "Shapes, dtypes, indexing, copies and views",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "PANDAS",
+      "title": "pandas introductory tutorials",
+      "url": "https://pandas.pydata.org/docs/getting_started/intro_tutorials/index.html",
+      "focus": "Dataframe selection, joins, reshaping and aggregation",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "PLOT",
+      "title": "Matplotlib quick start",
+      "url": "https://matplotlib.org/stable/users/explain/quick_start.html",
+      "focus": "Axes, figures, labels and reproducible plot output",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "CLASSICAL",
+      "title": "scikit-learn supervised learning",
+      "url": "https://scikit-learn.org/stable/supervised_learning.html",
+      "focus": "Linear models, nearest neighbors, SVM, naive Bayes and ensembles",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "HPO",
+      "title": "scikit-learn hyperparameter search",
+      "url": "https://scikit-learn.org/stable/modules/grid_search.html",
+      "focus": "Search spaces, cross-validation and resource budgets",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "OPTUNA",
+      "title": "Optuna documentation",
+      "url": "https://optuna.readthedocs.io/en/stable/",
+      "focus": "Trial search, pruning and reproducibility",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "SHAP",
+      "title": "A Unified Approach to Interpreting Model Predictions",
+      "url": "https://arxiv.org/abs/1705.07874",
+      "focus": "Feature attribution and additive explanations",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "LIME",
+      "title": "Why Should I Trust You? Explaining the Predictions of Any Classifier",
+      "url": "https://arxiv.org/abs/1602.04938",
+      "focus": "Local surrogate explanations and their limitations",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "TRACK",
+      "title": "MLflow ML experiment tracking",
+      "url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "focus": "Runs, parameters, metrics, artifacts and dataset lineage",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "REGISTRY",
+      "title": "MLflow ML model registry",
+      "url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "focus": "Versioned models, aliases and controlled promotion",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "FEAST",
+      "title": "Feast documentation",
+      "url": "https://docs.feast.dev/",
+      "focus": "Offline and online features, point-in-time correctness",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "AIRFLOW",
+      "title": "Airflow architecture overview",
+      "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/overview.html",
+      "focus": "Workflow scheduling and execution boundaries",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "SPARK",
+      "title": "Spark SQL and DataFrames",
+      "url": "https://spark.apache.org/docs/latest/sql-programming-guide.html",
+      "focus": "Distributed dataframe execution and data sources",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "RAYDATA",
+      "title": "Ray Data documentation",
+      "url": "https://docs.ray.io/en/latest/data/data.html",
+      "focus": "Parallel data processing and batch inference",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "CAUSAL",
+      "title": "DoWhy documentation",
+      "url": "https://www.pywhy.org/dowhy/main/index.html",
+      "focus": "Identification, estimation, causal assumptions and refutation",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "ABTEST",
+      "title": "Online Evaluation for Information Retrieval",
+      "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2016/06/ftir-online-evaluation-final-journal.pdf",
+      "focus": "Controlled experiments, metrics, historical policy evaluation",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "BANDIT",
+      "title": "Vowpal Wabbit contextual bandits",
+      "url": "https://vowpalwabbit.org/docs/vowpal_wabbit/python/latest/tutorials/python_Contextual_bandits_and_Vowpal_Wabbit.html",
+      "focus": "Logged action probabilities, exploration and partial feedback",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "UPLIFT",
+      "title": "EconML documentation",
+      "url": "https://www.pywhy.org/EconML/",
+      "focus": "Heterogeneous treatment effects and policy decisions",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "WEAK",
+      "title": "Snorkel: Rapid Training Data Creation with Weak Supervision",
+      "url": "https://arxiv.org/abs/1711.10160",
+      "focus": "Noisy labeling functions and weak supervision",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "ACTIVE",
+      "title": "Active Learning Literature Survey",
+      "url": "https://burrsettles.com/pub/settles.activelearning.pdf",
+      "focus": "Label query strategies and evaluation under labeling budgets",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "ONNX",
+      "title": "ONNX Runtime model optimizations",
+      "url": "https://onnxruntime.ai/docs/performance/model-optimizations/",
+      "focus": "Model optimization and runtime execution constraints",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "EXECUTORCH",
+      "title": "ExecuTorch documentation",
+      "url": "https://docs.pytorch.org/executorch/stable/index.html",
+      "focus": "Export and deployment to constrained devices",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "CUDA",
+      "title": "CUDA Programming Guide",
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/index.html",
+      "focus": "GPU execution, memory hierarchy, transfers and profiling context",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "COREML",
+      "title": "Apple Core ML documentation",
+      "url": "https://developer.apple.com/documentation/coreml",
+      "focus": "Apple device deployment; entry page requires JavaScript for details",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Official entry page opened; JavaScript-dependent detailed content was not available to this browser.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "LITERT",
+      "title": "Google LiteRT documentation",
+      "url": "https://developers.google.com/edge/litert",
+      "focus": "On-device deployment; TensorFlow Lite lineage and current runtime choices",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "TENSORRT",
+      "title": "NVIDIA TensorRT documentation",
+      "url": "https://docs.nvidia.com/deeplearning/tensorrt/latest/",
+      "focus": "NVIDIA inference optimization and backend compatibility",
+      "type": "official documentation or maintainer guidance",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "TTC",
+      "title": "Scaling LLM Test-Time Compute Optimally",
+      "url": "https://arxiv.org/abs/2408.03314",
+      "focus": "Inference-time compute allocation and verification tradeoffs",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "NLLB",
+      "title": "No Language Left Behind",
+      "url": "https://arxiv.org/abs/2207.04672",
+      "focus": "Low-resource translation, language coverage and evaluation",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "JAILBREAK",
+      "title": "JailbreakBench",
+      "url": "https://arxiv.org/abs/2404.01318",
+      "focus": "Adversarial-user threat models and robustness evaluation",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "INSTRUCT",
+      "title": "Training language models to follow instructions with human feedback",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "focus": "Demonstrations, preference labels and RLHF stages",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "DPO",
+      "title": "Direct Preference Optimization",
+      "url": "https://arxiv.org/abs/2305.18290",
+      "focus": "Preference objective and reference-policy assumptions",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "PPO",
+      "title": "Proximal Policy Optimization Algorithms",
+      "url": "https://arxiv.org/abs/1707.06347",
+      "focus": "Clipped policy optimization and rollout objectives",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "GRPO",
+      "title": "DeepSeekMath",
+      "url": "https://arxiv.org/abs/2402.03300",
+      "focus": "Group relative policy optimization and mathematical reasoning",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "HNSW",
+      "title": "Hierarchical Navigable Small World graphs",
+      "url": "https://arxiv.org/abs/1603.09320",
+      "focus": "Graph construction and approximate search tradeoffs",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "BM25",
+      "title": "The Probabilistic Relevance Framework: BM25 and Beyond",
+      "url": "https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf",
+      "focus": "Term weighting, length normalization and probabilistic retrieval",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "SCALING",
+      "title": "Scaling Laws for Neural Language Models",
+      "url": "https://arxiv.org/abs/2001.08361",
+      "focus": "Empirical relationships among model size, data and compute",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "CHINCHILLA",
+      "title": "Training Compute-Optimal Large Language Models",
+      "url": "https://arxiv.org/abs/2203.15556",
+      "focus": "Model and token allocation under a training budget",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "FLASH",
+      "title": "FlashAttention",
+      "url": "https://arxiv.org/abs/2205.14135",
+      "focus": "Exact attention with reduced memory traffic",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "SPEC",
+      "title": "Fast Inference from Transformers via Speculative Decoding",
+      "url": "https://arxiv.org/abs/2211.17192",
+      "focus": "Drafting, verification and distribution-preserving sampling",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
+    },
+    {
+      "id": "REACT",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "url": "https://arxiv.org/abs/2210.03629",
+      "focus": "Interleaving reasoning and environment actions",
+      "type": "original paper or author survey",
+      "reviewed_on": "2026-10-13",
+      "verification": "Opened during coverage review; bibliographic identity and stated focus checked. Full implementation compatibility is not certified.",
+      "version_policy": "Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Larnix — visual and interactive teaching direction
 
-Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 168 lessons in the [curriculum](INDEX.md). The vector-similarity, RAG evidence-pipeline and agent recovery samples are implemented; the remaining lessons are planned. The narrative standard below also applies when revising the existing sample.
+Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 188 lessons in the [curriculum](INDEX.md). There are 26 authored previews and a separate runnable data-programming artifact; no lesson is certified against the full completion contract. See DELIVERY.md for the current inventory. The narrative standard below also applies when revising the existing sample.
 
 ## Reference and interpretation
 
@@ -22,7 +22,7 @@ Apply the following editorial requirements to every authored lesson, including a
 - Finish the main narrative with three to five specific takeaways, a short glossary of newly introduced terms and a bridge to the next lesson. Keep the existing understanding checks, sources, interview reasoning and production exercise.
 - Preserve depth through clearly signposted derivations and implementation detail. Advanced lessons may rely on linked prerequisites; they should still explain each new reasoning step. Design the core concept for about 10 minutes; move extended derivations and production work into optional sections. Split a broad concept across the planned lesson sequence rather than growing the core indefinitely.
 
-Before publication, review whether a learner with the stated prerequisites can explain why the mechanism works, reproduce the worked example and recognize a failure case. A prose outline or a collection of bullets does not satisfy the authored explanation requirement. The 168 existing lesson plans are authoring blueprints, not completed narrative chapters.
+Before publication, review whether a learner with the stated prerequisites can explain why the mechanism works, reproduce the worked example and recognize a failure case. A prose outline or a collection of bullets does not satisfy the authored explanation requirement. The 188 existing lesson plans are authoring blueprints, not completed narrative chapters.
 
 The vector-similarity sample has been revised against this standard with a continuous rental-help-desk story, explicit prerequisites, worked normalization, common questions, takeaways and glossary. Use it as the first reviewable example of the narrative format; further prototypes must still validate the approach for evidence flow and agent recovery.
 
@@ -53,7 +53,7 @@ Use one primary interactive explanation per lesson as the minimum design target.
 
 ## Reading and navigation layout
 
-The course overview should present seven navigable topic groups, a prerequisite route, learner progress and a useful next lesson. Each module should explain what its four lessons unlock. Keep the complete 42-module catalogue accessible through search and a compact index.
+The course overview should present seven navigable topic groups, a prerequisite route, learner progress and a useful next lesson. Each module should explain what its lessons unlock. Keep the complete 42-module catalogue accessible through search and a compact index.
 
 A lesson page should provide a compact persistent header, module/lesson position, contents navigation, progress, theme control and search. The opening area introduces the problem with a relevant visual. The body alternates focused prose with wider interactive panels. Finish with practice, interview reasoning, production guidance and links to prerequisite and follow-on lessons.
 
@@ -74,7 +74,7 @@ Final fonts, exact colors and spacing tokens will be selected in the prototype. 
 
 ## Interaction plan across all 42 modules
 
-These are representative starting interactions for each module. The remaining lessons must receive their own interaction specifications during full authoring. This table does not claim 168 individual widgets are already designed or built.
+These are representative starting interactions for each module. The remaining lessons must receive their own interaction specifications during full authoring. This table does not claim 188 individual widgets are already designed or built.
 
 | Module | Representative interaction | Learner changes | Observable explanation |
 | --- | --- | --- | --- |
@@ -147,4 +147,4 @@ For every interactive component, specify deterministic fixtures or the source of
 
 Learning progress should distinguish reading, attempting a check, demonstrating understanding and completing the production exercise. Scrolling alone must not imply mastery. Account requirements, server-side progress and analytics are separate product decisions.
 
-Prototype three representative lessons before scaling the visual system: M03-L01 for mathematical manipulation, M17-L01 for evidence flow, and M21-L02 for state and recovery. Review explanation clarity and accessibility as well as appearance. Then apply the contract across the existing 168-lesson plan without reducing its interview or production depth.
+Prototype three representative lessons before scaling the visual system: M03-L01 for mathematical manipulation, M17-L01 for evidence flow, and M21-L02 for state and recovery. Review explanation clarity and accessibility as well as appearance. Then apply the contract across the existing 188-lesson plan without reducing its interview or production depth.

@@ -1,6 +1,6 @@
 # Primary source register
 
-Planning review date: **2026-10-11**. **59 primary sources**: original papers, official documentation/specifications, maintainer guidance, and author-written courses or textbooks.
+Planning review date: **2026-10-13**. **99 primary sources**: original papers, official documentation/specifications, maintainer guidance, and author-written courses or textbooks.
 
 These are reading entry points, not claims that every lesson detail appears in one page. Select exact sections when writing lessons. Source concepts are attributed; the curriculum questions, scenarios and exercise specifications are original. No source code, course exercises or prose were imported.
 
@@ -18,6 +18,30 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M24-L02](modules/M24.md#m24-l02), [M24-L03](modules/M24.md#m24-l03), [M24-L04](modules/M24.md#m24-l04)
 
+## ABTEST — Online Evaluation for Information Retrieval
+
+**Read:** [Online Evaluation for Information Retrieval](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/06/ftir-online-evaluation-final-journal.pdf)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Controlled experiments, metrics, historical policy evaluation.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M03-L04](modules/M03.md#m03-l04), [M03-L05](modules/M03.md#m03-l05), [M03-L06](modules/M03.md#m03-l06), [M16-L04](modules/M16.md#m16-l04), [M25-L04](modules/M25.md#m25-l04), [M40-L05](modules/M40.md#m40-l05)
+
+## ACTIVE — Active Learning Literature Survey
+
+**Read:** [Active Learning Literature Survey](https://burrsettles.com/pub/settles.activelearning.pdf)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Label query strategies and evaluation under labeling budgets.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L02](modules/M06.md#m06-l02), [M06-L07](modules/M06.md#m06-l07), [M37-L01](modules/M37.md#m37-l01)
+
 ## AGENT — Anthropic building effective agents
 
 **Read:** [Anthropic building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
@@ -29,6 +53,18 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M10-L02](modules/M10.md#m10-l02), [M19-L01](modules/M19.md#m19-l01), [M19-L02](modules/M19.md#m19-l02), [M19-L03](modules/M19.md#m19-l03), [M19-L04](modules/M19.md#m19-l04), [M20-L01](modules/M20.md#m20-l01), [M20-L04](modules/M20.md#m20-l04), [M21-L04](modules/M21.md#m21-l04), [M24-L01](modules/M24.md#m24-l01), [M24-L02](modules/M24.md#m24-l02), [M32-L03](modules/M32.md#m32-l03), [M40-L04](modules/M40.md#m40-l04)
+
+## AIRFLOW — Airflow architecture overview
+
+**Read:** [Airflow architecture overview](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/overview.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Workflow scheduling and execution boundaries.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L05](modules/M06.md#m06-l05)
 
 ## APIS — OpenAI Responses API migration and contracts
 
@@ -52,7 +88,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M38-L01](modules/M38.md#m38-l01), [M38-L04](modules/M38.md#m38-l04)
+**Lesson references:** [M38-L01](modules/M38.md#m38-l01), [M38-L04](modules/M38.md#m38-l04), [M38-L05](modules/M38.md#m38-l05)
 
 ## ATTN — Attention Is All You Need
 
@@ -66,6 +102,30 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M05-L04](modules/M05.md#m05-l04), [M07-L01](modules/M07.md#m07-l01), [M07-L02](modules/M07.md#m07-l02)
 
+## BANDIT — Vowpal Wabbit contextual bandits
+
+**Read:** [Vowpal Wabbit contextual bandits](https://vowpalwabbit.org/docs/vowpal_wabbit/python/latest/tutorials/python_Contextual_bandits_and_Vowpal_Wabbit.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Logged action probabilities, exploration and partial feedback.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M03-L06](modules/M03.md#m03-l06)
+
+## BM25 — The Probabilistic Relevance Framework: BM25 and Beyond
+
+**Read:** [The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Term weighting, length normalization and probabilistic retrieval.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M16-L01](modules/M16.md#m16-l01), [M16-L04](modules/M16.md#m16-l04)
+
 ## C2PA — C2PA specifications 2.4
 
 **Read:** [C2PA specifications 2.4](https://spec.c2pa.org/specifications/specifications/2.4/index.html)
@@ -77,6 +137,18 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Planning reading: specifications 2.4. Pin the selected implementation and credential profile.
 
 **Lesson references:** [M39-L04](modules/M39.md#m39-l04)
+
+## CAUSAL — DoWhy documentation
+
+**Read:** [DoWhy documentation](https://www.pywhy.org/dowhy/main/index.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Identification, estimation, causal assumptions and refutation.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M03-L05](modules/M03.md#m03-l05)
 
 ## CHAT — Hugging Face chat templates
 
@@ -90,6 +162,18 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M07-L04](modules/M07.md#m07-l04), [M09-L01](modules/M09.md#m09-l01), [M12-L01](modules/M12.md#m12-l01), [M33-L02](modules/M33.md#m33-l02)
 
+## CHINCHILLA — Training Compute-Optimal Large Language Models
+
+**Read:** [Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Model and token allocation under a training budget.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M08-L02](modules/M08.md#m08-l02)
+
 ## CI — GitHub Actions concepts
 
 **Read:** [GitHub Actions concepts](https://docs.github.com/en/actions/get-started/understand-github-actions)
@@ -100,7 +184,19 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M29-L02](modules/M29.md#m29-l02)
+**Lesson references:** [M29-L02](modules/M29.md#m29-l02), [M29-L06](modules/M29.md#m29-l06)
+
+## CLASSICAL — scikit-learn supervised learning
+
+**Read:** [scikit-learn supervised learning](https://scikit-learn.org/stable/supervised_learning.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Linear models, nearest neighbors, SVM, naive Bayes and ensembles.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M04-L01](modules/M04.md#m04-l01), [M04-L03](modules/M04.md#m04-l03), [M04-L05](modules/M04.md#m04-l05), [M04-L07](modules/M04.md#m04-l07), [M40-L05](modules/M40.md#m40-l05)
 
 ## CONTEXT — Anthropic context engineering
 
@@ -114,6 +210,30 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M10-L01](modules/M10.md#m10-l01), [M10-L04](modules/M10.md#m10-l04), [M12-L01](modules/M12.md#m12-l01), [M12-L02](modules/M12.md#m12-l02), [M12-L03](modules/M12.md#m12-l03), [M12-L04](modules/M12.md#m12-l04), [M17-L03](modules/M17.md#m17-l03), [M18-L03](modules/M18.md#m18-l03), [M22-L01](modules/M22.md#m22-l01), [M22-L03](modules/M22.md#m22-l03)
 
+## COREML — Apple Core ML documentation
+
+**Read:** [Apple Core ML documentation](https://developer.apple.com/documentation/coreml)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Apple device deployment; entry page requires JavaScript for details.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L06](modules/M35.md#m35-l06)
+
+## CUDA — CUDA Programming Guide
+
+**Read:** [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/index.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** GPU execution, memory hierarchy, transfers and profiling context.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L05](modules/M35.md#m35-l05), [M36-L03](modules/M36.md#m36-l03)
+
 ## DATA — Hugging Face Datasets
 
 **Read:** [Hugging Face Datasets](https://huggingface.co/docs/datasets/index)
@@ -124,7 +244,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M06-L01](modules/M06.md#m06-l01), [M06-L02](modules/M06.md#m06-l02), [M08-L01](modules/M08.md#m08-l01), [M13-L04](modules/M13.md#m13-l04), [M33-L02](modules/M33.md#m33-l02)
+**Lesson references:** [M06-L01](modules/M06.md#m06-l01), [M06-L02](modules/M06.md#m06-l02), [M06-L07](modules/M06.md#m06-l07), [M08-L01](modules/M08.md#m08-l01), [M13-L04](modules/M13.md#m13-l04), [M33-L02](modules/M33.md#m33-l02)
 
 ## DECODE — Transformers generation strategies
 
@@ -174,6 +294,18 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M29-L01](modules/M29.md#m29-l01), [M29-L04](modules/M29.md#m29-l04)
 
+## DPO — Direct Preference Optimization
+
+**Read:** [Direct Preference Optimization](https://arxiv.org/abs/2305.18290)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Preference objective and reference-policy assumptions.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M34-L02](modules/M34.md#m34-l02), [M34-L04](modules/M34.md#m34-l04)
+
 ## EVAL — OpenAI evaluation best practices
 
 **Read:** [OpenAI evaluation best practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
@@ -184,7 +316,19 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M03-L04](modules/M03.md#m03-l04), [M06-L02](modules/M06.md#m06-l02), [M10-L01](modules/M10.md#m10-l01), [M10-L02](modules/M10.md#m10-l02), [M10-L03](modules/M10.md#m10-l03), [M11-L02](modules/M11.md#m11-l02), [M11-L03](modules/M11.md#m11-l03), [M11-L04](modules/M11.md#m11-l04), [M12-L04](modules/M12.md#m12-l04), [M16-L03](modules/M16.md#m16-l03), [M16-L04](modules/M16.md#m16-l04), [M17-L04](modules/M17.md#m17-l04), [M19-L03](modules/M19.md#m19-l03), [M22-L04](modules/M22.md#m22-l04), [M24-L01](modules/M24.md#m24-l01), [M25-L01](modules/M25.md#m25-l01), [M25-L02](modules/M25.md#m25-l02), [M25-L03](modules/M25.md#m25-l03), [M25-L04](modules/M25.md#m25-l04), [M26-L01](modules/M26.md#m26-l01), [M26-L02](modules/M26.md#m26-l02), [M26-L04](modules/M26.md#m26-l04), [M29-L02](modules/M29.md#m29-l02), [M32-L01](modules/M32.md#m32-l01), [M32-L03](modules/M32.md#m32-l03), [M33-L01](modules/M33.md#m33-l01), [M33-L04](modules/M33.md#m33-l04), [M34-L01](modules/M34.md#m34-l01), [M34-L04](modules/M34.md#m34-l04), [M37-L04](modules/M37.md#m37-l04), [M38-L04](modules/M38.md#m38-l04), [M42-L01](modules/M42.md#m42-l01), [M42-L04](modules/M42.md#m42-l04)
+**Lesson references:** [M10-L01](modules/M10.md#m10-l01), [M10-L02](modules/M10.md#m10-l02), [M10-L03](modules/M10.md#m10-l03), [M11-L02](modules/M11.md#m11-l02), [M11-L03](modules/M11.md#m11-l03), [M11-L04](modules/M11.md#m11-l04), [M12-L04](modules/M12.md#m12-l04), [M19-L03](modules/M19.md#m19-l03), [M22-L04](modules/M22.md#m22-l04), [M25-L01](modules/M25.md#m25-l01), [M25-L02](modules/M25.md#m25-l02), [M25-L03](modules/M25.md#m25-l03), [M25-L04](modules/M25.md#m25-l04), [M26-L01](modules/M26.md#m26-l01), [M26-L02](modules/M26.md#m26-l02), [M26-L04](modules/M26.md#m26-l04), [M33-L01](modules/M33.md#m33-l01), [M33-L04](modules/M33.md#m33-l04), [M34-L01](modules/M34.md#m34-l01), [M34-L04](modules/M34.md#m34-l04), [M37-L04](modules/M37.md#m37-l04), [M38-L04](modules/M38.md#m38-l04), [M42-L01](modules/M42.md#m42-l01), [M42-L04](modules/M42.md#m42-l04)
+
+## EXECUTORCH — ExecuTorch documentation
+
+**Read:** [ExecuTorch documentation](https://docs.pytorch.org/executorch/stable/index.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Export and deployment to constrained devices.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L06](modules/M35.md#m35-l06)
 
 ## FAISS — Faiss research and documentation
 
@@ -197,6 +341,30 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M03-L01](modules/M03.md#m03-l01), [M14-L02](modules/M14.md#m14-l02), [M14-L03](modules/M14.md#m14-l03), [M15-L01](modules/M15.md#m15-l01), [M15-L02](modules/M15.md#m15-l02)
+
+## FEAST — Feast documentation
+
+**Read:** [Feast documentation](https://docs.feast.dev/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Offline and online features, point-in-time correctness.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L01](modules/M06.md#m06-l01), [M06-L06](modules/M06.md#m06-l06), [M29-L07](modules/M29.md#m29-l07)
+
+## FLASH — FlashAttention
+
+**Read:** [FlashAttention](https://arxiv.org/abs/2205.14135)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Exact attention with reduced memory traffic.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L02](modules/M35.md#m35-l02), [M35-L05](modules/M35.md#m35-l05), [M36-L03](modules/M36.md#m36-l03)
 
 ## FLOW — Flow Matching for Generative Modeling
 
@@ -220,7 +388,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M40-L02](modules/M40.md#m40-l02)
+**Lesson references:** [M40-L02](modules/M40.md#m40-l02), [M40-L06](modules/M40.md#m40-l06)
 
 ## FRAME — Google ML problem framing
 
@@ -270,6 +438,18 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M18-L02](modules/M18.md#m18-l02), [M18-L03](modules/M18.md#m18-l03), [M18-L04](modules/M18.md#m18-l04)
 
+## GRPO — DeepSeekMath
+
+**Read:** [DeepSeekMath](https://arxiv.org/abs/2402.03300)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Group relative policy optimization and mathematical reasoning.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M34-L03](modules/M34.md#m34-l03)
+
 ## HAX — Microsoft human AI interaction guidelines
 
 **Read:** [Microsoft human AI interaction guidelines](https://www.microsoft.com/en-us/haxtoolkit/ai-guidelines/)
@@ -280,7 +460,31 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M01-L02](modules/M01.md#m01-l02), [M01-L03](modules/M01.md#m01-l03), [M11-L04](modules/M11.md#m11-l04), [M21-L03](modules/M21.md#m21-l03), [M31-L02](modules/M31.md#m31-l02), [M31-L04](modules/M31.md#m31-l04), [M38-L03](modules/M38.md#m38-l03)
+**Lesson references:** [M01-L02](modules/M01.md#m01-l02), [M01-L03](modules/M01.md#m01-l03), [M09-L02](modules/M09.md#m09-l02), [M11-L04](modules/M11.md#m11-l04), [M21-L03](modules/M21.md#m21-l03), [M30-L04](modules/M30.md#m30-l04), [M31-L02](modules/M31.md#m31-l02), [M31-L04](modules/M31.md#m31-l04), [M38-L03](modules/M38.md#m38-l03), [M38-L05](modules/M38.md#m38-l05)
+
+## HNSW — Hierarchical Navigable Small World graphs
+
+**Read:** [Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Graph construction and approximate search tradeoffs.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M15-L02](modules/M15.md#m15-l02)
+
+## HPO — scikit-learn hyperparameter search
+
+**Read:** [scikit-learn hyperparameter search](https://scikit-learn.org/stable/modules/grid_search.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Search spaces, cross-validation and resource budgets.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M04-L06](modules/M04.md#m04-l06)
 
 ## HTTP — RFC 9110: HTTP Semantics
 
@@ -293,6 +497,30 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Pin the implemented version; distinguish paper mechanisms and normative protocol semantics from provider-specific behavior.
 
 **Lesson references:** [M02-L02](modules/M02.md#m02-l02), [M09-L03](modules/M09.md#m09-l03)
+
+## INSTRUCT — Training language models to follow instructions with human feedback
+
+**Read:** [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Demonstrations, preference labels and RLHF stages.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M08-L03](modules/M08.md#m08-l03), [M34-L01](modules/M34.md#m34-l01), [M34-L02](modules/M34.md#m34-l02)
+
+## JAILBREAK — JailbreakBench
+
+**Read:** [JailbreakBench](https://arxiv.org/abs/2404.01318)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Adversarial-user threat models and robustness evaluation.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M30-L02](modules/M30.md#m30-l02), [M30-L04](modules/M30.md#m30-l04)
 
 ## K8S — Kubernetes deployments
 
@@ -316,7 +544,31 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M04-L02](modules/M04.md#m04-l02), [M05-L03](modules/M05.md#m05-l03), [M10-L03](modules/M10.md#m10-l03), [M25-L02](modules/M25.md#m25-l02)
+**Lesson references:** [M02-L06](modules/M02.md#m02-l06), [M04-L02](modules/M04.md#m04-l02), [M04-L05](modules/M04.md#m04-l05), [M04-L06](modules/M04.md#m04-l06), [M05-L03](modules/M05.md#m05-l03), [M06-L06](modules/M06.md#m06-l06), [M10-L03](modules/M10.md#m10-l03), [M25-L02](modules/M25.md#m25-l02), [M29-L05](modules/M29.md#m29-l05), [M29-L08](modules/M29.md#m29-l08), [M40-L06](modules/M40.md#m40-l06)
+
+## LIME — Why Should I Trust You? Explaining the Predictions of Any Classifier
+
+**Read:** [Why Should I Trust You? Explaining the Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Local surrogate explanations and their limitations.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M04-L07](modules/M04.md#m04-l07), [M31-L02](modules/M31.md#m31-l02)
+
+## LITERT — Google LiteRT documentation
+
+**Read:** [Google LiteRT documentation](https://developers.google.com/edge/litert)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** On-device deployment; TensorFlow Lite lineage and current runtime choices.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L06](modules/M35.md#m35-l06)
 
 ## LLM — Hugging Face LLM course
 
@@ -352,7 +604,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M03-L01](modules/M03.md#m03-l01), [M03-L02](modules/M03.md#m03-l02), [M03-L03](modules/M03.md#m03-l03)
+**Lesson references:** [M02-L05](modules/M02.md#m02-l05), [M03-L01](modules/M03.md#m03-l01), [M03-L02](modules/M03.md#m03-l02), [M03-L03](modules/M03.md#m03-l03)
 
 ## MCP — Model Context Protocol specification
 
@@ -376,7 +628,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M02-L01](modules/M02.md#m02-l01), [M02-L02](modules/M02.md#m02-l02), [M02-L04](modules/M02.md#m02-l04), [M04-L01](modules/M04.md#m04-l01), [M04-L04](modules/M04.md#m04-l04), [M05-L02](modules/M05.md#m05-l02), [M05-L04](modules/M05.md#m05-l04), [M06-L01](modules/M06.md#m06-l01), [M06-L03](modules/M06.md#m06-l03), [M06-L04](modules/M06.md#m06-l04), [M08-L02](modules/M08.md#m08-l02), [M08-L04](modules/M08.md#m08-l04), [M09-L04](modules/M09.md#m09-l04), [M13-L04](modules/M13.md#m13-l04), [M14-L04](modules/M14.md#m14-l04), [M17-L04](modules/M17.md#m17-l04), [M29-L01](modules/M29.md#m29-l01), [M29-L03](modules/M29.md#m29-l03), [M31-L03](modules/M31.md#m31-l03), [M32-L01](modules/M32.md#m32-l01)
+**Lesson references:** [M02-L01](modules/M02.md#m02-l01), [M02-L02](modules/M02.md#m02-l02), [M02-L04](modules/M02.md#m02-l04), [M04-L04](modules/M04.md#m04-l04), [M05-L02](modules/M05.md#m05-l02), [M05-L04](modules/M05.md#m05-l04), [M06-L01](modules/M06.md#m06-l01), [M06-L03](modules/M06.md#m06-l03), [M06-L04](modules/M06.md#m06-l04), [M08-L02](modules/M08.md#m08-l02), [M08-L04](modules/M08.md#m08-l04), [M09-L04](modules/M09.md#m09-l04), [M13-L04](modules/M13.md#m13-l04), [M14-L04](modules/M14.md#m14-l04), [M17-L04](modules/M17.md#m17-l04), [M29-L01](modules/M29.md#m29-l01), [M29-L02](modules/M29.md#m29-l02), [M29-L03](modules/M29.md#m29-l03), [M29-L05](modules/M29.md#m29-l05), [M31-L03](modules/M31.md#m31-l03), [M32-L01](modules/M32.md#m32-l01)
 
 ## MLFLOW — MLflow evaluating production traces
 
@@ -400,7 +652,55 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M06-L03](modules/M06.md#m06-l03), [M06-L04](modules/M06.md#m06-l04), [M08-L04](modules/M08.md#m08-l04), [M18-L04](modules/M18.md#m18-l04), [M22-L01](modules/M22.md#m22-l01), [M22-L02](modules/M22.md#m22-l02), [M22-L03](modules/M22.md#m22-l03), [M22-L04](modules/M22.md#m22-l04), [M27-L04](modules/M27.md#m27-l04), [M30-L04](modules/M30.md#m30-l04), [M31-L01](modules/M31.md#m31-l01), [M31-L02](modules/M31.md#m31-l02), [M31-L03](modules/M31.md#m31-l03), [M31-L04](modules/M31.md#m31-l04), [M34-L04](modules/M34.md#m34-l04), [M39-L03](modules/M39.md#m39-l03), [M39-L04](modules/M39.md#m39-l04), [M41-L03](modules/M41.md#m41-l03), [M41-L04](modules/M41.md#m41-l04)
+**Lesson references:** [M06-L03](modules/M06.md#m06-l03), [M06-L04](modules/M06.md#m06-l04), [M08-L04](modules/M08.md#m08-l04), [M18-L04](modules/M18.md#m18-l04), [M22-L01](modules/M22.md#m22-l01), [M22-L02](modules/M22.md#m22-l02), [M22-L03](modules/M22.md#m22-l03), [M22-L04](modules/M22.md#m22-l04), [M27-L04](modules/M27.md#m27-l04), [M29-L06](modules/M29.md#m29-l06), [M30-L04](modules/M30.md#m30-l04), [M31-L01](modules/M31.md#m31-l01), [M31-L02](modules/M31.md#m31-l02), [M31-L03](modules/M31.md#m31-l03), [M31-L04](modules/M31.md#m31-l04), [M34-L04](modules/M34.md#m34-l04), [M39-L03](modules/M39.md#m39-l03), [M39-L04](modules/M39.md#m39-l04), [M41-L03](modules/M41.md#m41-l03), [M41-L04](modules/M41.md#m41-l04)
+
+## NLLB — No Language Left Behind
+
+**Read:** [No Language Left Behind](https://arxiv.org/abs/2207.04672)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Low-resource translation, language coverage and evaluation.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M38-L04](modules/M38.md#m38-l04), [M38-L05](modules/M38.md#m38-l05)
+
+## NUMPY — NumPy array fundamentals
+
+**Read:** [NumPy array fundamentals](https://numpy.org/doc/stable/user/absolute_beginners.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Shapes, dtypes, indexing, copies and views.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M02-L01](modules/M02.md#m02-l01), [M02-L05](modules/M02.md#m02-l05), [M05-L01](modules/M05.md#m05-l01)
+
+## ONNX — ONNX Runtime model optimizations
+
+**Read:** [ONNX Runtime model optimizations](https://onnxruntime.ai/docs/performance/model-optimizations/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Model optimization and runtime execution constraints.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L03](modules/M35.md#m35-l03), [M35-L06](modules/M35.md#m35-l06)
+
+## OPTUNA — Optuna documentation
+
+**Read:** [Optuna documentation](https://optuna.readthedocs.io/en/stable/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Trial search, pruning and reproducibility.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M04-L06](modules/M04.md#m04-l06)
 
 ## OTEL — OpenTelemetry GenAI observability
 
@@ -438,6 +738,18 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M35-L01](modules/M35.md#m35-l01), [M35-L02](modules/M35.md#m35-l02)
 
+## PANDAS — pandas introductory tutorials
+
+**Read:** [pandas introductory tutorials](https://pandas.pydata.org/docs/getting_started/intro_tutorials/index.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Dataframe selection, joins, reshaping and aggregation.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M02-L06](modules/M02.md#m02-l06), [M02-L07](modules/M02.md#m02-l07), [M06-L06](modules/M06.md#m06-l06), [M40-L06](modules/M40.md#m40-l06)
+
 ## PEFT — Hugging Face PEFT
 
 **Read:** [Hugging Face PEFT](https://huggingface.co/docs/peft/index)
@@ -462,6 +774,30 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M14-L04](modules/M14.md#m14-l04), [M15-L01](modules/M15.md#m15-l01), [M15-L02](modules/M15.md#m15-l02), [M15-L03](modules/M15.md#m15-l03), [M15-L04](modules/M15.md#m15-l04)
 
+## PLOT — Matplotlib quick start
+
+**Read:** [Matplotlib quick start](https://matplotlib.org/stable/users/explain/quick_start.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Axes, figures, labels and reproducible plot output.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M02-L07](modules/M02.md#m02-l07)
+
+## PPO — Proximal Policy Optimization Algorithms
+
+**Read:** [Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Clipped policy optimization and rollout objectives.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M34-L03](modules/M34.md#m34-l03), [M34-L04](modules/M34.md#m34-l04)
+
 ## PT — PyTorch learning basics
 
 **Read:** [PyTorch learning basics](https://docs.pytorch.org/tutorials/beginner/basics/intro.html)
@@ -472,7 +808,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M03-L02](modules/M03.md#m03-l02), [M05-L01](modules/M05.md#m05-l01), [M05-L02](modules/M05.md#m05-l02), [M05-L03](modules/M05.md#m05-l03), [M36-L03](modules/M36.md#m36-l03), [M37-L02](modules/M37.md#m37-l02)
+**Lesson references:** [M03-L02](modules/M03.md#m03-l02), [M05-L01](modules/M05.md#m05-l01), [M05-L02](modules/M05.md#m05-l02), [M05-L03](modules/M05.md#m05-l03), [M35-L05](modules/M35.md#m35-l05), [M36-L03](modules/M36.md#m36-l03), [M37-L02](modules/M37.md#m37-l02)
 
 ## PY — Python asyncio
 
@@ -496,7 +832,31 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M11-L03](modules/M11.md#m11-l03), [M12-L03](modules/M12.md#m12-l03), [M13-L02](modules/M13.md#m13-l02), [M16-L03](modules/M16.md#m16-l03), [M17-L01](modules/M17.md#m17-l01), [M17-L02](modules/M17.md#m17-l02), [M17-L03](modules/M17.md#m17-l03), [M41-L02](modules/M41.md#m41-l02), [M42-L01](modules/M42.md#m42-l01)
+**Lesson references:** [M11-L03](modules/M11.md#m11-l03), [M12-L03](modules/M12.md#m12-l03), [M13-L02](modules/M13.md#m13-l02), [M16-L03](modules/M16.md#m16-l03), [M17-L01](modules/M17.md#m17-l01), [M17-L02](modules/M17.md#m17-l02), [M17-L03](modules/M17.md#m17-l03), [M17-L04](modules/M17.md#m17-l04), [M41-L02](modules/M41.md#m41-l02), [M42-L01](modules/M42.md#m42-l01)
+
+## RAYDATA — Ray Data documentation
+
+**Read:** [Ray Data documentation](https://docs.ray.io/en/latest/data/data.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Parallel data processing and batch inference.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L05](modules/M06.md#m06-l05), [M29-L07](modules/M29.md#m29-l07)
+
+## REACT — ReAct: Synergizing Reasoning and Acting in Language Models
+
+**Read:** [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Interleaving reasoning and environment actions.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M19-L02](modules/M19.md#m19-l02), [M19-L03](modules/M19.md#m19-l03), [M24-L01](modules/M24.md#m24-l01)
 
 ## RECSYS — Google recommendation systems course
 
@@ -508,7 +868,31 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M40-L01](modules/M40.md#m40-l01)
+**Lesson references:** [M40-L01](modules/M40.md#m40-l01), [M40-L05](modules/M40.md#m40-l05)
+
+## REGISTRY — MLflow ML model registry
+
+**Read:** [MLflow ML model registry](https://mlflow.org/docs/latest/ml/model-registry/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Versioned models, aliases and controlled promotion.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M29-L02](modules/M29.md#m29-l02), [M29-L06](modules/M29.md#m29-l06), [M29-L07](modules/M29.md#m29-l07), [M29-L08](modules/M29.md#m29-l08)
+
+## SCALING — Scaling Laws for Neural Language Models
+
+**Read:** [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Empirical relationships among model size, data and compute.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M08-L02](modules/M08.md#m08-l02)
 
 ## SEARCH — Sentence Transformers retrieve and rerank
 
@@ -520,7 +904,19 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M14-L01](modules/M14.md#m14-l01), [M14-L02](modules/M14.md#m14-l02), [M14-L03](modules/M14.md#m14-l03), [M16-L01](modules/M16.md#m16-l01), [M16-L02](modules/M16.md#m16-l02), [M16-L04](modules/M16.md#m16-l04), [M26-L01](modules/M26.md#m26-l01)
+**Lesson references:** [M14-L01](modules/M14.md#m14-l01), [M14-L02](modules/M14.md#m14-l02), [M14-L03](modules/M14.md#m14-l03), [M16-L01](modules/M16.md#m16-l01), [M16-L02](modules/M16.md#m16-l02), [M16-L03](modules/M16.md#m16-l03), [M16-L04](modules/M16.md#m16-l04), [M17-L04](modules/M17.md#m17-l04), [M26-L01](modules/M26.md#m26-l01)
+
+## SHAP — A Unified Approach to Interpreting Model Predictions
+
+**Read:** [A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Feature attribution and additive explanations.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M04-L07](modules/M04.md#m04-l07), [M31-L02](modules/M31.md#m31-l02)
 
 ## SK — scikit-learn model selection
 
@@ -533,6 +929,30 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M03-L03](modules/M03.md#m03-l03), [M03-L04](modules/M03.md#m03-l04), [M04-L01](modules/M04.md#m04-l01), [M04-L02](modules/M04.md#m04-l02), [M04-L03](modules/M04.md#m04-l03), [M04-L04](modules/M04.md#m04-l04), [M40-L02](modules/M40.md#m40-l02)
+
+## SPARK — Spark SQL and DataFrames
+
+**Read:** [Spark SQL and DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Distributed dataframe execution and data sources.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L05](modules/M06.md#m06-l05)
+
+## SPEC — Fast Inference from Transformers via Speculative Decoding
+
+**Read:** [Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Drafting, verification and distribution-preserving sampling.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L03](modules/M35.md#m35-l03)
 
 ## SQL — PostgreSQL tutorial
 
@@ -616,7 +1036,7 @@ External pages were opened during research. The offline validator checks referen
 
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
-**Lesson references:** [M19-L04](modules/M19.md#m19-l04), [M26-L02](modules/M26.md#m26-l02)
+**Lesson references:** [M19-L04](modules/M19.md#m19-l04), [M24-L01](modules/M24.md#m24-l01), [M26-L02](modules/M26.md#m26-l02)
 
 ## TEMPORAL — Temporal workflow execution
 
@@ -642,6 +1062,30 @@ External pages were opened during research. The offline validator checks referen
 
 **Lesson references:** [M13-L03](modules/M13.md#m13-l03), [M15-L03](modules/M15.md#m15-l03), [M15-L04](modules/M15.md#m15-l04)
 
+## TENSORRT — NVIDIA TensorRT documentation
+
+**Read:** [NVIDIA TensorRT documentation](https://docs.nvidia.com/deeplearning/tensorrt/latest/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** NVIDIA inference optimization and backend compatibility.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M35-L06](modules/M35.md#m35-l06)
+
+## TRACK — MLflow ML experiment tracking
+
+**Read:** [MLflow ML experiment tracking](https://mlflow.org/docs/latest/ml/tracking/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Runs, parameters, metrics, artifacts and dataset lineage.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M29-L05](modules/M29.md#m29-l05), [M29-L08](modules/M29.md#m29-l08)
+
 ## TRL — Hugging Face TRL
 
 **Read:** [Hugging Face TRL](https://huggingface.co/docs/trl/index)
@@ -653,6 +1097,30 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M08-L03](modules/M08.md#m08-l03), [M33-L04](modules/M33.md#m33-l04), [M34-L01](modules/M34.md#m34-l01), [M34-L02](modules/M34.md#m34-l02), [M34-L03](modules/M34.md#m34-l03), [M34-L04](modules/M34.md#m34-l04)
+
+## TTC — Scaling LLM Test-Time Compute Optimally
+
+**Read:** [Scaling LLM Test-Time Compute Optimally](https://arxiv.org/abs/2408.03314)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Inference-time compute allocation and verification tradeoffs.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M07-L04](modules/M07.md#m07-l04), [M32-L01](modules/M32.md#m32-l01), [M32-L02](modules/M32.md#m32-l02), [M32-L03](modules/M32.md#m32-l03)
+
+## UPLIFT — EconML documentation
+
+**Read:** [EconML documentation](https://www.pywhy.org/EconML/)
+
+**Type:** official documentation or maintainer guidance · **Reviewed:** 2026-10-13
+
+**Reading focus:** Heterogeneous treatment effects and policy decisions.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M03-L06](modules/M03.md#m03-l06)
 
 ## VIDEO — Transformers video classification
 
@@ -701,6 +1169,18 @@ External pages were opened during research. The offline validator checks referen
 **Version policy:** Recheck at lesson-authoring time and pin the implemented package/spec version; main/latest/current URLs are mutable.
 
 **Lesson references:** [M26-L04](modules/M26.md#m26-l04), [M38-L01](modules/M38.md#m38-l01), [M38-L02](modules/M38.md#m38-l02), [M38-L03](modules/M38.md#m38-l03), [M38-L04](modules/M38.md#m38-l04)
+
+## WEAK — Snorkel: Rapid Training Data Creation with Weak Supervision
+
+**Read:** [Snorkel: Rapid Training Data Creation with Weak Supervision](https://arxiv.org/abs/1711.10160)
+
+**Type:** original paper or author survey · **Reviewed:** 2026-10-13
+
+**Reading focus:** Noisy labeling functions and weak supervision.
+
+**Version policy:** Use the cited paper version for historical claims; recheck mutable documentation and pin runtime dependencies before implementing.
+
+**Lesson references:** [M06-L02](modules/M06.md#m06-l02), [M06-L07](modules/M06.md#m06-l07)
 
 ## ZERO — DeepSpeed ZeRO tutorial
 

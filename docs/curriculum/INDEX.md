@@ -1,10 +1,10 @@
 # Larnix — 42-module lesson index
 
-168 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
+188 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
 
 [Overview](README.md) · [Teaching design](TEACHING_DESIGN.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)
 
-The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. All content below is planned, not implemented.
+The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. Each linked plan states its delivery status. Authored previews and runnable artifacts do not by themselves satisfy the full lesson contract.
 
 ## T1 — Foundations
 
@@ -18,6 +18,9 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 ### [M02 — Software engineering for AI](modules/M02.md)
 
 - [M02-L01](modules/M02.md#m02-l01) — Build reproducible Python components
+- [M02-L05](modules/M02.md#m02-l05) — Operate on arrays without shape surprises
+- [M02-L06](modules/M02.md#m02-l06) — Transform dataframes with trustworthy joins
+- [M02-L07](modules/M02.md#m02-l07) — Inspect datasets and communicate uncertainty
 - [M02-L02](modules/M02.md#m02-l02) — Design service contracts
 - [M02-L03](modules/M02.md#m02-l03) — Control concurrent work
 - [M02-L04](modules/M02.md#m02-l04) — Persist and test behavior
@@ -28,6 +31,8 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 - [M03-L02](modules/M03.md#m03-l02) — Understand optimization
 - [M03-L03](modules/M03.md#m03-l03) — Model uncertainty
 - [M03-L04](modules/M03.md#m03-l04) — Compare experiments honestly
+- [M03-L05](modules/M03.md#m03-l05) — Design causal questions and controlled experiments
+- [M03-L06](modules/M03.md#m03-l06) — Compare bandits and uplift decisions
 
 ### [M04 — Machine-learning fundamentals](modules/M04.md)
 
@@ -35,6 +40,9 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 - [M04-L02](modules/M04.md#m04-l02) — Protect the evaluation boundary
 - [M04-L03](modules/M04.md#m04-l03) — Handle imperfect predictions
 - [M04-L04](modules/M04.md#m04-l04) — Discover structure and diagnose fit
+- [M04-L05](modules/M04.md#m04-l05) — Compare classical model families
+- [M04-L06](modules/M04.md#m04-l06) — Tune models under a fixed search budget
+- [M04-L07](modules/M04.md#m04-l07) — Explain predictions without claiming causality
 
 ### [M05 — Deep-learning fundamentals](modules/M05.md)
 
@@ -49,6 +57,9 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 - [M06-L02](modules/M06.md#m06-l02) — Curate reliable labels
 - [M06-L03](modules/M06.md#m06-l03) — Version and trace data
 - [M06-L04](modules/M06.md#m06-l04) — Operate the data lifecycle
+- [M06-L05](modules/M06.md#m06-l05) — Orchestrate repeatable data processing
+- [M06-L06](modules/M06.md#m06-l06) — Engineer features at the right time
+- [M06-L07](modules/M06.md#m06-l07) — Spend a labeling budget wisely
 
 
 ## T2 — Language models and application interfaces
@@ -220,6 +231,10 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 - [M29-L01](modules/M29.md#m29-l01) — Package reproducible services
 - [M29-L02](modules/M29.md#m29-l02) — Automate delivery gates
+- [M29-L05](modules/M29.md#m29-l05) — Track reproducible predictive training runs
+- [M29-L06](modules/M29.md#m29-l06) — Promote model versions through a registry
+- [M29-L07](modules/M29.md#m29-l07) — Serve predictions in batches and online
+- [M29-L08](modules/M29.md#m29-l08) — Close the drift and retraining loop
 - [M29-L03](modules/M29.md#m29-l03) — Release progressively
 - [M29-L04](modules/M29.md#m29-l04) — Operate across environments
 
@@ -263,6 +278,8 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 ### [M35 — Inference and serving systems](modules/M35.md)
 
+- [M35-L05](modules/M35.md#m35-l05) — Understand hardware before optimizing kernels
+- [M35-L06](modules/M35.md#m35-l06) — Export and validate models on constrained devices
 - [M35-L01](modules/M35.md#m35-l01) — Model inference costs
 - [M35-L02](modules/M35.md#m35-l02) — Improve scheduling and memory
 - [M35-L03](modules/M35.md#m35-l03) — Reduce inference work
@@ -291,6 +308,7 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 - [M38-L02](modules/M38.md#m38-l02) — Design conversational timing
 - [M38-L03](modules/M38.md#m38-l03) — Integrate tools in voice sessions
 - [M38-L04](modules/M38.md#m38-l04) — Evaluate and operate voice
+- [M38-L05](modules/M38.md#m38-l05) — Evaluate multilingual and low-resource behavior
 
 ### [M39 — Generative media](modules/M39.md)
 
@@ -301,6 +319,8 @@ The numeric catalogue groups topics; use the learning path to bring evaluation a
 
 ### [M40 — Applied AI architectures](modules/M40.md)
 
+- [M40-L05](modules/M40.md#m40-l05) — Build and evaluate recommendation baselines
+- [M40-L06](modules/M40.md#m40-l06) — Forecast with rolling evidence
 - [M40-L01](modules/M40.md#m40-l01) — Design search and recommendations
 - [M40-L02](modules/M40.md#m40-l02) — Combine prediction and language
 - [M40-L03](modules/M40.md#m40-l03) — Build document and analytics assistants

@@ -10,12 +10,41 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "docs" / "curriculum"
+CONTRACT_CATEGORIES = {
+    "problem", "interaction", "explanation", "checks", "artifact",
+    "failure", "interview", "production", "attribution",
+}
 
 
 def load():
     curriculum = json.loads((BASE / "curriculum.json").read_text())
     sources = json.loads((BASE / "sources.json").read_text())
     return curriculum, sources
+
+
+def ordered_lessons(module):
+    """Stable catalogue IDs and teaching sequence are separate contracts."""
+    lessons = {lesson['id']: lesson for lesson in module['lessons']}
+    return [lessons[lid] for lid in module['lesson_order']]
+
+
+def route_lessons(curriculum, targets):
+    """Include every dependency, sorted by the validated full learning sequence."""
+    lessons = {l['id']: l for m in curriculum['modules'] for l in m['lessons']}
+    required = set()
+
+    def include(lid):
+        if lid in required or lid not in lessons:
+            return
+        required.add(lid)
+        for dependency in lessons[lid]['prerequisites']:
+            include(dependency)
+
+    for lid in targets:
+        include(lid)
+    modules = {m['id']: m for m in curriculum['modules']}
+    return [lid for mid in curriculum['recommended_module_order']
+            for lid in modules[mid].get('lesson_order', []) if lid in required]
 
 
 def validate(curriculum, source_data):
@@ -40,7 +69,7 @@ def validate(curriculum, source_data):
         return isinstance(value, list) and len(value) >= minimum and all(text(v) for v in value)
 
     require(len(modules) == 42, "The approved scope requires 42 modules.")
-    require(len(lessons) == 168, "The plan requires 168 lessons.")
+    require(len(lessons) == curriculum["expected_lessons"], "Lesson count differs from the reviewed scope.")
     for label, ids in (("source", source_ids), ("module", module_ids), ("lesson", lesson_ids)):
         require(len(ids) == len(set(ids)), f"Duplicate {label} IDs.")
     require(module_ids == [f"M{n:02}" for n in range(1, 43)], "Module IDs must be M01–M42 in order.")
@@ -57,17 +86,33 @@ def validate(curriculum, source_data):
     for module in modules:
         mid = module["id"]
         require(text(module.get("title")), f"{mid}: title missing.")
-        require(module.get("status") == "planned", f"{mid}: Phase 1 must remain planned.")
+        require(module.get("status") in {"planned", "in_progress"}, f"{mid}: invalid module delivery state.")
         require(module.get("depth") in {"core", "advanced"}, f"{mid}: invalid depth.")
-        require(len(module["lessons"]) == 4, f"{mid}: expected four lessons.")
-        require(module["lessons"][0]["prerequisites"] == module["prerequisites"],
-                f"{mid}: entry prerequisites must match lesson 1.")
+        require(len(module["lessons"]) >= 4, f"{mid}: preserve the original four lessons.")
+        local_ids = [lesson['id'] for lesson in module['lessons']]
+        teaching_order = module.get('lesson_order', [])
+        require(len(teaching_order) == len(local_ids) and set(teaching_order) == set(local_ids),
+                f"{mid}: teaching order must include every lesson exactly once.")
+        local_position = {lid: i for i, lid in enumerate(teaching_order)}
+        if teaching_order and teaching_order[0] in lesson_map:
+            require(lesson_map[teaching_order[0]]["prerequisites"] == module["prerequisites"],
+                    f"{mid}: entry prerequisites must match the first lesson in teaching order.")
         require(set(module["sources"]) <= set(source_ids), f"{mid}: unknown module source.")
         used_sources.update(module["sources"])
         for number, lesson in enumerate(module["lessons"], 1):
             lid = lesson["id"]
             require(lid == f"{mid}-L{number:02}", f"{lid}: unexpected lesson ID/order.")
-            require(lesson.get("status") == "planned", f"{lid}: Phase 1 must remain planned.")
+            require(lesson.get("status") in {"planned", "preview", "complete"}, f"{lid}: invalid lesson status.")
+            delivery = lesson.get("delivery", {})
+            require(delivery.get("full_contract") in {"not_met", "verified"}, f"{lid}: missing contract state.")
+            require((lesson['status'] == 'complete') == (delivery.get('full_contract') == 'verified'), f"{lid}: completion requires a verified contract.")
+            if lesson['status'] == 'complete':
+                evidence = delivery.get('completion_evidence', {})
+                require(isinstance(evidence, dict) and set(evidence) == CONTRACT_CATEGORIES
+                        and all(text(item) and (ROOT / item).is_file() for item in evidence.values()),
+                        f"{lid}: full contract requires evidence for all nine contract categories.")
+            if delivery.get('artifact_path'):
+                require((ROOT / delivery['artifact_path']).is_file(), f"{lid}: missing runnable artifact.")
             for field in ("title", "outcome", "resource_mode"):
                 require(text(lesson.get(field)), f"{lid}: missing {field}.")
             require(text_list(lesson.get("topics"), 3), f"{lid}: needs at least three topics.")
@@ -79,9 +124,9 @@ def validate(curriculum, source_data):
                     f"{lid}: duplicate prerequisite.")
             for dependency in lesson["prerequisites"]:
                 require(dependency in lesson_map, f"{lid}: unknown prerequisite {dependency}.")
-            if number > 1:
-                require(f"{mid}-L{number-1:02}" in lesson["prerequisites"],
-                        f"{lid}: preceding lesson is not a prerequisite.")
+                if dependency[:3] == mid and dependency in local_position and lid in local_position:
+                    require(local_position[dependency] < local_position[lid],
+                            f"{lid}: teaching order places lesson before prerequisite {dependency}.")
             interview = lesson.get("interview", {})
             require(text(interview.get("question")), f"{lid}: missing interview question.")
             require(text_list(interview.get("strong_answer_signals"), 2), f"{lid}: weak interview guidance.")
@@ -103,6 +148,10 @@ def validate(curriculum, source_data):
     ):
         require(len(values) == len(set(values)), f"Duplicate {name}.")
 
+    previews = json.loads((ROOT / 'web/lessons.json').read_text())
+    require({l['id'] for l in lessons if l['status'] in {'preview', 'complete'}} == set(previews), 'Preview status and published lesson manifest differ.')
+    for concern in curriculum.get('review_coverage', []):
+        require(set(concern['lessons']) <= set(lesson_ids), 'Review coverage contains an unknown lesson.')
     # Detect cycles at lesson granularity, including cross-module gates.
     visiting, visited = set(), set()
 
@@ -130,6 +179,12 @@ def validate(curriculum, source_data):
             if dep_module != own_module and dep_module in position and own_module in position:
                 require(position[dep_module] < position[own_module],
                         f"Learning path places {lesson['id']} before {dependency}.")
+    for route in curriculum.get('learning_routes', []):
+        require(text_list(route.get('targets')) and set(route['targets']) <= set(lesson_ids),
+                f"{route['id']}: unknown or empty route targets.")
+        required = route_lessons(curriculum, route.get('targets', []))
+        require(not ({lid[:3] for lid in required} & set(route.get('excluded_modules', []))),
+                f"{route['id']}: route includes an excluded prerequisite module.")
     track_members = [mid for track in curriculum["tracks"] for mid in track["modules"]]
     require(len(track_members) == len(module_ids) and set(track_members) == set(module_ids),
             "Tracks must partition all modules exactly once.")
@@ -163,21 +218,25 @@ def render(curriculum, source_data):
         prereqs = ", ".join(lesson_link(p, True) for p in module["prerequisites"]) or "Entry module; see the readiness guide in the curriculum overview."
         lines = [f"# {mid} — {module['title']}", "",
                  "[All modules](../INDEX.md) · [Learning path](../LEARNING_PATH.md) · [Source register](../SOURCES.md) · [Teaching design](../TEACHING_DESIGN.md)", "",
-                 f"**Status:** planned · **Depth:** {module['depth']} · **Track:** {module['track']}", "",
+                 f"**Status:** {module['status']} · **Depth:** {module['depth']} · **Track:** {module['track']}", "",
                  f"**Entry prerequisites:** {prereqs}", "",
-                 "Four lesson specifications follow. Each lesson will use a concrete problem, prediction, interactive explanation, worked example, inline checks and failure investigation before production and interview practice. Follow the teaching design for accessibility and original visual treatment. These interactions are planned, not implemented. Complete the evidence package for each exercise; live deployment is not required. Later lessons may introduce an additional cross-module prerequisite.", "",
+                 "**Teaching order:** " + " → ".join(lesson_link(lid, True) for lid in module["lesson_order"]), "",
+                 f"{len(module['lessons'])} lesson specifications follow. Each lesson will use a concrete problem, prediction, interactive explanation, worked example, inline checks and failure investigation before production and interview practice. Follow the teaching design for accessibility and original visual treatment. Delivery status is stated per lesson; a preview is not a completed lab. Complete the evidence package for each exercise; live deployment is not required. Later lessons may introduce an additional cross-module prerequisite.", "",
                  "## Module outcomes", ""]
-        lines += [f"- {l['outcome']}" for l in module["lessons"]]
-        for lesson in module["lessons"]:
+        lines += [f"- {l['outcome']}" for l in ordered_lessons(module)]
+        for lesson in ordered_lessons(module):
             lid = lesson["id"]
             p = ", ".join(lesson_link(dep, True) for dep in lesson["prerequisites"]) or "Entry readiness only."
             h = lesson["estimated_hours"]
             lines += ["", f'<a id="{lid.lower()}"></a>', "", f"## {lid} — {lesson['title']}", "",
+                      f"**Delivery:** {lesson['status']} · full lesson contract: {lesson['delivery']['full_contract']} · interaction: {lesson['delivery']['interaction']} · artifact: {lesson['delivery']['artifact']}", "",
                       f"**Prerequisites:** {p}", "",
                       f"**Learning outcome:** {lesson['outcome']}", "",
                       "**Topics:** " + "; ".join(lesson["topics"]) + ".", "",
-                      f"**Study estimate:** {h['guided_study'][0]}–{h['guided_study'][1]} hours guided study + {h['exercise'][0]}–{h['exercise'][1]} hours exercise. These are learner-effort estimates, not an implementation schedule.", "",
+                      f"**Study estimate:** {h['guided_study'][0]}–{h['guided_study'][1]} hours guided study + {h['exercise'][0]}–{h['exercise'][1]} hours exercise. These are uncalibrated learner-effort estimates, not measured timings or an implementation schedule.", "",
                       "### Primary readings", ""]
+            if lesson['delivery'].get('artifact_path'):
+                lines += [f"**Runnable artifact:** [Data foundations lab](../../../{lesson['delivery']['artifact_path']}) — artifact available; complete lesson narrative still planned.", ""]
             lines += [f"- {source_link(sid)} — {sources[sid]['focus']}." for sid in lesson["sources"]]
             lines += ["", "### Interview question", "", lesson["interview"]["question"], "",
                       "**A strong answer addresses:** " + "; ".join(lesson["interview"]["strong_answer_signals"]) + ".", "",
@@ -189,20 +248,20 @@ def render(curriculum, source_data):
             lines += [f"- {item}." for item in lesson["evidence_required"]]
             lines += ["", f"**Resources:** {lesson['resource_mode']}"]
         lines += ["", "## Module completion gate", "",
-                  "Submit all four lesson artifacts, answer the four interview questions, and explain one failure-and-recovery case. A reviewer checks acceptance criteria and labels results as designed, simulated, replayed or measured. A plan or replay is not proof of production performance.", "",
+                  "Submit every lesson artifact, answer its interview question, and explain one failure-and-recovery case. A reviewer checks acceptance criteria and labels results as designed, simulated, replayed or measured. A plan or replay is not proof of production performance.", "",
                   "Readings support concepts. Larnix's lesson sequencing, scenarios, questions and acceptance criteria are original curriculum design. Recheck relevant source sections and pin implementation versions when writing the actual lessons.", ""]
         files[f"modules/{mid}.md"] = "\n".join(lines)
 
     lines = ["# Larnix — 42-module lesson index", "",
-             "168 original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.", "",
+             f"{len(lessons)} original lesson plans, each with prerequisites, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.", "",
              "[Overview](README.md) · [Teaching design](TEACHING_DESIGN.md) · [Prerequisite-aware learning path](LEARNING_PATH.md) · [Sources](SOURCES.md) · [Coverage](COVERAGE.md) · [Validation report](AUDIT.md)", "",
-             "The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. All content below is planned, not implemented."]
+             "The numeric catalogue groups topics; use the learning path to bring evaluation and security forward. Each linked plan states its delivery status. Authored previews and runnable artifacts do not by themselves satisfy the full lesson contract."]
     for track in curriculum["tracks"]:
         lines += ["", f"## {track['id']} — {track['title']}", ""]
         for mid in track["modules"]:
             module = module_map[mid]
             lines += [f"### {module_link(mid)}", ""]
-            for lesson in module["lessons"]:
+            for lesson in ordered_lessons(module):
                 lines.append(f"- {lesson_link(lesson['id'])} — {lesson['title']}")
             lines.append("")
     files["INDEX.md"] = "\n".join(lines).rstrip() + "\n"
@@ -223,22 +282,34 @@ def render(curriculum, source_data):
 
     lines = ["# Prerequisite-aware learning path", "",
              "This is one valid full learning sequence. Module numbers are catalogue IDs, not a mandatory teaching order. Evaluation (M25) and security (M30) appear early and recur in practical work. The advanced M34 and M36 branches can be skipped on the application-engineering route because no downstream module requires them.", "",
-             "Entry readiness: basic programming literacy and comfort editing files/running a terminal. M02 supplies the Python, API, concurrency and SQL bridge; M03 supplies the mathematical bridge. No prior LLM application experience is assumed. Experienced learners may demonstrate prerequisite outcomes rather than repeat lessons.", "",
+             "Entry readiness: basic programming literacy and comfort editing files/running a terminal. M02 supplies the Python, NumPy, pandas, plotting, API, concurrency and SQL bridge; M03 supplies the mathematical bridge. No prior LLM application experience is assumed. Experienced learners may demonstrate prerequisite outcomes rather than repeat lessons.", "",
              "| Sequence | Module | Required earlier modules, including lesson-specific gates |", "| --- | --- | --- |"]
     for step, mid in enumerate(curriculum["recommended_module_order"], 1):
         deps = sorted({p[:3] for l in module_map[mid]["lessons"] for p in l["prerequisites"] if p[:3] != mid})
         lines.append(f"| {step} | {module_link(mid)} | {', '.join(deps) or 'Entry readiness'} |")
     lines += ["", "## Reading the dependency contract", "",
-              "Each lesson lists direct prerequisites. Prerequisites are transitive: a lesson depends on the knowledge behind its prerequisites as well. Within a module, lessons form a sequence. Additional gates are explicit at the lesson where they apply; for example, M20-L02 requires security lesson M30-L02 before tool-authority design.", "",
+              "Each lesson lists direct prerequisites. Prerequisites are transitive: a lesson depends on the knowledge behind its prerequisites as well. Stable lesson IDs identify topics, not required predecessors. Follow each module’s explicit teaching order; only listed prerequisites are required. Additional gates are explicit at the lesson where they apply; for example, M20-L02 requires security lesson M30-L02 before tool-authority design.", "",
               "Reading links are not extra prerequisite modules. A source may introduce an idea earlier at a conceptual level and support a deeper treatment later. All 42 modules are retained in the complete plan, including advanced branches.", "",
               "## Routes through the same catalogue", "",
               "- **Application engineering:** follow the full sequence and treat M34/M36 as optional advanced branches; use small-model or replay alternatives for compute-heavy exercises.",
               "- **Interview preparation:** begin with the diagnostic questions in the relevant modules; follow prerequisite links for weak answers, then use M42 as the final rehearsal. M42 is not a replacement for the core material.",
               "- **Production reference:** enter at a concrete problem such as M17 (RAG), M21 (agent recovery), M28 (reliability) or M35 (serving); check the prerequisite contract and completion criteria before applying the pattern.", ""]
-    files["LEARNING_PATH.md"] = "\n".join(lines)
+    lines += ["", "## Teaching order within modules", "",
+              "The same order drives module lists and next/previous navigation in the classroom. IDs and URLs stay unchanged.", ""]
+    for mid in curriculum['recommended_module_order']:
+        lines.append(f"- {mid}: " + " → ".join(lesson_link(lid) for lid in module_map[mid]['lesson_order']))
+    for route in curriculum.get('learning_routes', []):
+        required = route_lessons(curriculum, route['targets'])
+        lines += ["", f"## {route['title']}", "", route['description'], "",
+                  "These are lesson-level selections, not a requirement to finish every module containing them. All listed units retain their current planned/preview status.", "",
+                  "**Target outcomes:** " + ", ".join(lesson_link(lid) for lid in route['targets']), "",
+                  f"**Complete prerequisite route ({len(required)} lessons):**", ""]
+        for step, lid in enumerate(required, 1):
+            lines.append(f"{step}. {lesson_link(lid)}")
+    files["LEARNING_PATH.md"] = "\n".join(lines).rstrip() + "\n"
 
     lines = ["# Approved-scope coverage map", "",
-             "This maps all 42 approved modules to their four original lesson units. It establishes coverage of the agreed curriculum, not exhaustive coverage of every research topic in AI. Each linked unit contains topics, outcomes, readings, interview guidance and an exercise.", "",
+             f"This maps all 42 modules to {len(lessons)} lesson units, including 20 additions from the October 13 coverage review. It establishes coverage of the agreed curriculum, not exhaustive coverage of every research topic in AI. Each linked unit contains topics, outcomes, readings, interview guidance and an exercise.", "",
              "| Module | Lesson-level coverage |", "| --- | --- |"]
     for module in modules:
         covered = "; ".join(f"{lesson_link(l['id'])}: {l['title']}" for l in module["lessons"])
@@ -254,8 +325,12 @@ def render(curriculum, source_data):
               "| Cost and capacity | M01-L02, M12, M24, M27-L02, M32, M35, M41 |",
               "| Research-to-production judgment | M08, M25, M33–M36, M41, M42 |", "",
               "## Scope boundaries", "",
-              "The plan covers AI application engineering with supporting ML, training and systems foundations. Robotics/control, exhaustive theoretical proofs, custom accelerator design, every cloud-provider certification, and jurisdiction-specific legal advice are outside this 42-module plan. Advanced research topics are introduced to the depth needed for engineering decisions, not presented as a replacement for specialist research training.", "",
+              "The scope is AI/ML Engineering: predictive modeling and its production lifecycle alongside LLM application engineering. Coverage is planned breadth, not a claim of completed instruction or equal depth in every subfield. Robotics/control, exhaustive theoretical proofs, custom accelerator design, every cloud-provider certification, and jurisdiction-specific legal advice are outside this 42-module plan. SSM/Mamba, graph neural networks, differential privacy, federated learning and conformal prediction are explicitly deferred specialist electives. Knowledge-graph retrieval is not GNN training; governance coverage is not differential-privacy training. Advanced research topics are introduced for engineering decisions, not as a replacement for specialist research training.", "",
               "The referenced GitHub repository remains a background reference only. The approved independent catalogue, primary literature and original production scenarios govern this plan. A matching concept name is not a copied lesson or implementation.", ""]
+    lines += ["## October 13 review disposition", "", "Dedicated additions preserve existing IDs and avoid stretching a ten-minute preview into a full course. All 20 added narrative lessons remain planned; the M02 data lab is a separate runnable artifact.", "", "| Review concern | Primary treatment and reinforcement |", "| --- | --- |"]
+    for concern in curriculum['review_coverage']:
+        lines.append(f"| {concern['concern']} | " + ', '.join(lesson_link(lid) for lid in concern['lessons']) + ' |')
+    lines += [""]
     files["COVERAGE.md"] = "\n".join(lines)
 
     hours = {key: [sum(l["estimated_hours"][key][i] for l in lessons) for i in (0, 1)]
@@ -266,7 +341,7 @@ def render(curriculum, source_data):
              "Generated from the authoritative JSON records after content validation. Run `python3 scripts/curriculum.py check` from the repository root to verify the current files match the records.", "",
              "| Check | Result |", "| --- | --- |",
              f"| Approved modules | {len(modules)} / 42 |",
-             f"| Lessons with all required fields | {len(lessons)} / 168 |",
+             f"| Lessons with all required fields | {len(lessons)} / {curriculum['expected_lessons']} |",
              f"| Unique interview questions and answer guidance | {len(lessons)} |",
              f"| Unique exercise briefs with acceptance criteria | {len(lessons)} |",
              f"| Source records | {len(sources)} |",
@@ -274,14 +349,21 @@ def render(curriculum, source_data):
              "| Unknown prerequisites / dependency cycles | 0 / 0 |",
              "| Unknown source IDs / invalid source URL syntax | 0 / 0 |",
              "| Learning path | All modules once; every dependency precedes its dependent lesson |",
-             f"| Lesson status | {counts['planned']} planned; 0 implemented |", "",
+             f"| Lesson status | {counts['planned']} planned; {counts['preview']} previews; {counts['complete']} full-contract complete |", "",
              "## Effort assumptions", "",
              f"Guided study totals approximately {hours['guided_study'][0]}–{hours['guided_study'][1]} learner hours. Exercises add {hours['exercise'][0]}–{hours['exercise'][1]} hours if all are completed. These broad estimates describe learner effort, not an implementation commitment; prior knowledge and compute choices materially affect them.", "",
              "## What was reviewed", "",
              "The author reviewed the module-to-lesson mapping for conceptual gaps and repeated exercises, separated metrics from infrastructure health, added early security/evaluation gates, and provided resource alternatives for compute-heavy topics. Every lesson has an original scenario or engineering artifact and explicit review evidence.", "",
              "## Limits of this report", "",
              "The checker validates IDs, field completeness, unique questions/exercises, source references, dependency cycles, learning order, local Markdown targets, explicit anchors and generated-file consistency. It does not prove conceptual correctness, universal AI coverage, external link availability, legal compliance or working production systems. Exercise fixtures, solutions, measured benchmarks, learner pilots and independent technical review belong to later phases.", ""]
+    usage = Counter(sid for lesson in lessons for sid in lesson['sources'])
+    lines += ["## Source and delivery audit", "", f"Lessons with one source: {sum(len(l['sources']) == 1 for l in lessons)}. EVAL references: {usage['EVAL']}; NIST references: {usage['NIST']}. A focused specification can legitimately be a single source; source count alone is not evidence quality.", "", "Hour ranges differ by lesson but remain low-confidence editorial estimates, not measured learner timings. They assume stated prerequisites and small local fixtures or labeled replays, excluding large training runs and cloud provisioning. Repeated estimate-basis prose was removed after post-review; calibrate the ranges through learner trials.", "", "[Per-lesson delivery inventory](DELIVERY.md)", ""]
     files["AUDIT.md"] = "\n".join(lines)
+    delivery_lines = ["# Lesson delivery inventory", "", "Generated from curriculum.json and checked against the preview manifest. A tested engine is an executable mechanism, not proof that the full production exercise or nine-part lesson contract is complete.", "", "- 3 specialist browser engines: vector similarity, RAG evidence flow and crash recovery.", "- 3 additional lessons use a shared tested numerical calculator: M03-L02, M04-L03 and M05-L02. These are six engine-backed preview lessons across four runtime families, not six full production labs.", "- The original NumPy/pandas/plotting CPU lab supports three planned M02 lessons. It is a runnable artifact, not three authored lessons.", "- Illustrated cases and learner starters do not satisfy executable-artifact acceptance by themselves.", "", "| Lesson | Narrative status | Interaction | Artifact | Full contract |", "| --- | --- | --- | --- | --- |"]
+    for lesson in lessons:
+        d = lesson['delivery']
+        delivery_lines.append(f"| {lesson_link(lesson['id'])} | {lesson['status']} | {d['interaction']} | {d['artifact']} | {d['full_contract']} |")
+    files['DELIVERY.md'] = '\n'.join(delivery_lines) + '\n'
     return files
 
 
@@ -337,7 +419,7 @@ def main():
         errors.extend(check_local_links())
         if errors:
             raise SystemExit("\n".join(errors))
-        print(f"PASS: 42 modules, 168 lessons, {len(sources['sources'])} sources; prerequisite graph, learning order, content completeness, local links and generated documents are valid.")
+        print(f"PASS: {len(curriculum['modules'])} modules, {sum(len(m['lessons']) for m in curriculum['modules'])} lessons, {len(sources['sources'])} sources; prerequisite graph, learning order, content completeness, local links and generated documents are valid.")
 
 
 if __name__ == "__main__":

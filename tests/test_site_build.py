@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
 import json
+from zipfile import ZipFile
 import unittest
 import sys
 
@@ -36,6 +37,29 @@ class SiteBuildTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         build()
+
+    def test_downloadable_lab_is_complete_and_matches_tested_sources(self):
+        names = {'README.md', 'requirements.txt', 'rentals.csv', 'rates.csv', 'lab.py', 'test_lab.py'}
+        with ZipFile(ROOT / 'dist/labs/data-foundations.zip') as archive:
+            self.assertEqual(set(archive.namelist()), {'data-foundations/' + name for name in names})
+            for name in names:
+                self.assertEqual(archive.read('data-foundations/' + name),
+                                 (ROOT / 'labs/data-foundations' / name).read_bytes())
+
+    def test_shipped_navigation_uses_teaching_order_and_respects_dependencies(self):
+        source = (ROOT / 'dist/assets/data.js').read_text()
+        data = json.loads(source.removeprefix('window.LarnixData = ').removesuffix(';\n'))
+        modules = {m['id']: m for m in data['modules']}
+        order = [l for mid in data['order'] for l in modules[mid]['lessons']]
+        prior = set()
+        for lesson in order:
+            self.assertTrue(set(lesson['prerequisites']) <= prior, lesson['id'])
+            self.assertNotIn('estimate_basis', lesson)
+            prior.add(lesson['id'])
+        m02_ids = [l['id'] for l in modules['M02']['lessons']]
+        self.assertEqual(m02_ids[:4], ['M02-L01', 'M02-L05', 'M02-L06', 'M02-L07'])
+        self.assertEqual(modules['M35']['lessons'][0]['id'], 'M35-L05')
+        self.assertEqual(modules['M40']['lessons'][0]['id'], 'M40-L05')
 
     def test_static_routes_and_assets(self):
         out = ROOT / 'dist'
