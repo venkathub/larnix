@@ -17,7 +17,7 @@ class FoundationLessonsTest(unittest.TestCase):
         cls.notes = load_notes()
 
     def test_all_six_modules_are_authored_without_replacing_vector_lab(self):
-        expected = {l['id'] for m in self.curriculum['modules'][:6] for l in m['lessons']}
+        expected = {l['id'] for m in self.curriculum['modules'][:6] for l in m['lessons'][:4]}
         self.assertEqual(len(expected), 24)
         self.assertEqual(set(self.notes), expected - {'M03-L01'})
         self.assertTrue(expected <= self.manifest.keys())

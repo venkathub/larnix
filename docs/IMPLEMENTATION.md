@@ -2,21 +2,21 @@
 
 ## Current milestone: M01–M06 foundations and two advanced previews
 
-Implemented through the rebuild branch and published from `main`. The reference repository has not been forked or imported.
+The 26-preview classroom and homepage are published from `main`. The curriculum expansion described here is a local branch change pending merge and publication. The reference repository has not been forked or imported.
 
-- Catalogue of all 42 modules and 168 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
+- Catalogue of all 42 modules and 188 lesson plans, in the approved prerequisite order. The local catalogue draft uses seven handwritten roadmap stages, six modules per stage and one expanded module at a time.
 - The root URL opens a handwritten welcome page with the first lesson, a returning learner's resume link, a revealable teaching example, and the ten-minute study sequence. Home and Curriculum are distinct destinations; `#/catalog` retains its existing filters and deep links. Lesson logos return home while the explicit Curriculum links return to the roadmap.
 - Search across titles, topics and outcomes; Interview and Production views additionally search their respective question/exercise fields.
 - Ctrl/⌘ K opens Search & commands; arrow keys move through results, Enter opens a lesson, and Escape closes the palette. A visible button supports touch and mouse. Topic, availability, bookmark and Learn/Interview/Production controls live in the palette. Stage and filter state survive reload through the URL; active filters and no-result states remain visible.
 - The separate preview showcase is removed in the catalogue draft. Available lessons open directly from their modules; planned lessons open their blueprints. On mobile the roadmap starts collapsed and closes after a stage is selected.
 - Module pages, lesson blueprints, direct prerequisite links, primary readings and next-lesson navigation.
-- Twenty-six authored previews: all 24 foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
+- Twenty-six authored previews: 24 original foundation lessons M01–M06, plus RAG evidence flow (M17-L01) and agent crash recovery (M21-L02). The existing vector lab remains M03-L01.
 - Each preview has a suggested 10-minute core, original handwritten-style SVG, three checks, and optional deeper explanation/interview/production sections. Direct links reveal optional content automatically.
 - Shared quiz/theme component plus course navigation, bookmarks and independent reading/check/practice records.
 - Local progress restores after reload; storage-disabled environments fall back to page memory. Reading and exercise flags are self-reported, not assessment results. Check correctness is derived from the latest saved answer; it is not a credential or tamper-proof grade.
 - Dark/light themes, responsive catalogue and lesson layouts, semantic controls and keyboard access.
 
-This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 142 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
+This milestone does not implement account synchronization, backend APIs, a release/assessment system, or the remaining 162 narrative lessons. Those lessons are shown as plans. A blueprint can be bookmarked but cannot be marked as an authored lesson completed through the catalogue.
 
 ## Run and check
 
@@ -27,7 +27,7 @@ python3 -m http.server 8775 --bind 127.0.0.1 --directory dist
 
 Visit `http://127.0.0.1:8775/`. This is a static build with no runtime package dependencies. Rebuild and reload after edits. `dist/` is generated and ignored by Git. Serve the entire directory so lesson assets and downloads resolve.
 
-With Node.js on PATH, `make check` runs the curriculum validation, platform tests, lesson arithmetic/evidence/recovery tests, syntax checks and generated-route checks. Override `NODE=/absolute/path/to/node` if needed. `make build` builds; `make serve` builds and serves on port 8775.
+Install the lab dependencies with `python3 -m pip install -r labs/data-foundations/requirements.txt` in a virtual environment. With Node.js on PATH, `make check` runs the curriculum validation, platform tests, lesson arithmetic/evidence/recovery tests, syntax checks and generated-route checks. Override `NODE=/absolute/path/to/node` if needed. `make build` builds; `make serve` builds and serves on port 8775.
 
 Progress uses the `larnix.progress.v1` local-storage key. Storage is isolated by origin: switching port or domain starts a separate local record. The UI has a two-step reset. No analytics, tracking requests, external font requests or model calls are used. External source links open only when selected.
 
@@ -59,7 +59,7 @@ The three authored lesson pages retain their specialist lab engines. Shared comp
 
 The roadmap stages are consecutive groups of six modules from `recommended_module_order`, not replacements for the seven topic groups or the prerequisite graph. Evaluation and security stay before language-model work.
 
-The curriculum status is a planning baseline. Preview availability comes from a separate manifest, so an implemented prototype cannot accidentally turn all planned lessons into completed chapters.
+The curriculum records distinguish planned, preview and full-contract complete states. Preview statuses are checked against the published manifest; a complete lesson requires evidence for each of the nine contract categories. Supporting runnable artifacts do not change narrative status.
 
 ## Add the next authored lesson
 
@@ -67,7 +67,7 @@ The curriculum status is a planning baseline. Preview availability comes from a 
 2. Write original narrative, worked example, checks, failure investigation, interview guide and practice artifacts under `samples/<slug>/`.
 3. Put the learner’s question before lab controls, define unfamiliar terms at first use, and show state-derived evidence beside each result. Include concealed-answer transfer cases that test a new value or context and a limitation of the concept. Keep advanced controls optional.
 4. Initialize the shared LessonUI with a stable lesson ID and quiz keys. Keep lab computation in a separate testable file. Identify synthetic or replayed behavior.
-5. Add the manifest entry in `web/lessons.json`, including the matching answer keys. Add the appropriate test command to `make check`.
+5. Add the manifest entry in `web/lessons.json`, including the matching answer keys. Set its curriculum status to `preview`, record delivery details and regenerate the plans. Add the appropriate test command to `make check`.
 6. Build; verify links, artifacts and the lesson in the browser. Check storage restoration, keyboard controls, narrow-screen layout and explanatory accuracy.
 7. Keep the lesson labeled as an interactive preview until its content and acceptance evidence have been reviewed for release.
 
@@ -148,7 +148,7 @@ Honest review: vectors gives the most concrete entry point, although interpretin
 
 ## Foundation delivery — M01–M06
 
-All 24 foundation lessons now open as authored previews. Twenty-three use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 24 of the 26 available previews; 142 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
+The original 24 foundation lessons now open as authored previews. Twenty-three use original notes in `samples/foundations/m01-m03.json` and `m04-m06.json`; M03-L01 retains its existing vector engine and narrative. The first six modules account for 24 of the 26 available previews; 162 lessons remain plans. Availability is still derived from the preview manifest, not by rewriting the approved planning baseline.
 
 Each new lesson includes definitions, a handwritten mechanism sketch, a worked example, a misconception, three original illustrated cases with adjacent feedback and numerical evidence, three checks, two concealed-answer transfer prompts, every approved topic as an expanded note, verified primary sources, and a downloadable practice starter with acceptance criteria. The ten-minute route introduces one central mechanism; broader notes and production practice require additional time.
 

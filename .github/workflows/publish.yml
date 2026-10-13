@@ -24,6 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: python -m pip install -r labs/data-foundations/requirements.txt
       - run: make check
       - run: make build
       - name: Record the deployed source revision

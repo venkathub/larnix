@@ -1,10 +1,10 @@
 # Larnix — Phase 1 curriculum specification
 
-The approved 42-module scope is now broken into **168 original lessons**. Every lesson includes direct prerequisites, topic coverage, a learning outcome, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
+The approved 42-module scope is now broken into **188 original lessons**. Every lesson includes direct prerequisites, topic coverage, a learning outcome, primary readings, an interview question with answer signals, and a production exercise with acceptance criteria.
 
 Start with the [lesson index](INDEX.md). Use the [learning path](LEARNING_PATH.md) for prerequisite order, the [coverage map](COVERAGE.md) to inspect scope, the [source register](SOURCES.md) for research, and the [validation report](AUDIT.md) for structural checks.
 
-The [visual and interactive teaching specification](TEACHING_DESIGN.md) governs how all 168 lessons should explain these concepts. It adopts the user's linearalgebra.info reference as a direction for visual explanation, manipulation, worked examples and inline checks, using original Larnix content and design.
+The [visual and interactive teaching specification](TEACHING_DESIGN.md) governs how all 188 lessons should explain these concepts. It adopts the user's linearalgebra.info reference as a direction for visual explanation, manipulation, worked examples and inline checks, using original Larnix content and design.
 
 A subsequent implementation sample is available: [M03-L01 — Reason with vectors](../../samples/vector-similarity/index.html), with a [preview and verification guide](../../samples/vector-similarity/README.md). A second [RAG evidence-pipeline sample](../../samples/rag-grounding/index.html), a third [agent recovery sample](../../samples/agent-recovery/index.html), and the [local platform foundation](../IMPLEMENTATION.md) are also implemented. The Phase 1 records below remain the planning baseline; previews have not been marked as released curriculum lessons.
 
@@ -12,15 +12,15 @@ A subsequent implementation sample is available: [M03-L01 — Reason with vector
 
 | Deliverable | Contents |
 | --- | --- |
-| 42 module specifications | Four lesson plans per module with stable IDs such as `M17-L01` |
-| 168 interview prompts | Original questions, strong-answer signals and a common scoring rubric |
-| 168 production exercises | Original implementation, analysis, investigation or design assignments with explicit acceptance criteria |
+| 42 module specifications | Four to eight lesson plans per module with stable IDs such as `M17-L01` |
+| 188 interview prompts | Original questions, strong-answer signals and a common scoring rubric |
+| 188 production exercises | Original implementation, analysis, investigation or design assignments with explicit acceptance criteria |
 | Prerequisite map | Direct lesson dependencies, cross-module gates and a valid complete learning sequence |
 | Source register | Primary papers, official documentation, specifications and author-written learning materials; review date and version policy |
 | Coverage and validation | Approved-scope mapping, field checks, cycle detection, learning-order checks and local-link checks |
 | Maintainable source records | JSON records plus a standard-library renderer/checker; readable Markdown pages generated from those records |
 
-This phase specifies future teaching and lab work. It does not deliver the application, complete lesson prose, runnable labs, model results or deployed services. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
+These records specify future teaching and production work. The application has 26 authored previews and a separate runnable data lab; none yet meets the full nine-part lesson contract. See [delivery inventory](DELIVERY.md) for per-lesson status. Exercise verbs such as “build” and “run” describe future learner assignments. Their presence does not mean those exercises have already been implemented or executed.
 
 ## Originality and research policy
 
@@ -32,7 +32,7 @@ Sources are reading entry points rather than copied tutorials. Before writing a 
 
 ## Entry readiness and ordering
 
-Learners should be comfortable with basic programming ideas and running commands. M02 provides a Python, HTTP, concurrency and SQL bridge; M03 provides mathematical foundations. No previous LLM application experience is required. A learner can demonstrate an outcome to skip familiar prerequisite material.
+Learners should be comfortable with basic programming ideas and running commands. M02 plans a Python, HTTP, concurrency, SQL, NumPy, pandas and plotting bridge; M03 provides mathematical foundations. No previous LLM application experience is required. A learner can demonstrate an outcome to skip familiar prerequisite material.
 
 The catalogue has seven groups of six modules. Grouping helps navigation; it does not force security and evaluation to the end. The [recommended path](LEARNING_PATH.md) brings M25 and M30 forward and validates all direct and transitive prerequisites. Lessons inside each module are sequential, and extra prerequisites appear at the exact lesson that needs them.
 
@@ -52,7 +52,7 @@ Every completed lesson should contain the following material, based on its Phase
 8. **Production review:** acceptance results, baseline comparison, resource costs, boundaries and operating implications.
 9. **Attribution:** source links, version notes and any reused-asset provenance.
 
-The four lessons in a module progress from mechanism to engineering decisions and operation. Lessons are not required to use a single framework or provider. Implement a simple baseline before introducing a framework where it improves the learning objective.
+The lessons in a module progress from mechanism to engineering decisions and operation. Lessons are not required to use a single framework or provider. Implement a simple baseline before introducing a framework where it improves the learning objective.
 
 ## Exercise evidence and assessment
 
@@ -105,4 +105,4 @@ python3 scripts/curriculum.py check
 
 The renderer uses only Python's standard library. The checker verifies structure, dependencies, source IDs, local links and generated-file consistency. It does not certify source accuracy or replace independent technical review. Updates to scope, prerequisites or exercise objectives should be reviewed as curriculum changes.
 
-The next phase should author and validate a representative set of complete lessons before scaling to all 168. Choose samples from foundations, RAG, agents, evaluation, security and serving to test the lesson contract across different kinds of material.
+The next phase should author and validate a representative set of complete lessons before scaling to all 188. Choose samples from foundations, RAG, agents, evaluation, security and serving to test the lesson contract across different kinds of material.

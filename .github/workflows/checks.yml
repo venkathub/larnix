@@ -20,11 +20,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: python -m pip install -r labs/data-foundations/requirements.txt
       - run: make check
 
   notebooks:
-    # Retain the required check name across the rebuild. The current labs run
-    # in JavaScript; unfinished learner Python starters are not executables.
+    # Retain the required check name across the rebuild. The browser labs run
+    # in JavaScript; the schema job also executes the Python data lab; unfinished learner Python starters are not executables.
     name: Notebook execution (R10)
     runs-on: ubuntu-latest
     steps:
@@ -60,7 +61,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install codespell==2.4.2
       - name: Spelling (HAX is the Microsoft toolkit's name)
-        run: codespell README.md docs samples web scripts tests --skip='*.ttf,OFL.txt,PatrickHand-OFL.txt,__pycache__' --ignore-words-list=hax
+        run: codespell README.md docs samples web scripts tests labs --skip='*.ttf,OFL.txt,PatrickHand-OFL.txt,__pycache__' --ignore-words-list=hax
       - name: Curriculum, source records and generated prose consistency
         run: python scripts/curriculum.py check
       - name: Rendered links, anchors and project-site paths

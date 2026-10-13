@@ -2,7 +2,7 @@
 
 This is one valid full learning sequence. Module numbers are catalogue IDs, not a mandatory teaching order. Evaluation (M25) and security (M30) appear early and recur in practical work. The advanced M34 and M36 branches can be skipped on the application-engineering route because no downstream module requires them.
 
-Entry readiness: basic programming literacy and comfort editing files/running a terminal. M02 supplies the Python, API, concurrency and SQL bridge; M03 supplies the mathematical bridge. No prior LLM application experience is assumed. Experienced learners may demonstrate prerequisite outcomes rather than repeat lessons.
+Entry readiness: basic programming literacy and comfort editing files/running a terminal. M02 supplies the Python, NumPy, pandas, plotting, API, concurrency and SQL bridge; M03 supplies the mathematical bridge. No prior LLM application experience is assumed. Experienced learners may demonstrate prerequisite outcomes rather than repeat lessons.
 
 | Sequence | Module | Required earlier modules, including lesson-specific gates |
 | --- | --- | --- |
@@ -34,13 +34,13 @@ Entry readiness: basic programming literacy and comfort editing files/running a 
 | 26 | [M24 — Multi-agent systems and A2A](modules/M24.md) | M21, M23 |
 | 27 | [M27 — Observability and diagnosis](modules/M27.md) | M09, M25 |
 | 28 | [M28 — Reliability and distributed systems](modules/M28.md) | M02, M09, M27 |
-| 29 | [M29 — Deployment and delivery](modules/M29.md) | M02, M25, M28, M30 |
+| 29 | [M29 — Deployment and delivery](modules/M29.md) | M02, M04, M06, M25, M28, M30 |
 | 30 | [M26 — Task-specific evaluation](modules/M26.md) | M17, M21, M25 |
 | 31 | [M31 — Responsible AI and governance](modules/M31.md) | M01, M06, M25, M30 |
 | 32 | [M32 — Model selection and economics](modules/M32.md) | M01, M09, M25 |
 | 33 | [M33 — Fine-tuning and distillation](modules/M33.md) | M08, M25 |
 | 34 | [M34 — Preference and reinforcement learning](modules/M34.md) | M03, M33 |
-| 35 | [M35 — Inference and serving systems](modules/M35.md) | M07, M28, M32 |
+| 35 | [M35 — Inference and serving systems](modules/M35.md) | M07, M28, M29, M32 |
 | 36 | [M36 — Distributed training and advanced optimization](modules/M36.md) | M05, M08, M33 |
 | 37 | [M37 — Vision and video systems](modules/M37.md) | M05, M11, M25 |
 | 38 | [M38 — Speech and real-time agents](modules/M38.md) | M09, M19, M25 |
@@ -57,6 +57,7 @@ Reading links are not extra prerequisite modules. A source may introduce an idea
 
 ## Routes through the same catalogue
 
+- **Predictive ML engineering:** M01–M06 → M25/M30 → M27–M29 → M31 → M35 → M40. Follow additional dependencies in those modules. M29-L05–L08 form the tracking, registry, scoring and retraining lifecycle. Advanced LLM lessons are not prerequisites for starting the foundational data/ML work.
 - **Application engineering:** follow the full sequence and treat M34/M36 as optional advanced branches; use small-model or replay alternatives for compute-heavy exercises.
 - **Interview preparation:** begin with the diagnostic questions in the relevant modules; follow prerequisite links for weak answers, then use M42 as the final rehearsal. M42 is not a replacement for the core material.
 - **Production reference:** enter at a concrete problem such as M17 (RAG), M21 (agent recovery), M28 (reliability) or M35 (serving); check the prerequisite contract and completion criteria before applying the pattern.

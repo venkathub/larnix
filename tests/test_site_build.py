@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
 import json
+from zipfile import ZipFile
 import unittest
 import sys
 
@@ -36,6 +37,14 @@ class SiteBuildTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         build()
+
+    def test_downloadable_lab_is_complete_and_matches_tested_sources(self):
+        names = {'README.md', 'requirements.txt', 'rentals.csv', 'rates.csv', 'lab.py', 'test_lab.py'}
+        with ZipFile(ROOT / 'dist/labs/data-foundations.zip') as archive:
+            self.assertEqual(set(archive.namelist()), {'data-foundations/' + name for name in names})
+            for name in names:
+                self.assertEqual(archive.read('data-foundations/' + name),
+                                 (ROOT / 'labs/data-foundations' / name).read_bytes())
 
     def test_static_routes_and_assets(self):
         out = ROOT / 'dist'
