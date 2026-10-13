@@ -1814,204 +1814,205 @@
   },
   {
     "id": "M02-L04",
-    "orientation": "A database transaction groups writes into one committed change or no committed change. Tests check that intended behaviour, including failures, using repeatable fixtures.",
-    "idea": "Keep related writes atomic, and handle duplicate requests separately from rollback.",
+    "orientation": "Stopping a local task cannot tell you whether its database write committed. A transaction makes related writes all-or-nothing; a stable request key lets a later attempt recognize an earlier one.",
+    "idea": "Commit related rows together, recognize repeated request keys, and test what remains after failure.",
     "story": [
-      "Creating a rental-support ticket requires both a ticket row and an audit row. If the process fails between them, a half-written record can confuse the next person investigating the case. Meera wraps the two writes in one transaction.",
-      "A different failure happens after commit: the response never reaches the browser. The rows are safely stored, but the customer clicks submit again. Atomic writes did not prevent that duplicate request; the service also needs a stable request key and a defined repeat policy."
+      "Meera’s rental desk can now validate tickets and release cancelled provider slots. It still needs a record the next worker can inspect. A row is one stored record; a table is a collection of rows with named columns. For request rent-001, the ticket row says drill, two days. Audit rows record the steps accepted, validated and recorded. One ticket therefore needs three audit rows in this SYNTHETIC fixture, not one row in total.",
+      "Her first design saves the ticket, then saves its audit trail separately. If the second part fails, the ticket survives without any audit rows. A transaction groups these related writes: commit accepts the group, while rollback discards its uncommitted changes. Atomic means the group takes effect as a whole. Meera wants either one ticket with all three events or none of this new request’s rows. A faster query cannot repair the wrong write boundary.",
+      "Now suppose commit succeeds, but its response is lost. The stored rows exist even though the customer sees no confirmation. Repeating the same request_key identifies the same intended operation; inventing a new key would look like a new booking. The lab uses an in-memory SQLite database to make these cases reproducible. It demonstrates local commit and rollback while that connection lives, not persistence through process exit or a disk crash. The PostgreSQL readings explain the production database concepts; they are not evidence that this lab ran PostgreSQL."
     ],
-    "example": "A transaction inserts ticket T7 and its audit event. Failure before commit rolls both back. If commit succeeds but the response is lost, both rows remain. Repeating request key K7 should find or reuse the existing logical request, rather than create a second ticket.",
-    "trap": "Rollback and duplicate prevention solve different problems. A transaction cannot tell a disconnected client whether commit happened, and it does not automatically deduplicate a retry.",
+    "example": "SYNTHETIC worked row ledger for rent-001 (drill, days=2). Read each pair as (ticket rows, audit rows): fresh store (0,0); separate ticket commit then failure before audit insert (1,0); a fresh store with the lab’s crash inside one transaction (0,0); retry and commit, then lose the response (1,3); replay the same key and payload (1,3), returning {'ticket_id': 1, 'replayed': True}; rejected direct duplicate (1,3); rejected changed-payload replay (1,3). The separate-write baseline is a companion counterexample, not a mode of store_ticket. The committed ticket has events accepted, validated, recorded: joining it to audit gives 1 × 3 = 3 rows, but only 1 distinct ticket. The companion prints this ledger as a stage/tickets/audits table.",
+    "trap": "Rollback protects uncommitted database writes; it cannot undo an earlier separate commit, recover a lost response, or unsend an external email. A UNIQUE request key rejects duplicate inserts, but only the application’s replay policy decides whether an existing ticket is the same request. Three joined rows can still describe one ticket.",
     "sketch": [
-      "Related writes",
-      "Commit or rollback",
-      "Recognize a retry"
+      "Ticket + three audits",
+      "Commit or roll back",
+      "Look up the same key"
     ],
     "lab": {
-      "question": "Which rows remain when ticket creation fails at different points?",
-      "limitation": "Fixed synthetic case explorer: table counts are authored snapshots of the stated transaction semantics. This page does not run SQL or test a database.",
+      "question": "SYNTHETIC fixed fixtures: no SQL or database runs in the browser. Predict which rows remain after each failure. The separate-write case is an explicitly broken companion baseline; the transaction and lost-response cases quote the read-only SQLite lab.",
+      "limitation": "SYNTHETIC local row counts, shown as fixed cases. The lab uses in-memory SQLite and injected Python exceptions, not a server crash or network outage. It does not show server failure modes, isolation levels beyond SQLite’s, connection pools or migration tooling. No disk durability, concurrent-client replay safety or PostgreSQL execution is demonstrated.",
       "scenarios": [
         {
-          "label": "1 · Separate writes",
+          "label": "1 · SYNTHETIC separate writes",
           "steps": [
-            "Insert ticket",
-            "Commit ticket",
-            "Audit write fails"
+            "Commit ticket alone",
+            "Fail before audit insert",
+            "Inspect missing audits"
           ],
           "evidence": [
             [
-              "Ticket rows",
-              "1"
+              "Rows after failure",
+              "tickets=1; audit=0"
             ],
             [
-              "Audit rows",
-              "0"
+              "Companion injection",
+              "RuntimeError: separate-write failure before audit insert"
             ],
             [
               "Write boundary",
-              "Separate commits"
+              "First commit survives; second transaction has no audit rows"
             ]
           ],
-          "result": "A ticket remains without its required audit row.",
-          "why": "Each write committed independently, so the second failure cannot roll back the earlier committed insert.",
+          "result": "The ticket remains without its required three-event audit trail.",
+          "why": "The companion uses the lab schema but deliberately commits the ticket independently, then raises before writing any audits. The second rollback cannot undo the first commit. This is a separate negative example; the lab’s store_ticket always groups the ticket and audits in one transaction.",
           "bars": [
             {
               "label": "Ticket rows · count",
               "value": 1,
-              "max": 2
+              "max": 3
             },
             {
               "label": "Audit rows · count",
               "value": 0,
-              "max": 2
+              "max": 3
             }
           ]
         },
         {
-          "label": "2 · One transaction",
+          "label": "2 · SYNTHETIC transaction crash",
           "steps": [
-            "Begin + insert",
-            "Audit write fails",
-            "Roll back both"
+            "Insert uncommitted ticket",
+            "Raise before audit insert",
+            "Roll back the group"
           ],
           "evidence": [
             [
-              "Ticket rows",
-              "0"
+              "Rows after failure",
+              "tickets=0; audit=0"
             ],
             [
-              "Audit rows",
-              "0"
+              "Lab injection",
+              "InjectedCrash: crash after ticket insert, before audit insert"
             ],
             [
               "Write boundary",
-              "One transaction"
+              "store_ticket(crash=True); no new rows committed"
             ]
           ],
-          "result": "Neither row is committed.",
-          "why": "The failed transaction is rolled back as a unit. The application must report failure and handle the connection state correctly.",
+          "result": "Neither the new ticket nor any audit row remains after the injected exception.",
+          "why": "Inside store_ticket, the ticket insert and all three audit inserts share with connection. The injected exception exits that context before the audit inserts and rolls the ticket back. This fresh-store result is zero/zero; rollback would preserve previously committed tickets. The exception is not a process kill or disk failure.",
           "bars": [
             {
               "label": "Ticket rows · count",
               "value": 0,
-              "max": 2
+              "max": 3
             },
             {
               "label": "Audit rows · count",
               "value": 0,
-              "max": 2
+              "max": 3
             }
           ]
         },
         {
-          "label": "3 · Lost response",
+          "label": "3 · SYNTHETIC lost response + replay",
           "steps": [
-            "Write both rows",
-            "Commit succeeds",
-            "Response is lost"
+            "Commit ticket and audits",
+            "Lose the reply",
+            "Reuse the request key"
           ],
           "evidence": [
             [
-              "Ticket rows",
-              "1"
+              "Rows after loss / after replay",
+              "tickets=1; audit=3 / tickets=1; audit=3"
             ],
             [
-              "Audit rows",
-              "1"
+              "Lab injection",
+              "LostResponse: response lost after commit; outcome unknown to client"
             ],
             [
-              "Client observation",
-              "Timeout; result unknown"
+              "Replay result",
+              "{'ticket_id': 1, 'replayed': True}"
             ]
           ],
-          "result": "Both rows exist even though the client sees a timeout.",
-          "why": "Use the same non-null unique request key and documented retry handling to avoid a second logical ticket.",
+          "result": "One ticket and three audit rows survive; replay returns the existing ticket without another insert.",
+          "why": "ingest finds request_key rent-001, compares equipment and days, and returns ticket_id 1 with replayed=True. Direct store_ticket insertion of that key instead raises DuplicateRequest: duplicate request key: rent-001. Reusing it with days=9 raises DuplicateRequest: request key reused with different ticket: rent-001. Both rejections leave the existing one ticket and three audits intact. This single-client lookup-then-insert flow does not resolve concurrent replay races.",
           "bars": [
             {
               "label": "Ticket rows · count",
               "value": 1,
-              "max": 2
+              "max": 3
             },
             {
               "label": "Audit rows · count",
-              "value": 1,
-              "max": 2
+              "value": 3,
+              "max": 3
             }
           ]
         }
       ]
     },
     "mechanism": [
-      "Define the invariant first: every committed ticket creation has its matching audit event. Group the database writes that must preserve that invariant into one transaction.",
-      "Give retryable create requests a stable key and enforce uniqueness in the database. Reusing a key with different content needs a conflict policy; a key is not permission to silently overwrite an existing request.",
-      "Test failure points, not just the happy path. Inspect committed rows after rollback, duplicate submission and lost-response recovery, then run those tests automatically when the relevant code changes."
+      "Start with an invariant, a condition every accepted operation must preserve: this ticket creation commits one ticket and its three audit events together. SQL is the language used to query and change these tables. The lab’s store_ticket uses parameterized SQL, passing values separately from command text, inside one transaction. Its injected failure occurs after the ticket insert but before any audit insert. Rollback removes that uncommitted ticket. In the separate-write baseline, the ticket was already committed, so the same intended grouping is absent. Always inspect the tables after failure, not just the exception message.",
+      "A stable request key belongs to a logical operation, not to one network attempt. The schema declares request_key NOT NULL UNIQUE: it must exist and cannot repeat. ingest first looks it up and compares equipment and days; the same payload replays, a different payload conflicts. An index is a lookup structure; SQLite creates one for this UNIQUE constraint, supporting the request-key search as well as enforcing uniqueness. It does not make a read followed by an insert race-free across clients, or prove that the caller received the commit response.",
+      "A join pairs rows satisfying its match condition. Here audit.ticket_id matches tickets.id, so the three events repeat ticket 1 three times. COUNT(*) returns 3 joined rows; COUNT(DISTINCT tickets.id) returns 1 ticket represented in that join. The lab rejects treating 3 as the ticket count: JoinCardinalityError: joined rows are not ticket count: 3 != 1. Keep three checks separate: transaction tests for partial writes, replay tests for repeated requests, and join tests for the unit being counted. The next mathematical lessons build on the same habit of checking what a number represents."
     ],
     "transfer": [
       {
-        "question": "A ticket joins to three audit events. Must the joined result contain only one row because there is one ticket?",
-        "answer": "No. A join can produce one row per matching event. Aggregate or select deliberately before counting tickets, and test one-to-many fixtures."
+        "question": "A rental request committed, but the client received no reply. Should its retry use a new request key, and what if the duration changed?",
+        "answer": "Keep the original key for the same intended operation and the same payload. In this fixture, replaying rent-001/drill/2 returns ticket_id 1 with replayed=True and leaves 1 ticket / 3 audits. Changing days to 9 under that key raises DuplicateRequest: request key reused with different ticket: rent-001; do not silently overwrite the first request. A deliberate new booking needs a new key. Across concurrent clients, lookup then insert can race: the uniqueness constraint prevents a second stored key, but the application still needs an explicit conflict/reconciliation policy."
       },
       {
-        "question": "The database transaction rolls back. Does it also unsend an email already sent inside the operation?",
-        "answer": "No. A separate email provider is outside the database transaction. External effects need a separate delivery and recovery design."
+        "question": "One ticket has three audit events. A dashboard joins tickets to audit and reports COUNT(*)=3 as “bookings”. Is the store duplicated, and is COUNT(DISTINCT tickets.id) always the total of all tickets?",
+        "answer": "No duplicate ticket follows from those three rows: one ticket joined to three events produces three pairs. In the lab, COUNT(DISTINCT tickets.id)=1 within that joined result. An inner join omits tickets with no matching audit, so even DISTINCT there is not automatically the count of all stored tickets. Count the tickets table for that question, or choose a left join deliberately and test a ticket with no audit. Fix the query’s meaning before treating a row-count difference as a storage bug."
       }
     ],
     "checks": [
       {
-        "question": "What preserves the ticket-plus-audit invariant on an intermediate failure?",
+        "question": "Predict: the new ticket insert succeeds, then an exception occurs before its audits. What preserves the ticket-plus-audit invariant?",
         "options": [
           "An index on ticket text",
           "A faster network",
           "One transaction with rollback"
         ],
         "answer": 2,
-        "explanation": "Related writes must share the atomic boundary; speed and indexing do not supply atomicity."
+        "explanation": "One transaction with rollback leaves 0 new tickets and 0 audits in the fresh lab store. Separate commits leave the first ticket behind. An index can locate or constrain a key, but it cannot group independent commits into one atomic change."
       },
       {
-        "question": "What can a lost response after commit mean?",
+        "question": "The lab commits ticket 1 and its three audit rows, then loses the response. What can the client’s missing reply mean?",
         "options": [
           "The data exists although the client is unsure",
           "The database must be empty",
           "A rollback is guaranteed"
         ],
         "answer": 0,
-        "explanation": "The commit and delivery of its response are separate events."
+        "explanation": "The rows exist although the client is unsure: after_lost_response is 1 ticket / 3 audits. LostResponse is raised after commit. Retrying the same key and payload returns the existing ticket; rollback is not inferred from silence."
       },
       {
-        "question": "What should a duplicate request key enforce?",
+        "question": "What should a stable, unique request key enforce together with the application’s replay handling?",
         "options": [
           "Unlimited new rows",
           "A documented one-logical-request policy",
           "A fresh key on every retry"
         ],
         "answer": 1,
-        "explanation": "Stable keys let the service recognize a repeated logical request; conflicting payloads require explicit handling."
+        "explanation": "One logical request has one documented identity. Same key and same payload reuse ticket 1; direct duplicate insertion and a conflicting payload are rejected explicitly. A new key on every retry would defeat recognition, and uniqueness alone does not implement the replay response."
       }
     ],
     "topics": [
       {
         "title": "SQL joins",
-        "explanation": "Joins combine matching rows from tables. One ticket with three audit events can produce three joined rows, so COUNT(*) may count events rather than distinct tickets."
+        "explanation": "The query joins tickets to audit ON tickets.id = audit.ticket_id. Its unit is a matching pair, so events accepted, validated and recorded yield three rows for ticket 1. The foreign key ensures each audit references a ticket when enabled; it does not require every ticket to have an audit. COUNT(*) counts pairs, while COUNT(DISTINCT tickets.id) counts ticket IDs present in the result. An inner join hides the separate-write baseline’s unaudited ticket. Use a left-join view or the tickets table when investigating missing audit trails; the PostgreSQL joins reading covers that distinction."
       },
       {
         "title": "transactions",
-        "explanation": "Transactions group changes under a commit or rollback boundary. They protect database changes inside that boundary, not arbitrary external API calls or messages."
+        "explanation": "store_ticket groups the ticket insert and three audit inserts in with connection. The successful context commits; the injected exception rolls the current writes back. A previous committed record remains. A lost reply after commit belongs to a later boundary and cannot trigger an imaginary rollback. This in-memory SQLite connection disappears when closed: the lab tests atomic changes, not disk durability. PostgreSQL’s transaction reading describes database transaction concepts, but server failures, other isolation levels and external side effects need their own experiments."
       },
       {
         "title": "indexes",
-        "explanation": "Indexes can speed selected lookups but add storage and write work. A unique index or constraint can enforce a request-key invariant; an ordinary index alone does not prevent duplicates."
+        "explanation": "ingest searches WHERE request_key = ?. An index provides a route to candidate rows without scanning the entire table for every such lookup; the planner still chooses a plan. In this schema SQLite creates a unique index for request_key TEXT NOT NULL UNIQUE. The companion inspects PRAGMA index_list and index_info to identify it, rather than assuming an index name. Ordinary indexes do not prevent duplicate values; this unique constraint does. Indexes also cost storage and write maintenance. They do not make multiple writes atomic, confirm response delivery, or implement payload comparison and replay handling. No lookup-speed benchmark is claimed."
       },
       {
         "title": "tests",
-        "explanation": "Tests compare observed behaviour with explicit expectations. Include failures before commit, repeated keys and lost responses, because a passing happy-path insert cannot demonstrate recovery."
+        "explanation": "A test executes a case and compares its result with an explicit expectation. Here a passing insert is insufficient: test a crash between writes, loss after commit, same-key replay, direct duplicate, changed-payload replay and the three-to-one join. Assert row counts as well as exact failure types, because an exception can occur after useful state was committed. The lesson fixture test imports the unchanged lab and compares these traces; the companion uses fresh stores and reports the broken baseline separately. Passing those cases does not exhaust all failure schedules."
       },
       {
         "title": "fixtures",
-        "explanation": "Fixtures provide known starting data and expected outcomes. Include a ticket with multiple audit events and reset state between cases so hidden leftovers do not make tests misleading."
+        "explanation": "A fixture is controlled starting data and state for a repeatable test. This one uses rent-001, equipment drill, days 2 from fixtures/tickets.json. Start each independent comparison in a fresh in-memory store; within the lost-response/replay sequence keep the same connection, because existing state is the point. The three audit events deliberately expose join multiplication. Capture the actual Python/SQLite versions and fixture hash with the lab report. Production distributions, disk faults and concurrent-client races are absent from this invented workload."
       },
       {
         "title": "CI",
-        "explanation": "Continuous integration runs chosen checks automatically on repository events. A green run means those checks passed in that environment; it does not prove untested production behaviour."
+        "explanation": "Continuous integration (CI) runs selected checks automatically for changes. Here make check validates curriculum/generated records, runs Node tests and JavaScript syntax checks, Python tests including the site build, and both runnable lab suites. The four hosted checks are “Schema, a11y & unit tests” (make check), “Notebook execution (R10)” (interactive engine tests plus execution of tracked notebooks if any exist), “Prose, spelling & links” (codespell, curriculum and rendered-link tests), and “preview” (build and upload the static artifact). A green run reports those checks in that environment, not a full accessibility audit, PostgreSQL migration test, production reliability proof or learner validation. The current repository has no authored notebooks; the check name does not claim otherwise."
       }
     ],
     "sources": [
@@ -2020,7 +2021,7 @@
         "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       },
       {
-        "title": "PostgreSQL: joins",
+        "title": "PostgreSQL: joins between tables",
         "url": "https://www.postgresql.org/docs/current/tutorial-join.html"
       },
       {
@@ -2032,18 +2033,19 @@
         "url": "https://www.postgresql.org/docs/current/indexes-intro.html"
       },
       {
-        "title": "GitHub: understanding Actions",
-        "url": "https://docs.github.com/en/actions/get-started/understand-github-actions"
+        "title": "Made With ML: testing machine learning systems",
+        "url": "https://madewithml.com/courses/mlops/testing/"
       }
     ],
     "practice": {
       "steps": [
-        "In a disposable PostgreSQL database, create the two starter tables. Insert a ticket and its audit row in one transaction, then inspect both tables.",
-        "Repeat with an intentional failure before commit and verify rollback leaves neither row. Retry a committed key and verify the uniqueness constraint prevents another ticket.",
-        "Add one ticket with three audit rows and test your join count. Record the client behaviour expected after a lost commit response."
+        "Use SQLite as the default reproducible path: download the service lab and follow labs/service-foundations/README.md with Python 3.12 as the target. Keep the lab read-only. Predict the table counts and exact errors, then run its tests and save report.json with actual Python/SQLite versions and fixture hash. This is a SYNTHETIC teaching fixture, not a performance benchmark or learner-validated production store.",
+        "Save the companion as persistence_probe.py outside the lab and run python3 -I persistence_probe.py --lab-dir /path/to/service-foundations. It imports the unchanged persistence functions, prints the row ledger and failures, inspects the request-key index and contrasts the broken separate-write baseline. Expect baseline 1/0, transactional crash 0/0, loss/replay/rejections 1/3, and joined/distinct counts 3/1. Extend it to prove rollback preserves an older committed ticket and a left join reveals missing audits.",
+        "Complete the planned migration exercise in your own disposable store: version a schema change, test upgrade from the old schema with existing rows, and document recovery on failure. The lab recreates tables and supplies no migration tooling. Optionally repeat the transaction, duplicate, join and migration cases on PostgreSQL, recording server/client versions, configuration and observed results as a separate measured path. Do not relabel the SQLite results as PostgreSQL evidence; server failures, isolation levels beyond SQLite’s and connection pools remain untested here."
       ],
-      "starter": "CREATE TABLE tickets (\n  id integer PRIMARY KEY,\n  request_key text NOT NULL UNIQUE,\n  body text NOT NULL\n);\nCREATE TABLE audit (\n  id integer PRIMARY KEY,\n  ticket_id integer NOT NULL REFERENCES tickets(id),\n  event text NOT NULL\n);\nBEGIN;\nINSERT INTO tickets VALUES (7, 'K7', 'Drill stopped');\nINSERT INTO audit VALUES (1, 7, 'created');\nCOMMIT;"
-    }
+      "starter": "# SYNTHETIC companion; the imported service lab stays read-only.\nimport argparse\nfrom contextlib import closing\nimport json\nfrom pathlib import Path\nimport sys\n\n\ndef separate_writes(lab, ticket):\n    with closing(lab.open_store()) as connection:\n        with connection:\n            connection.execute(\n                \"INSERT INTO tickets(request_key, equipment, days) VALUES (?, ?, ?)\",\n                (ticket[\"request_key\"], ticket[\"equipment\"], ticket[\"days\"]))\n        try:\n            with connection:\n                raise RuntimeError(\"separate-write failure before audit insert\")\n        except RuntimeError as error:\n            failure = {\"type\": type(error).__name__, \"message\": str(error)}\n        return {\"counts\": lab.store_counts(connection), \"failure\": failure}\n\n\ndef probe(lab):\n    ticket = json.loads(lab.FIXTURE.read_text())[0]\n    baseline = separate_writes(lab, ticket)\n    report = lab.persistence_cases(ticket)\n    ledger = [(\"separate commits: audit failure\", baseline[\"counts\"]),\n              (\"one transaction: crash\", report[\"after_crash\"]),\n              (\"commit: response lost\", report[\"after_lost_response\"])]\n    # Trace each recovery step independently of the lab's final summary.\n    with closing(lab.open_store()) as connection:\n        try:\n            lab.ingest(connection, ticket, lose_response=True)\n        except lab.LostResponse:\n            pass  # Outcome is inspected and replayed below, not assumed absent.\n        else:\n            raise RuntimeError(\"expected lost response\")\n        replay = lab.ingest(connection, ticket)\n        ledger.append((\"same key and payload: replay\", lab.store_counts(connection)))\n        for label, operation in [\n            (\"direct duplicate\", lambda: lab.store_ticket(connection, ticket)),\n            (\"changed payload\", lambda: lab.ingest(connection, {**ticket, \"days\": 9}))]:\n            try:\n                operation()\n            except lab.DuplicateRequest as error:\n                print(f\"{type(error).__name__}: {error}\")\n            else:\n                raise RuntimeError(\"expected duplicate rejection\")\n            ledger.append((label, lab.store_counts(connection)))\n        # SQLite reports origin 'u' for an index made by a UNIQUE constraint.\n        unique_key_index = False\n        for _, name, unique, origin, _ in connection.execute(\"PRAGMA index_list('tickets')\"):\n            columns = [row[2] for row in connection.execute(\n                \"SELECT * FROM pragma_index_info(?)\", (name,))]\n            if unique and origin == \"u\" and columns == [\"request_key\"]:\n                unique_key_index = True\n        if not unique_key_index:\n            raise RuntimeError(\"missing unique request-key index\")\n    print(\"stage                              | tickets | audits\")\n    for stage, counts in ledger:\n        print(f\"{stage:34} | {counts['tickets']:7} | {counts['audit']:6}\")\n    for failure in [baseline[\"failure\"], report[\"lost_response\"],\n                    *report[\"rejected_failures\"].values()]:\n        print(f\"{failure['type']}: {failure['message']}\")\n    print(\"replay:\", replay)\n    print(\"joined / distinct:\", report[\"joined_rows\"], report[\"distinct_tickets\"])\n    print(\"unique request-key index:\", unique_key_index)\n    return {\"baseline\": baseline, \"lab\": report, \"ledger\": ledger,\n            \"replay\": replay, \"unique_key_index\": unique_key_index}\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--lab-dir\", required=True, type=Path)\n    args = parser.parse_args()\n    sys.path.insert(0, str(args.lab_dir.resolve()))\n    import lab\n    probe(lab)\n"
+    },
+    "sources_reviewed_on": "2026-10-13"
   },
   {
     "id": "M03-L02",

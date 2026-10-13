@@ -682,7 +682,8 @@
           "delivery": {
             "full_contract": "not_met",
             "interaction": "illustrated_cases",
-            "artifact": "learner_starter"
+            "artifact": "runnable_service_lab",
+            "artifact_path": "labs/service-foundations/README.md"
           }
         },
         {
