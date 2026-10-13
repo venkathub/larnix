@@ -46,6 +46,19 @@ class SiteBuildTest(unittest.TestCase):
                 self.assertEqual(archive.read('data-foundations/' + name),
                                  (ROOT / 'labs/data-foundations' / name).read_bytes())
 
+    def test_numpy_preview_links_runnable_lab_and_labels_fixtures_before_controls(self):
+        file = ROOT / 'dist/lessons/M02-L05/index.html'
+        text = file.read_text()
+        page = Page(text)
+        lab_ref = '../../labs/data-foundations.zip'
+        self.assertIn(lab_ref, page.refs)
+        self.assertTrue((file.parent / lab_ref).is_file())
+        self.assertIn('Download runnable data lab + README', text)
+        self.assertIn('labs/data-foundations/README.md', text)
+        self.assertIn('Authoring references rechecked October 13, 2026.', text)
+        limitation = 'SYNTHETIC fixed fixtures: this page does not run NumPy in the browser.'
+        self.assertLess(text.index(limitation), text.index('class="scenario-controls"'))
+
     def test_shipped_navigation_uses_teaching_order_and_respects_dependencies(self):
         source = (ROOT / 'dist/assets/data.js').read_text()
         data = json.loads(source.removeprefix('window.LarnixData = ').removesuffix(';\n'))

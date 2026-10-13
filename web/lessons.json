@@ -69,6 +69,20 @@
       "check3": "0"
     }
   },
+  "M02-L05": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Operate on arrays without shape surprises",
+    "description": "Match each rental’s days to its own daily rate, then verify the output shape and a hand-calculated cost before trusting the total.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
+  },
   "M02-L02": {
     "directory": "foundations",
     "format": "foundation",

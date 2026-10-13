@@ -28,7 +28,9 @@ class CurriculumTest(unittest.TestCase):
         self.assertTrue(any('nine contract categories' in e for e in validate(self.curriculum, self.sources)))
 
     def test_planned_artifact_does_not_become_an_authored_preview(self):
-        lesson = self.curriculum['modules'][1]['lessons'][4]
+        lesson = next(l for m in self.curriculum['modules'] for l in m['lessons']
+                      if l['status'] == 'planned'
+                      and l['delivery']['artifact'] == 'runnable_data_lab')
         self.assertEqual(lesson['delivery']['artifact'], 'runnable_data_lab')
         self.assertEqual(lesson['status'], 'planned')
         lesson['status'] = 'preview'
