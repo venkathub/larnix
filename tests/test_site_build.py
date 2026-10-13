@@ -61,6 +61,26 @@ class SiteBuildTest(unittest.TestCase):
         limitation = 'SYNTHETIC fixed fixtures: this page does not run NumPy in the browser.'
         self.assertLess(text.index(limitation), text.index('class="scenario-controls"'))
 
+    def test_foundation_data_lab_links_and_synthetic_notice(self):
+        curriculum = json.loads((ROOT / 'docs/curriculum/curriculum.json').read_text())
+        manifest = json.loads((ROOT / 'web/lessons.json').read_text())
+        for module in curriculum['modules']:
+            for lesson in module['lessons']:
+                lesson_id = lesson['id']
+                if (manifest.get(lesson_id, {}).get('format') != 'foundation'
+                        or lesson['delivery']['artifact'] != 'runnable_data_lab'):
+                    continue
+                with self.subTest(lesson=lesson_id):
+                    file = ROOT / 'dist/lessons' / lesson_id / 'index.html'
+                    text = file.read_text()
+                    ref = '../../labs/data-foundations.zip'
+                    self.assertIn(ref, Page(text).refs)
+                    self.assertTrue((file.parent / ref).is_file())
+                    before_controls = text.split('class="scenario-controls"')[0]
+                    self.assertIn('SYNTHETIC fixed fixtures:', before_controls)
+                    self.assertIn('in the browser.', before_controls)
+                    self.assertIn(lesson['delivery']['artifact_path'], text)
+
     def test_shipped_navigation_uses_teaching_order_and_respects_dependencies(self):
         source = (ROOT / 'dist/assets/data.js').read_text()
         data = json.loads(source.removeprefix('window.LarnixData = ').removesuffix(';\n'))

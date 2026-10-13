@@ -1,9 +1,12 @@
 """Acceptance checks for authored foundation coverage and teaching fixtures."""
 import json
+import contextlib
+import io
 import sys
 import unittest
 
 import numpy as np
+import pandas as pd
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,6 +80,101 @@ class FoundationLessonsTest(unittest.TestCase):
         failure = dict(cases[2]['evidence'])['Failure / recovery']
         self.assertIn('ValueError', failure)
         self.assertIn(f'total {costs.sum():.0f}', failure)
+
+    def pandas_starter(self):
+        namespace = {}
+        with contextlib.redirect_stdout(io.StringIO()):
+            exec(compile(self.notes['M02-L06']['practice']['starter'],
+                         'M02-L06 starter', 'exec'), namespace)
+        return namespace
+
+    def test_pandas_join_fixtures_match_executed_rows_and_costs(self):
+        starter = self.pandas_starter()
+        rentals, rates = starter['RENTALS'], starter['RATES']
+        audit_join = starter['audit_join']
+        cases = self.notes['M02-L06']['lab']['scenarios']
+        clean, missing, audit = audit_join(rentals, rates)
+        self.assertTrue(missing.empty)
+        self.assertEqual(audit, dict(rows_before=3, rows_after=3, missing_rates=0))
+        self.assertEqual(clean['cost'].tolist(), [24, 12, 20])
+        self.assertEqual(clean['cost'].sum(), 56)
+        duplicate = pd.concat([rates, rates.iloc[[0]]], ignore_index=True)
+        with self.assertRaises(pd.errors.MergeError):
+            audit_join(rentals, duplicate)
+        unsafe = rentals.merge(duplicate, on='equipment', how='left')
+        unsafe['cost'] = unsafe['days'] * unsafe['daily_rate']
+        self.assertEqual(unsafe['cost'].tolist(), [24, 24, 12, 12, 20])
+        self.assertEqual(unsafe['cost'].sum(), 92)
+        unknown, missing, audit = audit_join(
+            rentals.assign(equipment=['drill', 'drill', 'hoist']), rates)
+        self.assertEqual(audit, dict(rows_before=3, rows_after=3, missing_rates=1))
+        self.assertEqual(missing['rental_id'].tolist(), ['R3'])
+        self.assertEqual(missing['_merge'].tolist(), ['left_only'])
+        self.assertTrue(pd.isna(unknown.loc[2, 'cost']))
+        self.assertEqual(str(unknown['daily_rate'].dtype), 'Int64')
+        self.assertEqual(unknown['cost'].sum(), 36)  # partial, never the full total
+        for case, output, missing_count in zip(cases, [clean, unsafe, unknown], [0, 0, 1]):
+            with self.subTest(case=case['label']):
+                self.assertIn('SYNTHETIC', case['label'])
+                self.assertEqual([b['value'] for b in case['bars']], [len(rentals), len(output)])
+                self.assertEqual([b['max'] for b in case['bars']], [5, 5])
+                self.assertEqual(case['evidence'][0][1],
+                                 f'{len(rentals)} / {len(output)}; missing rates {missing_count}')
+                self.assertIn(str(output['cost'].tolist()), case['evidence'][1][1])
+                self.assertIn(f'{output["cost"].sum()} ', case['evidence'][1][1])
+        self.assertIn(f'{unsafe["cost"].sum()} − {clean["cost"].sum()} = 36',
+                      cases[1]['evidence'][2][1])
+        self.assertIn('full total withheld', cases[2]['evidence'][2][1])
+        # A matched key with a null price must also be preserved and reported.
+        null_rates = rates.assign(daily_rate=pd.Series([12, None], dtype='Int64'))
+        null_joined, missing, audit = audit_join(rentals, null_rates)
+        self.assertEqual(missing['rental_id'].tolist(), ['R3'])
+        self.assertEqual(missing['_merge'].tolist(), ['both'])
+        self.assertEqual(audit['missing_rates'], 1)
+        self.assertTrue(pd.isna(null_joined.loc[2, 'cost']))
+        shuffled, missing, _ = audit_join(rentals, rates.iloc[::-1])
+        pd.testing.assert_frame_equal(shuffled, clean)
+        for invalid in [rentals.assign(rental_id=['R1', 'R1', 'R3']),
+                        rentals.assign(rental_id=['R1', None, 'R3']),
+                        rentals.assign(equipment=['drill', None, 'lamp'])]:
+            with self.assertRaises(ValueError):
+                audit_join(invalid, rates)
+        with self.assertRaises(ValueError):
+            audit_join(rentals, rates.assign(equipment=['drill', None]))
+
+    def test_pandas_groups_pivot_and_transfer_reconcile(self):
+        starter = self.pandas_starter()
+        joined = starter['joined']
+        branches = joined.groupby('branch', dropna=False)['cost'].sum()
+        equipment = joined.groupby('equipment', dropna=False)['cost'].sum()
+        self.assertEqual(branches.to_dict(), {'North': 44, 'South': 12})
+        self.assertEqual(equipment.to_dict(), {'drill': 36, 'lamp': 20})
+        cells = joined.groupby(['branch', 'equipment'], as_index=False, dropna=False)['cost'].sum()
+        wide = cells.pivot(index='branch', columns='equipment', values='cost')
+        self.assertTrue(pd.isna(wide.loc['South', 'lamp']))
+        wide = wide.fillna(0)
+        self.assertEqual(wide.loc['North'].tolist(), [24, 20])
+        self.assertEqual(wide.loc['South'].tolist(), [12, 0])
+        self.assertEqual(wide.sum().sum(), branches.sum())
+        self.assertEqual(equipment.sum(), joined['cost'].sum())
+        note = self.notes['M02-L06']
+        evidence = dict(note['lab']['scenarios'][0]['evidence'])['Branch totals / pivot']
+        for branch in ['North', 'South']:
+            self.assertIn(f'{branch} {branches[branch]}', evidence)
+            self.assertIn(f'{branch} {wide.loc[branch].tolist()}', evidence)
+        # pivot cannot conceal repeated cells; a learner must choose aggregation.
+        with self.assertRaises(ValueError):
+            pd.concat([cells, cells.iloc[[0]]]).pivot(
+                index='branch', columns='equipment', values='cost')
+        rentals = pd.DataFrame({'equipment': ['saw', 'saw'], 'days': [2, 3]})
+        rates = pd.DataFrame({'equipment': ['saw'], 'daily_rate': [8]})
+        answer = note['transfer'][0]['answer']
+        for rate_table in [rates, pd.concat([rates, rates])]:
+            result = rentals.merge(rate_table, on='equipment', how='left')
+            costs = result['days'] * result['daily_rate']
+            self.assertIn(f'{len(result)} rows', answer)
+            self.assertIn(str(costs.tolist()), answer)
+            self.assertIn(f'total {costs.sum()}', answer)
 
     def test_numpy_transfer_and_topic_numbers(self):
         note = self.notes['M02-L05']

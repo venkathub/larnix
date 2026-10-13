@@ -1,6 +1,6 @@
 # Larnix — visual and interactive teaching direction
 
-Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 188 lessons in the [curriculum](INDEX.md). There are 27 authored previews and a separate runnable data-programming artifact; no lesson is certified against the full completion contract. See DELIVERY.md for the current inventory. The narrative standard below also applies when revising the existing sample.
+Status: adopted design requirement for subsequent lesson and application implementation. Applies to all 42 modules and 188 lessons in the [curriculum](INDEX.md). There are 28 authored previews and a separate runnable data-programming artifact; no lesson is certified against the full completion contract. See DELIVERY.md for the current inventory. The narrative standard below also applies when revising the existing sample.
 
 ## Reference and interpretation
 

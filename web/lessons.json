@@ -373,5 +373,19 @@
       "identity": "same",
       "outage": "hold"
     }
+  },
+  "M02-L06": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Transform dataframes with trustworthy joins",
+    "description": "Join each rental to one equipment rate, audit row counts and missing matches, then group or reshape only the checked charges.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }

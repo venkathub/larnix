@@ -2702,5 +2702,252 @@
       ],
       "starter": "import random\n\n# B correctness minus A correctness, one value per paired ticket.\ndifferences = [0]*12 + [1]*4 + [-1]*2 + [0]*2\nrng = random.Random(7)\nn = len(differences)\ngains = sorted(sum(rng.choices(differences, k=n))/n\n               for _ in range(2000))\nprint(\"observed percentage-point gain\", 100*sum(differences)/n)\nprint(\"illustrative percentile endpoints\", 100*gains[50], 100*gains[1949])\n# A teaching approximation, not a small-sample coverage guarantee."
     }
+  },
+  {
+    "id": "M02-L06",
+    "orientation": "M02-L05 multiplied aligned arrays. Now use pandas, a Python library for labelled tables, to establish which rate belongs to each rental before multiplying. A join matches rows by a shared key; it does not guarantee one output row per booking.",
+    "idea": "Join each rental to one equipment rate, audit row counts and missing matches, then group or reshape only the checked charges.",
+    "story": [
+      "Meera checks a new SYNTHETIC equipment-rental ledger. Booking R1 at North rents a drill for 2 days; R2 at South rents a drill for 1 day; R3 at North rents a lamp for 4 days. A separate rate card lists drill at 12 and lamp at 5 fictional currency units per day. She needs charges by branch without losing any booking.",
+      "A dataframe is a table with named columns and a row index. Here each rentals row means one booking, while each rates row should mean one equipment price. Think of looking up a price card for each booking: equipment is the lookup key. Two bookings can use the drill card, so the relationship is many rentals to one rate. Row position is no longer the matching rule.",
+      "Meera uses a left join to keep every rental. But a copied drill card means each drill booking finds two matches. pandas emits both matches; it does not choose the correct card for her. The lookup analogy stops at this ambiguity. Even identical duplicate rates create extra charges. Predict what happens to the row count and revenue when no rental changed."
+    ],
+    "example": "SYNTHETIC rentals: R1 North drill, 2 × 12 = 24; R2 South drill, 1 × 12 = 12; R3 North lamp, 4 × 5 = 20 units. Three input rows become three joined rows. Total = 24 + 12 + 20 = 56; grouped by branch, North = 44 and South = 12. Copying the drill rate creates five joined rows: [24, 24, 12, 12, 20], total 92. The extra 36 is duplicated drill revenue, not new business.",
+    "trap": "Left means keep the left-side bookings, not keep the same row count. validate=\"many_to_one\" rejects duplicate right-side keys, but an unknown equipment ID still passes that check and gets a missing rate. Cardinality and completeness need separate checks; filling a missing price with zero invents a free rental.",
+    "sketch": [
+      "3 rental rows",
+      "One rate per key",
+      "Audit → 3 rows, 56 units"
+    ],
+    "lab": {
+      "question": "SYNTHETIC fixed fixtures: this page does not run pandas in the browser. For Meera’s three rentals, does a clean rate card, a duplicate drill card, or an unknown equipment ID permit a complete revenue total?",
+      "limitation": "SYNTHETIC illustrated cases, not browser-executed pandas or production evidence. Bars count input and left-joined rows on the same 0–5 scale. The duplicate case shows the unsafe merge for diagnosis; the validated merge rejects it. The unknown case has a partial subtotal, never a complete total. Select case 1 to restore the clean fixture; run the separate lab for executable evidence.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC clean join",
+          "steps": [
+            "3 bookings, 2 rates",
+            "Validate many-to-one",
+            "3 costs → total 56"
+          ],
+          "evidence": [
+            [
+              "Rows before / after",
+              "3 / 3; missing rates 0"
+            ],
+            [
+              "Charges / total",
+              "[24, 12, 20] units / 56 units"
+            ],
+            [
+              "Branch totals / pivot",
+              "North 44; South 12. Columns [drill, lamp]: North [24, 20]; South [12, 0]"
+            ]
+          ],
+          "result": "Three bookings remain three rows, with a checked total of 56 fictional currency units.",
+          "why": "Both drill bookings use the single drill rate. Group the checked costs by branch: North 24 + 20 = 44; South 12. The pivot’s South/lamp zero means no such rental in this complete fixture, not a missing rate.",
+          "bars": [
+            {
+              "label": "Input rental rows",
+              "value": 3,
+              "max": 5
+            },
+            {
+              "label": "Joined rows",
+              "value": 3,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC duplicate rate",
+          "steps": [
+            "Copy drill rate 12",
+            "Unsafe join → 5 rows",
+            "Validated join rejects"
+          ],
+          "evidence": [
+            [
+              "Rows before / unsafe after",
+              "3 / 5; missing rates 0"
+            ],
+            [
+              "Unsafe charges / total",
+              "[24, 24, 12, 12, 20] units / 92 units"
+            ],
+            [
+              "Inflation / validated result",
+              "92 − 56 = 36 extra units; MergeError, no accepted total"
+            ]
+          ],
+          "result": "Without validation, revenue jumps from 56 to 92 even though no rental changed. The validated merge raises MergeError.",
+          "why": "Each of the two drill rentals now matches two right-side rows: 2 × 2 + 1 lamp row = 5. Reject the duplicate key and resolve the rate card at its source. Do not hide the fault with a groupby, a pivot, or arbitrary keep-first deduplication; corrected case 1 returns 56.",
+          "bars": [
+            {
+              "label": "Input rental rows",
+              "value": 3,
+              "max": 5
+            },
+            {
+              "label": "Unsafe joined rows",
+              "value": 5,
+              "max": 5
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC unknown equipment",
+          "steps": [
+            "R3: lamp → hoist",
+            "Left join keeps R3",
+            "Report gap; block total"
+          ],
+          "evidence": [
+            [
+              "Rows before / after",
+              "3 / 3; missing rates 1"
+            ],
+            [
+              "Charges / known subtotal",
+              "[24, 12, <NA>] units / 36 known units"
+            ],
+            [
+              "Missing-rate report / full total",
+              "R3: hoist, 4 days, left_only; full total withheld"
+            ]
+          ],
+          "result": "R3 survives with a missing rate and cost. The two known charges sum to 36, but the full revenue total is withheld.",
+          "why": "The rate keys are unique, so many-to-one validation passes. indicator=True marks R3 as left_only; daily_rate.isna() also detects a null price on an otherwise matched key. Report the booking and recover an authoritative price before aggregating. Neither dropping R3 nor filling zero repairs it.",
+          "bars": [
+            {
+              "label": "Input rental rows",
+              "value": 3,
+              "max": 5
+            },
+            {
+              "label": "Joined rows",
+              "value": 3,
+              "max": 5
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "For these two input tables, use rentals.merge(rates, on=\"equipment\", how=\"left\", validate=\"many_to_one\", indicator=True). Cardinality means how many rows may match a key; many-to-one permits repeated equipment in rentals but requires unique rate keys. Reject null equipment keys before joining: pandas can match null keys to each other. Also require unique, non-null rental IDs so the row-count audit starts from identifiable bookings.",
+      "Inspect the joined rows before reducing them. Check len(joined) == len(rentals), then report rows where _merge is not \"both\" or daily_rate.isna(). Keep those rows in the audit table and leave their costs missing; block the complete report until corrected. For case 3, ordinary sum skips the missing cost and returns 36, so a number alone is not evidence of completeness. Only after the audit passes, calculate cost = days × daily_rate and groupby(\"branch\")[\"cost\"].sum(): North 44, South 12. Group by branch and equipment before pivoting to the small grid shown in case 1.",
+      "Keep three habits: validate key multiplicity, report missing prices before summing, and reconcile group totals with the checked row-level total. A dataframe is a labelled table; a key identifies a match; a groupby combines rows sharing a value; a pivot rearranges groups into rows and columns. Passing these checks does not establish that the prices are current or correct. In M02-L07, inspect and plot data while keeping missingness and sample sizes visible."
+    ],
+    "transfer": [
+      {
+        "question": "A new SYNTHETIC ledger has two saw rentals lasting 2 and 3 days, both at 8 units/day. What row count and total should a left join produce? What if the rate table contains two identical saw rows?",
+        "answer": "With one saw rate: 2 rows, charges [16, 24], total 40 units. With two saw rates and no validation: 4 rows, [16, 16, 24, 24], total 80. validate=\"many_to_one\" rejects the duplicated rate key even when the two prices agree. Repeated rentals are allowed; repeated rate keys are not."
+      },
+      {
+        "question": "The clean join still has three rows and no missing rates. Does that prove the total is correct for last month’s rentals if the rate card contains today’s prices?",
+        "answer": "No. Unique keys and complete matches establish structure, not historical validity. The 56-unit total assumes those rates applied to those rentals. A dated rate policy needs booking dates and effective periods, with exactly one applicable price per booking. For a prediction task, also exclude information unavailable at prediction time; learn any preprocessing only from training data. A many-to-one check alone cannot prevent leakage."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Predict: Meera copies only the drill rate row, then runs the left join without validation. What changes?",
+        "options": [
+          "Three joined rows; revenue stays 56",
+          "Five joined rows; revenue becomes 92",
+          "All three rentals disappear"
+        ],
+        "answer": 1,
+        "explanation": "R1 and R2 each match the two drill rates; R3 still matches one lamp rate. That gives five rows and 24 + 24 + 12 + 12 + 20 = 92 units. No booking changed. many_to_one validation would reject this input."
+      },
+      {
+        "question": "The unknown-hoist case passes many-to-one validation. What should Meera publish?",
+        "options": [
+          "Complete revenue 36, because sum returned a number",
+          "Complete revenue 36 after replacing the missing cost with zero",
+          "A missing-rate report for R3; withhold the complete revenue total"
+        ],
+        "answer": 2,
+        "explanation": "Uniqueness does not guarantee a match. The left join preserves R3 with a missing rate; 36 is only the known subtotal. Report the unmatched booking and recover its price before publishing group totals or a pivot."
+      },
+      {
+        "question": "After checking every rate, Meera groups costs by branch and equipment, then pivots. What does South/lamp = 0 mean here?",
+        "options": [
+          "No South lamp rental exists in this complete fixture",
+          "The lamp rate is missing",
+          "Pivot repaired a duplicated drill rate"
+        ],
+        "answer": 0,
+        "explanation": "The checked bookings are North/drill 24, North/lamp 20 and South/drill 12. Only the absent South/lamp combination is displayed as zero. Filling missing prices with zero before that audit would instead conceal unknown revenue."
+      }
+    ],
+    "topics": [
+      {
+        "title": "pandas dataframes",
+        "explanation": "A DataFrame stores labelled rows and named columns; each column has its own dtype. rentals has rental_id, branch, equipment and days; rates has equipment and daily_rate. A Series is one labelled column. The row index is not automatically a business identifier. Keep rental_id explicit and unique; join on equipment explicitly rather than relying on table order or all shared column names."
+      },
+      {
+        "title": "nullable dtypes",
+        "explanation": "Use pandas \"Int64\" (capital I) for whole-day counts and these fictional whole-unit rates. Unlike NumPy int64, it can hold pd.NA, displayed as <NA>, without converting integers to floating point. For example, pd.Series([12, None], dtype=\"Int64\") holds a known price and a missing one. Nullable means absence can be represented; it does not make an absent price valid. Real fractional prices need an explicit representation and rounding policy."
+      },
+      {
+        "title": "missing values",
+        "explanation": "Use isna() to detect absence, not equality with pd.NA. In case 3, 4 × <NA> remains <NA>. A sum normally skips missing values, so [24, 12, <NA>] yields 36 even though a charge is unknown. _merge == \"left_only\" reports an unknown key, while daily_rate.isna() also catches a known key with a null price. Preserve the row and report both causes; do not fill a rate with zero. This billing exercise uses recovery from the source, not statistical imputation. If later learning an imputer for a model, fit it only on training data to avoid leakage."
+      },
+      {
+        "title": "loc and iloc",
+        "explanation": "loc selects by labels or a boolean mask; iloc selects by integer position. joined.loc[joined[\"daily_rate\"].isna(), [\"rental_id\", \"equipment\"]] reports R3/hoist in case 3. joined.iloc[:2] inspects the first two rows, regardless of their index labels. Label slices include both endpoints; positional slices exclude the stop. Use one loc assignment for a deliberate edit, such as trial.loc[trial[\"rental_id\"] == \"R3\", \"equipment\"] = \"hoist\", on an explicit copy of the fixture; avoid chained indexing."
+      },
+      {
+        "title": "merge cardinality",
+        "explanation": "Many-to-one means multiple rental rows may reference one rate key. The clean join has two drill rentals but only one drill rate, so validate=\"many_to_one\" passes. Copying that rate causes MergeError; without validation it creates five rows and a false 92-unit total. Validate before aggregation and retain a before/after row audit. Reject null keys separately because pandas can match null to null. Unique keys still require a completeness check and a policy for the effective date of each price."
+      },
+      {
+        "title": "groupby",
+        "explanation": "After rejecting unresolved missing prices, joined.groupby(\"branch\", dropna=False)[\"cost\"].sum() produces North 44 and South 12, total 56. Grouping by equipment gives drill 36 and lamp 20. dropna=False retains a missing branch as an audit group; the default drops missing group keys. It does not fix missing costs. Reconcile the grouped sum with the verified row-level total. Grouping an unsafe join merely adds the duplicate charges together."
+      },
+      {
+        "title": "reshape and pivot",
+        "explanation": "For a wide branch-by-equipment view, first form cells = joined.groupby([\"branch\", \"equipment\"], as_index=False, dropna=False)[\"cost\"].sum(). Then cells.pivot(index=\"branch\", columns=\"equipment\", values=\"cost\") gives columns drill/lamp: North [24, 20], South [12, missing]. After all input rates and grouping keys are checked, fill that absent combination with zero: South [12, 0]. This zero means no booking, not a missing price. pivot only rearranges values and rejects repeated index/column pairs; pivot_table can aggregate them with an explicit aggfunc=\"sum\", but neither repairs an invalid join."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-13",
+    "sources": [
+      {
+        "title": "pandas 2.3: DataFrame.merge, validation and match indicators",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.merge.html"
+      },
+      {
+        "title": "pandas 2.3: nullable integer data type",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/user_guide/integer_na.html"
+      },
+      {
+        "title": "pandas 2.3: working with missing data",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/user_guide/missing_data.html"
+      },
+      {
+        "title": "pandas 2.3: indexing and selecting data",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/user_guide/indexing.html"
+      },
+      {
+        "title": "pandas 2.3: group by, split-apply-combine",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/user_guide/groupby.html"
+      },
+      {
+        "title": "pandas 2.3: DataFrame.pivot",
+        "url": "https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.pivot.html"
+      },
+      {
+        "title": "scikit-learn: common pitfalls and data leakage (conceptual reading)",
+        "url": "https://scikit-learn.org/stable/common_pitfalls.html"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Open labs/data-foundations/README.md in the repository or the runnable data-lab download. Follow its Python 3.12 setup and tests, pinned to pandas 2.3.3. Its four-rental fixture totals 103 units; the separate three-rental SYNTHETIC starter below totals 56. Work in your own practice directory; keep the reference lab unchanged.",
+        "Save the starter as rental_joins.py. Complete the reporting function: retain joined rows and a missing-rate report, audit rows before/after, and block complete totals if any rate is missing. Reject duplicate rate keys. For clean inputs, verify charges [24, 12, 20], branch totals North 44/South 12, equipment totals drill 36/lamp 20 and pivot rows North [24, 20]/South [12, 0]. Reconcile every summary to 56.",
+        "Inject a duplicate drill rate, R3/hoist, and a matched lamp with a null price; record the error or missing-rate report and withheld totals, then restore the clean inputs and rerun. Also test shuffled rates and invalid booking IDs. Save package versions, inputs, row audits and expected/actual results. State that the fixture is synthetic and not a performance benchmark; taxes, discounts, historical prices and model quality are outside this exercise."
+      ],
+      "starter": "# SYNTHETIC fixture; fictional currency units, not a benchmark.\n# Python 3.12 / pandas 2.3.3; setup: labs/data-foundations/README.md\nimport pandas as pd\n\nRENTALS = pd.DataFrame({\n    \"rental_id\": [\"R1\", \"R2\", \"R3\"],\n    \"branch\": [\"North\", \"South\", \"North\"],\n    \"equipment\": [\"drill\", \"drill\", \"lamp\"],\n    \"days\": pd.Series([2, 1, 4], dtype=\"Int64\"),\n})\nRATES = pd.DataFrame({\n    \"equipment\": [\"drill\", \"lamp\"],\n    \"daily_rate\": pd.Series([12, 5], dtype=\"Int64\"),\n})\n\n\ndef audit_join(rentals, rates):\n    # Baseline for this fixture; extend domain validation for real inputs.\n    ids = rentals[\"rental_id\"]\n    if ids.isna().any() or ids.duplicated().any():\n        raise ValueError(\"unique non-null rental IDs required\")\n    if rentals[\"equipment\"].isna().any() or rates[\"equipment\"].isna().any():\n        raise ValueError(\"null equipment keys rejected\")\n    joined = rentals.merge(rates, on=\"equipment\", how=\"left\",\n                           validate=\"many_to_one\", indicator=True)\n    assert len(joined) == len(rentals)\n    bad = joined[\"_merge\"].ne(\"both\") | joined[\"daily_rate\"].isna()\n    missing = joined.loc[bad, [\"rental_id\", \"equipment\", \"days\", \"_merge\"]].copy()\n    joined[\"cost\"] = joined[\"days\"] * joined[\"daily_rate\"]\n    audit = {\"rows_before\": len(rentals), \"rows_after\": len(joined),\n             \"missing_rates\": int(bad.sum())}\n    # Preserve unknown rows and missing costs. Never fill a rate with zero.\n    return joined, missing, audit\n\n\ndef checked_report(joined, missing, audit):\n    # TODO: if missing is nonempty, report it and withhold full totals/pivot.\n    # TODO: otherwise check days, costs and group keys, then return group\n    #       totals and a pivot. Fill only absent pivot combinations with 0.\n    # TODO: reconcile row-level, grouped and pivot totals to the hand result.\n    raise NotImplementedError(\"implement the reporting gate and summaries\")\n\n\njoined, missing, audit = audit_join(RENTALS, RATES)\nassert missing.empty\nassert joined[\"cost\"].tolist() == [24, 12, 20]\nassert joined[\"cost\"].sum() == 56\nprint(\"SYNTHETIC clean audit:\", audit, \"total:\", joined[\"cost\"].sum())\n# TODO: call checked_report and test the known pivot and group totals.\n# Duplicate: pd.concat([RATES, RATES.iloc[[0]]], ignore_index=True)\n# Unknown: RENTALS.assign(equipment=[\"drill\", \"drill\", \"hoist\"])\n# Null price: RATES.assign(daily_rate=pd.Series([12, None], dtype=\"Int64\"))\n# Keep missing rows in the audit output; show 36 only as a known subtotal.\n# Prove a corrected rerun returns three rows and total 56.\n"
+    }
   }
 ]
