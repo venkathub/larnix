@@ -1340,7 +1340,7 @@
       "Think of a booking slip: first can Meera read it, then are its boxes filled correctly, then is it the form revision the desk supports? JSON is a text format for values; parsing turns that text into values the program can inspect. A lone { cannot be parsed. A complete ticket with days \"2\" can be parsed, but the quoted value is a string, not the positive integer her contract requires. Converting it silently would hide a client mistake.",
       "Meera also requires X-Larnix-Version: 1. A well-formed ticket sent with version 2 still uses an unsupported contract. HTTP is the web’s request/response protocol; a form revision does not upgrade that protocol. A status code summarizes a response. Even a reply saying 200 can contain a broken ticket, so the client needs its own checks. The slip analogy stops at delivery: a missing network reply does not tell Meera whether a real server acted. Our local contract handler only validates and echoes a ticket; it opens no connection and saves no booking."
     ],
-    "example": "SYNTHETIC request/response trace, using the lab’s exact contract. With X-Larnix-Version: 1, body { → 400, body {\"error\":\"malformed JSON\"}. Body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":\"2\"} → 422, body {\"error\":\"days must be a positive integer\"}. Body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2} → 200, body {\"accepted\":true,\"ticket\":{\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}}. Keep that valid body but send X-Larnix-Version: 2, or omit the header → 400, body {\"error\":\"unsupported contract version; expected 1\"}. Every lab response carries X-Larnix-Version: 1. If a faulty responder sends 200 with accepted=true but ticket.days=\"2\", the client raises ContractError: invalid 200 ticket: days must be a positive integer. JSON spacing and object-key order do not change these values.",
+    "example": "SYNTHETIC exchanges in the listing: case 1 deliberately sends only {, so JSON parsing fails with 400 and malformed JSON. Case 2 parses, but days is text instead of an integer: 422 and days must be a positive integer. Case 3 passes all three checks: 200 and one accepted ticket, with no database write. The listing shows every request and response body; each response carries X-Larnix-Version: 1. Keep the valid request body but send version 2 or omit the header: 400 and unsupported contract version; expected 1. A faulty 200 with accepted=true but ticket.days=\"2\" is still rejected: ContractError: invalid 200 ticket: days must be a positive integer. JSON spacing and object-key order do not change these values.",
     "trap": "A success status is not a validation function. In this fixture, the good request passes three checks: parse JSON, validate fields, check version. The good response must then pass the client’s checks too. A 200 means this handler accepted the contract; it does not mean a database row was committed. No automatic retry, transport failure or database write is executed by the case explorer.",
     "sketch": [
       "Read JSON",
@@ -1361,11 +1361,11 @@
           "evidence": [
             [
               "Request",
-              "X-Larnix-Version: 1; body {"
+              "X-Larnix-Version: 1\n{"
             ],
             [
               "Response",
-              "400 | {\"error\":\"malformed JSON\"}"
+              "400\n{\n  \"error\": \"malformed JSON\"\n}"
             ],
             [
               "Checks / accepted tickets",
@@ -1397,11 +1397,11 @@
           "evidence": [
             [
               "Request",
-              "X-Larnix-Version: 1; body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":\"2\"}"
+              "X-Larnix-Version: 1\n{\n  \"request_key\": \"rent-001\",\n  \"equipment\": \"drill\",\n  \"days\": \"2\"\n}"
             ],
             [
               "Response",
-              "422 | {\"error\":\"days must be a positive integer\"}"
+              "422\n{\n  \"error\": \"days must be a positive integer\"\n}"
             ],
             [
               "Checks / accepted tickets",
@@ -1433,11 +1433,11 @@
           "evidence": [
             [
               "Request",
-              "X-Larnix-Version: 1; body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}"
+              "X-Larnix-Version: 1\n{\n  \"request_key\": \"rent-001\",\n  \"equipment\": \"drill\",\n  \"days\": 2\n}"
             ],
             [
               "Response",
-              "200 | {\"accepted\":true,\"ticket\":{\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}}"
+              "200\n{\n  \"accepted\": true,\n  \"ticket\": {\n    \"request_key\": \"rent-001\",\n    \"equipment\": \"drill\",\n    \"days\": 2\n  }\n}"
             ],
             [
               "Checks / accepted tickets",
@@ -1556,7 +1556,64 @@
       ],
       "starter": "# SYNTHETIC rental ticket; Python 3.12, standard library only.\n# Save outside the read-only lab. Pass its directory via --lab-dir.\nimport argparse\nimport json\nfrom pathlib import Path\nimport sys\nfrom typing import TypedDict\n\n\nclass Ticket(TypedDict):\n    request_key: str\n    equipment: str\n    days: int\n\n\ndef checked_ticket(lab, reply) -> Ticket:\n    # TypedDict documents the shape; the next call checks actual values.\n    return lab.accept_response(reply)\n\n\ndef probe(lab):\n    ticket = {\"request_key\": \"rent-001\", \"equipment\": \"drill\", \"days\": 2}\n    raw = json.dumps(ticket)\n    cases = [\n        (\"malformed\", \"{\", {\"X-Larnix-Version\": \"1\"}),\n        (\"wrong type\", json.dumps({**ticket, \"days\": \"2\"}), {\"X-Larnix-Version\": \"1\"}),\n        (\"wrong version\", raw, {\"X-Larnix-Version\": \"2\"}),\n        (\"missing version\", raw, {}),\n        (\"valid\", raw, {\"X-Larnix-Version\": \"1\"}),\n    ]\n    observed = []\n    for label, body, headers in cases:\n        reply = lab.handle(body, headers)\n        try:\n            value = checked_ticket(lab, reply)\n            outcome = f\"accepted {value['request_key']}\"\n        except lab.ContractError as error:\n            outcome = str(error)\n        row = (label, reply.status, json.loads(reply.body), outcome)\n        observed.append(row)\n        print(row)\n\n    invalid = lab.response(200, {\"accepted\": True, \"ticket\": {**ticket, \"days\": \"2\"}})\n    try:\n        checked_ticket(lab, invalid)\n    except lab.ContractError as error:\n        print(\"invalid 200 rejected:\", error)\n    else:\n        raise RuntimeError(\"client accepted invalid data\")\n    return observed\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"SYNTHETIC contract probe; no network\")\n    parser.add_argument(\"--lab-dir\", required=True, type=Path)\n    args = parser.parse_args()\n    sys.path.insert(0, str(args.lab_dir.resolve()))\n    import lab  # Your local, unchanged service-foundations/lab.py\n    probe(lab)\n# TODO: add missing-field, boolean-days and response-version tests.\n# TODO: implement the same boundary checks in a TypeScript decoder from unknown.\n"
     },
-    "sources_reviewed_on": "2026-10-13"
+    "sources_reviewed_on": "2026-10-13",
+    "listing": {
+      "title": "SYNTHETIC request → response trace",
+      "language": "text",
+      "lines": [
+        "1 · SYNTHETIC malformed JSON",
+        "Request",
+        "X-Larnix-Version: 1",
+        "Body (deliberately malformed):",
+        "{",
+        "Response",
+        "Status: 400",
+        "X-Larnix-Version: 1",
+        "Body:",
+        "{",
+        "  \"error\": \"malformed JSON\"",
+        "}",
+        "",
+        "2 · SYNTHETIC wrong field type",
+        "Request",
+        "X-Larnix-Version: 1",
+        "Body:",
+        "{",
+        "  \"request_key\": \"rent-001\",",
+        "  \"equipment\": \"drill\",",
+        "  \"days\": \"2\"",
+        "}",
+        "Response",
+        "Status: 422",
+        "X-Larnix-Version: 1",
+        "Body:",
+        "{",
+        "  \"error\": \"days must be a positive integer\"",
+        "}",
+        "",
+        "3 · SYNTHETIC valid contract",
+        "Request",
+        "X-Larnix-Version: 1",
+        "Body:",
+        "{",
+        "  \"request_key\": \"rent-001\",",
+        "  \"equipment\": \"drill\",",
+        "  \"days\": 2",
+        "}",
+        "Response",
+        "Status: 200",
+        "X-Larnix-Version: 1",
+        "Body:",
+        "{",
+        "  \"accepted\": true,",
+        "  \"ticket\": {",
+        "    \"request_key\": \"rent-001\",",
+        "    \"equipment\": \"drill\",",
+        "    \"days\": 2",
+        "  }",
+        "}"
+      ]
+    }
   },
   {
     "id": "M02-L03",
