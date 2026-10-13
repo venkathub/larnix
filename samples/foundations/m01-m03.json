@@ -1333,126 +1333,127 @@
   },
   {
     "id": "M02-L02",
-    "orientation": "A service contract defines what requests and responses mean. HTTP carries the message, JSON represents data, and application validation checks whether that data is usable.",
+    "orientation": "A service contract is an agreement about the requests a program accepts and the responses it returns. An API is the interface another program calls. Bring M02-L01’s habit of explicit inputs and tests to this boundary: receiving a reply and receiving usable data are different successes.",
     "idea": "Receiving a response and receiving valid business data are different successes.",
     "story": [
-      "The rental desk adds an API that accepts new tickets. A browser sends a request body, but the service cannot assume the body is valid just because bytes arrived. It must parse the document and check the fields before creating a ticket.",
-      "One client sends broken JSON; another sends valid JSON with text set to a number. These are different failures. Meera wants an explicit response for each, plus a client that avoids blindly retrying bad input."
+      "Meera’s rental desk adds a ticket API for equipment bookings. A client, the program asking for work, sends a body containing the booking data and a header, a named piece of message metadata. The service, the program handling that request, must decide what the message means before accepting it. Her SYNTHETIC drill ticket has request_key \"rent-001\", equipment \"drill\", and days 2. The request key names the operation; it is not a password or proof that the booking was saved.",
+      "Think of a booking slip: first can Meera read it, then are its boxes filled correctly, then is it the form revision the desk supports? JSON is a text format for values; parsing turns that text into values the program can inspect. A lone { cannot be parsed. A complete ticket with days \"2\" can be parsed, but the quoted value is a string, not the positive integer her contract requires. Converting it silently would hide a client mistake.",
+      "Meera also requires X-Larnix-Version: 1. A well-formed ticket sent with version 2 still uses an unsupported contract. HTTP is the web’s request/response protocol; a form revision does not upgrade that protocol. A status code summarizes a response. Even a reply saying 200 can contain a broken ticket, so the client needs its own checks. The slip analogy stops at delivery: a missing network reply does not tell Meera whether a real server acted. Our local contract handler only validates and echoes a ticket; it opens no connection and saves no booking."
     ],
-    "example": "The body {\"text\":42} is valid JSON because numbers are allowed. It still violates this endpoint’s contract, which requires a non-empty string. A TypeScript assertion cannot repair that mismatch: the service and client boundary need real checks on the received values.",
-    "trap": "A 200 response, valid JSON, and a TypeScript type assertion do not each prove the data obeys your contract. Inspect status, structure and meaning separately.",
+    "example": "SYNTHETIC request/response trace, using the lab’s exact contract. With X-Larnix-Version: 1, body { → 400, body {\"error\":\"malformed JSON\"}. Body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":\"2\"} → 422, body {\"error\":\"days must be a positive integer\"}. Body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2} → 200, body {\"accepted\":true,\"ticket\":{\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}}. Keep that valid body but send X-Larnix-Version: 2, or omit the header → 400, body {\"error\":\"unsupported contract version; expected 1\"}. Every lab response carries X-Larnix-Version: 1. If a faulty responder sends 200 with accepted=true but ticket.days=\"2\", the client raises ContractError: invalid 200 ticket: days must be a positive integer. JSON spacing and object-key order do not change these values.",
+    "trap": "A success status is not a validation function. In this fixture, the good request passes three checks: parse JSON, validate fields, check version. The good response must then pass the client’s checks too. A 200 means this handler accepted the contract; it does not mean a database row was committed. No automatic retry, transport failure or database write is executed by the case explorer.",
     "sketch": [
-      "HTTP response",
-      "JSON structure",
-      "Application contract"
+      "Read JSON",
+      "Check fields + version",
+      "Validate the reply"
     ],
     "lab": {
-      "question": "At which boundary should this ticket request stop?",
-      "limitation": "Fixed synthetic case explorer: status codes and gate results are authored for this illustrative API contract. No HTTP requests or TypeScript validation run in this page.",
+      "question": "SYNTHETIC fixed fixtures: no Python handler, HTTP request or TypeScript validation runs in the browser. For the same rental ticket, predict which of three checks passes: JSON parsing, field validation, version compatibility.",
+      "limitation": "SYNTHETIC fixed case explorer. Responses are authored traces checked against the downloadable lab, not a running service or production evidence. Bars count passed and remaining checks on a shared 0–3 scale; remaining includes failed and unattempted checks. A validated ticket is not a saved booking.",
       "scenarios": [
         {
-          "label": "1 · Malformed JSON",
+          "label": "1 · SYNTHETIC malformed JSON",
           "steps": [
-            "Receive bytes",
-            "JSON parse fails",
-            "Return 400"
+            "Read body {",
+            "Parsing fails",
+            "400 + reason"
           ],
           "evidence": [
             [
-              "Body",
-              "{\"text\":"
+              "Request",
+              "X-Larnix-Version: 1; body {"
             ],
             [
-              "Contract decision",
-              "Cannot parse document"
+              "Response",
+              "400 | {\"error\":\"malformed JSON\"}"
             ],
             [
-              "Illustrative response",
-              "400 Bad Request"
+              "Checks / accepted tickets",
+              "0 / 3 passed; 3 remaining; 0 accepted"
             ]
           ],
-          "result": "Stop before field validation: the JSON document is incomplete.",
-          "why": "Resending the same malformed body does not fix it. The client must correct its serialization.",
+          "result": "400: malformed JSON. No field or version check is reached.",
+          "why": "One opening brace is not a complete document. Correct serialization before retrying; the same bytes still fail. This is an explicit rejection from the handler, not a connection failure.",
           "bars": [
             {
-              "label": "Passed gates · count",
+              "label": "Passed checks · count",
+              "value": 0,
+              "max": 3
+            },
+            {
+              "label": "Remaining checks · count",
+              "value": 3,
+              "max": 3
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC wrong field type",
+          "steps": [
+            "JSON parses",
+            "days is a string",
+            "422 + reason"
+          ],
+          "evidence": [
+            [
+              "Request",
+              "X-Larnix-Version: 1; body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":\"2\"}"
+            ],
+            [
+              "Response",
+              "422 | {\"error\":\"days must be a positive integer\"}"
+            ],
+            [
+              "Checks / accepted tickets",
+              "1 / 3 passed; 2 remaining; 0 accepted"
+            ]
+          ],
+          "result": "422: days must be a positive integer. JSON parsing succeeded; field validation did not.",
+          "why": "The value \"2\" has a different type from 2. The version check is not reached. Replace the string with the intended integer and select case 3; do not remove the validation rule.",
+          "bars": [
+            {
+              "label": "Passed checks · count",
               "value": 1,
               "max": 3
             },
             {
-              "label": "Unpassed gates · count",
+              "label": "Remaining checks · count",
               "value": 2,
               "max": 3
             }
           ]
         },
         {
-          "label": "2 · Wrong field type",
+          "label": "3 · SYNTHETIC valid contract",
           "steps": [
-            "Receive bytes",
-            "Parse JSON",
-            "Reject text type"
+            "JSON parses",
+            "Fields pass",
+            "Version 1 → 200"
           ],
           "evidence": [
             [
-              "Body",
-              "{\"text\":42}"
+              "Request",
+              "X-Larnix-Version: 1; body {\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}"
             ],
             [
-              "Contract decision",
-              "text must be a string"
+              "Response",
+              "200 | {\"accepted\":true,\"ticket\":{\"request_key\":\"rent-001\",\"equipment\":\"drill\",\"days\":2}}"
             ],
             [
-              "Illustrative response",
-              "422 Unprocessable Content"
+              "Checks / accepted tickets",
+              "3 / 3 passed; 0 remaining; 1 accepted; 0 database writes"
             ]
           ],
-          "result": "JSON parsing succeeds, but application validation rejects the field.",
-          "why": "422 is this lesson’s documented choice for valid syntax with unusable content; other APIs may document 400.",
+          "result": "200: the client accepts one validated ticket. This handler has not created a database record.",
+          "why": "Keep this body but use version 2 or omit the header: the result becomes 400 with unsupported contract version; expected 1 (2 / 3 checks pass). A fabricated 200 with ticket.days=\"2\" also fails at the client. Validation applies on both sides of the boundary; inspect the worked trace and run the starter to reproduce these counterexamples.",
           "bars": [
             {
-              "label": "Passed gates · count",
-              "value": 2,
-              "max": 3
-            },
-            {
-              "label": "Unpassed gates · count",
-              "value": 1,
-              "max": 3
-            }
-          ]
-        },
-        {
-          "label": "3 · Valid ticket",
-          "steps": [
-            "Receive bytes",
-            "Parse JSON",
-            "Validate fields"
-          ],
-          "evidence": [
-            [
-              "Body",
-              "{\"text\":\"Drill stopped\"}"
-            ],
-            [
-              "Contract decision",
-              "Non-empty string accepted"
-            ],
-            [
-              "Illustrative response",
-              "201 Created + ticket ID"
-            ]
-          ],
-          "result": "The request passes the three shown gates and a ticket is created.",
-          "why": "The response must still be checked by the client. Success status is not permission to assume any arbitrary response shape.",
-          "bars": [
-            {
-              "label": "Passed gates · count",
+              "label": "Passed checks · count",
               "value": 3,
               "max": 3
             },
             {
-              "label": "Unpassed gates · count",
+              "label": "Remaining checks · count",
               "value": 0,
               "max": 3
             }
@@ -1461,96 +1462,101 @@
       ]
     },
     "mechanism": [
-      "Separate transport outcome from response content. A connection failure may leave no response; an HTTP error response is still a response. Parse the body only according to the documented content type and contract.",
-      "At the boundary, check field presence, type and relevant constraints. Treat external data as unknown until validation succeeds; a cast tells the compiler what you claim, not what the server actually sent.",
-      "Classify recovery by cause and operation. Fix invalid input; handle documented temporary failures with bounded retries only when repeating the operation is safe. A timed-out create may already have committed."
+      "A boundary is where data enters code that must decide whether to trust its shape. A schema describes required fields and value types; validation actually checks them. Here the schema requires exactly request_key, equipment and days. The first two must be nonempty strings; days must be a positive integer, so even Python True is rejected despite being an int subclass. The handler stops at the first failed check: parsing, then fields, then version. A wrong-field ticket with a wrong version therefore reports the field error first.",
+      "The client receives status, headers and a body separately. It checks the response version, parses the body, rejects an error status, then checks the accepted/ticket envelope and ticket fields. An envelope is the outer object wrapping the result. TypeScript is a language that checks types during development; a type assertion such as value as Ticket makes a claim to its compiler without inspecting the received value. Runtime validation must establish the claim before application code relies on it.",
+      "Keep three habits: distinguish a missing reply from an explicit rejection; check both request and response values; choose recovery from the documented cause and operation. A retry repeats a request. Idempotency means repeating it has the same intended effect as doing it once, not that every reply is identical. The request_key needs a real server-side replay rule before it makes a create safe to repeat. The lab’s separate persistence part explores that rule. Next, M02-L03 asks how many valid requests the client should allow to run at once."
     ],
     "transfer": [
       {
-        "question": "A ticket-create request times out after the server commits. Does the timeout prove no ticket exists?",
-        "answer": "No. The client lacks a response, not necessarily a result. Use a documented idempotency or lookup mechanism before repeating the create."
+        "question": "A second rental desk receives a 422 for days=\"3\" and later a 503 after sending a corrected create request. Which is a candidate for retry, and what must be established before repeating the create?",
+        "answer": "Correct the string duration before sending again; retrying that same 422 request cannot repair it. A 503 indicates service unavailability and can be a candidate for a bounded, delayed retry under the API’s policy, including Retry-After when supplied. It does not prove that no side effect occurred. Establish replay safety or look up the original request key first. A 5xx is not a blanket retry instruction, and some 4xx cases have their own recovery rules: the class alone is insufficient."
       },
       {
-        "question": "Can every API use exactly the three status choices shown here?",
-        "answer": "No. Status semantics come from HTTP, but endpoint contracts choose details within those semantics. Read and test the actual API’s documented errors and versions."
+        "question": "Another client sends {\"request_key\":\"rent-009\",\"equipment\":\"pump\",\"days\":3} with X-Larnix-Version: 2. Which response does this lab return? Would repeatedly sending version 2 or merely relabelling an incompatible payload as version 1 fix it?",
+        "answer": "400 with {\"error\":\"unsupported contract version; expected 1\"}. The fields pass, but the version gate fails. Use the supported contract only after checking the actual field meanings and representation; this particular body already matches version 1, so setting the header to 1 produces 200. A differently shaped version-2 payload would need conversion too. Omitting the header gives the same 400 reason. Repetition does not negotiate a version, and HTTP 426 is not an application-version response."
       }
     ],
     "checks": [
       {
-        "question": "Why does {\"text\":42} fail this endpoint?",
+        "question": "Predict: Meera sends a complete ticket with days=\"2\" and X-Larnix-Version: 1. Why does it receive 422?",
         "options": [
-          "It is not JSON",
+          "It cannot be parsed as JSON",
           "HTTP forbids numbers",
           "It violates the required field type"
         ],
         "answer": 2,
-        "explanation": "The syntax is valid; the endpoint requires a string."
+        "explanation": "The quoted value is a valid JSON string. This ticket contract requires a positive integer, so field validation returns 422 with days must be a positive integer. Use numeric 2 in the corrected request; neither another retry nor a type assertion changes the received value."
       },
       {
-        "question": "What does a TypeScript assertion validate at runtime?",
+        "question": "A 200 reply contains ticket.days=\"2\". What does a TypeScript assertion, value as Ticket, validate at runtime?",
         "options": [
           "Nothing by itself",
           "Every required field",
           "HTTP status codes only"
         ],
         "answer": 0,
-        "explanation": "Assertions are removed during compilation and do not check incoming data."
+        "explanation": "The assertion adds no runtime check. The lab’s client validates the ticket and raises ContractError: invalid 200 ticket: days must be a positive integer. Keep external values unknown until checks establish their shape; a success status cannot replace those checks."
       },
       {
-        "question": "What is the safe inference after a create timeout?",
+        "question": "In a real ticket-create service, the client times out before receiving a reply. What is the safe inference?",
         "options": [
           "The create certainly failed",
           "The outcome may be unknown",
           "The server certainly committed"
         ],
         "answer": 1,
-        "explanation": "A lost response cannot by itself distinguish failure before work from success before the response was lost."
+        "explanation": "Both failure before work and a lost reply after commit fit the observation. Investigate the original operation or use its documented replay mechanism before repeating a create. Our in-process contract handler performs no network request or persistence, so this is a transfer to a real service, not a timeout measured here."
       }
     ],
     "topics": [
       {
         "title": "HTTP",
-        "explanation": "HTTP defines request methods, response status semantics and other message rules. A timeout and a received error status represent different observations; neither should be flattened into a generic empty response."
+        "explanation": "HTTP defines message semantics between clients and servers. A method names the requested action; status summarizes the response; headers carry metadata; the body holds content. For a real JSON endpoint, document method, path and content type as well as fields. Here handle(body, headers) models only the contract boundary in-process. It does not implement routing, Content-Type enforcement or a network transport. An error response supplies information a connection failure may not supply."
       },
       {
         "title": "JSON",
-        "explanation": "JSON encodes values such as objects, arrays, strings and numbers. Parsing {\"text\":42} produces structured data, but says nothing about whether 42 is an acceptable ticket description."
+        "explanation": "JSON text can encode objects, arrays, strings, numbers, booleans and null. In Meera’s ticket, days=2 and days=\"2\" parse to different types. Parsing is not schema validation, and schema validation alone cannot prove equipment is available. The registered OpenAI structured-output guide makes the analogous distinction between valid JSON and schema adherence; its refusal and incomplete-output cases still need handling. This lesson makes no model calls and imports none of that guide’s examples."
       },
       {
         "title": "status codes",
-        "explanation": "Status codes summarize the response semantics. This lesson uses 400 for malformed input, 422 for semantically invalid content and 201 for creation; document the choices your endpoint actually implements."
+        "explanation": "RFC 9110 §15.5 covers client-error responses. This lab documents 400 for malformed JSON or an unsupported application-version header, with different error reasons; it uses 422 for readable JSON whose fields fail the contract. Its 200 response confirms validation only. It does not return 201 Created because this handler creates no resource. RFC 9110 §15.5.22 reserves 426 for a protocol upgrade and requires an Upgrade header: changing X-Larnix-Version is not that operation. Do not encode business meaning in status alone; inspect the documented error body."
       },
       {
         "title": "API versioning",
-        "explanation": "Versioning makes incompatible contract changes explicit. If text is renamed to description, retain compatibility or expose a documented new contract instead of silently breaking older clients."
+        "explanation": "A contract version names the supported agreement about fields and their meaning. This handler requires X-Larnix-Version: 1 on valid requests and sends that header on every response, including errors. With otherwise valid fields, version 2 or no version produces 400 and unsupported contract version; expected 1. It checks fields before version, so tests must specify both inputs. Renaming days to hours or changing its unit requires a compatibility decision, not just changing a header string. The lab implements only version 1."
       },
       {
         "title": "TypeScript boundaries",
-        "explanation": "TypeScript types help reason about known values during development. Treat network data as unknown and validate it before narrowing; writing value as Ticket does not add a runtime check."
+        "explanation": "A declaration such as type Ticket = { request_key: string; equipment: string; days: number } describes values your code intends to use. Writing decoded as Ticket supplies no runtime evidence, and number alone does not require a positive integer. Treat decoded network input as unknown, then check the object, exact keys, nonempty strings and a positive integer before narrowing it. Check response version and accepted=true as well. The Python starter mirrors this discipline: TypedDict describes the client shape, while accept_response performs the actual validation."
       }
     ],
     "sources": [
       {
-        "title": "RFC 9110: HTTP semantics",
-        "url": "https://www.rfc-editor.org/rfc/rfc9110.html"
+        "title": "IETF — RFC 9110 §15.5: client-error status codes",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5"
       },
       {
-        "title": "RFC 8259: JSON",
-        "url": "https://www.rfc-editor.org/rfc/rfc8259.html"
+        "title": "IETF — RFC 9110 §9.2.2: idempotent methods",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2"
       },
       {
-        "title": "TypeScript: assertions",
-        "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+        "title": "OpenAI — Structured model outputs: JSON, schemas and error handling",
+        "url": "https://developers.openai.com/api/docs/guides/structured-outputs"
+      },
+      {
+        "title": "Made With ML by Anyscale — Testing machine learning systems: code, data and models",
+        "url": "https://madewithml.com/courses/mlops/testing/"
       }
     ],
     "practice": {
       "steps": [
-        "Write an endpoint contract with method, path, required fields, successful response and three explicit error cases.",
-        "Run the starter against a string, numeric text and missing text; compare parsing with field validation. Add an incompatible-version fixture.",
-        "Describe recovery for malformed input and for a timeout after possible creation. State which repetition guarantees your endpoint would need."
+        "Download the runnable service lab or open labs/service-foundations/README.md. Follow its Python 3.12 test and report commands; no package installation is needed. Preserve the lab files. This SYNTHETIC contract exercise uses its first fixture, rent-001, and is not a benchmark or a live HTTP endpoint.",
+        "Save the starter as contract_probe.py in your own practice directory. Run python3 contract_probe.py --lab-dir /path/to/service-foundations. Predict all five status/reason pairs before running; compare the full body, response version and accepted values, not just the status. The final injected 200 must fail the client check. Record Python version and the fixture checksum from the lab report.",
+        "Extend your own client tests with a missing field, days=true, and a wrong response-version header. Write the corresponding TypeScript Ticket shape and a decoder from unknown that enforces the same rules; do not replace validation with as Ticket. For a real service design, document the method/path/content type and a bounded retry policy with replay safety. Explain separately what a 422, a version rejection and a timeout tell you. Network behavior and persistence are outside this starter."
       ],
-      "starter": "import json\n\ndef validate_ticket(raw: str) -> dict:\n    value = json.loads(raw)\n    if not isinstance(value, dict):\n        raise ValueError(\"object required\")\n    if not isinstance(value.get(\"text\"), str) or not value[\"text\"].strip():\n        raise ValueError(\"non-empty text string required\")\n    return value\n\nprint(validate_ticket('{\"text\":\"Drill stopped\"}'))"
-    }
+      "starter": "# SYNTHETIC rental ticket; Python 3.12, standard library only.\n# Save outside the read-only lab. Pass its directory via --lab-dir.\nimport argparse\nimport json\nfrom pathlib import Path\nimport sys\nfrom typing import TypedDict\n\n\nclass Ticket(TypedDict):\n    request_key: str\n    equipment: str\n    days: int\n\n\ndef checked_ticket(lab, reply) -> Ticket:\n    # TypedDict documents the shape; the next call checks actual values.\n    return lab.accept_response(reply)\n\n\ndef probe(lab):\n    ticket = {\"request_key\": \"rent-001\", \"equipment\": \"drill\", \"days\": 2}\n    raw = json.dumps(ticket)\n    cases = [\n        (\"malformed\", \"{\", {\"X-Larnix-Version\": \"1\"}),\n        (\"wrong type\", json.dumps({**ticket, \"days\": \"2\"}), {\"X-Larnix-Version\": \"1\"}),\n        (\"wrong version\", raw, {\"X-Larnix-Version\": \"2\"}),\n        (\"missing version\", raw, {}),\n        (\"valid\", raw, {\"X-Larnix-Version\": \"1\"}),\n    ]\n    observed = []\n    for label, body, headers in cases:\n        reply = lab.handle(body, headers)\n        try:\n            value = checked_ticket(lab, reply)\n            outcome = f\"accepted {value['request_key']}\"\n        except lab.ContractError as error:\n            outcome = str(error)\n        row = (label, reply.status, json.loads(reply.body), outcome)\n        observed.append(row)\n        print(row)\n\n    invalid = lab.response(200, {\"accepted\": True, \"ticket\": {**ticket, \"days\": \"2\"}})\n    try:\n        checked_ticket(lab, invalid)\n    except lab.ContractError as error:\n        print(\"invalid 200 rejected:\", error)\n    else:\n        raise RuntimeError(\"client accepted invalid data\")\n    return observed\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"SYNTHETIC contract probe; no network\")\n    parser.add_argument(\"--lab-dir\", required=True, type=Path)\n    args = parser.parse_args()\n    sys.path.insert(0, str(args.lab_dir.resolve()))\n    import lab  # Your local, unchanged service-foundations/lab.py\n    probe(lab)\n# TODO: add missing-field, boolean-days and response-version tests.\n# TODO: implement the same boundary checks in a TypeScript decoder from unknown.\n"
+    },
+    "sources_reviewed_on": "2026-10-13"
   },
   {
     "id": "M02-L03",
