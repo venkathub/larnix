@@ -401,5 +401,19 @@
       "check2": "2",
       "check3": "0"
     }
+  },
+  "M02-L08": {
+    "directory": "foundations",
+    "format": "foundation",
+    "title": "Read and run a Python program",
+    "description": "Track the value and type of each name, follow the chosen branch, and enter a function body only when it is called.",
+    "kind": "Interactive preview",
+    "reading_minutes": "10",
+    "checks": 3,
+    "answers": {
+      "check1": "1",
+      "check2": "2",
+      "check3": "0"
+    }
   }
 }

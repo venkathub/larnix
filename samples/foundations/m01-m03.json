@@ -3223,5 +3223,233 @@
       ],
       "starter": "# SYNTHETIC fixture, not a benchmark. Python 3.12.\n# Setup: labs/data-foundations/README.md (pandas 2.3.3 / Matplotlib 3.10.7).\nimport argparse\nimport hashlib\nimport io\nimport json\nimport platform\nfrom pathlib import Path\n\nimport matplotlib\nmatplotlib.use(\"Agg\")\nfrom matplotlib import pyplot as plt\nimport numpy as np\nimport pandas as pd\n\nFIXTURE_CSV = \"\"\"rental_id,customer_group,cost\nW1,Walk-in,18\nW2,Walk-in,20\nW3,Walk-in,22\nW4,Walk-in,18\nW5,Walk-in,22\nW6,Walk-in,\nA1,Account,8\nA2,Account,8\nA3,Account,44\n\"\"\"\nGROUPS = [\"Walk-in\", \"Account\"]\n\n\ndef inspect_csv(raw):\n    df = pd.read_csv(io.BytesIO(raw), dtype={\n        \"rental_id\": \"string\", \"customer_group\": \"string\", \"cost\": \"Float64\"})\n    required = {\"rental_id\", \"customer_group\", \"cost\"}\n    if not required.issubset(df.columns):\n        raise ValueError(\"required columns missing\")\n    if df[\"rental_id\"].isna().any() or df[\"rental_id\"].duplicated().any():\n        raise ValueError(\"unique non-null booking IDs required\")\n    if df[\"customer_group\"].isna().any() or not df[\"customer_group\"].isin(GROUPS).all():\n        raise ValueError(\"known non-null customer groups required\")\n    missing_groups = set(GROUPS) - set(df[\"customer_group\"])\n    if missing_groups:\n        raise ValueError(f\"expected groups missing: {sorted(missing_groups)}\")\n    known = df[\"cost\"].dropna().to_numpy(dtype=float)\n    if not np.isfinite(known).all() or (known < 0).any():\n        raise ValueError(\"known costs must be finite and nonnegative\")\n    summary = df.groupby(\"customer_group\")[\"cost\"].agg(\n        rows=\"size\", observed=\"count\", mean=\"mean\", median=\"median\")\n    summary[\"missing\"] = summary[\"rows\"] - summary[\"observed\"]\n    return df, summary\n\n\ndef write_report(input_path, output):\n    raw = Path(input_path).read_bytes()\n    df, summary = inspect_csv(raw)\n    output = Path(output)\n    output.mkdir(parents=True, exist_ok=True)\n    summary.to_csv(output / \"group_summary.csv\")\n    df.isna().sum().rename(\"missing_count\").to_csv(output / \"missingness.csv\")\n    provenance = {\n        \"mode\": \"SYNTHETIC descriptive fixture; not a benchmark\",\n        \"input\": str(input_path), \"sha256\": hashlib.sha256(raw).hexdigest(),\n        \"versions\": {\"python\": platform.python_version(), \"pandas\": pd.__version__,\n                     \"matplotlib\": matplotlib.__version__, \"numpy\": np.__version__},\n        \"limitations\": \"One desk, one day; missing costs stay unknown; no causal claim.\",\n    }\n    (output / \"provenance.json\").write_text(json.dumps(provenance, indent=2) + \"\\n\")\n    fig, axes = plt.subplots(1, 2, sharey=True, figsize=(9, 4), layout=\"constrained\")\n    for group, ax in zip(GROUPS, axes):\n        values = df.loc[df[\"customer_group\"].eq(group), \"cost\"].dropna().to_numpy(dtype=float)\n        rows = int(df[\"customer_group\"].eq(group).sum())\n        ax.scatter(range(1, len(values) + 1), values)\n        ax.set_title(f\"{group}: n={len(values)}, rows={rows}, missing={rows-len(values)}\")\n        ax.set_xlabel(\"Observed booking number (within group)\")\n        ax.set_xticks(range(1, len(values) + 1))\n    known = df[\"cost\"].dropna().to_numpy(dtype=float)\n    top = max(1.0, float(known.max()) * 1.1) if len(known) else 1.0\n    axes[0].set_ylim(0, top)  # shared scale includes the largest observed cost\n    axes[0].set_ylabel(\"Cost (fictional currency units per rental)\")\n    fig.suptitle(\"SYNTHETIC rental costs: observed values only\")\n    fig.savefig(output / \"costs.png\", dpi=120)\n    plt.close(fig)\n    return summary\n\n\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser(description=\"Inspect a synthetic rental CSV\")\n    parser.add_argument(\"--input\", default=\"rental-inspection.csv\")\n    parser.add_argument(\"--output\", default=\"evidence\")\n    parser.add_argument(\"--write-fixture\", action=\"store_true\")\n    args = parser.parse_args()\n    if args.write_fixture:\n        # Exclusive creation protects any existing learner-edited input.\n        with Path(args.input).open(\"x\", encoding=\"utf-8\", newline=\"\") as handle:\n            handle.write(FIXTURE_CSV)\n    else:\n        print(write_report(args.input, args.output))\n# TODO: add the labelled with/without-44 comparison and decision note.\n# TODO: test invalid inputs, the recovered W6 case and fresh-process reruns.\n"
     }
+  },
+  {
+    "id": "M02-L08",
+    "orientation": "You only need to be able to run a command. A program is a set of instructions; Python is the language used here, and its interpreter is the application that follows those instructions. We will read one small rental-price program before running it on your own machine. M02-L08 is the starting point for readers new to programming. M01 is not required first; the previous-lesson link follows catalogue order, not a prerequisite. The full program listing is at the start of the starter inside the Production practice disclosure; open it alongside the line-by-line trace below.",
+    "idea": "Track the value and type of each name, follow the chosen branch, and enter a function body only when it is called.",
+    "story": [
+      "Meera’s rental desk needs a price for a lamp. For this SYNTHETIC exercise, the daily rate is 20 fictional currency units and a booking of at least 3 days gets a single 5-unit discount. These are teaching fixtures, not a pricing policy. Before running anything, predict the one-day charge and the three-day charge: should the discount happen once or once per day?",
+      "A value is a piece of data: 20 is a whole number. Its type describes what kind of data it is: int means integer, while str means text such as \"3\". A variable is a name bound to a value. The statement daily_rate = 20 assigns 20 to that name; = assigns rather than asks whether two values are equal. Multiplication is written * and subtraction is written -. Meera names the two fixed values daily_rate and discount so the calculation says what its numbers mean.",
+      "A function is a named set of instructions that can be called to do a job. Line 3, def rental_price(days):, defines one. The parameter days is a local name for the value supplied by a call such as rental_price(3). Indentation, the spaces at the start of a line, groups the function body and the discount branch. The if statement tests a condition: days >= 3 asks whether days is at least 3. A branch is the block followed only when that condition is true. return sends the computed value back to the caller; print displays a value on the screen.",
+      "Follow the Quick revision trace above using L1–L15 as source line numbers. The exact program is the first 15 lines of the starter in Production practice; expand it for a spaced listing. Defining rental_price does not yet calculate a charge. The top-level instructions continue at L8, and the call at L10 sends execution into the indented body before returning to L11. Top to bottom means following the executed path, including these calls and returns, rather than executing every printed source line once."
+    ],
+    "example": "SYNTHETIC trace of the starter’s first 15 lines. L1: daily_rate = 20. L2: discount = 5; daily_rate stays 20. L3 binds rental_price to a function; its L4–L7 body waits, with no local days or total yet. L8: days = 1. L9: predicted = 20. L10 calls rental_price(1): local days = 1; L4 sets total = 20 (1 × 20); L5 tests 1 >= 3 → False; L6 is skipped; L7 returns total = 20. Back at L10, observed = 20. L11 prints one-day predicted: 20 observed: 20. L12: days = 3; predicted and observed are still 20. L13: predicted = 55; observed stays 20. L14 calls rental_price(3): local days = 3; L4 sets total = 60 (3 × 20); L5 tests 3 >= 3 → True; L6 changes total = 55 (60 − 5); L7 returns total = 55. Back at L14, observed = 55. L15 prints multi-day predicted: 55 observed: 55. Throughout, daily_rate = 20 and discount = 5; the function’s local total belongs to that call. predicted is our written expectation, not an input to the function.",
+    "trap": "Quotation marks matter: days = \"3\" stores text, not the integer 3. In this particular program L4 repeats that text 20 times instead of doing numeric multiplication. L5 then raises TypeError when it tries to compare text with the integer 3. An error is not a zero charge. Inspect the original input and change the deliberately wrong fixture to days = 3; do not hide the failure by inventing a result.",
+    "sketch": [
+      "Name rate 20, discount 5",
+      "Call with integer days",
+      "Choose branch → return charge"
+    ],
+    "lab": {
+      "question": "SYNTHETIC fixed program fixtures: the page does not run Python. Predict each printed line or failure, then select a case to reveal the authored output. The third case runs the deliberate error extension after the first two bookings.",
+      "limitation": "SYNTHETIC fixed case explorer; no Python interpreter runs in this page. Outputs describe only the shown program and inputs, not production evidence or a benchmark. Prices and discount are teaching fixtures, not a pricing policy. Bars compare returned charges with attempted bookings, not money; zero in the failing case is no returned charge, not a free rental.",
+      "scenarios": [
+        {
+          "label": "1 · SYNTHETIC one day",
+          "steps": [
+            "days = 1 (int)",
+            "1 >= 3 → False",
+            "Return 20"
+          ],
+          "evidence": [
+            [
+              "Input / calculation",
+              "days = 1; daily_rate = 20; discount = 5; total = 20"
+            ],
+            [
+              "Executed body lines",
+              "L4 → L5 → L7; L6 skipped"
+            ],
+            [
+              "Exact printed output",
+              "one-day predicted: 20 observed: 20"
+            ]
+          ],
+          "result": "The one-day booking returns 20 fictional currency units.",
+          "why": "The condition is false, so the subtraction is skipped. predicted = 20 is our expectation; observed = 20 is the function’s returned value. print separates its arguments with spaces.",
+          "bars": [
+            {
+              "label": "Returned charges in this case",
+              "value": 1,
+              "max": 1
+            },
+            {
+              "label": "Attempted bookings in this case",
+              "value": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "label": "2 · SYNTHETIC three days",
+          "steps": [
+            "days = 3 (int)",
+            "3 >= 3 → True",
+            "60 − 5 → 55"
+          ],
+          "evidence": [
+            [
+              "Input / calculation",
+              "days = 3; daily_rate = 20; discount = 5; total = 60 → 55"
+            ],
+            [
+              "Executed body lines",
+              "L4 → L5 → L6 → L7"
+            ],
+            [
+              "Exact printed output",
+              "multi-day predicted: 55 observed: 55"
+            ]
+          ],
+          "result": "The three-day booking returns 55 fictional currency units.",
+          "why": "The condition includes exactly 3 days. Subtract 5 once from 3 × 20 = 60, not 5 from each day. When this call starts, it creates its own local days and total; it does not reuse the first call’s total.",
+          "bars": [
+            {
+              "label": "Returned charges in this case",
+              "value": 1,
+              "max": 1
+            },
+            {
+              "label": "Attempted bookings in this case",
+              "value": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "label": "3 · SYNTHETIC text day count",
+          "steps": [
+            "days = \"3\" (str)",
+            "L4 repeats text",
+            "L5 → TypeError"
+          ],
+          "evidence": [
+            [
+              "Input / intermediate value",
+              "days = \"3\"; total = \"33333333333333333333\" after L4"
+            ],
+            [
+              "Printed output from this failing call",
+              "None; the two earlier booking lines remain printed by the full starter."
+            ],
+            [
+              "Exception (final traceback line)",
+              "TypeError: '>=' not supported between instances of 'str' and 'int'"
+            ]
+          ],
+          "result": "The text-day call returns no charge; its print never runs.",
+          "why": "Python evaluates rental_price(days) before the surrounding print can display its arguments. L5 raises TypeError, an exception reporting an operation on unsuitable types. The full starter first prints cases 1 and 2, then stops here with a traceback, a report of where the error occurred. The path and line formatting can vary by Python version.",
+          "bars": [
+            {
+              "label": "Returned charges in this case",
+              "value": 0,
+              "max": 1
+            },
+            {
+              "label": "Attempted bookings in this case",
+              "value": 1,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    },
+    "mechanism": [
+      "Execution follows control flow, the order in which instructions actually run. At a function definition, Python creates the callable function and binds its name; it does not yet run this body. At a call, the supplied argument becomes the local parameter days. L4 calculates a fresh total, L5 chooses whether L6 runs, and L7 returns to the waiting assignment. The caller’s observed name receives the returned value. The outer days and the parameter have the same spelling but belong to different places; this function does not assign to the outer days.",
+      "Keep a small ledger of names and values as you read. The right side of an assignment is evaluated before the name on the left is updated: total = total - discount uses the old total 60 to obtain the new total 55. The comparison >= produces True or False, values of the bool type. Our numeric fixture uses integers throughout; it assumes a positive whole-day count and does not validate every possible input. The text case demonstrates a failure instead of quietly supplying a charge.",
+      "Take away three habits: predict before running, track types as well as values, and follow calls and branches before judging the output. Glossary: variable = a name for a value; condition = a True/False test; function = callable instructions; return = send a result back; print = display text. A matching prediction checks this one fixture, not all possible bookings. Next, M02-L09, Shape data with collections and files, groups several rental records and reads them from files; the distinction between numeric days and text will still matter."
+    ],
+    "transfer": [
+      {
+        "question": "For a new SYNTHETIC two-day booking with daily_rate = 20 and discount = 5, what does rental_price(2) return? Which body line is skipped?",
+        "answer": "It returns 40 fictional currency units: L4 computes 2 × 20, L5 is False, and L6 is skipped. The three-day threshold has not been reached. If you also change predicted, write 40 before running rather than copying the observed result afterwards."
+      },
+      {
+        "question": "Suppose Meera runs only L1–L3 and the function definition’s indented L4–L7, leaving out L8–L15. Has the function calculated or printed a charge? What changes when she later calls rental_price(3)?",
+        "answer": "The definition binds the function name but does not run its body, so no charge is calculated or printed. The later call enters L4–L7 with local days = 3 and returns 55. A call alone in a script does not print that returned value: print is a separate instruction. Python’s interactive prompt may display expression results, which is different from running a script."
+      }
+    ],
+    "checks": [
+      {
+        "question": "Meera reaches def rental_price(days): before any call. What happens now?",
+        "options": [
+          "The function body immediately computes a charge",
+          "The function name is bound; this body waits for a call",
+          "The definition prints the value of days"
+        ],
+        "answer": 1,
+        "explanation": "def defines the callable function. This body has no work to do until a call supplies days; neither a charge nor a printed line appears just from this definition."
+      },
+      {
+        "question": "Predict rental_price(3) when daily_rate = 20 and discount = 5.",
+        "options": [
+          "45, because every day gets 5 off",
+          "60, because the discount starts after 3 days",
+          "55, because 3 >= 3 and 5 is subtracted once"
+        ],
+        "answer": 2,
+        "explanation": "L4 makes total 60. The >= comparison includes exactly 3, so L6 subtracts a single 5 and L7 returns 55. Read the operator and the subtraction, rather than assuming a pricing rule."
+      },
+      {
+        "question": "Why does the deliberately changed days = \"3\" fail here?",
+        "options": [
+          "It is text, and L5 cannot compare it with the integer 3",
+          "Python refuses all variables named days",
+          "The function has already been used once"
+        ],
+        "answer": 0,
+        "explanation": "Quoted digits have type str. L4 can repeat the text, but L5 cannot order that text against an int and raises TypeError. Remove the quotes from this known numeric fixture and rerun; neither a prior call nor the variable name causes this error."
+      }
+    ],
+    "topics": [
+      {
+        "title": "values and types",
+        "explanation": "A value is the actual data; a type describes its kind. 20 and 3 are int values, \"3\" is a str value, and True and False are bool values. Quotes create text even when the characters look numeric. With numbers, * multiplies; with a string and an integer it repeats text. That explains why the mistaken day count reaches L5 rather than failing at L4. This preview keeps amounts as whole fictional units and does not establish currency rounding rules."
+      },
+      {
+        "title": "variables",
+        "explanation": "A variable is a name bound to a value. daily_rate = 20 assigns a value; observed = rental_price(days) assigns the returned result. Assignment is not a comparison: == would test equality, whereas = binds the name. The function reads the outer daily_rate and discount but gives each call local names days and total. When the outer days becomes 3, predicted and observed do not automatically update; their later assignments do that work."
+      },
+      {
+        "title": "control flow",
+        "explanation": "Control flow is the path of executed instructions. if days >= 3: begins a conditional block; the more deeply indented total = total - discount runs only when the condition is true. return total is outside that if block but inside the function, so both valid bookings return a value. Keep the four spaces for the function body and eight for the discount assignment. If that assignment were moved outside the if block, even one-day bookings would lose 5 units."
+      },
+      {
+        "title": "functions",
+        "explanation": "def names a function and its parameter, the local name that receives a supplied argument. In rental_price(3), 3 is the argument. Calling the function runs its body; return hands a result back. Printing and returning are separate: return 55 lets the caller use the number, while print displays text. This tiny function reads the rate and discount already set above it; it does not call a provider or remember a previous booking’s total."
+      },
+      {
+        "title": "reading a program top to bottom",
+        "explanation": "Read the file from its first top-level instruction and keep track of calls that temporarily enter a body. For one day the executed source lines are 1, 2, 3, 8, 9, 10, 4, 5, 7, 11; then the file continues at 12. The three-day call follows 14, 4, 5, 6, 7 before reaching 15. A line in a function definition can appear earlier on the page yet run later. Comments beginning with # explain the code to people; blank lines and those comments do not calculate a result."
+      }
+    ],
+    "sources_reviewed_on": "2026-10-13",
+    "sources": [
+      {
+        "title": "Python: Numbers (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/introduction.html#numbers"
+      },
+      {
+        "title": "Python: Text (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/introduction.html#text"
+      },
+      {
+        "title": "Python: if statements (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/controlflow.html#if-statements"
+      },
+      {
+        "title": "Python: Defining functions (3.12 tutorial)",
+        "url": "https://docs.python.org/3.12/tutorial/controlflow.html#defining-functions"
+      }
+    ],
+    "practice": {
+      "steps": [
+        "Save the starter as rental_price.py in your own practice directory. Its first 15 lines are the traced program; preserve the indentation. The bookings are SYNTHETIC: these prices and this discount are teaching fixtures, not a pricing policy. No packages are needed. Target Python 3.12; run python3 --version and keep the actual version with your notes.",
+        "Before running, write your two predictions and track the intermediate totals. Run python3 -I rental_price.py (-I selects isolated mode, reducing dependence on local Python settings). Expect exactly one-day predicted: 20 observed: 20, then multi-day predicted: 55 observed: 55 on separate lines. The deliberate error extension then stops the run with TypeError; this first nonzero exit is expected, not a completed exercise.",
+        "Find days = \"3\" in the marked error extension and change only that line to days = 3. Predict the extra printed line text-day observed: 55; rerun the same command and record the now-successful exit. Explain why the original L4 produced repeated text and why L5 failed. Keep the original failure evidence; do not replace an error with zero. Try a two-day booking and predict 40 before running. Keep the input values, line trace, predicted and observed outputs, command and Python version together. State that these fixtures do not validate zero or negative day counts, real billing, taxes or rounding, and are not a performance benchmark."
+      ],
+      "starter": "daily_rate = 20\ndiscount = 5\ndef rental_price(days):\n    total = days * daily_rate\n    if days >= 3:\n        total = total - discount\n    return total\ndays = 1\npredicted = 20\nobserved = rental_price(days)\nprint(\"one-day predicted:\", predicted, \"observed:\", observed)\ndays = 3\npredicted = 55\nobserved = rental_price(days)\nprint(\"multi-day predicted:\", predicted, \"observed:\", observed)\n\n# SYNTHETIC: teaching fixtures, not a pricing policy.\n# Deliberate error extension: fix the quoted day count, then rerun.\ndays = \"3\"\nprint(\"text-day observed:\", rental_price(days))"
+    }
   }
 ]
